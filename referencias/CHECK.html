@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checklist por Etapas e Sprints — Trabalho Prático de Grafos</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: rgba(17, 24, 39, 0.82);
+      --panel2: rgba(31, 41, 55, 0.78);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: rgba(148, 163, 184, 0.22);
+      --accent: #f5c451;
+      --green: #22c55e;
+      --red: #ef4444;
+      --blue: #60a5fa;
+      --purple: #c084fc;
+      --orange: #fb923c;
+      --shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(245, 196, 81, 0.14), transparent 28%),
+        radial-gradient(circle at top right, rgba(96, 165, 250, 0.12), transparent 26%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .container {
+      width: min(1220px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 34px 0 56px;
+    }
+    header, .toolbar, .stage {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+    header {
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.75rem, 4vw, 3rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+    .subtitle {
+      color: var(--muted);
+      margin: 0;
+      max-width: 930px;
+    }
+
+    .hierarchy {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 18px;
+      padding: 12px 14px;
+      border: 1px solid rgba(96,165,250,.24);
+      background: rgba(96,165,250,.08);
+      border-radius: 14px;
+      color: #dbeafe;
+      font-size: .94rem;
+    }
+    .hierarchy span {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(15,23,42,.64);
+      border: 1px solid rgba(148,163,184,.20);
+      white-space: nowrap;
+    }
+    .hierarchy strong {
+      color: var(--accent);
+    }
+
+    .flow {
+      margin-top: 18px;
+      padding: 16px;
+      border: 1px solid rgba(245,196,81,.28);
+      background: rgba(245,196,81,.08);
+      border-radius: 16px;
+      color: #fde68a;
+    }
+    .flow pre {
+      margin: 10px 0 0;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid rgba(245, 196, 81, .24);
+      overflow-x: auto;
+      color: #f8fafc;
+      font-size: .9rem;
+      line-height: 1.45;
+    }
+    .flow code {
+      color: #fff7cc;
+      font-weight: 700;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin: 22px 0;
+    }
+    .stat {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .stat strong {
+      display: block;
+      font-size: 1.65rem;
+      line-height: 1;
+    }
+    .stat span {
+      color: var(--muted);
+      font-size: .86rem;
+    }
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: .9rem;
+      margin-bottom: 8px;
+    }
+    .progress {
+      width: 100%;
+      height: 12px;
+      background: rgba(148, 163, 184, 0.18);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--green));
+      transition: width .25s ease;
+    }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: 16px;
+      margin-bottom: 22px;
+    }
+    .filters {
+      display: grid;
+      grid-template-columns: 1.4fr repeat(4, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    input, select, button { font: inherit; }
+    input, select {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: rgba(17, 24, 39, .88);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 11px 12px;
+      outline: none;
+    }
+    input:focus, select:focus {
+      border-color: rgba(245,196,81,.75);
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    button {
+      border: 1px solid var(--border);
+      background: rgba(31,41,55,.85);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: transform .15s ease, border-color .15s ease;
+    }
+    button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(245,196,81,.65);
+    }
+    .danger-button:hover {
+      border-color: rgba(239,68,68,.7);
+    }
+    .stage {
+      margin: 24px 0;
+      overflow: hidden;
+    }
+    .stage-header {
+      padding: 22px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(245,196,81,.11), rgba(96,165,250,.08));
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: start;
+    }
+    .stage h2 {
+      margin: 0;
+      font-size: 1.45rem;
+    }
+    .stage p {
+      color: var(--muted);
+      margin: 6px 0 0;
+    }
+    .gate {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(34,197,94,.25);
+      background: rgba(34,197,94,.08);
+      color: #bbf7d0;
+    }
+    .stage-progress {
+      min-width: 190px;
+      text-align: right;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+    .sprint {
+      margin: 20px 22px;
+      padding: 18px;
+      border: 1px solid rgba(96,165,250,.18);
+      border-left: 5px solid rgba(96,165,250,.72);
+      border-radius: 16px;
+      background: rgba(15,23,42,.34);
+    }
+    .sprint h3 {
+      margin: 0 0 16px;
+      font-size: 1.18rem;
+      color: #dbeafe;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(96,165,250,.10);
+      border: 1px solid rgba(96,165,250,.22);
+    }
+    .section {
+      margin: 18px 0 24px;
+      padding-top: 4px;
+    }
+    .section h4 {
+      margin: 0 0 12px;
+      color: #fde68a;
+      font-size: .98rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 12px;
+      background: rgba(245,196,81,.08);
+      border: 1px solid rgba(245,196,81,.18);
+    }
+    .section h4::before {
+      content: "▸";
+      color: var(--accent);
+      font-size: .95rem;
+    }
+    .task-list {
+      display: grid;
+      gap: 9px;
+    }
+    .task {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 13px;
+      align-items: start;
+      background: rgba(31,41,55,.55);
+      border: 1px solid rgba(148,163,184,.14);
+      border-radius: 14px;
+      padding: 14px;
+      transition: opacity .15s ease, border-color .15s ease, background .15s ease;
+    }
+    .task:hover {
+      border-color: rgba(245,196,81,.34);
+      background: rgba(31,41,55,.78);
+    }
+    .task.done {
+      opacity: .62;
+    }
+    .task.done .task-title {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+    .task input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--green);
+      margin-top: 2px;
+      cursor: pointer;
+    }
+    .task-title {
+      font-weight: 720;
+      margin-bottom: 7px;
+      font-size: 1rem;
+      color: #f8fafc;
+    }
+    .task-desc {
+      color: #cbd5e1;
+      font-size: .9rem;
+      margin: 0 0 10px;
+      padding: 10px 12px;
+      border-left: 3px solid rgba(148,163,184,.24);
+      background: rgba(15,23,42,.28);
+      border-radius: 10px;
+    }
+    .task-desc strong {
+      color: #e2e8f0;
+    }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+    .pill {
+      border: 1px solid var(--border);
+      background: rgba(15,23,42,.72);
+      color: #cbd5e1;
+      border-radius: 999px;
+      padding: 3px 8px;
+      white-space: nowrap;
+    }
+    .pill.critico {
+      color: #fecaca;
+      border-color: rgba(239,68,68,.35);
+      background: rgba(239,68,68,.10);
+    }
+    .pill.teste {
+      color: #bfdbfe;
+      border-color: rgba(96,165,250,.35);
+      background: rgba(96,165,250,.10);
+    }
+    .pill.doc {
+      color: #ddd6fe;
+      border-color: rgba(192,132,252,.35);
+      background: rgba(192,132,252,.10);
+    }
+    .pill.desejavel {
+      color: #fed7aa;
+      border-color: rgba(251,146,60,.35);
+      background: rgba(251,146,60,.10);
+    }
+    .pill.bloqueio {
+      color: #bbf7d0;
+      border-color: rgba(34,197,94,.35);
+      background: rgba(34,197,94,.10);
+    }
+    footer {
+      color: var(--muted);
+      font-size: .9rem;
+      text-align: center;
+      margin-top: 24px;
+    }
+    @media (max-width: 980px) {
+      .filters { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .stage-header { display: block; }
+      .stage-progress { text-align: left; margin-top: 14px; }
+      .task { grid-template-columns: auto 1fr; }
+    }
+    @media print {
+      body { background: #fff; color: #111827; }
+      header, .toolbar, .stage { box-shadow: none; background: #fff; }
+      .toolbar, .actions, footer { display: none; }
+      header, .stage, .task { border-color: #d1d5db; }
+      .subtitle, .stage p, .meta, .pill, .stat span, .stage-progress, .task-desc { color: #374151; }
+      .task.done { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Checklist por Etapas e Sprints — Trabalho Prático de Grafos</h1>
+      <p class="subtitle">
+        Organização em camadas para evitar confusão visual: primeiro vem a Etapa oficial, depois a Sprint, depois o grupo de tarefas e por fim a tarefa individual.
+      </p>
+
+      <div class="hierarchy">
+        <span>1. Etapa oficial</span>
+        <strong>→</strong>
+        <span>2. Sprint</span>
+        <strong>→</strong>
+        <span>3. Grupo/Seção</span>
+        <strong>→</strong>
+        <span>4. Tarefa</span>
+      </div>
+
+      <div class="flow">
+        <strong>Organização das duplas:</strong> Dupla A e Dupla B aparecem somente na <strong>Sprint 2</strong>. Nessa sprint, a Dupla A fecha a <strong>API completa de grafos</strong> e a Dupla B fica em uma única frente: <strong>minerador do GitHub completo</strong>. Na Sprint 3, a divisão deixa de ser por dupla e passa a ser por grafo, para que todos participem da parte central do trabalho.
+        <br><br>
+        <strong>Formato comum obrigatório para evitar erro no Grafo Integrado:</strong>
+        <pre>{
+  "sourceUser": "alice",
+  "targetUser": "bob",
+  "type": "ISSUE_COMMENT",
+  "weight": 2
+}</pre>
+        <code>sourceUser</code> é quem fez a ação; <code>targetUser</code> é quem recebeu; <code>type</code> identifica a relação;
+        <code>weight</code> é o peso que será somado no grafo integrado.
+      </div>
+
+      <div class="stats">
+        <div class="stat"><strong id="totalTasks">0</strong><span>Tarefas totais</span></div>
+        <div class="stat"><strong id="doneTasks">0</strong><span>Concluídas</span></div>
+        <div class="stat"><strong id="pendingTasks">0</strong><span>Pendentes</span></div>
+        <div class="stat"><strong id="percentDone">0%</strong><span>Progresso geral</span></div>
+      </div>
+
+      <div class="progress-info"><span>Progresso geral</span><span id="progressText">0 de 0 tarefas</span></div>
+      <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+    </header>
+
+    <div class="toolbar">
+      <div class="filters">
+        <input id="searchInput" type="search" placeholder="Buscar tarefa, etapa, sprint, seção..." />
+        <select id="stageFilter">
+          <option value="">Todas as etapas</option>
+          <option value="Etapa 1">Etapa 1</option>
+          <option value="Etapa 2">Etapa 2</option>
+          <option value="Etapa 3">Etapa 3</option>
+        </select>
+        <select id="sprintFilter">
+          <option value="">Todas as sprints</option>
+          <option value="Sprint 1">Sprint 1</option>
+          <option value="Sprint 2">Sprint 2</option>
+          <option value="Sprint 3">Sprint 3</option>
+          <option value="Sprint 4">Sprint 4</option>
+        </select>
+        <select id="typeFilter">
+          <option value="">Todos os tipos</option>
+          <option value="Crítico">Crítico</option>
+          <option value="Teste">Teste</option>
+          <option value="Doc">Doc</option>
+          <option value="Bloqueio">Bloqueio</option>
+          <option value="Desejável">Desejável</option>
+        </select>
+        <select id="statusFilter">
+          <option value="">Todos os status</option>
+          <option value="done">Concluídas</option>
+          <option value="pending">Pendentes</option>
+        </select>
+      </div>
+
+      <div class="actions">
+        <button id="markVisible">Marcar visíveis como concluídas</button>
+        <button id="unmarkVisible">Desmarcar visíveis</button>
+        <button onclick="window.print()">Imprimir / salvar PDF</button>
+        <button class="danger-button" id="resetAll">Resetar checklist</button>
+      </div>
+    </div>
+
+    <main id="checklist"></main>
+
+    <footer>
+      Checklist com hierarquia visual: Etapa → Sprint → Grupo/Seção → Tarefa. Dupla A/B é usada somente na Sprint 2; na Sprint 3 a divisão é por grafo.
+    </footer>
+  </div>
+
+<script>
+const tasks = [{"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Decisões do grupo", "title": "Escolher repositório público com mais de 5.000 estrelas", "type": "Crítico", "responsavel": "", "description": "Escolher um repositório ativo, com muitas issues, pull requests, comentários e colaboradores. Essa escolha precisa ser justificada no relatório."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Decisões do grupo", "title": "Decidir entre Java ou Python", "type": "Crítico", "responsavel": "", "description": "A linguagem escolhida deve ser usada por todo o grupo. Para facilitar a explicação de classes, herança e API, Java é uma boa opção."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Decisões do grupo", "title": "Criar repositório no GitHub Classroom", "type": "Crítico", "responsavel": "", "description": "O repositório será usado para versionamento, entregas intermediárias e comprovação de commits individuais."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Decisões do grupo", "title": "Definir divisão de responsabilidades por integrante", "type": "Crítico", "responsavel": "", "description": "A divisão deve deixar claro quem cuida de cada grafo, API, minerador, métricas, relatório e apresentação."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Contratos do projeto", "title": "Criar diagrama de classes inicial", "type": "Crítico", "responsavel": "", "description": "O diagrama deve incluir AbstractGraph, AdjacencyMatrixGraph, AdjacencyListGraph, minerador, construtores de grafos, métricas e exportador."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Contratos do projeto", "title": "Definir assinaturas exatas da API do grafo", "type": "Crítico", "responsavel": "", "description": "Definir nomes, parâmetros e retornos dos métodos obrigatórios, incluindo isSucessor e isPredessor com a grafia do enunciado."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Contratos do projeto", "title": "Criar esqueleto das classes principais", "type": "Crítico", "responsavel": "", "description": "Criar AbstractGraph, AdjacencyMatrixGraph e AdjacencyListGraph com métodos vazios para que o restante do grupo já consiga programar contra a API."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Contratos do projeto", "title": "Definir formato comum das interações no JSON", "type": "Crítico", "responsavel": "", "description": "Contrato obrigatório para evitar erro entre minerador, construtores dos 4 grafos e grafo integrado. Campos sugeridos: sourceUser, targetUser, type, weight, repository, itemId e createdAt."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Contratos do projeto", "title": "Criar JSON fictício de interações", "type": "Crítico", "responsavel": "", "description": "Criar dados falsos para testar os 4 grafos sem depender do minerador real. Isso evita que uma parte do grupo trave esperando outra."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Contratos do projeto", "title": "Definir como o Construtor de Grafos chama a API", "type": "Crítico", "responsavel": "", "description": "Combinar como GraphBuilder, UserMapper, addEdge, setEdgeWeight e rótulos de vértices vão funcionar juntos."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Contratos do projeto", "title": "Definir como as métricas recebem o grafo pronto", "type": "Crítico", "responsavel": "", "description": "O módulo de análise deve receber grafos já montados. Ele não deve minerar dados nem conhecer diretamente a API do GitHub."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Modelagem dos grafos", "title": "Documentar Grafo 1 — comentários em issues e pull requests", "type": "Doc", "responsavel": "", "description": "Explicar regra da aresta: normalmente quem comentou aponta para o autor da issue ou do pull request."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Modelagem dos grafos", "title": "Documentar Grafo 2 — fechamento de issues", "type": "Doc", "responsavel": "", "description": "Explicar regra da aresta: quem fechou a issue aponta para quem abriu a issue, quando forem usuários diferentes."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Modelagem dos grafos", "title": "Documentar Grafo 3 — revisões, aprovações e merges de pull requests", "type": "Doc", "responsavel": "", "description": "Explicar regra da aresta: revisor, aprovador ou usuário do merge aponta para o autor do pull request."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Modelagem dos grafos", "title": "Documentar Grafo 4 — grafo integrado com pesos combinados", "type": "Doc", "responsavel": "", "description": "Deixar explícito que o integrado depende do formato comum das interações. Ele deve somar pesos quando a mesma relação sourceUser → targetUser aparecer mais de uma vez."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Documento da Etapa 1", "title": "Documentar justificativa da escolha do repositório", "type": "Doc", "responsavel": "", "description": "Registrar número de estrelas, relevância do projeto e existência de interações suficientes."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Documento da Etapa 1", "title": "Documentar estratégia de coleta de dados", "type": "Doc", "responsavel": "", "description": "Explicar quais interações serão coletadas e como serão transformadas em arestas."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Documento da Etapa 1", "title": "Documentar pesos das interações", "type": "Doc", "responsavel": "", "description": "Exemplo: comentário = 2, issue comentada por outro usuário = 3, revisão/aprovação = 4, merge = 5."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Documento da Etapa 1", "title": "Iniciar relatório LaTeX no template oficial da SBC", "type": "Crítico", "responsavel": "", "description": "O relatório deve começar desde a Etapa 1 para evitar acúmulo no final."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Portão de conclusão da Etapa 1", "title": "Conferir se a Etapa 1 está completa antes de iniciar a Etapa 2", "type": "Bloqueio", "responsavel": "", "description": "Só avançar se: repositório escolhido, API definida, JSON comum definido, JSON fictício criado, 4 grafos modelados, estratégia de coleta documentada e relatório iniciado."}, {"stage": "Etapa 1", "stageTitle": "Modelagem e Planejamento da Solução", "sprint": "Sprint 1", "section": "Portão de conclusão da Etapa 1", "title": "Entregar Etapa 1 no Canvas antes do prazo", "type": "Crítico", "responsavel": "", "description": "Entregar o documento de planejamento/modelagem no prazo estabelecido."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla A: API de grafos completa", "title": "Implementar AbstractGraph com atributos comuns", "type": "Crítico", "responsavel": "", "description": "Incluir número de vértices, quantidade de arestas, pesos de vértices, rótulos e métodos auxiliares de validação."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla A: API de grafos completa", "title": "Implementar construtores obrigatórios", "type": "Crítico", "responsavel": "", "description": "Criar AdjacencyMatrixGraph(int numVertices) e AdjacencyListGraph(int numVertices)."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla A: API de grafos completa", "title": "Implementar AdjacencyMatrixGraph", "type": "Crítico", "responsavel": "", "description": "Implementar o grafo usando matriz de adjacência."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla A: API de grafos completa", "title": "Implementar AdjacencyListGraph", "type": "Crítico", "responsavel": "", "description": "Implementar o grafo usando lista de adjacência."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla A: API de grafos completa", "title": "Implementar addEdge, removeEdge e hasEdge", "type": "Crítico", "responsavel": "", "description": "Métodos centrais da API. addEdge deve validar índices, impedir laços, evitar duplicação e atualizar edgeCount somente quando a aresta for nova."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla A: API de grafos completa", "title": "Implementar getVertexCount e getEdgeCount", "type": "Crítico", "responsavel": "", "description": "Esses métodos serão usados pela demonstração, métricas e testes."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla A: API de grafos completa", "title": "Implementar rótulos dos vértices", "type": "Crítico", "responsavel": "", "description": "Guardar login/nome do usuário no vértice, para que o Gephi e o relatório mostrem nomes, não só índices."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla A: API de grafos completa", "title": "Implementar pesos de vértices e arestas", "type": "Crítico", "responsavel": "", "description": "Implementar setVertexWeight, getVertexWeight, setEdgeWeight e getEdgeWeight."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla A: API de grafos completa", "title": "Implementar graus de entrada e saída", "type": "Crítico", "responsavel": "", "description": "Implementar getVertexInDegree e getVertexOutDegree."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla A: API de grafos completa", "title": "Garantir grafo simples", "type": "Crítico", "responsavel": "", "description": "Não permitir laços, não permitir múltiplas arestas e garantir addEdge idempotente."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla A: API de grafos completa", "title": "Lançar exceções para índices inválidos e operações inconsistentes", "type": "Crítico", "responsavel": "", "description": "Exemplo: índice negativo, índice fora do intervalo ou tentativa de criar laço."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla A: API de grafos completa", "title": "Implementar isConnected, isCompleteGraph e isEmptyGraph", "type": "Crítico", "responsavel": "", "description": "Fechar os métodos obrigatórios da API relacionados ao estado geral do grafo ainda na Sprint 2, para que a Sprint 3 fique focada na construção dos grafos."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla A: API de grafos completa", "title": "Implementar isSucessor, isPredessor, isDivergent, isConvergent e isIncident", "type": "Crítico", "responsavel": "", "description": "Fechar os métodos obrigatórios restantes da API ainda na Sprint 2. Manter os nomes exigidos pelo enunciado."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla B: minerador do GitHub completo", "title": "Implementar coleta de autores de issues e pull requests", "type": "Crítico", "responsavel": "", "description": "Base do minerador: coletar autores de issues e pull requests, pois eles serão o targetUser das interações."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla B: minerador do GitHub completo", "title": "Implementar coleta de comentários em issues", "type": "Crítico", "responsavel": "", "description": "Coletar comentários em issues e gerar interações padronizadas no JSON comum."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla B: minerador do GitHub completo", "title": "Implementar coleta de fechamento de issues", "type": "Crítico", "responsavel": "", "description": "Coletar fechamentos de issues e gerar interações no formato comum."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla B: minerador do GitHub completo", "title": "Implementar coleta de comentários em pull requests", "type": "Crítico", "responsavel": "", "description": "Coletar comentários em pull requests e gerar interações para o Grafo 1."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla B: minerador do GitHub completo", "title": "Implementar coleta de revisões, aprovações e merges de pull requests", "type": "Crítico", "responsavel": "", "description": "Coletar revisões, aprovações e merges de pull requests para alimentar o Grafo 3."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla B: minerador do GitHub completo", "title": "Salvar interações no JSON comum definido na Etapa 1", "type": "Crítico", "responsavel": "", "description": "Salvar todas as interações, básicas e completas, no mesmo formato comum definido na Etapa 1."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla B: minerador do GitHub completo", "title": "Implementar cache dos dados minerados", "type": "Crítico", "responsavel": "", "description": "Criar cache para evitar repetir chamadas à API e permitir demonstração rápida sem depender da internet."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Sprint 2 — Dupla B: minerador do GitHub completo", "title": "Documentar como o minerador funciona", "type": "Doc", "responsavel": "", "description": "Documentar endpoints, token, limite da API, cache, estrutura do JSON e como reproduzir a mineração."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Testes da ferramenta", "title": "Escrever testes unitários da API principal do grafo", "type": "Teste", "responsavel": "", "description": "Testar addEdge, removeEdge, hasEdge, edgeCount, graus, pesos, rótulos, exceções e restrições."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Testes da ferramenta", "title": "Testar construção do grafo usando JSON fictício", "type": "Teste", "responsavel": "", "description": "Garantir que o contrato definido na Etapa 1 funciona antes do minerador completo."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Testes da ferramenta", "title": "Escrever testes básicos do minerador", "type": "Teste", "responsavel": "", "description": "Testar transformação de dados da API ou de mocks em interações padronizadas no JSON."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 2", "section": "Entrega intermediária", "title": "Entregar protótipo funcional no GitHub Classroom", "type": "Crítico", "responsavel": "", "description": "O protótipo deve ter API de grafos completa ou quase completa, minerador com cache e JSON padronizado, além de testes iniciais."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 3", "section": "Construção dos 4 grafos — todos participam", "title": "Implementar UserMapper", "type": "Crítico", "responsavel": "", "description": "Mapear login do GitHub para índice inteiro do vértice e manter caminho inverso índice → login."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 3", "section": "Construção dos 4 grafos — todos participam", "title": "Criar GraphBuilder base", "type": "Crítico", "responsavel": "", "description": "Ler o JSON comum e distribuir interações para o grafo correto sem misturar mineração e análise."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 3", "section": "Construção dos 4 grafos — todos participam", "title": "Construir Grafo 1 — comentários em issues e pull requests", "type": "Crítico", "responsavel": "", "description": "Um integrante fica responsável principal por esse grafo, mas todos devem entender como comentários viram arestas."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 3", "section": "Construção dos 4 grafos — todos participam", "title": "Construir Grafo 2 — fechamento de issues", "type": "Crítico", "responsavel": "", "description": "Um integrante fica responsável principal por esse grafo, mas todos devem entender como fechamento de issue vira aresta."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 3", "section": "Construção dos 4 grafos — todos participam", "title": "Construir Grafo 3 — revisões, aprovações e merges", "type": "Crítico", "responsavel": "", "description": "Um integrante fica responsável principal por esse grafo, mas todos devem entender como interações de PR viram arestas."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 3", "section": "Construção dos 4 grafos — todos participam", "title": "Construir Grafo 4 — grafo integrado com pesos combinados", "type": "Crítico", "responsavel": "", "description": "O responsável principal precisa conhecer o formato comum das interações definido na Etapa 1. Exemplo de contrato: sourceUser='alice', targetUser='bob', type='ISSUE_COMMENT', weight=2. O integrado soma pesos quando a mesma aresta aparecer em diferentes interações."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 3", "section": "Construção dos 4 grafos — todos participam", "title": "Testar se os 4 grafos são montados corretamente a partir do mesmo JSON", "type": "Teste", "responsavel": "", "description": "Cada grafo deve filtrar os tipos corretos de interação; o integrado deve combinar tudo."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 3", "section": "Interface mínima e exportação", "title": "Criar aplicação separada para demonstrar todas as operações da API", "type": "Crítico", "responsavel": "", "description": "Aplicação simples por terminal já atende: criar grafo, adicionar/remover aresta, consultar graus, pesos, conectividade e exportar."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 3", "section": "Interface mínima e exportação", "title": "Implementar exportToGEPHI em GEXF ou GraphML", "type": "Crítico", "responsavel": "", "description": "Exportar nós, rótulos, arestas e pesos em formato aceito pelo Gephi."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 3", "section": "Interface mínima e exportação", "title": "Testar abertura do arquivo no Gephi", "type": "Teste", "responsavel": "", "description": "Abrir o arquivo exportado e confirmar que os dados aparecem corretamente."}, {"stage": "Etapa 2", "stageTitle": "Desenvolvimento da Ferramenta", "sprint": "Sprint 3", "section": "Portão de conclusão da Etapa 2", "title": "Conferir se a Etapa 2 está completa antes de iniciar a análise final", "type": "Bloqueio", "responsavel": "", "description": "Só avançar se: API obrigatória implementada, restrições garantidas, minerador completo/cache funcionando, 4 grafos montados, aplicação de demonstração criada e exportação Gephi testada."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 3", "section": "Métricas essenciais", "title": "Implementar grau de entrada, grau de saída e grau total", "type": "Crítico", "responsavel": "", "description": "Identificar usuários que mais recebem interações, mais fazem interações e possuem maior grau total."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 3", "section": "Métricas essenciais", "title": "Implementar densidade da rede", "type": "Crítico", "responsavel": "", "description": "Mostrar quão conectada é a rede de colaboração."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 3", "section": "Métricas essenciais", "title": "Implementar PageRank simples", "type": "Crítico", "responsavel": "", "description": "Gerar uma métrica de influência considerando as conexões do grafo."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 3", "section": "Métricas essenciais", "title": "Gerar ranking dos usuários mais influentes", "type": "Crítico", "responsavel": "", "description": "Usar os resultados das métricas para produzir tabelas e conclusões para o relatório."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 3", "section": "Métricas avançadas — se der tempo", "title": "Implementar betweenness centrality", "type": "Desejável", "responsavel": "", "description": "Identificar usuários que atuam como pontes entre grupos."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 3", "section": "Métricas avançadas — se der tempo", "title": "Implementar closeness centrality", "type": "Desejável", "responsavel": "", "description": "Identificar usuários mais próximos dos demais no grafo."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 3", "section": "Métricas avançadas — se der tempo", "title": "Implementar coeficiente de agrupamento", "type": "Desejável", "responsavel": "", "description": "Avaliar a formação de grupos pequenos muito conectados."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 3", "section": "Métricas avançadas — se der tempo", "title": "Implementar comunidades, bridging ties e assortatividade", "type": "Desejável", "responsavel": "", "description": "Métricas avançadas para enriquecer a análise se as partes essenciais já estiverem prontas."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 3", "section": "Resultados preliminares", "title": "Gerar imagem inicial do grafo no Gephi", "type": "Doc", "responsavel": "", "description": "Criar imagem para relatório e apresentação."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 3", "section": "Resultados preliminares", "title": "Criar roteiro da demonstração", "type": "Crítico", "responsavel": "", "description": "Definir ordem: dados/cache, construção dos grafos, métricas, exportação Gephi e explicação da API."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 3", "section": "Resultados preliminares", "title": "Levantar perguntas prováveis do professor", "type": "Crítico", "responsavel": "", "description": "Exemplos: como addEdge funciona, por que não pode biblioteca de grafos, como o grafo integrado soma pesos, como o minerador usa cache."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 4", "section": "Qualidade final", "title": "Integrar todos os blocos e testar o fluxo completo", "type": "Crítico", "responsavel": "", "description": "Fluxo esperado: JSON/cache → 4 grafos → métricas → exportação Gephi → relatório e apresentação."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 4", "section": "Qualidade final", "title": "Confirmar cobertura de testes maior ou igual a 90%", "type": "Teste", "responsavel": "", "description": "Cobrir API, minerador, cache, GraphBuilder, construção dos grafos e métricas essenciais."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 4", "section": "Qualidade final", "title": "Revisar código para evitar code smells", "type": "Crítico", "responsavel": "", "description": "Evitar classes gigantes, métodos longos, duplicação e mistura de responsabilidades."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 4", "section": "Qualidade final", "title": "Verificar que nenhuma biblioteca pronta de grafos foi usada", "type": "Crítico", "responsavel": "", "description": "Conferir dependências do projeto e evitar NetworkX, JGraphT ou similares."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 4", "section": "Qualidade final", "title": "Garantir que o sistema roda rápido com cache", "type": "Crítico", "responsavel": "", "description": "A apresentação deve conseguir rodar sem depender da internet."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 4", "section": "Relatório LaTeX", "title": "Finalizar relatório no template oficial da SBC", "type": "Crítico", "responsavel": "", "description": "O relatório deve ter entre 7 e 15 páginas."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 4", "section": "Relatório LaTeX", "title": "Incluir diagrama de classes, modelagem dos grafos e pesos", "type": "Doc", "responsavel": "", "description": "Mostrar os artefatos produzidos e como as interações viram arestas."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 4", "section": "Relatório LaTeX", "title": "Incluir resultados das métricas calculadas", "type": "Doc", "responsavel": "", "description": "Apresentar tabelas, rankings e interpretação dos resultados."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 4", "section": "Relatório LaTeX", "title": "Incluir imagem do grafo no Gephi", "type": "Doc", "responsavel": "", "description": "A imagem ajuda a demonstrar visualmente a rede analisada."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 4", "section": "Relatório LaTeX", "title": "Indicar responsabilidades de cada membro", "type": "Crítico", "responsavel": "", "description": "Indicar no relatório quem fez cada parte, incluindo o grafo principal de cada integrante."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 4", "section": "Vídeo e apresentação", "title": "Gravar vídeo de demonstração entre 5 e 10 minutos", "type": "Crítico", "responsavel": "", "description": "Mostrar funcionamento da ferramenta, construção dos grafos, métricas e Gephi."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 4", "section": "Vídeo e apresentação", "title": "Garantir participação de todos os membros no vídeo e na apresentação", "type": "Crítico", "responsavel": "", "description": "Cada integrante deve saber explicar sua parte e o fluxo geral."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 4", "section": "Vídeo e apresentação", "title": "Preparar apresentação presencial de 10 a 15 minutos", "type": "Crítico", "responsavel": "", "description": "Organizar tempo para contexto, modelagem, implementação, resultados, Gephi e perguntas."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 4", "section": "Entrega final", "title": "Montar .zip com código fonte, .tex e PDF do relatório", "type": "Crítico", "responsavel": "", "description": "Conferir se o pacote contém exatamente os itens exigidos."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 4", "section": "Entrega final", "title": "Confirmar commits individuais de cada membro no Git", "type": "Crítico", "responsavel": "", "description": "Commits individuais ajudam a comprovar participação."}, {"stage": "Etapa 3", "stageTitle": "Análise do Repositório Baseada em Dados", "sprint": "Sprint 4", "section": "Entrega final", "title": "Entregar no Canvas antes das 23:59", "type": "Crítico", "responsavel": "", "description": "Não deixar a entrega para os últimos minutos."}];
+const stages = {"Etapa 1": {"title": "Modelagem e Planejamento da Solução", "deliverable": "Entregável: documento com descrição do problema, justificativa do repositório, estratégia de coleta, modelagem dos grafos, pesos e plano de desenvolvimento.", "gate": "Só avançar para a Etapa 2 se os contratos estiverem fechados: API do grafo, formato comum do JSON, modelagem dos 4 grafos e relatório iniciado."}, "Etapa 2": {"title": "Desenvolvimento da Ferramenta", "deliverable": "Entregável: protótipo funcional com API de grafos, minerador/cache, construção dos grafos, testes, aplicação de demonstração e exportação para Gephi.", "gate": "Só avançar para a análise final se a API obrigatória estiver completa, o minerador completo/cache estiver funcionando, os 4 grafos estiverem montados e o exportToGEPHI estiver testado."}, "Etapa 3": {"title": "Análise do Repositório Baseada em Dados", "deliverable": "Entregável: análise com métricas, relatório técnico em LaTeX, vídeo, apresentação, prints/resultados do Gephi e pacote final para o Canvas.", "gate": "Só entregar se o fluxo completo rodar, os testes passarem, o relatório tiver 7 a 15 páginas, o vídeo estiver gravado e o .zip estiver completo."}};
+const storageKey = "checklist-grafos-etapas-sprints-visual-v5";
+
+function slug(value) {
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-+|-+$/g, "").toLowerCase();
+}
+
+tasks.forEach((task, index) => task.id = "task-" + index + "-" + slug(task.stage + "-" + task.sprint + "-" + task.section + "-" + task.title));
+
+function getState() {
+  try { return JSON.parse(localStorage.getItem(storageKey)) || {}; }
+  catch { return {}; }
+}
+
+function setState(state) {
+  localStorage.setItem(storageKey, JSON.stringify(state));
+}
+
+function pillClass(type) {
+  const normalized = type.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  if (normalized === "critico") return "critico";
+  if (normalized === "teste") return "teste";
+  if (normalized === "doc") return "doc";
+  if (normalized === "desejavel") return "desejavel";
+  if (normalized === "bloqueio") return "bloqueio";
+  return "";
+}
+
+function render() {
+  const state = getState();
+  const checklist = document.getElementById("checklist");
+  checklist.innerHTML = "";
+
+  const search = document.getElementById("searchInput").value.trim().toLowerCase();
+  const stageFilter = document.getElementById("stageFilter").value;
+  const sprintFilter = document.getElementById("sprintFilter").value;
+  const typeFilter = document.getElementById("typeFilter").value;
+  const statusFilter = document.getElementById("statusFilter").value;
+
+  ["Etapa 1", "Etapa 2", "Etapa 3"].forEach(stage => {
+    const stageTasks = tasks.filter(task => task.stage === stage);
+    const filteredStageTasks = stageTasks.filter(task => {
+      const done = !!state[task.id];
+      const text = `${task.stage} ${task.stageTitle} ${task.sprint} ${task.section} ${task.title} ${task.description} ${task.type}`.toLowerCase();
+      if (stageFilter && task.stage !== stageFilter) return false;
+      if (sprintFilter && task.sprint !== sprintFilter) return false;
+      if (typeFilter && task.type !== typeFilter) return false;
+      if (statusFilter === "done" && !done) return false;
+      if (statusFilter === "pending" && done) return false;
+      if (search && !text.includes(search)) return false;
+      return true;
+    });
+
+    if (!filteredStageTasks.length) return;
+
+    const stageDone = stageTasks.filter(task => state[task.id]).length;
+    const stagePercent = stageTasks.length ? Math.round((stageDone / stageTasks.length) * 100) : 0;
+
+    const stageEl = document.createElement("section");
+    stageEl.className = "stage";
+    stageEl.innerHTML = `
+      <div class="stage-header">
+        <div>
+          <h2>${stage} — ${stages[stage].title}</h2>
+          <p>${stages[stage].deliverable}</p>
+          <div class="gate"><strong>Portão da etapa:</strong> ${stages[stage].gate}</div>
+        </div>
+        <div class="stage-progress">
+          <strong>${stagePercent}%</strong><br>
+          ${stageDone} de ${stageTasks.length} tarefas concluídas
+        </div>
+      </div>
+    `;
+
+    const sprints = [...new Set(filteredStageTasks.map(task => task.sprint))];
+    sprints.forEach(sprint => {
+      const sprintTasks = filteredStageTasks.filter(task => task.sprint === sprint);
+      const sprintEl = document.createElement("div");
+      sprintEl.className = "sprint";
+      sprintEl.innerHTML = `<h3>📌 ${sprint}</h3>`;
+
+      const sections = [...new Set(sprintTasks.map(task => task.section))];
+      sections.forEach(section => {
+        const sectionTasks = sprintTasks.filter(task => task.section === section);
+        const sectionEl = document.createElement("div");
+        sectionEl.className = "section";
+        sectionEl.innerHTML = `<h4>${section}</h4><div class="task-list"></div>`;
+        const list = sectionEl.querySelector(".task-list");
+
+        sectionTasks.forEach(task => {
+          const done = !!state[task.id];
+          const taskEl = document.createElement("label");
+          taskEl.className = "task" + (done ? " done" : "");
+          taskEl.dataset.id = task.id;
+          taskEl.innerHTML = `
+            <input type="checkbox" ${done ? "checked" : ""} />
+            <div>
+              <div class="task-title">${task.title}</div>
+              <p class="task-desc"><strong>Descrição:</strong> ${task.description}</p>
+              <div class="meta">
+                <span class="pill ${pillClass(task.type)}">${task.type}</span>
+                <span class="pill">👤 Responsável:</span>
+                <span class="pill">${task.stage}</span>
+                <span class="pill">${task.sprint}</span>
+              </div>
+            </div>
+          `;
+          const checkbox = taskEl.querySelector("input");
+          checkbox.addEventListener("change", () => {
+            const current = getState();
+            current[task.id] = checkbox.checked;
+            setState(current);
+            render();
+          });
+          list.appendChild(taskEl);
+        });
+        sprintEl.appendChild(sectionEl);
+      });
+      stageEl.appendChild(sprintEl);
+    });
+
+    checklist.appendChild(stageEl);
+  });
+
+  updateStats();
+}
+
+function updateStats() {
+  const state = getState();
+  const total = tasks.length;
+  const done = tasks.filter(task => state[task.id]).length;
+  const pending = total - done;
+  const percent = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById("totalTasks").textContent = total;
+  document.getElementById("doneTasks").textContent = done;
+  document.getElementById("pendingTasks").textContent = pending;
+  document.getElementById("percentDone").textContent = percent + "%";
+  document.getElementById("progressText").textContent = `${done} de ${total} tarefas`;
+  document.getElementById("progressBar").style.width = percent + "%";
+}
+
+function visibleTaskIds() {
+  return [...document.querySelectorAll(".task")].map(el => el.dataset.id);
+}
+
+document.getElementById("searchInput").addEventListener("input", render);
+document.getElementById("stageFilter").addEventListener("change", render);
+document.getElementById("sprintFilter").addEventListener("change", render);
+document.getElementById("typeFilter").addEventListener("change", render);
+document.getElementById("statusFilter").addEventListener("change", render);
+
+document.getElementById("markVisible").addEventListener("click", () => {
+  const state = getState();
+  visibleTaskIds().forEach(id => state[id] = true);
+  setState(state);
+  render();
+});
+
+document.getElementById("unmarkVisible").addEventListener("click", () => {
+  const state = getState();
+  visibleTaskIds().forEach(id => delete state[id]);
+  setState(state);
+  render();
+});
+
+document.getElementById("resetAll").addEventListener("click", () => {
+  if (confirm("Tem certeza que deseja apagar todas as marcações?")) {
+    localStorage.removeItem(storageKey);
+    render();
+  }
+});
+
+render();
+</script>
+</body>
+</html>
