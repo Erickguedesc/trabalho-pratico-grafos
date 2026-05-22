@@ -1,0 +1,47 @@
+@startuml diagrama-minerador
+
+title Bloco 2 — mineração GitHub → JSON em cache
+
+left to right direction
+
+package minerador {
+  class MinerConfig {
+    + owner : str
+    + repo : str
+    + token : str | None
+    + cache_dir : Path
+    + ...
+  }
+
+  class GitHubMinerador {
+    + run(cfg) : list[dict]
+    + ...
+  }
+
+  class GitHubClient {
+    + get_json(url) : dict
+    + ...
+  }
+
+  class JsonCache {
+    + read(path) : list[dict]
+    + write(path, rows) : void
+    + ...
+  }
+}
+
+package "httpx | requests\n<<External>>" as ExtHttp {
+}
+
+GitHubMinerador *-- MinerConfig
+GitHubMinerador *-- GitHubClient
+GitHubMinerador *-- JsonCache
+GitHubClient ..> ExtHttp
+
+note bottom of GitHubMinerador
+  Saída: linhas no **contrato JSON** acordado pelo grupo
+  (``source_user``, ``target_user``, ``type``, ``weight``, …).
+  **Não** importa ``AbstractGraph``.
+end note
+
+@enduml

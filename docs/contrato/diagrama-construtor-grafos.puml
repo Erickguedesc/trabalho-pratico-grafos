@@ -1,0 +1,58 @@
+@startuml diagrama-construtor-grafos
+
+title Bloco 3 — JSON → quatro grafos (mapeamento de logins)
+
+left to right direction
+
+package contrato {
+  class InteractionRow <<DTO>> {
+    + source_user : str
+    + target_user : str
+    + type : str
+    + weight : float
+    + ...
+  }
+}
+
+package construtor {
+  class UserMapper {
+    + id_for(login) : int
+    + login_for(id) : str
+    + size() : int
+    + ...
+  }
+
+  class GraphBuilder {
+    + build(rows: list[InteractionRow]) : GraphBundle
+    + ...
+  }
+
+  class GraphBundle {
+    + comments : AbstractGraph
+    + issue_closes : AbstractGraph
+    + pr_events : AbstractGraph
+    + integrated : AbstractGraph
+    + mapper : UserMapper
+    + ...
+  }
+}
+
+package grafo {
+  abstract class AbstractGraph
+  class AdjacencyMatrixGraph
+  class AdjacencyListGraph
+}
+
+GraphBuilder ..> InteractionRow
+GraphBuilder --> UserMapper
+GraphBuilder ..> AbstractGraph : cria (matriz|lista)
+GraphBundle o-- UserMapper
+GraphBundle o-- AbstractGraph : x4 instâncias
+AbstractGraph <|-- AdjacencyMatrixGraph
+AbstractGraph <|-- AdjacencyListGraph
+
+note bottom of GraphBuilder
+  Filtra por ``type`` para G1/G2/G3; **G4** agrega pesos no par (u→v).
+end note
+
+@enduml

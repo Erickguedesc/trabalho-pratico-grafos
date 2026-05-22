@@ -1,0 +1,43 @@
+@startuml diagrama-demo-aplicacao
+
+title Demo / CLI — obrigação do enunciado (expor a API)
+
+left to right direction
+
+package demo {
+  class DemoCLI {
+    + cmd_graph_smoke()
+    + cmd_build()
+    + cmd_mine()
+    + cmd_metrics()
+    + ...
+  }
+}
+
+package grafo {
+  abstract class AbstractGraph
+}
+
+package construtor {
+  class GraphBuilder
+}
+
+package minerador {
+  class GitHubMinerador
+}
+
+package analise {
+  class GraphMetrics
+}
+
+DemoCLI ..> AbstractGraph : exemplos CRUD + export
+DemoCLI ..> GraphBuilder : <<opcional>>
+DemoCLI ..> GitHubMinerador : <<opcional>>
+DemoCLI ..> GraphMetrics : <<opcional>>
+
+note bottom of DemoCLI
+  Pode ser um ``if __name__ == "__main__"`` simples;
+  o importante é **demonstrar todas** as operações públicas do grafo.
+end note
+
+@enduml

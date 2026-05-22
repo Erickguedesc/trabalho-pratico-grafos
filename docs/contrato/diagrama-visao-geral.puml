@@ -1,0 +1,94 @@
+@startuml diagrama-visao-geral
+
+title Trabalho de grafos — visão geral (contrato)
+
+left to right direction
+
+package minerador {
+  class GitHubMinerador {
+    + minerar() : list[dict]
+    + ...
+  }
+  class CacheJson {
+    + load(path) : list[dict]
+    + save(path, rows) : void
+    + ...
+  }
+}
+
+package contrato {
+  class "linha JSON\n(source, target, type, weight, ...)" as LinhaJson <<DTO>> {
+  }
+}
+
+package construtor {
+  class UserMapper {
+    + id_de(login) : int
+    + login_de(id) : str
+    + ...
+  }
+  class GraphBuilder {
+    + build(rows) : GraphBundle
+    + ...
+  }
+  class GraphBundle {
+    + g1_comments
+    + g2_issue_close
+    + g3_pr_flow
+    + g4_integrated
+    + ...
+  }
+}
+
+package grafo {
+  abstract class AbstractGraph {
+    + add_edge(u, v)
+    + export_to_gephi(path)
+    + ...
+  }
+  class AdjacencyMatrixGraph
+  class AdjacencyListGraph
+}
+
+package analise {
+  class GraphMetrics {
+    + density(g)
+    + pagerank(g, ...)
+    + ...
+  }
+}
+
+package demo {
+  class DemoApp {
+    + main()
+    + ...
+  }
+}
+
+package "httpx | requests\n<<External>>" as ExtHttp {
+}
+package "stdlib json\n<<External>>" as ExtJson {
+}
+
+GitHubMinerador --> ExtHttp
+GitHubMinerador --> CacheJson
+CacheJson --> ExtJson
+GitHubMinerador ..> LinhaJson : grava
+GraphBuilder ..> LinhaJson : lê
+GraphBuilder --> UserMapper
+GraphBuilder --> AbstractGraph : instancia
+GraphBundle o-- AbstractGraph : x4 instâncias
+AbstractGraph <|-- AdjacencyMatrixGraph
+AbstractGraph <|-- AdjacencyListGraph
+GraphMetrics ..> AbstractGraph : lê
+DemoApp ..> AbstractGraph
+DemoApp ..> GraphBuilder
+DemoApp ..> GitHubMinerador
+DemoApp ..> GraphMetrics
+
+note bottom of AbstractGraph
+  API completa conforme enunciado
+  (sem bibliotecas de grafos prontas)
+end note
+
+@enduml
