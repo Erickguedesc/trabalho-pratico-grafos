@@ -1,0 +1,33 @@
+@startuml diagrama-analise
+
+title Bloco 4 — métricas sobre ``AbstractGraph`` (sem libs de grafo)
+
+left to right direction
+
+package grafo {
+  abstract class AbstractGraph {
+    + has_edge(u, v) : bool
+    + get_edge_weight(u, v) : float
+    + get_vertex_out_degree(u) : int
+    + ...
+  }
+}
+
+package analise {
+  class GraphMetrics {
+    + degree_stats(g) : dict[int, tuple]
+    + density(g) : float
+    + pagerank(g, **kw) : dict[int, float]
+    + ...
+  }
+}
+
+AbstractGraph <.. GraphMetrics : apenas leitura
+
+note bottom of GraphMetrics
+  **Proibido** NetworkX / igraph para representar o grafo-base.
+  Opcional: NumPy só como **álgebra auxiliar** (ex.: PageRank),
+  desde que o TAD do enunciado continue implementado por vocês.
+end note
+
+@enduml

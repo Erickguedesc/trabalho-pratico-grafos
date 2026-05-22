@@ -1,0 +1,46 @@
+@startuml diagrama-grafo
+
+title Bloco 1 — núcleo do grafo (matriz e lista)
+
+left to right direction
+
+package grafo {
+  abstract class AbstractGraph {
+    + get_vertex_count() : int
+    + get_edge_count() : int
+    + has_edge(u, v) : bool
+    + add_edge(u, v) : void
+    + remove_edge(u, v) : void
+    + is_successor(u, v) : bool
+    + is_predecessor(u, v) : bool
+    + export_to_gephi(path) : void
+    + ...
+  }
+
+  class AdjacencyMatrixGraph {
+    + __init__(num_vertices: int)
+    + ...
+  }
+
+  class AdjacencyListGraph {
+    + __init__(num_vertices: int)
+    + ...
+  }
+}
+
+package grafo.errors <<External>> {
+  class GrafoError
+  class VerticeInvalidoError
+}
+
+AbstractGraph <|-- AdjacencyMatrixGraph
+AbstractGraph <|-- AdjacencyListGraph
+AbstractGraph ..> GrafoError : <<raises>>
+
+note right of AbstractGraph
+  Restante da API: graus, pesos de vértice/aresta,
+  ``is_divergent``, ``is_grid_convergent`` (nome do enunciado),
+  ``is_incident``, conectividade, grafo vazio/completo, rótulos, etc.
+end note
+
+@enduml
