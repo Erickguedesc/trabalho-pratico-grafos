@@ -1,0 +1,48 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/issues/comments/2235737584",
+    "html_url": "https://github.com/starship/starship/issues/6093#issuecomment-2235737584",
+    "issue_url": "https://api.github.com/repos/starship/starship/issues/6093",
+    "id": 2235737584,
+    "node_id": "IC_kwDOCqswNs6FQqXw",
+    "user": {
+      "login": "ekorchmar",
+      "id": 32364416,
+      "node_id": "MDQ6VXNlcjMyMzY0NDE2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32364416?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ekorchmar",
+      "html_url": "https://github.com/ekorchmar",
+      "followers_url": "https://api.github.com/users/ekorchmar/followers",
+      "following_url": "https://api.github.com/users/ekorchmar/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ekorchmar/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ekorchmar/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ekorchmar/subscriptions",
+      "organizations_url": "https://api.github.com/users/ekorchmar/orgs",
+      "repos_url": "https://api.github.com/users/ekorchmar/repos",
+      "events_url": "https://api.github.com/users/ekorchmar/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ekorchmar/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "created_at": "2024-07-18T06:38:44Z",
+    "updated_at": "2024-07-18T06:38:44Z",
+    "body": "This is `direnv` bug, not `starship` bug.\r\n\r\nBoth `direnv` and `starship` hook to tcsh by aliasing to precmd. However, [direnv](https://github.com/direnv/direnv/blob/bb140a134aba464e4141564e57321a552ee5a5fd/internal/cmd/shell_tcsh.go#L14) simply overwrites existing precmd:\r\n```go\r\n\treturn \"alias precmd 'eval `{{.SelfPath}} export tcsh`'\", nil\r\n```\r\n\r\nAnd Starship respects existing hooks by wrapping them in USER_PRECMD and USER_POSTCMD:\r\n\r\n```tcsh\r\n$ /usr/bin/starship init tcsh --print-full-init\r\nsetenv STARSHIP_SHELL tcsh;\r\nsetenv STARSHIP_SESSION_KEY `/usr/bin/starship session`;\r\nset USER_PRECMD = \"`alias precmd`\";\r\nset USER_POSTCMD = \"`alias postcmd`\";\r\nset STARSHIP_PRECMD = 'set STARSHIP_CMD_STATUS = $status;set STARSHIP_PATH = /usr/bin/starship;set STARSHIP_END_TIME = `$STARSHIP_PATH time`;set STARSHIP_DURATION = 0;if ( $STARSHIP_START_TIME != -1 ) @ STARSHIP_DURATION = $STARSHIP_END_TIME - $STARSHIP_START_TIME;set prompt = \"`$STARSHIP_PATH prompt --status $STARSHIP_CMD_STATUS --cmd-duration $STARSHIP_DURATION`\";set STARSHIP_START_TIME = -1';\r\nset STARSHIP_POSTCMD = 'set STARSHIP_START_TIME = `/usr/bin/starship time`';\r\nalias precmd \"$STARSHIP_PRECMD;$USER_PRECMD\";\r\nalias postcmd \"$STARSHIP_POSTCMD;$USER_POSTCMD\";\r\nset STARSHIP_START_TIME = `/usr/bin/starship time`;\r\n```\r\n\r\nIf you init starship after direnv, both should work.",
+    "author_association": "CONTRIBUTOR",
+    "pin": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/issues/comments/2235737584/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "performed_via_github_app": null
+  }
+]

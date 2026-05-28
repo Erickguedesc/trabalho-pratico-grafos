@@ -1,0 +1,48 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/issues/comments/2808329641",
+    "html_url": "https://github.com/starship/starship/issues/6390#issuecomment-2808329641",
+    "issue_url": "https://api.github.com/repos/starship/starship/issues/6390",
+    "id": 2808329641,
+    "node_id": "IC_kwDOCqswNs6nY7Wp",
+    "user": {
+      "login": "Saplyn",
+      "id": 81770798,
+      "node_id": "MDQ6VXNlcjgxNzcwNzk4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/81770798?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Saplyn",
+      "html_url": "https://github.com/Saplyn",
+      "followers_url": "https://api.github.com/users/Saplyn/followers",
+      "following_url": "https://api.github.com/users/Saplyn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Saplyn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Saplyn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Saplyn/subscriptions",
+      "organizations_url": "https://api.github.com/users/Saplyn/orgs",
+      "repos_url": "https://api.github.com/users/Saplyn/repos",
+      "events_url": "https://api.github.com/users/Saplyn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Saplyn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "created_at": "2025-04-16T05:19:51Z",
+    "updated_at": "2025-04-16T05:19:51Z",
+    "body": "I don't know about `jeffreytse/zsh-vi-mode`, but if it's `ohmyzsh`'s [`zsh-vi-mode`](https://github.com/ohmyzsh/ohmyzsh/blob/a84a0332a822a78ddf3f66d0e1ed3990d4badd12/plugins/vi-mode/vi-mode.plugin.zsh#L28C1-L44C2), this seems achievable by checking the `VI_KEYMAP` variable:\n\n> ```zsh\n> # ohmyzsh/plugins/vi-mode/vi-mode.plugin.zsh 28~44\n> function _vi-mode-set-cursor-shape-for-keymap() {\n>   [[ \"$VI_MODE_SET_CURSOR\" = true ]] || return\n>\n>   # https://vt100.net/docs/vt510-rm/DECSCUSR\n>   local _shape=0\n>   case \"${1:-${VI_KEYMAP:-main}}\" in\n>     main)    _shape=$VI_MODE_CURSOR_INSERT ;; # vi insert: line\n>     viins)   _shape=$VI_MODE_CURSOR_INSERT ;; # vi insert: line\n>     isearch) _shape=$VI_MODE_CURSOR_INSERT ;; # inc search: line\n>     command) _shape=$VI_MODE_CURSOR_INSERT ;; # read a command name\n>     vicmd)   _shape=$VI_MODE_CURSOR_NORMAL ;; # vi cmd: block\n>     visual)  _shape=$VI_MODE_CURSOR_VISUAL ;; # vi visual mode: block\n>     viopp)   _shape=$VI_MODE_CURSOR_OPPEND ;; # vi operation pending: blinking block\n>     *)       _shape=0 ;;\n>   esac\n>   printf $'\\e[%d q' \"${_shape}\"\n> }\n> ```\n\nThe mapping would look like this:\n\n- `ShellEditMode::Insert`: `main`, `viins`, `isearch`, `command`\n- `ShellEditMode::Normal`: `vicmd`\n- `ShellEditMode::Visual`: `visual`\n- `ShellEditMode::Replace`: *`viopp` maybe?*\n- `ShellEditMode::ReplaceOne`: *`viopp` maybe?*\n\nI could be wrong though, as I couldn't get this running on my pc ",
+    "author_association": "NONE",
+    "pin": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/issues/comments/2808329641/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "performed_via_github_app": null
+  }
+]
