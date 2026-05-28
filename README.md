@@ -68,7 +68,37 @@ GitHub API
 - **`Neo4j`** → banco de dados nativo de grafos; persiste os nós e arestas para consultas analíticas pesadas
 
 ---
+Minerador:
+Começa no minerador, que coleta os dados do GitHub e gera um JSON com as interações encontradas.
 
+JSON comum:
+Armazena as interações no formato comum do projeto, contendo campos como:
+sourceUser, targetUser, type, weight, repository e itemId.
+
+UserMapper:
+Converte os logins dos usuários em índices inteiros de vértices.
+Exemplo:
+alice → 0
+bob → 1
+
+GraphBuilder:
+Lê o JSON comum, usa o UserMapper para converter usuários em índices e chama a API de grafos para construir os grafos.
+
+API de grafos:
+É formada por AbstractGraph, AdjacencyMatrixGraph e AdjacencyListGraph.
+Ela armazena e manipula o grafo em memória, usando métodos como addEdge, hasEdge, setEdgeWeight, getVertexInDegree, isConnected e exportToGEPHI.
+
+App/demo:
+Consome a API de grafos e demonstra as operações funcionando.
+
+Neo4j:
+É opcional. Entra depois que os grafos já foram construídos, servindo para guardar nós e arestas e permitir consultas futuras com Cypher.
+
+GitHub → Minerador → JSON comum → UserMapper → GraphBuilder → API de Grafos → App/Demo → Neo4j opcional
+
+obs: O Neo4j não constrói o grafo no lugar da API. Ele apenas pode guardar e consultar os grafos depois que a API própria já construiu tudo.
+
+---
 ## Pré-requisitos
 
 - [Docker](https://docs.docker.com/get-docker/) e [Docker Compose](https://docs.docker.com/compose/) **ou** Python 3.11+
