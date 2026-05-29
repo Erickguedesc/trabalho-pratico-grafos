@@ -14,12 +14,12 @@ WORKDIR /app
 
 # Copia só o necessário para instalar dependências primeiro
 # (aproveita cache do Docker quando o código muda mas o requirements não)
-COPY requirements-minerador.txt .
+COPY codigo/mineirador/requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements-minerador.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia o código do minerador
-COPY codigo/minerador/ ./codigo/minerador/
+COPY codigo/mineirador/ ./codigo/mineirador/
 
 # Copia utilitários compartilhados (github_parser, etc.)
 COPY codigo/utils/ ./codigo/utils/
@@ -37,4 +37,4 @@ ENV OUTPUT_DIR="/dados"
 VOLUME ["/dados"]
 
 # Ponto de entrada — executa o minerador e termina
-CMD ["python", "-m", "codigo.minerador.miner"]
+CMD ["python", "-m", "codigo.mineirador.miner"]
