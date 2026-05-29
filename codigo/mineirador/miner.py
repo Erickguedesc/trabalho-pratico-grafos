@@ -12,7 +12,7 @@ Contrato de saída (uma linha por interação):
     "source_user": str,   # quem iniciou a ação
     "target_user": str,   # quem recebeu a ação
     "type": str,          # issue_comment | pr_comment | issue_close |
-                          #   pr_review   | pr_merge
+                          #   pr_open | pr_review | pr_merge
     "weight": int,        # 2 | 3 | 4 | 5
     "repo": str,          # "owner/repo"
     "created_at": str     # ISO 8601
@@ -36,10 +36,11 @@ logger = logging.getLogger(__name__)
 # Pesos conforme o enunciado
 _WEIGHT = {
     "issue_comment": 2,
-    "pr_comment": 2,
-    "issue_close": 3,
-    "pr_review": 4,
-    "pr_merge": 5,
+    "pr_comment":    2,
+    "issue_close":   3,
+    "pr_open":       3,
+    "pr_review":     4,
+    "pr_merge":      5,
 }
 
 
@@ -164,7 +165,7 @@ class GitHubMinerador:
     # ------------------------------------------------------------------
 
     def _mine_pr_interactions(self) -> Iterator[Interaction]:
-        """Minera comentários, revisões e merges de PRs."""
+        """Minera abertura, comentários, revisões e merges de PRs."""
         pulls = self._client.get_all_pulls()
         logger.info("Pull requests encontrados: %d", len(pulls))
 
@@ -173,6 +174,32 @@ class GitHubMinerador:
             pr_author = self._login(pr.get("user"))
             if not pr_author:
                 continue
+
+            # — Abertura de PR (peso 3) ——————————————————————————————
+            # A interação registrada é: o autor do PR interage com o
+            # repositório notificando os colaboradores. Representamos isso
+            # como o autor interagindo com o merger (quem costuma integrar
+            # o trabalho). Quando não há merger definido ainda, usamos o
+            # primeiro revisor encontrado; se nenhum existir, pulamos.
+            pr_target = self._login(pr.get("merged_by"))
+            if not pr_target:
+                # tenta o assignee como alvo substituto
+                assignees = pr.get("assignees") or []
+                for assignee in assignees:
+                    candidate = self._login(assignee)
+                    if candidate and candidate != pr_author:
+                        pr_target = candidate
+                        break
+
+            if pr_target and pr_target != pr_author:
+                yield Interaction(
+                    source_user=pr_author,
+                    target_user=pr_target,
+                    type="pr_open",
+                    weight=_WEIGHT["pr_open"],
+                    repo=self._config.repo_full_name,
+                    created_at=pr.get("created_at", ""),
+                )
 
             # — Comentários inline em PR (peso 2) ————————————————————
             pr_comments = self._client.get_pull_comments(pr_number)
@@ -189,7 +216,7 @@ class GitHubMinerador:
                     created_at=comment.get("created_at", ""),
                 )
 
-            # — Revisões / aprovações (peso 4) e merges (peso 5) ——————
+            # — Revisões / aprovações (peso 4) ————————————————————————
             reviews = self._client.get_pull_reviews(pr_number)
             for review in reviews:
                 reviewer = self._login(review.get("user"))

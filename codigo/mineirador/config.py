@@ -33,7 +33,7 @@ class MinerConfig:
     request_delay: float = 0.1
     
 
-    #após iniciar o mineirador ele vai chamar os métodos para criar as pastas de dados mineirados e dados cache 
+    #após iniciar o mineirador ele vai chamar os métodos para criar as pastas de dados mineirados e dados cache isso se elas não existirem
     def __post_init__(self) -> None:
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.cache_dir.mkdir(parents=True, exist_ok=True)

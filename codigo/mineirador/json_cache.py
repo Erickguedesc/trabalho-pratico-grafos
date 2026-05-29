@@ -3,6 +3,10 @@ json_cache.py — Cache em disco para respostas da API do GitHub.
 
 Evita re-coletar dados já baixados em execuções anteriores,
 economizando quota do rate-limit.
+
+
+
+!!!!! A lógica é simples: cada resposta é salva como um arquivo .json dentro da pasta cache/, usando uma chave como nome de arquivo (ex: issue_comments_123.json). Na próxima execução, antes de fazer a requisição HTTP, o código verifica se já existe o arquivo — se sim, lê direto do disco. !!!!
 """
 from __future__ import annotations
 
