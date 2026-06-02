@@ -63,7 +63,7 @@ GitHub API
 ```
 
 - **`minerador`** → bate na API do GitHub, abstrai as interações e grava o JSON em `/dados/`
-- **`biblioteca`** → implementa `AbstractGraph`, `AdjacencyMatrixGraph`, `AdjacencyListGraph`, `GraphBuilder` e `GraphMetrics`
+- **`biblioteca`** → implementa `AbstractGraph`, `AdjacencyMatrixGraph` e `AdjacencyListGraph` (`biblioteca/graph/`)
 - **`app`** → consome a biblioteca e demonstra todas as operações da API (exigência do enunciado)
 - **`Neo4j`** → banco de dados nativo de grafos; persiste os nós e arestas para consultas analíticas pesadas
 
@@ -72,8 +72,8 @@ Minerador:
 Começa no minerador, que coleta os dados do GitHub e gera um JSON com as interações encontradas.
 
 JSON comum:
-Armazena as interações no formato comum do projeto, contendo campos como:
-sourceUser, targetUser, type, weight, repository e itemId.
+Armazena as interações em `dados/interacoes.json` (JSON Lines), uma linha por interação, com campos:
+`source_user`, `target_user`, `type`, `weight`, `repo`, `created_at` (ver dataclass `Interaction` em `mineirador/miner.py`).
 
 UserMapper:
 Converte os logins dos usuários em índices inteiros de vértices.
@@ -126,6 +126,7 @@ cp .env.example .env
 **3. Preencha o `.env` com suas credenciais:**
 ```env
 GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxx
+# GITHUB_TOKENS=ghp_a,ghp_b   # opcional: vários tokens (rotação automática)
 OWNER=nome-do-dono
 REPO=nome-do-repositorio
 OUTPUT_DIR=/dados
@@ -164,7 +165,7 @@ docker compose --profile mine up minerador
 
 **Localmente:**
 ```bash
-cd codigo/minerador
+cd codigo/mineirador
 pip install -r ../../requirements.txt
 python miner.py
 ```
@@ -268,7 +269,7 @@ docker run -d \
   neo4j:5
 
 # 4. Rode o minerador
-python -m codigo.minerador.miner
+python -m codigo.mineirador.miner
 
 # 5. Rode a demo
 python -m codigo.app.demo_cli build
@@ -334,17 +335,17 @@ trabalho-pratico-grafos/
 │   └── .gitkeep
 │
 ├── docs/
-│   └── diagramas/                # arquivos .puml do contrato
+│   └── contrato/                 # diagramas PlantUML do contrato
 │
 └── codigo/
     │
-    ├── minerador/                # container isolado — coleta de dados
+    ├── mineirador/               # coleta de dados (serviço Docker: minerador)
     │   ├── Dockerfile
     │   ├── __init__.py
-    │   ├── config.py             # MinerConfig (owner, repo, token, cache_dir)
-    │   ├── github_client.py      # GitHubClient — HTTP + paginação
+    │   ├── config.py             # MinerConfig (tokens, cache, rate-limit)
+    │   ├── github_client.py      # GitHubClient — urllib + paginação bulk
     │   ├── json_cache.py         # CacheJson — leitura e gravação em disco
-    │   └── miner.py              # GitHubMinerador — orquestrador principal
+    │   └── miner.py              # GitHubMinerador + Interaction
     │
     ├── biblioteca/               # núcleo do trabalho — sem Dockerfile próprio
     │   ├── __init__.py
@@ -354,7 +355,7 @@ trabalho-pratico-grafos/
     │   │   ├── abstract_graph.py       # AbstractGraph — API completa
     │   │   ├── adjacency_matrix.py     # AdjacencyMatrixGraph
     │   │   ├── adjacency_list.py       # AdjacencyListGraph
-    │   │   └── errors.py              # GrafoError, VerticeInvalidoError
+    │   │   └── erros.py               # reservado (API usa ValueError)
     │   │
     │   ├── builder/              # JSON → grafos
     │   │   ├── __init__.py
@@ -411,6 +412,7 @@ O minerador grava e o construtor lê linhas no seguinte formato:
 | `issue_comment` | Comentário em issue | 2 |
 | `pr_comment` | Comentário em pull request | 2 |
 | `issue_close` | Fechamento de issue por outro usuário | 3 |
+| `pr_open` | Abertura de PR (autor → merger/assignee) | 3 |
 | `pr_review` | Revisão ou aprovação de PR | 4 |
 | `pr_merge` | Merge de pull request | 5 |
 

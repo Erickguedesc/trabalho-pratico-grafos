@@ -2,22 +2,26 @@
 
 title Contrato mínimo — uma interação normalizada (1 linha JSON)
 
+skinparam classAttributeIconSize 0
 left to right direction
 
-class InteractionRow <<DTO>> {
+class Interaction <<DTO>> {
   + source_user : str
   + target_user : str
   + type : str
   + weight : int
   + repo : str
   + created_at : str
+  __
+  + to_dict() : dict
 }
 
-note right of InteractionRow
-  **Regra**: ``source_user`` age → ``target_user`` recebe.
-  **Integrado**: somar ``weight`` quando repetir o mesmo par orientado.
-  **Tipos**: ``issue_comment``(2), ``pr_comment``(2),
-  ``issue_close``(3), ``pr_open``(3), ``pr_review``(4), ``pr_merge``(5).
+note right of Interaction
+  ``mineirador/miner.py`` (@dataclass).
+  Cada ``to_dict()`` vira uma linha de ``interacoes.json``.
+  **Regra**: ``source_user`` → ``target_user``.
+  **Tipos**: issue_comment(2), pr_comment(2),
+  issue_close(3), pr_open(3), pr_review(4), pr_merge(5).
 end note
 
 @enduml

@@ -87,15 +87,15 @@ Abstrai todas as chamadas à API REST do GitHub. Recebe `MinerConfig` e `CacheJs
 | Método | Endpoint chamado |
 |---|---|
 | `get_all_issues()` | `GET /repos/{owner}/{repo}/issues?state=all` |
-| `get_issue_comments(n)` | `GET /repos/{owner}/{repo}/issues/{n}/comments` |
+| `get_all_issue_comments()` | `GET /repos/{owner}/{repo}/issues/comments` |
+| `get_all_issue_events()` | `GET /repos/{owner}/{repo}/issues/events` |
 | `get_all_pulls()` | `GET /repos/{owner}/{repo}/pulls?state=all` |
-| `get_pull_comments(n)` | `GET /repos/{owner}/{repo}/pulls/{n}/comments` |
-| `get_pull_reviews(n)` | `GET /repos/{owner}/{repo}/pulls/{n}/reviews` |
-| `get_issue_events(n)` | `GET /repos/{owner}/{repo}/issues/{n}/events` |
+| `get_all_pull_review_comments()` | `GET /repos/{owner}/{repo}/pulls/comments` |
+| `get_pull_reviews(n)` | `GET /repos/{owner}/{repo}/pulls/{n}/reviews` (sem endpoint bulk) |
 
 Todos os métodos públicos delegam para `_get_paged`, que verifica o cache antes de bater na API e percorre todas as páginas automaticamente usando o cabeçalho `Link: rel="next"` da resposta.
 
-Em caso de erro 403 ou 429 (rate-limit da API), `_fetch_page` aguarda o tempo indicado no cabeçalho `Retry-After` e tenta novamente.
+`_fetch_page` aplica throttle global (`request_delay`), rotação entre `tokens` e retry em 403/429 (aguarda `Retry-After`) ou erros de rede. Após esgotar `max_retries`, lança `RateLimitError`.
 
 ### `miner.py` — GitHubMinerador e Interaction
 
@@ -104,8 +104,8 @@ Em caso de erro 403 ou 429 (rate-limit da API), `_fetch_page` aguarda o tempo in
 **`GitHubMinerador`** é o orquestrador principal. Instancia `CacheJson` e `GitHubClient` a partir da configuração recebida.
 
 - `run()` — ponto de entrada: chama os dois métodos de mineração, filtra auto-interações (`source == target`) e interações sem usuário, e grava o arquivo final.
-- `_mine_issue_interactions()` — itera sobre todas as issues (excluindo PRs, que a API devolve junto), e para cada uma coleta comentários (peso 2) e, se fechada, o primeiro evento de fechamento por outro usuário (peso 3).
-- `_mine_pr_interactions()` — itera sobre todos os PRs e coleta: abertura do PR (peso 3), comentários inline (peso 2), revisões do tipo `APPROVED`, `CHANGES_REQUESTED` ou `COMMENTED` (peso 4), e merges quando `merged_at` está preenchido (peso 5).
+- `_mine_issue_interactions()` — mapeia autores das issues puras; cruza comentários e eventos de fechamento via endpoints **bulk** (peso 2 e 3).
+- `_mine_pr_interactions()` — mapeia PRs; coleta abertura (peso 3) e comentários inline em bulk (peso 2); revisões por PR (peso 4) e merge (peso 5).
 - `_save()` — grava o arquivo em formato **JSON Lines**: uma interação por linha.
 - `_login()` — utilitário que extrai o campo `login` de um objeto usuário da API, retornando `""` quando o usuário não existe (conta deletada, bot, etc.).
 
@@ -122,13 +122,13 @@ main()
   │     └── cria GitHubClient  →  recebe config + cache
   └── chama miner.run()
         ├── _mine_issue_interactions()
-        │     ├── get_all_issues()  →  _get_paged()  →  cache ou HTTP
-        │     ├── get_issue_comments(n)  →  para cada issue
-        │     └── get_issue_events(n)   →  para issues fechadas
+        │     ├── get_all_issues()
+        │     ├── get_all_issue_comments()  →  bulk
+        │     └── get_all_issue_events()    →  bulk (fechamentos)
         ├── _mine_pr_interactions()
         │     ├── get_all_pulls()
-        │     ├── get_pull_comments(n)  →  para cada PR
-        │     └── get_pull_reviews(n)   →  para cada PR
+        │     ├── get_all_pull_review_comments()  →  bulk
+        │     └── get_pull_reviews(n)   →  por PR (único sem bulk)
         ├── filtra auto-interações e entradas sem usuário
         └── _save()  →  grava dados/interacoes.json
 ```
