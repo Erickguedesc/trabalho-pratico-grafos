@@ -2,42 +2,43 @@
 
 title Demo / CLI — obrigação do enunciado (expor a API)
 
+skinparam classAttributeIconSize 0
 left to right direction
 
-package demo {
-  class DemoCLI {
-    + cmd_graph_smoke()
-    + cmd_build()
-    + cmd_mine()
-    + cmd_metrics()
-    + ...
+package "codigo/app" as demo {
+  class DemoCLI <<planned>> {
+    __
+    + main() : void
+    + cmdGraphSmoke() : void
+    + cmdBuild() : void
+    + cmdMine() : void
+    + cmdMetrics() : void
   }
 }
 
-package grafo {
+package "biblioteca/graph" as grafo {
   abstract class AbstractGraph
 }
 
-package construtor {
-  class GraphBuilder
+package "biblioteca/builder" as construtor {
+  class GraphBuilder <<planned>>
 }
 
-package minerador {
+package "codigo/mineirador" as mineirador {
   class GitHubMinerador
 }
 
-package analise {
-  class GraphAnalyzer
+package "biblioteca/analysis" as analise {
+  class GraphAnalyzer <<planned>>
 }
 
-DemoCLI ..> AbstractGraph : exemplos CRUD + export
-DemoCLI ..> GraphBuilder : <<opcional>>
-DemoCLI ..> GitHubMinerador : <<opcional>>
-DemoCLI ..> GraphAnalyzer : <<opcional>>
+DemoCLI ..> AbstractGraph : «use»
+DemoCLI ..> GraphBuilder : «use» (opcional)
+DemoCLI ..> GitHubMinerador : «use» (opcional)
+DemoCLI ..> GraphAnalyzer : «use» (opcional)
 
 note bottom of DemoCLI
-  Pode ser um ``if __name__ == "__main__"`` simples;
-  o importante é **demonstrar todas** as operações públicas do grafo.
+  <<planned>> — demonstrar todas as operações públicas do grafo.
 end note
 
 @enduml
