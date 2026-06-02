@@ -6,14 +6,14 @@ left to right direction
 
 package grafo {
   abstract class AbstractGraph {
-    + get_vertex_count() : int
-    + get_edge_count() : int
-    + has_edge(u, v) : bool
-    + add_edge(u, v) : void
-    + remove_edge(u, v) : void
-    + is_successor(u, v) : bool
-    + is_predecessor(u, v) : bool
-    + export_to_gephi(path) : void
+    + getVertexCount() : int
+    + getEdgeCount() : int
+    + hasEdge(u, v) : bool
+    + addEdge(u, v) : void
+    + removeEdge(u, v) : void
+    + isSucessor(u, v) : bool
+    + isPredessor(u, v) : bool
+    + exportToGEPHI(path) : void
     + ...
   }
 
@@ -28,19 +28,16 @@ package grafo {
   }
 }
 
-package grafo.errors <<External>> {
-  class GrafoError
-  class VerticeInvalidoError
-}
-
 AbstractGraph <|-- AdjacencyMatrixGraph
 AbstractGraph <|-- AdjacencyListGraph
-AbstractGraph ..> GrafoError : <<raises>>
 
 note right of AbstractGraph
-  Restante da API: graus, pesos de vértice/aresta,
-  ``is_divergent``, ``is_grid_convergent`` (nome do enunciado),
-  ``is_incident``, conectividade, grafo vazio/completo, rótulos, etc.
+  API completa (camelCase, conforme enunciado):
+  graus, pesos de vértice/aresta, ``isDivergent``,
+  ``isConvergent``, ``isIncident``, conectividade,
+  ``isEmptyGraph``, ``isCompleteGraph``, rótulos.
+  Exceções lançadas diretamente como ``ValueError``
+  (sem classes customizadas).
 end note
 
 @enduml

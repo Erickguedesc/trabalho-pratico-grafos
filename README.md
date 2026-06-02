@@ -364,7 +364,7 @@ trabalho-pratico-grafos/
     │   │
     │   └── analysis/             # métricas (sem NetworkX/igraph)
     │       ├── __init__.py
-    │       └── graph_metrics.py       # GraphMetrics — centralidade, densidade, etc.
+    │       └── graph_analyzer.py      # GraphAnalyzer — centralidade, densidade, etc.
     │
     ├── app/                      # container da interface / demo CLI
     │   ├── Dockerfile
