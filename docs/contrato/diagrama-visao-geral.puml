@@ -6,25 +6,25 @@ left to right direction
 
 package minerador {
   class GitHubMinerador {
-    + minerar() : list[dict]
+    + run() : Path
     + ...
   }
   class CacheJson {
-    + load(path) : list[dict]
-    + save(path, rows) : void
+    + get(key: str) : Any | None
+    + set(key: str, data: Any) : void
     + ...
   }
 }
 
 package contrato {
-  class "linha JSON\n(source, target, type, weight, ...)" as LinhaJson <<DTO>> {
+  class "linha JSON\n(source_user, target_user, type, weight, repo, ...)" as LinhaJson <<DTO>> {
   }
 }
 
 package construtor {
   class UserMapper {
-    + id_de(login) : int
-    + login_de(id) : str
+    + id_for(login) : int
+    + login_for(id) : str
     + ...
   }
   class GraphBuilder {
@@ -32,18 +32,18 @@ package construtor {
     + ...
   }
   class GraphBundle {
-    + g1_comments
-    + g2_issue_close
-    + g3_pr_flow
-    + g4_integrated
+    + comments : AbstractGraph
+    + issue_closes : AbstractGraph
+    + pr_events : AbstractGraph
+    + integrated : AbstractGraph
     + ...
   }
 }
 
 package grafo {
   abstract class AbstractGraph {
-    + add_edge(u, v)
-    + export_to_gephi(path)
+    + addEdge(u, v)
+    + exportToGEPHI(path)
     + ...
   }
   class AdjacencyMatrixGraph
@@ -51,7 +51,7 @@ package grafo {
 }
 
 package analise {
-  class GraphMetrics {
+  class GraphAnalyzer {
     + density(g)
     + pagerank(g, ...)
     + ...
@@ -59,15 +59,15 @@ package analise {
 }
 
 package demo {
-  class DemoApp {
+  class DemoCLI {
     + main()
     + ...
   }
 }
 
-package "httpx | requests\n<<External>>" as ExtHttp {
+package "urllib\n<<stdlib>>" as ExtHttp {
 }
-package "stdlib json\n<<External>>" as ExtJson {
+package "stdlib json\n<<stdlib>>" as ExtJson {
 }
 
 GitHubMinerador --> ExtHttp
@@ -80,11 +80,11 @@ GraphBuilder --> AbstractGraph : instancia
 GraphBundle o-- AbstractGraph : x4 instâncias
 AbstractGraph <|-- AdjacencyMatrixGraph
 AbstractGraph <|-- AdjacencyListGraph
-GraphMetrics ..> AbstractGraph : lê
-DemoApp ..> AbstractGraph
-DemoApp ..> GraphBuilder
-DemoApp ..> GitHubMinerador
-DemoApp ..> GraphMetrics
+GraphAnalyzer ..> AbstractGraph : lê
+DemoCLI ..> AbstractGraph
+DemoCLI ..> GraphBuilder
+DemoCLI ..> GitHubMinerador
+DemoCLI ..> GraphAnalyzer
 
 note bottom of AbstractGraph
   API completa conforme enunciado

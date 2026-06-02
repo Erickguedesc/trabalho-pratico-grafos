@@ -8,38 +8,67 @@ package minerador {
   class MinerConfig {
     + owner : str
     + repo : str
-    + token : str | None
+    + token : str
+    + output_dir : Path
     + cache_dir : Path
-    + ...
+    + per_page : int
+    + request_delay : float
+    + repo_full_name : str
+    + output_file : Path
+    + has_token : bool
   }
 
   class GitHubMinerador {
-    + run(cfg) : list[dict]
+    + run() : Path
     + ...
   }
 
   class GitHubClient {
-    + get_json(url) : dict
-    + ...
+    + get_all_issues() : list[dict]
+    + get_issue_comments(issue_number) : list[dict]
+    + get_all_pulls() : list[dict]
+    + get_pull_comments(pull_number) : list[dict]
+    + get_pull_reviews(pull_number) : list[dict]
+    + get_issue_events(issue_number) : list[dict]
   }
 
-  class JsonCache {
-    + read(path) : list[dict]
-    + write(path, rows) : void
-    + ...
+  class CacheJson {
+    + get(key: str) : Any | None
+    + set(key: str, data: Any) : void
+    + has(key: str) : bool
+    + invalidate(key: str) : void
+    + clear() : void
+  }
+
+  class Interaction <<dataclass>> {
+    + source_user : str
+    + target_user : str
+    + type : str
+    + weight : int
+    + repo : str
+    + created_at : str
+    + to_dict() : dict
+  }
+
+  class RateLimitError <<exception>> {
   }
 }
 
-package "httpx | requests\n<<External>>" as ExtHttp {
+package "urllib\n<<stdlib>>" as ExtHttp {
 }
 
 GitHubMinerador *-- MinerConfig
+GitHubMinerador *-- CacheJson
 GitHubMinerador *-- GitHubClient
-GitHubMinerador *-- JsonCache
+GitHubMinerador ..> Interaction : cria
+
+GitHubClient --> MinerConfig
+GitHubClient --> CacheJson
 GitHubClient ..> ExtHttp
+GitHubClient ..> RateLimitError : <<raises>>
 
 note bottom of GitHubMinerador
-  Saída: linhas no **contrato JSON** acordado pelo grupo
+  Saída: **interacoes.json** com linhas no contrato acordado
   (``source_user``, ``target_user``, ``type``, ``weight``, …).
   **Não** importa ``AbstractGraph``.
 end note
