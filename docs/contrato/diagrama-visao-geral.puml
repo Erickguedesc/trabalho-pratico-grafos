@@ -2,93 +2,92 @@
 
 title Trabalho de grafos — visão geral (contrato)
 
+skinparam classAttributeIconSize 0
 left to right direction
 
-package minerador {
+package "codigo/mineirador" as mineirador {
   class GitHubMinerador {
-    + minerar() : list[dict]
-    + ...
+    + run() : Path
+  }
+  class GitHubClient {
   }
   class CacheJson {
-    + load(path) : list[dict]
-    + save(path, rows) : void
-    + ...
+    + get(key : str) : Any
+    + set(key : str, data : Any) : void
   }
+  class Interaction <<DTO>>
 }
 
 package contrato {
-  class "linha JSON\n(source, target, type, weight, ...)" as LinhaJson <<DTO>> {
+  artifact "interacoes.json" as InteracoesJson <<file>> {
   }
 }
 
-package construtor {
-  class UserMapper {
-    + id_de(login) : int
-    + login_de(id) : str
-    + ...
+package "biblioteca/builder" as construtor {
+  class UserMapper <<planned>>
+  class GraphBuilder <<planned>> {
+    + build(rows : list[Interaction]) : GraphBundle
   }
-  class GraphBuilder {
-    + build(rows) : GraphBundle
-    + ...
-  }
-  class GraphBundle {
-    + g1_comments
-    + g2_issue_close
-    + g3_pr_flow
-    + g4_integrated
-    + ...
+  class GraphBundle <<planned>> {
+    + comments : AbstractGraph
+    + issue_closes : AbstractGraph
+    + pr_events : AbstractGraph
+    + integrated : AbstractGraph
   }
 }
 
-package grafo {
+package "biblioteca/graph" as grafo {
   abstract class AbstractGraph {
-    + add_edge(u, v)
-    + export_to_gephi(path)
-    + ...
+    + addEdge(u : int, v : int) : void
+    + exportToGEPHI(path : str) : void
   }
   class AdjacencyMatrixGraph
   class AdjacencyListGraph
 }
 
-package analise {
-  class GraphMetrics {
-    + density(g)
-    + pagerank(g, ...)
-    + ...
+package "biblioteca/analysis" as analise {
+  class GraphAnalyzer <<planned>> {
+    + density(g : AbstractGraph) : float
+    + pagerank(g : AbstractGraph) : dict[int, float]
   }
 }
 
-package demo {
-  class DemoApp {
-    + main()
-    + ...
+package "codigo/app" as demo {
+  class DemoCLI <<planned>> {
+    + main() : void
   }
 }
 
-package "httpx | requests\n<<External>>" as ExtHttp {
-}
-package "stdlib json\n<<External>>" as ExtJson {
-}
+class "urllib" as Urllib <<library>>
+class "json" as JsonLib <<library>>
 
-GitHubMinerador --> ExtHttp
-GitHubMinerador --> CacheJson
-CacheJson --> ExtJson
-GitHubMinerador ..> LinhaJson : grava
-GraphBuilder ..> LinhaJson : lê
-GraphBuilder --> UserMapper
-GraphBuilder --> AbstractGraph : instancia
-GraphBundle o-- AbstractGraph : x4 instâncias
+GitHubMinerador *-- GitHubClient
+GitHubMinerador *-- CacheJson
+GitHubClient ..> Urllib
+CacheJson ..> JsonLib
+GitHubMinerador ..> Interaction : «create»
+GitHubMinerador ..> InteracoesJson : «write»
+
+GraphBuilder ..> InteracoesJson : «read»
+GraphBuilder ..> Interaction : «parse»
+GraphBuilder ..> UserMapper
+GraphBuilder ..> AbstractGraph : «create»
+
 AbstractGraph <|-- AdjacencyMatrixGraph
 AbstractGraph <|-- AdjacencyListGraph
-GraphMetrics ..> AbstractGraph : lê
-DemoApp ..> AbstractGraph
-DemoApp ..> GraphBuilder
-DemoApp ..> GitHubMinerador
-DemoApp ..> GraphMetrics
 
-note bottom of AbstractGraph
-  API completa conforme enunciado
-  (sem bibliotecas de grafos prontas)
+GraphAnalyzer ..> AbstractGraph : «read»
+DemoCLI ..> AbstractGraph
+DemoCLI ..> GraphBuilder
+DemoCLI ..> GitHubMinerador
+DemoCLI ..> GraphAnalyzer
+
+note bottom of grafo
+  **Implementado** — API completa sem libs de grafos prontas.
+end note
+
+note bottom of mineirador
+  **Implementado** — mineração e cache JSON.
 end note
 
 @enduml

@@ -1,6 +1,4 @@
-"""
-config.py — Configuração do minerador via variáveis de ambiente.
-"""
+"""config.py — Configuração do minerador via variáveis de ambiente."""
 from __future__ import annotations
 
 import os
@@ -8,17 +6,21 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 
+def _read_tokens() -> list[str]:
+    multi = os.environ.get("GITHUB_TOKENS", "")
+    if multi:
+        return [t.strip() for t in multi.split(",") if t.strip()]
+    single = os.environ.get("GITHUB_TOKEN", "")
+    return [single] if single else []
+
+
 @dataclass
 class MinerConfig:
-    """Centraliza todas as configurações do minerador.
-
-    Lê as variáveis de ambiente definidas no .env e expõe
-    propriedades tipadas para o resto do módulo.
-    """
+    """Centraliza todas as configurações do minerador."""
 
     owner: str = field(default_factory=lambda: os.environ["OWNER"])
     repo: str = field(default_factory=lambda: os.environ["REPO"])
-    token: str = field(default_factory=lambda: os.environ.get("GITHUB_TOKEN", ""))
+    tokens: list[str] = field(default_factory=_read_tokens)
     output_dir: Path = field(
         default_factory=lambda: Path(os.environ.get("OUTPUT_DIR", "dados"))
     )
@@ -26,19 +28,18 @@ class MinerConfig:
         default_factory=lambda: Path(os.environ.get("OUTPUT_DIR", "dados")) / "cache"
     )
 
-    # Quantos itens por página nas chamadas paginadas (máx. 100 pela API)
     per_page: int = 100
+    # 5.000 req/h por token ≈ 1,38 req/s; base de 0,75 s dividida pelo número
+    # de tokens para aproveitar o round-robin sem estourar o rate-limit.
+    request_delay: float = field(default=0.0, init=False)
+    max_retries: int = 3
 
-    # Pausa entre requisições para não estourar o rate-limit (segundos)
-    request_delay: float = 0.1
-    
-
-    #após iniciar o mineirador ele vai chamar os métodos para criar as pastas de dados mineirados e dados cache isso se elas não existirem
     def __post_init__(self) -> None:
+        self.request_delay = 0.75 / max(1, len(self.tokens))
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
-    @property #@property transforma o método em um atrbibuto, meio que a função irá retornar uma variável
+    @property
     def repo_full_name(self) -> str:
         return f"{self.owner}/{self.repo}"
 
@@ -48,5 +49,4 @@ class MinerConfig:
 
     @property
     def has_token(self) -> bool:
-        return bool(self.token)
-    
+        return bool(self.tokens)

@@ -2,45 +2,61 @@
 
 title Bloco 1 — núcleo do grafo (matriz e lista)
 
+skinparam classAttributeIconSize 0
 left to right direction
 
-package grafo {
+package "biblioteca/graph" as grafo {
+
   abstract class AbstractGraph {
-    + get_vertex_count() : int
-    + get_edge_count() : int
-    + has_edge(u, v) : bool
-    + add_edge(u, v) : void
-    + remove_edge(u, v) : void
-    + is_successor(u, v) : bool
-    + is_predecessor(u, v) : bool
-    + export_to_gephi(path) : void
-    + ...
+    # num_vertices : int
+    # edge_count : int
+    # vertex_weights : list[float]
+    # vertex_labels : list[str]
+    __
+    + getVertexCount() : int
+    + getEdgeCount() : int
+    + isEmptyGraph() : bool
+    + isCompleteGraph() : bool
+    + isConnected() : bool
+    + {abstract} hasEdge(u : int, v : int) : bool
+    + {abstract} addEdge(u : int, v : int) : void
+    + {abstract} removeEdge(u : int, v : int) : void
+    + {abstract} setEdgeWeight(u : int, v : int, w : float) : void
+    + {abstract} getEdgeWeight(u : int, v : int) : float
+    + {abstract} getVertexInDegree(u : int) : int
+    + {abstract} getVertexOutDegree(u : int) : int
+    + isSucessor(u : int, v : int) : bool
+    + isPredessor(u : int, v : int) : bool
+    + isDivergent(u1 : int, v1 : int, u2 : int, v2 : int) : bool
+    + isConvergent(u1 : int, v1 : int, u2 : int, v2 : int) : bool
+    + isIncident(u : int, v : int, x : int) : bool
+    + setVertexWeight(v : int, w : float) : void
+    + getVertexWeight(v : int) : float
+    + setVertexLabel(v : int, label : str) : void
+    + getVertexLabel(v : int) : str
+    + exportToGEPHI(path : str) : void
   }
 
   class AdjacencyMatrixGraph {
-    + __init__(num_vertices: int)
-    + ...
+    - adjacency_matrix : list[list[bool]]
+    - edge_weights : list[list[float]]
+    __
+    + AdjacencyMatrixGraph(num_vertices : int)
   }
 
   class AdjacencyListGraph {
-    + __init__(num_vertices: int)
-    + ...
+    - adjacency_list : list[dict[int, float]]
+    __
+    + AdjacencyListGraph(num_vertices : int)
   }
-}
-
-package grafo.errors <<External>> {
-  class GrafoError
-  class VerticeInvalidoError
 }
 
 AbstractGraph <|-- AdjacencyMatrixGraph
 AbstractGraph <|-- AdjacencyListGraph
-AbstractGraph ..> GrafoError : <<raises>>
 
 note right of AbstractGraph
-  Restante da API: graus, pesos de vértice/aresta,
-  ``is_divergent``, ``is_grid_convergent`` (nome do enunciado),
-  ``is_incident``, conectividade, grafo vazio/completo, rótulos, etc.
+  API em camelCase (enunciado).
+  Índices inválidos e self-loop: ``ValueError``.
 end note
 
 @enduml

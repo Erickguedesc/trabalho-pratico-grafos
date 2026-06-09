@@ -2,57 +2,65 @@
 
 title Bloco 3 — JSON → quatro grafos (mapeamento de logins)
 
+skinparam classAttributeIconSize 0
 left to right direction
 
 package contrato {
-  class InteractionRow <<DTO>> {
+  class Interaction <<DTO>> {
     + source_user : str
     + target_user : str
     + type : str
-    + weight : float
-    + ...
+    + weight : int
+    + repo : str
+    + created_at : str
+    __
+    + to_dict() : dict
   }
 }
 
-package construtor {
-  class UserMapper {
-    + id_for(login) : int
-    + login_for(id) : str
+package "biblioteca/builder" as construtor {
+
+  class UserMapper <<planned>> {
+    __
+    + id_for(login : str) : int
+    + login_for(id : int) : str
     + size() : int
-    + ...
   }
 
-  class GraphBuilder {
-    + build(rows: list[InteractionRow]) : GraphBundle
-    + ...
+  class GraphBuilder <<planned>> {
+    __
+    + build(rows : list[Interaction]) : GraphBundle
   }
 
-  class GraphBundle {
+  class GraphBundle <<planned>> {
     + comments : AbstractGraph
     + issue_closes : AbstractGraph
     + pr_events : AbstractGraph
     + integrated : AbstractGraph
     + mapper : UserMapper
-    + ...
   }
 }
 
-package grafo {
+package "biblioteca/graph" as grafo {
   abstract class AbstractGraph
   class AdjacencyMatrixGraph
   class AdjacencyListGraph
 }
 
-GraphBuilder ..> InteractionRow
-GraphBuilder --> UserMapper
-GraphBuilder ..> AbstractGraph : cria (matriz|lista)
-GraphBundle o-- UserMapper
-GraphBundle o-- AbstractGraph : x4 instâncias
+GraphBuilder ..> Interaction : «parameter»
+GraphBuilder ..> UserMapper : «create»
+GraphBuilder ..> AbstractGraph : «create»
+
 AbstractGraph <|-- AdjacencyMatrixGraph
 AbstractGraph <|-- AdjacencyListGraph
 
 note bottom of GraphBuilder
-  Filtra por ``type`` para G1/G2/G3; **G4** agrega pesos no par (u→v).
+  G1/G2/G3: filtro por ``type``; G4: soma de pesos no par (u→v).
+  Atributos de ``GraphBundle`` implicam associação 1→1 com cada grafo.
+end note
+
+note bottom of construtor
+  <<planned>> — classes ainda não implementadas.
 end note
 
 @enduml

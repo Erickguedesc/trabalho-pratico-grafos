@@ -33,7 +33,6 @@ from .json_cache import CacheJson
 
 logger = logging.getLogger(__name__)
 
-# Pesos conforme o enunciado
 _WEIGHT = {
     "issue_comment": 2,
     "pr_comment":    2,
@@ -67,13 +66,7 @@ class Interaction:
 
 
 class GitHubMinerador:
-    """Minera interações de um repositório GitHub e salva em JSON.
-
-    Parâmetros
-    ----------
-    config:
-        MinerConfig com credenciais e caminhos.
-    """
+    """Minera interações de um repositório GitHub e salva em JSON."""
 
     def __init__(self, config: MinerConfig) -> None:
         self._config = config
@@ -88,12 +81,9 @@ class GitHubMinerador:
         """Executa a mineração completa e retorna o caminho do arquivo gerado."""
         logger.info("Iniciando mineração de %s", self._config.repo_full_name)
 
-        interactions: list[Interaction] = []
-
-        interactions.extend(self._mine_issue_interactions())
+        interactions = list(self._mine_issue_interactions())
         interactions.extend(self._mine_pr_interactions())
 
-        # Filtra auto-interações (source == target) e interações sem usuário
         valid = [
             i for i in interactions
             if i.source_user and i.target_user and i.source_user != i.target_user
@@ -101,96 +91,102 @@ class GitHubMinerador:
 
         output = self._config.output_file
         self._save(valid, output)
-
-        logger.info(
-            "Mineração concluída. %d interações válidas salvas em %s",
-            len(valid),
-            output,
-        )
+        logger.info("Mineração concluída. %d interações válidas salvas em %s", len(valid), output)
         return output
 
     # ------------------------------------------------------------------
-    # Issues
+    # Issues — usa endpoints bulk para eliminar o padrão N+1
     # ------------------------------------------------------------------
 
     def _mine_issue_interactions(self) -> Iterator[Interaction]:
-        """Minera comentários e fechamentos de issues."""
         issues = self._client.get_all_issues()
-        # A API de /issues retorna PRs também; filtra apenas issues reais
-        pure_issues = [i for i in issues if "pull_request" not in i]
+        issue_authors = self._build_issue_author_map(issues)
+        logger.info("Issues (puras) encontradas: %d", len(issue_authors))
 
-        logger.info("Issues encontradas: %d", len(pure_issues))
+        yield from self._issue_comment_interactions(issue_authors)
+        yield from self._issue_close_interactions(issue_authors)
 
-        for issue in pure_issues:
-            issue_number = issue["number"]
-            issue_author = self._login(issue.get("user"))
-            if not issue_author:
+    def _build_issue_author_map(self, issues: list[dict]) -> dict[int, str]:
+        return {
+            i["number"]: self._login(i.get("user"))
+            for i in issues
+            if "pull_request" not in i and self._login(i.get("user"))
+        }
+
+    def _issue_comment_interactions(
+        self, issue_authors: dict[int, str]
+    ) -> Iterator[Interaction]:
+        for comment in self._client.get_all_issue_comments():
+            issue_number = int(comment["issue_url"].rsplit("/", 1)[-1])
+            issue_author = issue_authors.get(issue_number)
+            commenter = self._login(comment.get("user"))
+            if not issue_author or not commenter:
                 continue
+            yield Interaction(
+                source_user=commenter,
+                target_user=issue_author,
+                type="issue_comment",
+                weight=_WEIGHT["issue_comment"],
+                repo=self._config.repo_full_name,
+                created_at=comment.get("created_at", ""),
+            )
 
-            # — Comentários em issue (peso 2) ——————————————————————————
-            comments = self._client.get_issue_comments(issue_number)
-            for comment in comments:
-                commenter = self._login(comment.get("user"))
-                if not commenter:
-                    continue
+    def _issue_close_interactions(
+        self, issue_authors: dict[int, str]
+    ) -> Iterator[Interaction]:
+        seen: set[int] = set()
+        for event in self._client.get_all_issue_events():
+            if event.get("event") != "closed":
+                continue
+            issue_obj = event.get("issue") or {}
+            issue_number = issue_obj.get("number")
+            if not issue_number or issue_number in seen:
+                continue
+            issue_author = issue_authors.get(issue_number)
+            closer = self._login(event.get("actor"))
+            if issue_author and closer and closer != issue_author:
+                seen.add(issue_number)
                 yield Interaction(
-                    source_user=commenter,
+                    source_user=closer,
                     target_user=issue_author,
-                    type="issue_comment",
-                    weight=_WEIGHT["issue_comment"],
+                    type="issue_close",
+                    weight=_WEIGHT["issue_close"],
                     repo=self._config.repo_full_name,
-                    created_at=comment.get("created_at", ""),
+                    created_at=event.get("created_at", ""),
                 )
 
-            # — Fechamento por outro usuário (peso 3) ——————————————————
-            if issue.get("state") == "closed":
-                events = self._client.get_issue_events(issue_number)
-                for event in events:
-                    if event.get("event") != "closed":
-                        continue
-                    closer = self._login(event.get("actor"))
-                    if closer and closer != issue_author:
-                        yield Interaction(
-                            source_user=closer,
-                            target_user=issue_author,
-                            type="issue_close",
-                            weight=_WEIGHT["issue_close"],
-                            repo=self._config.repo_full_name,
-                            created_at=event.get("created_at", ""),
-                        )
-                        break  # só o primeiro evento de fechamento
-
     # ------------------------------------------------------------------
-    # Pull Requests
+    # Pull Requests — bulk para comentários; per-PR apenas para revisões
     # ------------------------------------------------------------------
 
     def _mine_pr_interactions(self) -> Iterator[Interaction]:
-        """Minera abertura, comentários, revisões e merges de PRs."""
         pulls = self._client.get_all_pulls()
-        logger.info("Pull requests encontrados: %d", len(pulls))
+        pr_info = self._build_pr_info_map(pulls)
+        logger.info("Pull requests encontrados: %d", len(pr_info))
 
+        yield from self._pr_open_interactions(pr_info)
+        yield from self._pr_comment_interactions(pr_info)
+        yield from self._pr_review_and_merge_interactions(pr_info)
+
+    def _build_pr_info_map(self, pulls: list[dict]) -> dict[int, dict]:
+        result = {}
         for pr in pulls:
-            pr_number = pr["number"]
-            pr_author = self._login(pr.get("user"))
-            if not pr_author:
+            author = self._login(pr.get("user"))
+            if not author:
                 continue
+            result[pr["number"]] = {
+                "author": author,
+                "merged_by": self._login(pr.get("merged_by")),
+                "merged_at": pr.get("merged_at"),
+                "assignees": pr.get("assignees") or [],
+                "created_at": pr.get("created_at", ""),
+            }
+        return result
 
-            # — Abertura de PR (peso 3) ——————————————————————————————
-            # A interação registrada é: o autor do PR interage com o
-            # repositório notificando os colaboradores. Representamos isso
-            # como o autor interagindo com o merger (quem costuma integrar
-            # o trabalho). Quando não há merger definido ainda, usamos o
-            # primeiro revisor encontrado; se nenhum existir, pulamos.
-            pr_target = self._login(pr.get("merged_by"))
-            if not pr_target:
-                # tenta o assignee como alvo substituto
-                assignees = pr.get("assignees") or []
-                for assignee in assignees:
-                    candidate = self._login(assignee)
-                    if candidate and candidate != pr_author:
-                        pr_target = candidate
-                        break
-
+    def _pr_open_interactions(self, pr_info: dict[int, dict]) -> Iterator[Interaction]:
+        for info in pr_info.values():
+            pr_author = info["author"]
+            pr_target = info["merged_by"] or self._first_assignee(info["assignees"], pr_author)
             if pr_target and pr_target != pr_author:
                 yield Interaction(
                     source_user=pr_author,
@@ -198,58 +194,56 @@ class GitHubMinerador:
                     type="pr_open",
                     weight=_WEIGHT["pr_open"],
                     repo=self._config.repo_full_name,
-                    created_at=pr.get("created_at", ""),
+                    created_at=info["created_at"],
                 )
 
-            # — Comentários inline em PR (peso 2) ————————————————————
-            pr_comments = self._client.get_pull_comments(pr_number)
-            for comment in pr_comments:
-                commenter = self._login(comment.get("user"))
-                if not commenter:
-                    continue
+    def _pr_comment_interactions(self, pr_info: dict[int, dict]) -> Iterator[Interaction]:
+        for comment in self._client.get_all_pull_review_comments():
+            pr_number = int(comment["pull_request_url"].rsplit("/", 1)[-1])
+            info = pr_info.get(pr_number)
+            commenter = self._login(comment.get("user"))
+            if not info or not commenter:
+                continue
+            yield Interaction(
+                source_user=commenter,
+                target_user=info["author"],
+                type="pr_comment",
+                weight=_WEIGHT["pr_comment"],
+                repo=self._config.repo_full_name,
+                created_at=comment.get("created_at", ""),
+            )
+
+    def _pr_review_and_merge_interactions(
+        self, pr_info: dict[int, dict]
+    ) -> Iterator[Interaction]:
+        for pr_number, info in pr_info.items():
+            yield from self._pr_review_interactions(pr_number, info)
+            if info["merged_at"] and info["merged_by"]:
                 yield Interaction(
-                    source_user=commenter,
-                    target_user=pr_author,
-                    type="pr_comment",
-                    weight=_WEIGHT["pr_comment"],
+                    source_user=info["merged_by"],
+                    target_user=info["author"],
+                    type="pr_merge",
+                    weight=_WEIGHT["pr_merge"],
                     repo=self._config.repo_full_name,
-                    created_at=comment.get("created_at", ""),
+                    created_at=info["merged_at"],
                 )
 
-            # — Revisões / aprovações (peso 4) ————————————————————————
-            reviews = self._client.get_pull_reviews(pr_number)
-            for review in reviews:
-                reviewer = self._login(review.get("user"))
-                if not reviewer:
-                    continue
-
-                state = review.get("state", "").upper()
-
-                if state in ("APPROVED", "CHANGES_REQUESTED", "COMMENTED"):
-                    yield Interaction(
-                        source_user=reviewer,
-                        target_user=pr_author,
-                        type="pr_review",
-                        weight=_WEIGHT["pr_review"],
-                        repo=self._config.repo_full_name,
-                        created_at=review.get("submitted_at", ""),
-                    )
-
-            # — Merge (peso 5) ——————————————————————————————————————
-            if pr.get("merged_at"):
-                merger = self._login(pr.get("merged_by"))
-                if merger:
-                    yield Interaction(
-                        source_user=merger,
-                        target_user=pr_author,
-                        type="pr_merge",
-                        weight=_WEIGHT["pr_merge"],
-                        repo=self._config.repo_full_name,
-                        created_at=pr.get("merged_at", ""),
-                    )
+    def _pr_review_interactions(self, pr_number: int, info: dict) -> Iterator[Interaction]:
+        for review in self._client.get_pull_reviews(pr_number):
+            reviewer = self._login(review.get("user"))
+            state = review.get("state", "").upper()
+            if reviewer and state in ("APPROVED", "CHANGES_REQUESTED", "COMMENTED"):
+                yield Interaction(
+                    source_user=reviewer,
+                    target_user=info["author"],
+                    type="pr_review",
+                    weight=_WEIGHT["pr_review"],
+                    repo=self._config.repo_full_name,
+                    created_at=review.get("submitted_at", ""),
+                )
 
     # ------------------------------------------------------------------
-    # Persistência
+    # Persistência e helpers
     # ------------------------------------------------------------------
 
     @staticmethod
@@ -259,16 +253,17 @@ class GitHubMinerador:
             for interaction in interactions:
                 fh.write(json.dumps(interaction.to_dict(), ensure_ascii=False) + "\n")
 
-    # ------------------------------------------------------------------
-    # Helpers
-    # ------------------------------------------------------------------
+    def _first_assignee(self, assignees: list[dict], exclude: str) -> str:
+        for assignee in assignees:
+            candidate = self._login(assignee)
+            if candidate and candidate != exclude:
+                return candidate
+        return ""
 
     @staticmethod
     def _login(user_obj: dict | None) -> str:
-        """Extrai o login de um objeto usuário da API, ou '' se ausente."""
         if not user_obj:
             return ""
-        # Bots e apps do GitHub têm tipo "Bot"; podemos filtrá-los se quiser
         return user_obj.get("login", "")
 
 

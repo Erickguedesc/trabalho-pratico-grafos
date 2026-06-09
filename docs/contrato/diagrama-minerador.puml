@@ -2,46 +2,106 @@
 
 title Bloco 2 — mineração GitHub → JSON em cache
 
+skinparam classAttributeIconSize 0
 left to right direction
 
-package minerador {
-  class MinerConfig {
+package "codigo/mineirador" as mineirador {
+
+  class MinerConfig <<configuration>> {
     + owner : str
     + repo : str
-    + token : str | None
+    + tokens : list[str]
+    + output_dir : Path
     + cache_dir : Path
-    + ...
+    + per_page : int
+    + max_retries : int
+    + request_delay : float
+    __
+    / repo_full_name : str {readOnly}
+    / output_file : Path {readOnly}
+    / has_token : bool {readOnly}
   }
 
   class GitHubMinerador {
-    + run(cfg) : list[dict]
-    + ...
+    - _config : MinerConfig
+    - _cache : CacheJson
+    - _client : GitHubClient
+    __
+    + run() : Path
   }
 
   class GitHubClient {
-    + get_json(url) : dict
-    + ...
+    - _config : MinerConfig
+    - _cache : CacheJson
+    __
+    + get_all_issues() : list[dict]
+    + get_all_issue_comments() : list[dict]
+    + get_all_issue_events() : list[dict]
+    + get_all_pulls() : list[dict]
+    + get_all_pull_review_comments() : list[dict]
+    + get_pull_reviews(pull_number : int) : list[dict]
   }
 
-  class JsonCache {
-    + read(path) : list[dict]
-    + write(path, rows) : void
-    + ...
+  class CacheJson {
+    - _dir : Path
+    __
+    + get(key : str) : Any
+    + set(key : str, data : Any) : void
+    + has(key : str) : bool
+    + invalidate(key : str) : void
+    + clear() : void
+  }
+
+  class Interaction <<DTO>> {
+    + source_user : str
+    + target_user : str
+    + type : str
+    + weight : int
+    + repo : str
+    + created_at : str
+    __
+    + to_dict() : dict
+  }
+
+  class RateLimitError <<exception>> {
   }
 }
 
-package "httpx | requests\n<<External>>" as ExtHttp {
+class "urllib" as Urllib <<library>> {
 }
 
-GitHubMinerador *-- MinerConfig
-GitHubMinerador *-- GitHubClient
-GitHubMinerador *-- JsonCache
-GitHubClient ..> ExtHttp
+class "Exception" as PyException <<external>> {
+}
+
+GitHubMinerador *-- MinerConfig : config
+GitHubMinerador *-- CacheJson : cache
+GitHubMinerador *-- GitHubClient : client
+GitHubMinerador ..> Interaction : «create»
+
+GitHubClient ..> MinerConfig : usa
+GitHubClient ..> CacheJson : usa
+GitHubClient ..> Urllib : HTTP
+GitHubClient ..> RateLimitError : «raise»
+
+RateLimitError --|> PyException
+
+note bottom of GitHubClient
+  Throttle, rotação de tokens e retry
+  em 403/429 / erro de rede.
+end note
 
 note bottom of GitHubMinerador
-  Saída: linhas no **contrato JSON** acordado pelo grupo
-  (``source_user``, ``target_user``, ``type``, ``weight``, …).
-  **Não** importa ``AbstractGraph``.
+  Saída: **interacoes.json** (JSON Lines).
+  Não importa o pacote de grafos.
+end note
+
+note right of MinerConfig
+  ``request_delay`` = 0,75 s / |tokens|.
+  ``tokens``: ``GITHUB_TOKEN`` ou ``GITHUB_TOKENS``.
+end note
+
+note right of Interaction
+  Implementada como ``@dataclass`` em ``miner.py``.
 end note
 
 @enduml
