@@ -1,33 +1,35 @@
 @startuml diagrama-analise
 
-title Bloco 4 — métricas sobre ``AbstractGraph`` (sem libs de grafo)
+title Bloco 4 — métricas sobre AbstractGraph (sem libs de grafo)
 
+skinparam classAttributeIconSize 0
 left to right direction
 
-package grafo {
+package "biblioteca/graph" as grafo {
   abstract class AbstractGraph {
-    + has_edge(u, v) : bool
-    + get_edge_weight(u, v) : float
-    + get_vertex_out_degree(u) : int
+    + hasEdge(u : int, v : int) : bool
+    + getEdgeWeight(u : int, v : int) : float
+    + getVertexOutDegree(u : int) : int
+    + getVertexInDegree(u : int) : int
     + ...
   }
 }
 
-package analise {
-  class GraphMetrics {
-    + degree_stats(g) : dict[int, tuple]
-    + density(g) : float
-    + pagerank(g, **kw) : dict[int, float]
+package "biblioteca/analysis" as analise {
+  class GraphAnalyzer <<planned>> {
+    __
+    + degree_stats(g : AbstractGraph) : dict
+    + density(g : AbstractGraph) : float
+    + pagerank(g : AbstractGraph) : dict[int, float]
     + ...
   }
 }
 
-AbstractGraph <.. GraphMetrics : apenas leitura
+GraphAnalyzer ..> AbstractGraph : «use»
 
-note bottom of GraphMetrics
-  **Proibido** NetworkX / igraph para representar o grafo-base.
-  Opcional: NumPy só como **álgebra auxiliar** (ex.: PageRank),
-  desde que o TAD do enunciado continue implementado por vocês.
+note bottom of GraphAnalyzer
+  <<planned>> — sem NetworkX/igraph no TAD-base.
+  NumPy opcional só como álgebra auxiliar.
 end note
 
 @enduml
