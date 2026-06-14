@@ -1,0 +1,420 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2146835884",
+    "pull_request_review_id": 2928212189,
+    "id": 2146835884,
+    "node_id": "PRRC_kwDOCqswNs5_9h2s",
+    "diff_hunk": "@@ -504,61 +505,110 @@ impl DirContents {\n         timeout: Duration,\n         follow_symlinks: bool,\n     ) -> Result<Self, std::io::Error> {\n+        let _ = fs::read_dir(base)?; // Early return if invalid base\n+\n         let start = Instant::now();\n+        let mut remaining_time = timeout;\n \n         let mut folders: HashSet<PathBuf> = HashSet::new();\n         let mut files: HashSet<PathBuf> = HashSet::new();\n         let mut file_names: HashSet<String> = HashSet::new();\n         let mut extensions: HashSet<String> = HashSet::new();\n \n-        fs::read_dir(base)?\n-            .enumerate()\n-            .take_while(|(n, _)| {\n-                cfg!(test) // ignore timeout during tests\n-                || n & 0xFF != 0 // only check timeout once every 2^8 entries\n-                || start.elapsed() < timeout\n-            })\n-            .filter_map(|(_, entry)| entry.ok())\n-            .for_each(|entry| {\n-                let path = PathBuf::from(entry.path().strip_prefix(base).unwrap());\n-\n-                let is_dir = match follow_symlinks {\n-                    true => entry.path().is_dir(),\n-                    false => fs::symlink_metadata(entry.path())\n-                        .map(|m| m.is_dir())\n-                        .unwrap_or(false),\n-                };\n+        let base_path = base;\n+        let base = Arc::from(base);\n+        let (tx, rx) = mpsc::channel();\n \n-                if is_dir {\n-                    folders.insert(path);\n-                } else {\n-                    if !path.to_string_lossy().starts_with('.') {\n-                        // Extract the file extensions (yes, that's plural) from a filename.\n-                        // Why plural? Consider the case of foo.tar.gz. It's a compressed\n-                        // tarball (tar.gz), and it's a gzipped file (gz). We should be able\n-                        // to match both.\n-\n-                        // find the minimal extension on a file. ie, the gz in foo.tar.gz\n-                        // NB the .to_string_lossy().to_string() here looks weird but is\n-                        // required to convert it from a Cow.\n-                        path.extension()\n-                            .map(|ext| extensions.insert(ext.to_string_lossy().to_string()));\n-\n-                        // find the full extension on a file. ie, the tar.gz in foo.tar.gz\n-                        path.file_name().map(|file_name| {\n-                            file_name\n-                                .to_string_lossy()\n-                                .split_once('.')\n-                                .map(|(_, after)| extensions.insert(after.to_string()))\n-                        });\n+        {\n+            let worker = move || {\n+                let timeout = &timeout;\n+                let enumerated_dir = fs::read_dir(base).unwrap().enumerate();\n+                for entry in enumerated_dir\n+                    .take_while(|(n, _)| {\n+                        cfg!(test) // ignore timeout during tests\n+                        || n & 0xFF != 0 // only check timeout once every 2^8 entries\n+                        || start.elapsed() < *timeout\n+                    })",
+    "path": "src/context.rs",
+    "commit_id": "037b1e6d49496d9d11bdce4ff7ea69c3d6f3666e",
+    "original_commit_id": "03bbeeeb42d285e9fca1bb0d50196231f430874a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Lets just end on `tx.send` error instead to avoid superfluous checks (thus please also remove the `log`).",
+    "created_at": "2025-06-14T11:39:14Z",
+    "updated_at": "2025-06-29T16:47:44Z",
+    "html_url": "https://github.com/starship/starship/pull/6694#discussion_r2146835884",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6694",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2146835884"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6694#discussion_r2146835884"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6694"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2146835884/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 525,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 531,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 76,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2146838623",
+    "pull_request_review_id": 2928212189,
+    "id": 2146838623,
+    "node_id": "PRRC_kwDOCqswNs5_9ihf",
+    "diff_hunk": "@@ -504,61 +505,110 @@ impl DirContents {\n         timeout: Duration,\n         follow_symlinks: bool,\n     ) -> Result<Self, std::io::Error> {\n+        let _ = fs::read_dir(base)?; // Early return if invalid base\n+\n         let start = Instant::now();\n+        let mut remaining_time = timeout;\n \n         let mut folders: HashSet<PathBuf> = HashSet::new();\n         let mut files: HashSet<PathBuf> = HashSet::new();\n         let mut file_names: HashSet<String> = HashSet::new();\n         let mut extensions: HashSet<String> = HashSet::new();\n \n-        fs::read_dir(base)?\n-            .enumerate()\n-            .take_while(|(n, _)| {\n-                cfg!(test) // ignore timeout during tests\n-                || n & 0xFF != 0 // only check timeout once every 2^8 entries\n-                || start.elapsed() < timeout\n-            })\n-            .filter_map(|(_, entry)| entry.ok())\n-            .for_each(|entry| {\n-                let path = PathBuf::from(entry.path().strip_prefix(base).unwrap());\n-\n-                let is_dir = match follow_symlinks {\n-                    true => entry.path().is_dir(),\n-                    false => fs::symlink_metadata(entry.path())\n-                        .map(|m| m.is_dir())\n-                        .unwrap_or(false),\n-                };\n+        let base_path = base;\n+        let base = Arc::from(base);\n+        let (tx, rx) = mpsc::channel();\n \n-                if is_dir {\n-                    folders.insert(path);\n-                } else {\n-                    if !path.to_string_lossy().starts_with('.') {\n-                        // Extract the file extensions (yes, that's plural) from a filename.\n-                        // Why plural? Consider the case of foo.tar.gz. It's a compressed\n-                        // tarball (tar.gz), and it's a gzipped file (gz). We should be able\n-                        // to match both.\n-\n-                        // find the minimal extension on a file. ie, the gz in foo.tar.gz\n-                        // NB the .to_string_lossy().to_string() here looks weird but is\n-                        // required to convert it from a Cow.\n-                        path.extension()\n-                            .map(|ext| extensions.insert(ext.to_string_lossy().to_string()));\n-\n-                        // find the full extension on a file. ie, the tar.gz in foo.tar.gz\n-                        path.file_name().map(|file_name| {\n-                            file_name\n-                                .to_string_lossy()\n-                                .split_once('.')\n-                                .map(|(_, after)| extensions.insert(after.to_string()))\n-                        });\n+        {\n+            let worker = move || {\n+                let timeout = &timeout;\n+                let enumerated_dir = fs::read_dir(base).unwrap().enumerate();\n+                for entry in enumerated_dir\n+                    .take_while(|(n, _)| {\n+                        cfg!(test) // ignore timeout during tests\n+                        || n & 0xFF != 0 // only check timeout once every 2^8 entries\n+                        || start.elapsed() < *timeout\n+                    })\n+                    .filter_map(|(_, entry)| entry.ok())\n+                {\n+                    match tx.send(entry) {\n+                        Ok(_) => continue,\n+                        Err(e) => {\n+                            log::warn!(\"Error occurred while sending across mpsc: {e}\");\n+                            break;\n+                        }\n                     }\n-                    if let Some(file_name) = path.file_name() {\n-                        // this .to_string_lossy().to_string() is also required\n-                        file_names.insert(file_name.to_string_lossy().to_string());\n+                }\n+            };\n+\n+            let _ = thread::Builder::new()\n+                .name(\"from_path_with_timeout worker\".into())\n+                .spawn(worker)?;\n+        }\n+\n+        loop {\n+            match rx.recv_timeout(remaining_time) {",
+    "path": "src/context.rs",
+    "commit_id": "037b1e6d49496d9d11bdce4ff7ea69c3d6f3666e",
+    "original_commit_id": "03bbeeeb42d285e9fca1bb0d50196231f430874a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Timeouts should not happen unless specifically tested. Alternatively perhaps add a function that redirects that redirects to either the timeout/non-timeout version based on `cfg(test)` to allow for timeout-specific tests.\r\n```suggestion\r\n            // TODO: use `recv_deadline` instead once stable\r\n            let msg = if cfg(test) { rx.recv() } else { rx.recv_timeout(remaining_time) };\r\n            match msg {\r\n```",
+    "created_at": "2025-06-14T11:40:59Z",
+    "updated_at": "2025-06-29T16:47:44Z",
+    "html_url": "https://github.com/starship/starship/pull/6694#discussion_r2146838623",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6694",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2146838623"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6694#discussion_r2146838623"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6694"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2146838623/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 550,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 98,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2175588572",
+    "pull_request_review_id": 2972130685,
+    "id": 2175588572,
+    "node_id": "PRRC_kwDOCqswNs6BrNjc",
+    "diff_hunk": "@@ -504,61 +505,110 @@ impl DirContents {\n         timeout: Duration,\n         follow_symlinks: bool,\n     ) -> Result<Self, std::io::Error> {\n+        let _ = fs::read_dir(base)?; // Early return if invalid base\n+\n         let start = Instant::now();\n+        let mut remaining_time = timeout;\n \n         let mut folders: HashSet<PathBuf> = HashSet::new();\n         let mut files: HashSet<PathBuf> = HashSet::new();\n         let mut file_names: HashSet<String> = HashSet::new();\n         let mut extensions: HashSet<String> = HashSet::new();\n \n-        fs::read_dir(base)?\n-            .enumerate()\n-            .take_while(|(n, _)| {\n-                cfg!(test) // ignore timeout during tests\n-                || n & 0xFF != 0 // only check timeout once every 2^8 entries\n-                || start.elapsed() < timeout\n-            })\n-            .filter_map(|(_, entry)| entry.ok())\n-            .for_each(|entry| {\n-                let path = PathBuf::from(entry.path().strip_prefix(base).unwrap());\n-\n-                let is_dir = match follow_symlinks {\n-                    true => entry.path().is_dir(),\n-                    false => fs::symlink_metadata(entry.path())\n-                        .map(|m| m.is_dir())\n-                        .unwrap_or(false),\n-                };\n+        let base_path = base;\n+        let base = Arc::from(base);\n+        let (tx, rx) = mpsc::channel();\n \n-                if is_dir {\n-                    folders.insert(path);\n-                } else {\n-                    if !path.to_string_lossy().starts_with('.') {\n-                        // Extract the file extensions (yes, that's plural) from a filename.\n-                        // Why plural? Consider the case of foo.tar.gz. It's a compressed\n-                        // tarball (tar.gz), and it's a gzipped file (gz). We should be able\n-                        // to match both.\n-\n-                        // find the minimal extension on a file. ie, the gz in foo.tar.gz\n-                        // NB the .to_string_lossy().to_string() here looks weird but is\n-                        // required to convert it from a Cow.\n-                        path.extension()\n-                            .map(|ext| extensions.insert(ext.to_string_lossy().to_string()));\n-\n-                        // find the full extension on a file. ie, the tar.gz in foo.tar.gz\n-                        path.file_name().map(|file_name| {\n-                            file_name\n-                                .to_string_lossy()\n-                                .split_once('.')\n-                                .map(|(_, after)| extensions.insert(after.to_string()))\n-                        });\n+        {\n+            let worker = move || {\n+                let timeout = &timeout;\n+                let enumerated_dir = fs::read_dir(base).unwrap().enumerate();\n+                for entry in enumerated_dir\n+                    .take_while(|(n, _)| {\n+                        cfg!(test) // ignore timeout during tests\n+                        || n & 0xFF != 0 // only check timeout once every 2^8 entries\n+                        || start.elapsed() < *timeout\n+                    })",
+    "path": "src/context.rs",
+    "commit_id": "037b1e6d49496d9d11bdce4ff7ea69c3d6f3666e",
+    "original_commit_id": "03bbeeeb42d285e9fca1bb0d50196231f430874a",
+    "user": {
+      "login": "SpookyYomo",
+      "id": 48710653,
+      "node_id": "MDQ6VXNlcjQ4NzEwNjUz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48710653?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/SpookyYomo",
+      "html_url": "https://github.com/SpookyYomo",
+      "followers_url": "https://api.github.com/users/SpookyYomo/followers",
+      "following_url": "https://api.github.com/users/SpookyYomo/following{/other_user}",
+      "gists_url": "https://api.github.com/users/SpookyYomo/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/SpookyYomo/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/SpookyYomo/subscriptions",
+      "organizations_url": "https://api.github.com/users/SpookyYomo/orgs",
+      "repos_url": "https://api.github.com/users/SpookyYomo/repos",
+      "events_url": "https://api.github.com/users/SpookyYomo/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/SpookyYomo/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "> Lets just end on `tx.send` error instead to avoid superfluous checks (thus please also remove the `log`).\r\n\r\nI take this to mean that removing only the `cfg!` and `n & 0xFF`? I assume this being part of the `from_path_with_timeout` means we should still be checking against the elapsed time...\r\nedit: I think you're aiming for code cov? I suppose this is why you're suggesting splitting into timeout and non-timeout versions?",
+    "created_at": "2025-06-30T17:41:56Z",
+    "updated_at": "2025-06-30T17:57:02Z",
+    "html_url": "https://github.com/starship/starship/pull/6694#discussion_r2175588572",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6694",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2175588572"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6694#discussion_r2175588572"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6694"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2175588572/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 525,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 531,
+    "side": "RIGHT",
+    "in_reply_to_id": 2146835884,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 76,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2175602286",
+    "pull_request_review_id": 2972157249,
+    "id": 2175602286,
+    "node_id": "PRRC_kwDOCqswNs6BrQ5u",
+    "diff_hunk": "@@ -504,61 +505,110 @@ impl DirContents {\n         timeout: Duration,\n         follow_symlinks: bool,\n     ) -> Result<Self, std::io::Error> {\n+        let _ = fs::read_dir(base)?; // Early return if invalid base\n+\n         let start = Instant::now();\n+        let mut remaining_time = timeout;\n \n         let mut folders: HashSet<PathBuf> = HashSet::new();\n         let mut files: HashSet<PathBuf> = HashSet::new();\n         let mut file_names: HashSet<String> = HashSet::new();\n         let mut extensions: HashSet<String> = HashSet::new();\n \n-        fs::read_dir(base)?\n-            .enumerate()\n-            .take_while(|(n, _)| {\n-                cfg!(test) // ignore timeout during tests\n-                || n & 0xFF != 0 // only check timeout once every 2^8 entries\n-                || start.elapsed() < timeout\n-            })\n-            .filter_map(|(_, entry)| entry.ok())\n-            .for_each(|entry| {\n-                let path = PathBuf::from(entry.path().strip_prefix(base).unwrap());\n-\n-                let is_dir = match follow_symlinks {\n-                    true => entry.path().is_dir(),\n-                    false => fs::symlink_metadata(entry.path())\n-                        .map(|m| m.is_dir())\n-                        .unwrap_or(false),\n-                };\n+        let base_path = base;\n+        let base = Arc::from(base);\n+        let (tx, rx) = mpsc::channel();\n \n-                if is_dir {\n-                    folders.insert(path);\n-                } else {\n-                    if !path.to_string_lossy().starts_with('.') {\n-                        // Extract the file extensions (yes, that's plural) from a filename.\n-                        // Why plural? Consider the case of foo.tar.gz. It's a compressed\n-                        // tarball (tar.gz), and it's a gzipped file (gz). We should be able\n-                        // to match both.\n-\n-                        // find the minimal extension on a file. ie, the gz in foo.tar.gz\n-                        // NB the .to_string_lossy().to_string() here looks weird but is\n-                        // required to convert it from a Cow.\n-                        path.extension()\n-                            .map(|ext| extensions.insert(ext.to_string_lossy().to_string()));\n-\n-                        // find the full extension on a file. ie, the tar.gz in foo.tar.gz\n-                        path.file_name().map(|file_name| {\n-                            file_name\n-                                .to_string_lossy()\n-                                .split_once('.')\n-                                .map(|(_, after)| extensions.insert(after.to_string()))\n-                        });\n+        {\n+            let worker = move || {\n+                let timeout = &timeout;\n+                let enumerated_dir = fs::read_dir(base).unwrap().enumerate();\n+                for entry in enumerated_dir\n+                    .take_while(|(n, _)| {\n+                        cfg!(test) // ignore timeout during tests\n+                        || n & 0xFF != 0 // only check timeout once every 2^8 entries\n+                        || start.elapsed() < *timeout\n+                    })\n+                    .filter_map(|(_, entry)| entry.ok())\n+                {\n+                    match tx.send(entry) {\n+                        Ok(_) => continue,\n+                        Err(e) => {\n+                            log::warn!(\"Error occurred while sending across mpsc: {e}\");\n+                            break;\n+                        }\n                     }\n-                    if let Some(file_name) = path.file_name() {\n-                        // this .to_string_lossy().to_string() is also required\n-                        file_names.insert(file_name.to_string_lossy().to_string());\n+                }\n+            };\n+\n+            let _ = thread::Builder::new()\n+                .name(\"from_path_with_timeout worker\".into())\n+                .spawn(worker)?;\n+        }\n+\n+        loop {\n+            match rx.recv_timeout(remaining_time) {",
+    "path": "src/context.rs",
+    "commit_id": "037b1e6d49496d9d11bdce4ff7ea69c3d6f3666e",
+    "original_commit_id": "03bbeeeb42d285e9fca1bb0d50196231f430874a",
+    "user": {
+      "login": "SpookyYomo",
+      "id": 48710653,
+      "node_id": "MDQ6VXNlcjQ4NzEwNjUz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48710653?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/SpookyYomo",
+      "html_url": "https://github.com/SpookyYomo",
+      "followers_url": "https://api.github.com/users/SpookyYomo/followers",
+      "following_url": "https://api.github.com/users/SpookyYomo/following{/other_user}",
+      "gists_url": "https://api.github.com/users/SpookyYomo/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/SpookyYomo/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/SpookyYomo/subscriptions",
+      "organizations_url": "https://api.github.com/users/SpookyYomo/orgs",
+      "repos_url": "https://api.github.com/users/SpookyYomo/repos",
+      "events_url": "https://api.github.com/users/SpookyYomo/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/SpookyYomo/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Resolved with [11d161f](https://github.com/starship/starship/pull/6694/commits/11d161f06ad9422893008f3830c58756aac9d391)",
+    "created_at": "2025-06-30T17:50:43Z",
+    "updated_at": "2025-06-30T17:50:44Z",
+    "html_url": "https://github.com/starship/starship/pull/6694#discussion_r2175602286",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6694",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2175602286"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6694#discussion_r2175602286"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6694"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2175602286/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 550,
+    "side": "RIGHT",
+    "in_reply_to_id": 2146838623,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 98,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2180414050",
+    "pull_request_review_id": 2979720843,
+    "id": 2180414050,
+    "node_id": "PRRC_kwDOCqswNs6B9npi",
+    "diff_hunk": "@@ -504,61 +505,110 @@ impl DirContents {\n         timeout: Duration,\n         follow_symlinks: bool,\n     ) -> Result<Self, std::io::Error> {\n+        let _ = fs::read_dir(base)?; // Early return if invalid base\n+\n         let start = Instant::now();\n+        let mut remaining_time = timeout;\n \n         let mut folders: HashSet<PathBuf> = HashSet::new();\n         let mut files: HashSet<PathBuf> = HashSet::new();\n         let mut file_names: HashSet<String> = HashSet::new();\n         let mut extensions: HashSet<String> = HashSet::new();\n \n-        fs::read_dir(base)?\n-            .enumerate()\n-            .take_while(|(n, _)| {\n-                cfg!(test) // ignore timeout during tests\n-                || n & 0xFF != 0 // only check timeout once every 2^8 entries\n-                || start.elapsed() < timeout\n-            })\n-            .filter_map(|(_, entry)| entry.ok())\n-            .for_each(|entry| {\n-                let path = PathBuf::from(entry.path().strip_prefix(base).unwrap());\n-\n-                let is_dir = match follow_symlinks {\n-                    true => entry.path().is_dir(),\n-                    false => fs::symlink_metadata(entry.path())\n-                        .map(|m| m.is_dir())\n-                        .unwrap_or(false),\n-                };\n+        let base_path = base;\n+        let base = Arc::from(base);\n+        let (tx, rx) = mpsc::channel();\n \n-                if is_dir {\n-                    folders.insert(path);\n-                } else {\n-                    if !path.to_string_lossy().starts_with('.') {\n-                        // Extract the file extensions (yes, that's plural) from a filename.\n-                        // Why plural? Consider the case of foo.tar.gz. It's a compressed\n-                        // tarball (tar.gz), and it's a gzipped file (gz). We should be able\n-                        // to match both.\n-\n-                        // find the minimal extension on a file. ie, the gz in foo.tar.gz\n-                        // NB the .to_string_lossy().to_string() here looks weird but is\n-                        // required to convert it from a Cow.\n-                        path.extension()\n-                            .map(|ext| extensions.insert(ext.to_string_lossy().to_string()));\n-\n-                        // find the full extension on a file. ie, the tar.gz in foo.tar.gz\n-                        path.file_name().map(|file_name| {\n-                            file_name\n-                                .to_string_lossy()\n-                                .split_once('.')\n-                                .map(|(_, after)| extensions.insert(after.to_string()))\n-                        });\n+        {\n+            let worker = move || {\n+                let timeout = &timeout;\n+                let enumerated_dir = fs::read_dir(base).unwrap().enumerate();\n+                for entry in enumerated_dir\n+                    .take_while(|(n, _)| {\n+                        cfg!(test) // ignore timeout during tests\n+                        || n & 0xFF != 0 // only check timeout once every 2^8 entries\n+                        || start.elapsed() < *timeout\n+                    })",
+    "path": "src/context.rs",
+    "commit_id": "037b1e6d49496d9d11bdce4ff7ea69c3d6f3666e",
+    "original_commit_id": "03bbeeeb42d285e9fca1bb0d50196231f430874a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "On timeout the receiving channel `rx` should be dropped, leading to `tx.send` erroring. Thus any explicit timeout handling on the transmission end shouldn't be necessary.",
+    "created_at": "2025-07-02T15:52:39Z",
+    "updated_at": "2025-07-02T15:52:39Z",
+    "html_url": "https://github.com/starship/starship/pull/6694#discussion_r2180414050",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6694",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2180414050"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6694#discussion_r2180414050"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6694"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2180414050/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 525,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 531,
+    "side": "RIGHT",
+    "in_reply_to_id": 2146835884,
+    "author_association": "MEMBER",
+    "original_position": 76,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2183361588",
+    "pull_request_review_id": 2984056591,
+    "id": 2183361588,
+    "node_id": "PRRC_kwDOCqswNs6CI3Q0",
+    "diff_hunk": "@@ -504,61 +505,110 @@ impl DirContents {\n         timeout: Duration,\n         follow_symlinks: bool,\n     ) -> Result<Self, std::io::Error> {\n+        let _ = fs::read_dir(base)?; // Early return if invalid base\n+\n         let start = Instant::now();\n+        let mut remaining_time = timeout;\n \n         let mut folders: HashSet<PathBuf> = HashSet::new();\n         let mut files: HashSet<PathBuf> = HashSet::new();\n         let mut file_names: HashSet<String> = HashSet::new();\n         let mut extensions: HashSet<String> = HashSet::new();\n \n-        fs::read_dir(base)?\n-            .enumerate()\n-            .take_while(|(n, _)| {\n-                cfg!(test) // ignore timeout during tests\n-                || n & 0xFF != 0 // only check timeout once every 2^8 entries\n-                || start.elapsed() < timeout\n-            })\n-            .filter_map(|(_, entry)| entry.ok())\n-            .for_each(|entry| {\n-                let path = PathBuf::from(entry.path().strip_prefix(base).unwrap());\n-\n-                let is_dir = match follow_symlinks {\n-                    true => entry.path().is_dir(),\n-                    false => fs::symlink_metadata(entry.path())\n-                        .map(|m| m.is_dir())\n-                        .unwrap_or(false),\n-                };\n+        let base_path = base;\n+        let base = Arc::from(base);\n+        let (tx, rx) = mpsc::channel();\n \n-                if is_dir {\n-                    folders.insert(path);\n-                } else {\n-                    if !path.to_string_lossy().starts_with('.') {\n-                        // Extract the file extensions (yes, that's plural) from a filename.\n-                        // Why plural? Consider the case of foo.tar.gz. It's a compressed\n-                        // tarball (tar.gz), and it's a gzipped file (gz). We should be able\n-                        // to match both.\n-\n-                        // find the minimal extension on a file. ie, the gz in foo.tar.gz\n-                        // NB the .to_string_lossy().to_string() here looks weird but is\n-                        // required to convert it from a Cow.\n-                        path.extension()\n-                            .map(|ext| extensions.insert(ext.to_string_lossy().to_string()));\n-\n-                        // find the full extension on a file. ie, the tar.gz in foo.tar.gz\n-                        path.file_name().map(|file_name| {\n-                            file_name\n-                                .to_string_lossy()\n-                                .split_once('.')\n-                                .map(|(_, after)| extensions.insert(after.to_string()))\n-                        });\n+        {\n+            let worker = move || {\n+                let timeout = &timeout;\n+                let enumerated_dir = fs::read_dir(base).unwrap().enumerate();\n+                for entry in enumerated_dir\n+                    .take_while(|(n, _)| {\n+                        cfg!(test) // ignore timeout during tests\n+                        || n & 0xFF != 0 // only check timeout once every 2^8 entries\n+                        || start.elapsed() < *timeout\n+                    })",
+    "path": "src/context.rs",
+    "commit_id": "037b1e6d49496d9d11bdce4ff7ea69c3d6f3666e",
+    "original_commit_id": "03bbeeeb42d285e9fca1bb0d50196231f430874a",
+    "user": {
+      "login": "SpookyYomo",
+      "id": 48710653,
+      "node_id": "MDQ6VXNlcjQ4NzEwNjUz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48710653?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/SpookyYomo",
+      "html_url": "https://github.com/SpookyYomo",
+      "followers_url": "https://api.github.com/users/SpookyYomo/followers",
+      "following_url": "https://api.github.com/users/SpookyYomo/following{/other_user}",
+      "gists_url": "https://api.github.com/users/SpookyYomo/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/SpookyYomo/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/SpookyYomo/subscriptions",
+      "organizations_url": "https://api.github.com/users/SpookyYomo/orgs",
+      "repos_url": "https://api.github.com/users/SpookyYomo/repos",
+      "events_url": "https://api.github.com/users/SpookyYomo/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/SpookyYomo/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "My bad yes, the control flow was lost on me after not having looked at this for a while.",
+    "created_at": "2025-07-03T17:35:55Z",
+    "updated_at": "2025-07-03T17:35:55Z",
+    "html_url": "https://github.com/starship/starship/pull/6694#discussion_r2183361588",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6694",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2183361588"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6694#discussion_r2183361588"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6694"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2183361588/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 525,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 531,
+    "side": "RIGHT",
+    "in_reply_to_id": 2146835884,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 76,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

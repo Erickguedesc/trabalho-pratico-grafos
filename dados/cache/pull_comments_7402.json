@@ -1,0 +1,71 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3097963217",
+    "pull_request_review_id": 4126167936,
+    "id": 3097963217,
+    "node_id": "PRRC_kwDOCqswNs64pyrR",
+    "diff_hunk": "@@ -26,11 +26,37 @@ struct StarshipPath {\n impl StarshipPath {\n     fn init() -> io::Result<Self> {\n         let exe_name = option_env!(\"CARGO_PKG_NAME\").unwrap_or(\"starship\");\n-\n-        let native_path = which(exe_name).or_else(|_| env::current_exe())?;\n+        let native_path = Self::resolve_native_path(\n+            env::args_os().next().as_deref(),\n+            || which(exe_name).map_err(io::Error::other),\n+            env::current_exe,\n+        )?;\n \n         Ok(Self { native_path })\n     }\n+\n+    fn resolve_native_path<LookupPath, CurrentExe>(\n+        argv0: Option<&OsStr>,\n+        lookup_path: LookupPath,\n+        current_exe: CurrentExe,\n+    ) -> io::Result<PathBuf>\n+    where\n+        LookupPath: FnOnce() -> io::Result<PathBuf>,\n+        CurrentExe: FnOnce() -> io::Result<PathBuf>,\n+    {\n+        // If starship was invoked via an explicit path, preserve the exact\n+        // executable that is currently running instead of re-resolving via PATH.\n+        if argv0.is_some_and(Self::invoked_with_path) {\n+            current_exe()\n+        } else {\n+            lookup_path().or_else(|_| current_exe())\n+        }",
+    "path": "src/init/mod.rs",
+    "commit_id": "714a78369b1b3237eb09b586c3e3875cc7d73b4d",
+    "original_commit_id": "714a78369b1b3237eb09b586c3e3875cc7d73b4d",
+    "user": {
+      "login": "Copilot",
+      "id": 175728472,
+      "node_id": "BOT_kgDOCnlnWA",
+      "avatar_url": "https://avatars.githubusercontent.com/in/946600?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Copilot",
+      "html_url": "https://github.com/apps/copilot-pull-request-reviewer",
+      "followers_url": "https://api.github.com/users/Copilot/followers",
+      "following_url": "https://api.github.com/users/Copilot/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Copilot/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Copilot/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Copilot/subscriptions",
+      "organizations_url": "https://api.github.com/users/Copilot/orgs",
+      "repos_url": "https://api.github.com/users/Copilot/repos",
+      "events_url": "https://api.github.com/users/Copilot/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Copilot/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`resolve_native_path` returns `current_exe()` directly when invoked with an explicit path. If `env::current_exe()` fails on a platform/environment (it can return `io::Error`), `starship init ...` will now fail even though a PATH lookup could have succeeded. Consider falling back when `current_exe()` errors in this branch (e.g., try `current_exe().or_else(|_| lookup_path())`, or fall back to `argv0`/a resolved form of it) to avoid introducing a new hard failure mode for explicit-path invocations.\n```suggestion\n        // However, `current_exe()` can fail on some platforms/environments, so\n        // fall back to PATH lookup instead of introducing a hard failure.\n        if argv0.is_some_and(Self::invoked_with_path) {\n            return current_exe().or_else(|_| lookup_path());\n        }\n\n        lookup_path().or_else(|_| current_exe())\n```",
+    "created_at": "2026-04-17T04:59:31Z",
+    "updated_at": "2026-04-17T04:59:31Z",
+    "html_url": "https://github.com/starship/starship/pull/7402#discussion_r3097963217",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7402",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3097963217"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7402#discussion_r3097963217"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7402"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3097963217/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 49,
+    "original_start_line": 49,
+    "start_side": "RIGHT",
+    "line": 53,
+    "original_line": 53,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 30,
+    "position": 30,
+    "subject_type": "line"
+  }
+]

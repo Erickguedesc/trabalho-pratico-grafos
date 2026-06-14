@@ -1,0 +1,487 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/714956712",
+    "pull_request_review_id": 762239960,
+    "id": 714956712,
+    "node_id": "PRRC_kwDOCqswNs4qnV-o",
+    "diff_hunk": "@@ -128,6 +128,17 @@ impl<'a> Context<'a> {\n \n         let right = arguments.is_present(\"right\");\n \n+        let mut width = term_size::dimensions()\n+            .map(|(width, _)| width)\n+            .unwrap_or_default();\n+        if width == 0 {\n+            width = arguments\n+                .value_of(\"terminal_width\")\n+                .unwrap_or(\"0\")\n+                .parse()\n+                .unwrap_or(0);\n+        }\n+",
+    "path": "src/context.rs",
+    "commit_id": "101ced59a13c44fe3140702c37f6da8a2fc4cc2b",
+    "original_commit_id": "b9524b18651f1714cf3e9e6337f13ae584f8c4ff",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think the command line argument should take precedence here, and I'd prefer a saner default and something more functional like this:\r\n```suggestion\r\n        let width = arguments\r\n            .value_of(\"terminal_width\")\r\n            .and_then(|w| w.parse().ok())\r\n            .or_else(|| terminal_size().map(|(w, _)| w.0 as usize))\r\n            .unwrap_or(80);\r\n```",
+    "created_at": "2021-09-23T16:18:35Z",
+    "updated_at": "2021-09-23T16:18:36Z",
+    "html_url": "https://github.com/starship/starship/pull/3090#discussion_r714956712",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3090",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/714956712"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3090#discussion_r714956712"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3090"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/714956712/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 131,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 141,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 14,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/714957194",
+    "pull_request_review_id": 762240591,
+    "id": 714957194,
+    "node_id": "PRRC_kwDOCqswNs4qnWGK",
+    "diff_hunk": "@@ -12,6 +12,8 @@\n # drawn, and only start the timer if this flag is present. That way, timing is\n # for the entire command, and not just a portion of it.\n \n+STARSHIP_EXE=::STARSHIP::",
+    "path": "src/init/starship.bash",
+    "commit_id": "101ced59a13c44fe3140702c37f6da8a2fc4cc2b",
+    "original_commit_id": "b9524b18651f1714cf3e9e6337f13ae584f8c4ff",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please remove this change.",
+    "created_at": "2021-09-23T16:19:11Z",
+    "updated_at": "2021-09-23T16:19:12Z",
+    "html_url": "https://github.com/starship/starship/pull/3090#discussion_r714957194",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3090",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/714957194"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3090#discussion_r714957194"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3090"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/714957194/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 15,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/714958064",
+    "pull_request_review_id": 762241719,
+    "id": 714958064,
+    "node_id": "PRRC_kwDOCqswNs4qnWTw",
+    "diff_hunk": "@@ -30,6 +30,13 @@ fn main() {\n         .long_help(\"Bash and Zsh supports returning codes for each process in a pipeline.\")\n         .multiple(true);\n \n+    let terminal_width_arg = Arg::with_name(\"terminal_width\")\n+        .short(\"t\")",
+    "path": "src/main.rs",
+    "commit_id": "101ced59a13c44fe3140702c37f6da8a2fc4cc2b",
+    "original_commit_id": "b9524b18651f1714cf3e9e6337f13ae584f8c4ff",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I would prefer `-w` for the argument\r\n```suggestion\r\n        .short(\"w\")\r\n```",
+    "created_at": "2021-09-23T16:20:17Z",
+    "updated_at": "2021-09-23T16:20:18Z",
+    "html_url": "https://github.com/starship/starship/pull/3090#discussion_r714958064",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3090",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/714958064"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3090#discussion_r714958064"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3090"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/714958064/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 34,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 5,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/714962311",
+    "pull_request_review_id": 762247507,
+    "id": 714962311,
+    "node_id": "PRRC_kwDOCqswNs4qnXWH",
+    "diff_hunk": "@@ -12,6 +12,8 @@\n # drawn, and only start the timer if this flag is present. That way, timing is\n # for the entire command, and not just a portion of it.\n \n+STARSHIP_EXE=::STARSHIP::",
+    "path": "src/init/starship.bash",
+    "commit_id": "101ced59a13c44fe3140702c37f6da8a2fc4cc2b",
+    "original_commit_id": "b9524b18651f1714cf3e9e6337f13ae584f8c4ff",
+    "user": {
+      "login": "rashil2000",
+      "id": 46838874,
+      "node_id": "MDQ6VXNlcjQ2ODM4ODc0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/46838874?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rashil2000",
+      "html_url": "https://github.com/rashil2000",
+      "followers_url": "https://api.github.com/users/rashil2000/followers",
+      "following_url": "https://api.github.com/users/rashil2000/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rashil2000/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rashil2000/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rashil2000/subscriptions",
+      "organizations_url": "https://api.github.com/users/rashil2000/orgs",
+      "repos_url": "https://api.github.com/users/rashil2000/repos",
+      "events_url": "https://api.github.com/users/rashil2000/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rashil2000/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Sorry, but is there a particular reason why we need 5 different instances of the binary's full path (which replaces the `::STARSHIP::` here)?",
+    "created_at": "2021-09-23T16:25:46Z",
+    "updated_at": "2021-09-23T16:25:46Z",
+    "html_url": "https://github.com/starship/starship/pull/3090#discussion_r714962311",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3090",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/714962311"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3090#discussion_r714962311"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3090"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/714962311/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 15,
+    "side": "RIGHT",
+    "in_reply_to_id": 714957194,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/714981402",
+    "pull_request_review_id": 762273109,
+    "id": 714981402,
+    "node_id": "PRRC_kwDOCqswNs4qncAa",
+    "diff_hunk": "@@ -12,6 +12,8 @@\n # drawn, and only start the timer if this flag is present. That way, timing is\n # for the entire command, and not just a portion of it.\n \n+STARSHIP_EXE=::STARSHIP::",
+    "path": "src/init/starship.bash",
+    "commit_id": "101ced59a13c44fe3140702c37f6da8a2fc4cc2b",
+    "original_commit_id": "b9524b18651f1714cf3e9e6337f13ae584f8c4ff",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I don't think a new `STARSHIP_EXE` env var is a big improvement over that, and I'd prefer not to pull unrelated changes into this PR.",
+    "created_at": "2021-09-23T16:50:47Z",
+    "updated_at": "2021-09-23T16:50:47Z",
+    "html_url": "https://github.com/starship/starship/pull/3090#discussion_r714981402",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3090",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/714981402"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3090#discussion_r714981402"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3090"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/714981402/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 15,
+    "side": "RIGHT",
+    "in_reply_to_id": 714957194,
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/721578863",
+    "pull_request_review_id": 770588222,
+    "id": 721578863,
+    "node_id": "PRRC_kwDOCqswNs4rAmtv",
+    "diff_hunk": "@@ -49,10 +49,10 @@ starship_precmd() {\n     if [[ $STARSHIP_START_TIME ]]; then\n         STARSHIP_END_TIME=$(::STARSHIP:: time)\n         STARSHIP_DURATION=$((STARSHIP_END_TIME - STARSHIP_START_TIME))\n-        PS1=\"$(::STARSHIP:: prompt --status=$STARSHIP_CMD_STATUS  --pipestatus ${STARSHIP_PIPE_STATUS[@]} --jobs=\"$NUM_JOBS\" --cmd-duration=$STARSHIP_DURATION)\"\n+        PS1=\"$(::STARSHIP:: prompt --terminal-width=$COLUMNS --status=$STARSHIP_CMD_STATUS  --pipestatus ${STARSHIP_PIPE_STATUS[@]} --jobs=\"$NUM_JOBS\" --cmd-duration=$STARSHIP_DURATION)\"",
+    "path": "src/init/starship.bash",
+    "commit_id": "101ced59a13c44fe3140702c37f6da8a2fc4cc2b",
+    "original_commit_id": "1ed7c3baac3d0ea317212fa7cb333518194aeabc",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please quote `$COLUMNS` here and below.",
+    "created_at": "2021-10-04T17:39:33Z",
+    "updated_at": "2021-10-04T17:42:09Z",
+    "html_url": "https://github.com/starship/starship/pull/3090#discussion_r721578863",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3090",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/721578863"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3090#discussion_r721578863"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3090"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/721578863/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 52,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 5,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/721580294",
+    "pull_request_review_id": 770588222,
+    "id": 721580294,
+    "node_id": "PRRC_kwDOCqswNs4rAnEG",
+    "diff_hunk": "@@ -9,11 +9,11 @@ function fish_prompt\n     # Account for changes in variable name between v2.7 and v3.0\n     set STARSHIP_DURATION \"$CMD_DURATION$cmd_duration\"\n     set STARSHIP_JOBS (count (jobs -p))\n-    ::STARSHIP:: prompt --status=$STARSHIP_CMD_STATUS --pipestatus=$pipestatus --keymap=$STARSHIP_KEYMAP --cmd-duration=$STARSHIP_DURATION --jobs=$STARSHIP_JOBS\n+    ::STARSHIP:: prompt --terminal-width=$COLUMNS --status=$STARSHIP_CMD_STATUS --pipestatus=$pipestatus --keymap=$STARSHIP_KEYMAP --cmd-duration=$STARSHIP_DURATION --jobs=$STARSHIP_JOBS",
+    "path": "src/init/starship.fish",
+    "commit_id": "101ced59a13c44fe3140702c37f6da8a2fc4cc2b",
+    "original_commit_id": "1ed7c3baac3d0ea317212fa7cb333518194aeabc",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please quote `$COLUMNS` here and below.",
+    "created_at": "2021-10-04T17:41:33Z",
+    "updated_at": "2021-10-04T17:42:09Z",
+    "html_url": "https://github.com/starship/starship/pull/3090#discussion_r721580294",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3090",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/721580294"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3090#discussion_r721580294"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3090"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/721580294/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 12,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 5,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

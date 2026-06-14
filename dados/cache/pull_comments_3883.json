@@ -1,0 +1,906 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/895245559",
+    "pull_request_review_id": 1003679458,
+    "id": 895245559,
+    "node_id": "PRRC_kwDOCqswNs41XFz3",
+    "diff_hunk": "@@ -255,22 +255,29 @@ impl<'a> Context<'a> {\n     }\n \n     /// Will lazily get repo root and branch when a module requests it.\n-    pub fn get_repo(&self) -> Result<&Repo, git2::Error> {\n-        self.repo.get_or_try_init(|| -> Result<Repo, git2::Error> {\n-            let repository = if env::var(\"GIT_DIR\").is_ok() {\n-                Repository::open_from_env()\n-            } else {\n-                let dirs: [PathBuf; 0] = [];\n-                Repository::open_ext(&self.current_dir, git2::RepositoryOpenFlags::FROM_ENV, dirs)\n-            }?;\n-            Ok(Repo {\n-                branch: get_current_branch(&repository),\n-                workdir: repository.workdir().map(Path::to_path_buf),\n-                path: Path::to_path_buf(repository.path()),\n-                state: repository.state(),\n-                remote: get_remote_repository_info(&repository),\n+    pub fn get_repo(&self) -> Result<&Repo, git_repository::discover::Error> {\n+        self.repo\n+            .get_or_try_init(|| -> Result<Repo, git_repository::discover::Error> {\n+                let shared_repo =\n+                    ThreadSafeRepository::discover_with_environment_overrides(&self.current_dir)?;\n+\n+                let repository = shared_repo.to_thread_local();\n+                let branch = get_current_branch(&repository);\n+                let remote = get_remote_repository_info(&repository, branch.as_deref());\n+                let path = repository.path().to_path_buf();\n+                let trust_level = git_sec::Trust::from_path_ownership(&path)",
+    "path": "src/context.rs",
+    "commit_id": "e3570611cdbb31993eb47d87fd7cdc41592aa5de",
+    "original_commit_id": "76af9604f934e04a0854c4678f7ed50738b1db40",
+    "user": {
+      "login": "Byron",
+      "id": 63622,
+      "node_id": "MDQ6VXNlcjYzNjIy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/63622?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Byron",
+      "html_url": "https://github.com/Byron",
+      "followers_url": "https://api.github.com/users/Byron/followers",
+      "following_url": "https://api.github.com/users/Byron/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Byron/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Byron/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Byron/subscriptions",
+      "organizations_url": "https://api.github.com/users/Byron/orgs",
+      "repos_url": "https://api.github.com/users/Byron/repos",
+      "events_url": "https://api.github.com/users/Byron/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Byron/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ideally `git-repository` users won't ever have the need to pull in a plumbing crate directly. Thus `git_sec` should be `git::sec` here unless it's a matter of preference.\r\n\r\nThe reason for that is that they will only have to maintain one crate version to use anything `git` related, which is `git-repository`. Note that as per [gitoxide's stability policy](https://github.com/Byron/gitoxide/blob/498072ea42dca7b9d00bedba42829bdac92195b9/STABILITY.md#L1-L0) breaking changes in exposed dependencies of `git-repository` will automatically lead to a breaking semver change in `git-repository` transitively, so doing so should be preferred and is save to do as well.",
+    "created_at": "2022-06-12T23:08:50Z",
+    "updated_at": "2022-06-12T23:30:29Z",
+    "html_url": "https://github.com/starship/starship/pull/3883#discussion_r895245559",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3883",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/895245559"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3883#discussion_r895245559"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3883"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/895245559/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 268,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 37,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/895274398",
+    "pull_request_review_id": 1003717499,
+    "id": 895274398,
+    "node_id": "PRRC_kwDOCqswNs41XM2e",
+    "diff_hunk": "@@ -255,22 +255,29 @@ impl<'a> Context<'a> {\n     }\n \n     /// Will lazily get repo root and branch when a module requests it.\n-    pub fn get_repo(&self) -> Result<&Repo, git2::Error> {\n-        self.repo.get_or_try_init(|| -> Result<Repo, git2::Error> {\n-            let repository = if env::var(\"GIT_DIR\").is_ok() {\n-                Repository::open_from_env()\n-            } else {\n-                let dirs: [PathBuf; 0] = [];\n-                Repository::open_ext(&self.current_dir, git2::RepositoryOpenFlags::FROM_ENV, dirs)\n-            }?;\n-            Ok(Repo {\n-                branch: get_current_branch(&repository),\n-                workdir: repository.workdir().map(Path::to_path_buf),\n-                path: Path::to_path_buf(repository.path()),\n-                state: repository.state(),\n-                remote: get_remote_repository_info(&repository),\n+    pub fn get_repo(&self) -> Result<&Repo, git_repository::discover::Error> {\n+        self.repo\n+            .get_or_try_init(|| -> Result<Repo, git_repository::discover::Error> {\n+                let shared_repo =\n+                    ThreadSafeRepository::discover_with_environment_overrides(&self.current_dir)?;\n+\n+                let repository = shared_repo.to_thread_local();\n+                let branch = get_current_branch(&repository);\n+                let remote = get_remote_repository_info(&repository, branch.as_deref());\n+                let path = repository.path().to_path_buf();\n+                let trust_level = git_sec::Trust::from_path_ownership(&path)\n+                    .unwrap_or(git_sec::Trust::Reduced);\n+                Ok(Repo {\n+                    repo: shared_repo,\n+                    branch,\n+                    // gitoxide might relativize the path, so we need to expand it again",
+    "path": "src/context.rs",
+    "commit_id": "e3570611cdbb31993eb47d87fd7cdc41592aa5de",
+    "original_commit_id": "76af9604f934e04a0854c4678f7ed50738b1db40",
+    "user": {
+      "login": "Byron",
+      "id": 63622,
+      "node_id": "MDQ6VXNlcjYzNjIy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/63622?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Byron",
+      "html_url": "https://github.com/Byron",
+      "followers_url": "https://api.github.com/users/Byron/followers",
+      "following_url": "https://api.github.com/users/Byron/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Byron/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Byron/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Byron/subscriptions",
+      "organizations_url": "https://api.github.com/users/Byron/orgs",
+      "repos_url": "https://api.github.com/users/Byron/repos",
+      "events_url": "https://api.github.com/users/Byron/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Byron/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Is this not fixed in `gitoxide` by now? I thought it won't over-eagerly make paths relative anymore.",
+    "created_at": "2022-06-13T02:03:01Z",
+    "updated_at": "2022-06-13T02:39:30Z",
+    "html_url": "https://github.com/starship/starship/pull/3883#discussion_r895274398",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3883",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/895274398"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3883#discussion_r895274398"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3883"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/895274398/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 273,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 42,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/895284786",
+    "pull_request_review_id": 1003717499,
+    "id": 895284786,
+    "node_id": "PRRC_kwDOCqswNs41XPYy",
+    "diff_hunk": "@@ -80,23 +50,27 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     Some(module)\n }\n \n-fn format_tag(symbol: &str, tag_name: &str) -> Option<Result<String, StringFormatterError>> {\n-    if tag_name.is_empty() {\n-        None\n-    } else {\n-        Some(Ok(format!(\"{}{}\", &symbol, &tag_name)))\n-    }\n+fn git_tag(repo: &Repo) -> Option<String> {\n+    let git_repo = repo.open();\n+    let mut git_head = git_repo.head().ok()?;\n+    let head_commit = git_head.peel_to_commit_in_place().ok()?;",
+    "path": "src/modules/git_commit.rs",
+    "commit_id": "e3570611cdbb31993eb47d87fd7cdc41592aa5de",
+    "original_commit_id": "76af9604f934e04a0854c4678f7ed50738b1db40",
+    "user": {
+      "login": "Byron",
+      "id": 63622,
+      "node_id": "MDQ6VXNlcjYzNjIy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/63622?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Byron",
+      "html_url": "https://github.com/Byron",
+      "followers_url": "https://api.github.com/users/Byron/followers",
+      "following_url": "https://api.github.com/users/Byron/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Byron/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Byron/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Byron/subscriptions",
+      "organizations_url": "https://api.github.com/users/Byron/orgs",
+      "repos_url": "https://api.github.com/users/Byron/repos",
+      "events_url": "https://api.github.com/users/Byron/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Byron/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "There is a [`head_commit()`](https://github.com/Byron/gitoxide/blob/b362fb594546400e6c42688103df438954df7eeb/git-repository/src/repository/reference.rs#L213) method now.\r\n\r\nGenerally, `gitoxide` wants to make common tasks simple, and I am happy to add what's seemingly missing, too.",
+    "created_at": "2022-06-13T02:33:48Z",
+    "updated_at": "2022-06-13T02:39:30Z",
+    "html_url": "https://github.com/starship/starship/pull/3883#discussion_r895284786",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3883",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/895284786"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3883#discussion_r895284786"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3883"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/895284786/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 56,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 90,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/895285150",
+    "pull_request_review_id": 1003717499,
+    "id": 895285150,
+    "node_id": "PRRC_kwDOCqswNs41XPee",
+    "diff_hunk": "@@ -80,23 +50,27 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     Some(module)\n }\n \n-fn format_tag(symbol: &str, tag_name: &str) -> Option<Result<String, StringFormatterError>> {\n-    if tag_name.is_empty() {\n-        None\n-    } else {\n-        Some(Ok(format!(\"{}{}\", &symbol, &tag_name)))\n-    }\n+fn git_tag(repo: &Repo) -> Option<String> {\n+    let git_repo = repo.open();\n+    let mut git_head = git_repo.head().ok()?;\n+    let head_commit = git_head.peel_to_commit_in_place().ok()?;\n+\n+    let describe_platform = head_commit.describe().names(AnnotatedTags);\n+    let formatter = describe_platform.try_format().ok()??;\n+\n+    Some(formatter.name?.to_string())\n }\n \n-/// len specifies length of hex encoded string\n-fn id_to_hex_abbrev(bytes: &[u8], len: usize) -> String {\n-    bytes\n-        .iter()\n-        .map(|b| format!(\"{:02x}\", b))\n-        .collect::<String>()\n-        .chars()\n-        .take(len)\n-        .collect()\n+fn git_hash(repo: &Repo, config: &GitCommitConfig) -> Option<String> {\n+    let git_repo = repo.open();\n+    let mut git_head = git_repo.head().ok()?;\n+    let head_commit = git_head.peel_to_commit_in_place().ok()?;\n+    let head_id = head_commit.id();",
+    "path": "src/modules/git_commit.rs",
+    "commit_id": "e3570611cdbb31993eb47d87fd7cdc41592aa5de",
+    "original_commit_id": "76af9604f934e04a0854c4678f7ed50738b1db40",
+    "user": {
+      "login": "Byron",
+      "id": 63622,
+      "node_id": "MDQ6VXNlcjYzNjIy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/63622?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Byron",
+      "html_url": "https://github.com/Byron",
+      "followers_url": "https://api.github.com/users/Byron/followers",
+      "following_url": "https://api.github.com/users/Byron/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Byron/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Byron/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Byron/subscriptions",
+      "organizations_url": "https://api.github.com/users/Byron/orgs",
+      "repos_url": "https://api.github.com/users/Byron/repos",
+      "events_url": "https://api.github.com/users/Byron/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Byron/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "There is a [`head_id()`](https://github.com/Byron/gitoxide/blob/b362fb594546400e6c42688103df438954df7eeb/git-repository/src/repository/reference.rs#L194) method as well.",
+    "created_at": "2022-06-13T02:35:07Z",
+    "updated_at": "2022-06-13T02:39:30Z",
+    "html_url": "https://github.com/starship/starship/pull/3883#discussion_r895285150",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3883",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/895285150"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3883#discussion_r895285150"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3883"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/895285150/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 68,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 111,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/895494832",
+    "pull_request_review_id": 1004015775,
+    "id": 895494832,
+    "node_id": "PRRC_kwDOCqswNs41YCqw",
+    "diff_hunk": "@@ -255,22 +255,29 @@ impl<'a> Context<'a> {\n     }\n \n     /// Will lazily get repo root and branch when a module requests it.\n-    pub fn get_repo(&self) -> Result<&Repo, git2::Error> {\n-        self.repo.get_or_try_init(|| -> Result<Repo, git2::Error> {\n-            let repository = if env::var(\"GIT_DIR\").is_ok() {\n-                Repository::open_from_env()\n-            } else {\n-                let dirs: [PathBuf; 0] = [];\n-                Repository::open_ext(&self.current_dir, git2::RepositoryOpenFlags::FROM_ENV, dirs)\n-            }?;\n-            Ok(Repo {\n-                branch: get_current_branch(&repository),\n-                workdir: repository.workdir().map(Path::to_path_buf),\n-                path: Path::to_path_buf(repository.path()),\n-                state: repository.state(),\n-                remote: get_remote_repository_info(&repository),\n+    pub fn get_repo(&self) -> Result<&Repo, git_repository::discover::Error> {\n+        self.repo\n+            .get_or_try_init(|| -> Result<Repo, git_repository::discover::Error> {\n+                let shared_repo =\n+                    ThreadSafeRepository::discover_with_environment_overrides(&self.current_dir)?;\n+\n+                let repository = shared_repo.to_thread_local();\n+                let branch = get_current_branch(&repository);\n+                let remote = get_remote_repository_info(&repository, branch.as_deref());\n+                let path = repository.path().to_path_buf();\n+                let trust_level = git_sec::Trust::from_path_ownership(&path)",
+    "path": "src/context.rs",
+    "commit_id": "e3570611cdbb31993eb47d87fd7cdc41592aa5de",
+    "original_commit_id": "76af9604f934e04a0854c4678f7ed50738b1db40",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Thanks, I didn't notice that this was included in `git-repository`.",
+    "created_at": "2022-06-13T09:07:06Z",
+    "updated_at": "2022-06-13T09:07:06Z",
+    "html_url": "https://github.com/starship/starship/pull/3883#discussion_r895494832",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3883",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/895494832"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3883#discussion_r895494832"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3883"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/895494832/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 268,
+    "side": "RIGHT",
+    "in_reply_to_id": 895245559,
+    "author_association": "MEMBER",
+    "original_position": 37,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/895496191",
+    "pull_request_review_id": 1004017704,
+    "id": 895496191,
+    "node_id": "PRRC_kwDOCqswNs41YC__",
+    "diff_hunk": "@@ -80,23 +50,27 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     Some(module)\n }\n \n-fn format_tag(symbol: &str, tag_name: &str) -> Option<Result<String, StringFormatterError>> {\n-    if tag_name.is_empty() {\n-        None\n-    } else {\n-        Some(Ok(format!(\"{}{}\", &symbol, &tag_name)))\n-    }\n+fn git_tag(repo: &Repo) -> Option<String> {\n+    let git_repo = repo.open();\n+    let mut git_head = git_repo.head().ok()?;\n+    let head_commit = git_head.peel_to_commit_in_place().ok()?;",
+    "path": "src/modules/git_commit.rs",
+    "commit_id": "e3570611cdbb31993eb47d87fd7cdc41592aa5de",
+    "original_commit_id": "76af9604f934e04a0854c4678f7ed50738b1db40",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Thanks for the heads-up!",
+    "created_at": "2022-06-13T09:08:37Z",
+    "updated_at": "2022-06-13T09:08:38Z",
+    "html_url": "https://github.com/starship/starship/pull/3883#discussion_r895496191",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3883",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/895496191"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3883#discussion_r895496191"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3883"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/895496191/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 56,
+    "side": "RIGHT",
+    "in_reply_to_id": 895284786,
+    "author_association": "MEMBER",
+    "original_position": 90,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/895497017",
+    "pull_request_review_id": 1004018872,
+    "id": 895497017,
+    "node_id": "PRRC_kwDOCqswNs41YDM5",
+    "diff_hunk": "@@ -255,22 +255,29 @@ impl<'a> Context<'a> {\n     }\n \n     /// Will lazily get repo root and branch when a module requests it.\n-    pub fn get_repo(&self) -> Result<&Repo, git2::Error> {\n-        self.repo.get_or_try_init(|| -> Result<Repo, git2::Error> {\n-            let repository = if env::var(\"GIT_DIR\").is_ok() {\n-                Repository::open_from_env()\n-            } else {\n-                let dirs: [PathBuf; 0] = [];\n-                Repository::open_ext(&self.current_dir, git2::RepositoryOpenFlags::FROM_ENV, dirs)\n-            }?;\n-            Ok(Repo {\n-                branch: get_current_branch(&repository),\n-                workdir: repository.workdir().map(Path::to_path_buf),\n-                path: Path::to_path_buf(repository.path()),\n-                state: repository.state(),\n-                remote: get_remote_repository_info(&repository),\n+    pub fn get_repo(&self) -> Result<&Repo, git_repository::discover::Error> {\n+        self.repo\n+            .get_or_try_init(|| -> Result<Repo, git_repository::discover::Error> {\n+                let shared_repo =\n+                    ThreadSafeRepository::discover_with_environment_overrides(&self.current_dir)?;\n+\n+                let repository = shared_repo.to_thread_local();\n+                let branch = get_current_branch(&repository);\n+                let remote = get_remote_repository_info(&repository, branch.as_deref());\n+                let path = repository.path().to_path_buf();\n+                let trust_level = git_sec::Trust::from_path_ownership(&path)\n+                    .unwrap_or(git_sec::Trust::Reduced);\n+                Ok(Repo {\n+                    repo: shared_repo,\n+                    branch,\n+                    // gitoxide might relativize the path, so we need to expand it again",
+    "path": "src/context.rs",
+    "commit_id": "e3570611cdbb31993eb47d87fd7cdc41592aa5de",
+    "original_commit_id": "76af9604f934e04a0854c4678f7ed50738b1db40",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Thanks, I hadn't updated that yet.",
+    "created_at": "2022-06-13T09:09:33Z",
+    "updated_at": "2022-06-13T09:09:33Z",
+    "html_url": "https://github.com/starship/starship/pull/3883#discussion_r895497017",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3883",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/895497017"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3883#discussion_r895497017"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3883"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/895497017/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 273,
+    "side": "RIGHT",
+    "in_reply_to_id": 895274398,
+    "author_association": "MEMBER",
+    "original_position": 42,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/895565825",
+    "pull_request_review_id": 1004114219,
+    "id": 895565825,
+    "node_id": "PRRC_kwDOCqswNs41YUAB",
+    "diff_hunk": "@@ -21,6 +22,12 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     };\n \n     let repo = context.get_repo().ok()?;\n+\n+    if repo.trust_level < git_sec::Trust::Full {\n+        log::debug!(\"skipping, not a trusted repo {:?}\", repo.trust_level);\n+        return None;\n+    }",
+    "path": "src/modules/git_metrics.rs",
+    "commit_id": "e3570611cdbb31993eb47d87fd7cdc41592aa5de",
+    "original_commit_id": "a092a63cc651017ad6ff4532dba9d15054822f90",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I thought I would be a good idea to handle repo trust with some basic checks, though it might be better to wait until `secure.directories` can be handled to improve the experience. At this time, (our) starship builds with git2 don't handle this at all.\r\nI've used `debug` over `warn` here to make this less noisy.",
+    "created_at": "2022-06-13T10:27:46Z",
+    "updated_at": "2022-06-13T10:27:46Z",
+    "html_url": "https://github.com/starship/starship/pull/3883#discussion_r895565825",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3883",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/895565825"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3883#discussion_r895565825"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3883"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/895565825/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 26,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 29,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/895641950",
+    "pull_request_review_id": 1004222246,
+    "id": 895641950,
+    "node_id": "PRRC_kwDOCqswNs41Ymle",
+    "diff_hunk": "@@ -21,6 +22,12 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     };\n \n     let repo = context.get_repo().ok()?;\n+\n+    if repo.trust_level < git_sec::Trust::Full {\n+        log::debug!(\"skipping, not a trusted repo {:?}\", repo.trust_level);\n+        return None;\n+    }",
+    "path": "src/modules/git_metrics.rs",
+    "commit_id": "e3570611cdbb31993eb47d87fd7cdc41592aa5de",
+    "original_commit_id": "a092a63cc651017ad6ff4532dba9d15054822f90",
+    "user": {
+      "login": "Byron",
+      "id": 63622,
+      "node_id": "MDQ6VXNlcjYzNjIy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/63622?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Byron",
+      "html_url": "https://github.com/Byron",
+      "followers_url": "https://api.github.com/users/Byron/followers",
+      "following_url": "https://api.github.com/users/Byron/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Byron/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Byron/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Byron/subscriptions",
+      "organizations_url": "https://api.github.com/users/Byron/orgs",
+      "repos_url": "https://api.github.com/users/Byron/repos",
+      "events_url": "https://api.github.com/users/Byron/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Byron/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I see, it's probably preferable to fail gracefully than have `git` bail out, even though with the current implementation I bet `starship` would be over-eagerly bailing even though `git` might be configured to accept the path.\r\n\r\nI don't know if using `git config` to obtain the `safe.directories` value is feasible in the meantime (or does that bail out too :D?)",
+    "created_at": "2022-06-13T12:07:06Z",
+    "updated_at": "2022-06-13T12:07:06Z",
+    "html_url": "https://github.com/starship/starship/pull/3883#discussion_r895641950",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3883",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/895641950"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3883#discussion_r895641950"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3883"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/895641950/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 26,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 29,
+    "side": "RIGHT",
+    "in_reply_to_id": 895565825,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/895823317",
+    "pull_request_review_id": 1004489979,
+    "id": 895823317,
+    "node_id": "PRRC_kwDOCqswNs41ZS3V",
+    "diff_hunk": "@@ -21,6 +22,12 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     };\n \n     let repo = context.get_repo().ok()?;\n+\n+    if repo.trust_level < git_sec::Trust::Full {\n+        log::debug!(\"skipping, not a trusted repo {:?}\", repo.trust_level);\n+        return None;\n+    }",
+    "path": "src/modules/git_metrics.rs",
+    "commit_id": "e3570611cdbb31993eb47d87fd7cdc41592aa5de",
+    "original_commit_id": "a092a63cc651017ad6ff4532dba9d15054822f90",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This is mostly intended as a fallback in case git hasn't yet been updated to use a security model.\r\n\r\nUsing `git config` might slow down the prompt too much on Windows (#2888).",
+    "created_at": "2022-06-13T14:56:27Z",
+    "updated_at": "2022-06-13T14:56:29Z",
+    "html_url": "https://github.com/starship/starship/pull/3883#discussion_r895823317",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3883",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/895823317"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3883#discussion_r895823317"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3883"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/895823317/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 26,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 29,
+    "side": "RIGHT",
+    "in_reply_to_id": 895565825,
+    "author_association": "MEMBER",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/928127574",
+    "pull_request_review_id": 1048540324,
+    "id": 928127574,
+    "node_id": "PRRC_kwDOCqswNs43UhpW",
+    "diff_hunk": "@@ -258,11 +259,36 @@ impl<'a> Context<'a> {\n     }\n \n     /// Will lazily get repo root and branch when a module requests it.\n-    pub fn get_repo(&self) -> Result<&Repo, git_repository::discover::Error> {\n+    pub fn get_repo(&self) -> Result<&Repo, git::discover::Error> {\n         self.repo\n-            .get_or_try_init(|| -> Result<Repo, git_repository::discover::Error> {\n-                let shared_repo =\n-                    ThreadSafeRepository::discover_with_environment_overrides(&self.current_dir)?;\n+            .get_or_try_init(|| -> Result<Repo, git::discover::Error> {\n+                // custom open options\n+                let git_open_opts = GitOpenOptions::default()\n+                    // trust the git repo and avoid additional checks\n+                    .with(git_sec::Trust::Full)",
+    "path": "src/context.rs",
+    "commit_id": "e3570611cdbb31993eb47d87fd7cdc41592aa5de",
+    "original_commit_id": "33ca20c9db0804eeb418fe958843dff2023358fa",
+    "user": {
+      "login": "Byron",
+      "id": 63622,
+      "node_id": "MDQ6VXNlcjYzNjIy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/63622?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Byron",
+      "html_url": "https://github.com/Byron",
+      "followers_url": "https://api.github.com/users/Byron/followers",
+      "following_url": "https://api.github.com/users/Byron/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Byron/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Byron/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Byron/subscriptions",
+      "organizations_url": "https://api.github.com/users/Byron/orgs",
+      "repos_url": "https://api.github.com/users/Byron/repos",
+      "events_url": "https://api.github.com/users/Byron/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Byron/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Actually I was wrong about this, and the way it's currently implemented this value is overridden by the trust level that was determined anyway rendering the `with(…)` adjustment ineffective.\r\n\r\nFor a moment I was about to neuter the implementation to not be so strict and all in the name of saving a permission check which right now isn't proven to save any perceivable time. All this resulted in [this commit](https://github.com/Byron/gitoxide/commit/270242c707bd086b7746ee45b55791587f1484b1) to add more information on the security implications.\r\n\r\nFor starship this means it will definitely not accidentally cause the execution of a binary controlled by an attacker, now or in the future, which I think is desirable.\r\n\r\nThat said, once actual performance measurements of the cost of the permission check (probably mostly on windows) are available, it might be worth reviewing this stance. For now I think it's good to start on the safe side.",
+    "created_at": "2022-07-23T14:06:19Z",
+    "updated_at": "2022-07-23T14:06:19Z",
+    "html_url": "https://github.com/starship/starship/pull/3883#discussion_r928127574",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3883",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/928127574"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3883#discussion_r928127574"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3883"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/928127574/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 268,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 24,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/928225360",
+    "pull_request_review_id": 1048614261,
+    "id": 928225360,
+    "node_id": "PRRC_kwDOCqswNs43U5hQ",
+    "diff_hunk": "@@ -258,11 +259,36 @@ impl<'a> Context<'a> {\n     }\n \n     /// Will lazily get repo root and branch when a module requests it.\n-    pub fn get_repo(&self) -> Result<&Repo, git_repository::discover::Error> {\n+    pub fn get_repo(&self) -> Result<&Repo, git::discover::Error> {\n         self.repo\n-            .get_or_try_init(|| -> Result<Repo, git_repository::discover::Error> {\n-                let shared_repo =\n-                    ThreadSafeRepository::discover_with_environment_overrides(&self.current_dir)?;\n+            .get_or_try_init(|| -> Result<Repo, git::discover::Error> {\n+                // custom open options\n+                let git_open_opts = GitOpenOptions::default()\n+                    // trust the git repo and avoid additional checks\n+                    .with(git_sec::Trust::Full)",
+    "path": "src/context.rs",
+    "commit_id": "e3570611cdbb31993eb47d87fd7cdc41592aa5de",
+    "original_commit_id": "33ca20c9db0804eeb418fe958843dff2023358fa",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ok, I've removed the line. Is `git::Permissions::all()` likely to become an issue? I noticed it includes some DoS protections, which might even be desirable in trusted repos.",
+    "created_at": "2022-07-24T09:14:39Z",
+    "updated_at": "2022-07-24T09:14:39Z",
+    "html_url": "https://github.com/starship/starship/pull/3883#discussion_r928225360",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3883",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/928225360"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3883#discussion_r928225360"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3883"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/928225360/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 268,
+    "side": "RIGHT",
+    "in_reply_to_id": 928127574,
+    "author_association": "MEMBER",
+    "original_position": 24,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/928368837",
+    "pull_request_review_id": 1048756003,
+    "id": 928368837,
+    "node_id": "PRRC_kwDOCqswNs43VcjF",
+    "diff_hunk": "@@ -258,11 +259,36 @@ impl<'a> Context<'a> {\n     }\n \n     /// Will lazily get repo root and branch when a module requests it.\n-    pub fn get_repo(&self) -> Result<&Repo, git_repository::discover::Error> {\n+    pub fn get_repo(&self) -> Result<&Repo, git::discover::Error> {\n         self.repo\n-            .get_or_try_init(|| -> Result<Repo, git_repository::discover::Error> {\n-                let shared_repo =\n-                    ThreadSafeRepository::discover_with_environment_overrides(&self.current_dir)?;\n+            .get_or_try_init(|| -> Result<Repo, git::discover::Error> {\n+                // custom open options\n+                let git_open_opts = GitOpenOptions::default()\n+                    // trust the git repo and avoid additional checks\n+                    .with(git_sec::Trust::Full)",
+    "path": "src/context.rs",
+    "commit_id": "e3570611cdbb31993eb47d87fd7cdc41592aa5de",
+    "original_commit_id": "33ca20c9db0804eeb418fe958843dff2023358fa",
+    "user": {
+      "login": "Byron",
+      "id": 63622,
+      "node_id": "MDQ6VXNlcjYzNjIy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/63622?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Byron",
+      "html_url": "https://github.com/Byron",
+      "followers_url": "https://api.github.com/users/Byron/followers",
+      "following_url": "https://api.github.com/users/Byron/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Byron/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Byron/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Byron/subscriptions",
+      "organizations_url": "https://api.github.com/users/Byron/orgs",
+      "repos_url": "https://api.github.com/users/Byron/repos",
+      "events_url": "https://api.github.com/users/Byron/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Byron/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "> Is git::Permissions::all() likely to become an issue?\r\n\r\nYou are right! It's better to go with the secure defaults for the trust map and only override the pieces that need changing. Maybe like so:\r\n\r\n```Rust\r\nlet mut options = git_sec::trust::Mapping::default();\r\noptions.full.permissions.config = …;\r\noptions.reduced.permissions.config = …;\r\n```\r\n\r\nIt's super valuable to do this as it seems to be easy, even for me, to suggest potentially insecure settings. I am definitely still learning.\r\n\r\n",
+    "created_at": "2022-07-25T02:41:31Z",
+    "updated_at": "2022-07-25T02:41:31Z",
+    "html_url": "https://github.com/starship/starship/pull/3883#discussion_r928368837",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3883",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/928368837"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3883#discussion_r928368837"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3883"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/928368837/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 268,
+    "side": "RIGHT",
+    "in_reply_to_id": 928127574,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 24,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

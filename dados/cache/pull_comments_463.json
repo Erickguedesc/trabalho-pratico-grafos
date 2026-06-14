@@ -1,0 +1,698 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/330205881",
+    "pull_request_review_id": 295801855,
+    "id": 330205881,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMDIwNTg4MQ==",
+    "diff_hunk": "@@ -383,6 +383,16 @@\n       \"contributions\": [\n         \"code\"\n       ]\n+    },\n+    {\n+      \"login\": \"keawade\",\n+      \"name\": \"Keith Wade\",\n+      \"avatar_url\": \"https://avatars0.githubusercontent.com/u/7308850\",\n+      \"profile\": \"https://github.com/keawade\",\n+      \"contributions\": [\n+        \"code\",\n+        \"test\"\n+      ]",
+    "path": ".all-contributorsrc",
+    "commit_id": "ca213444effdf5631b07562e70e4812c9c1c2a17",
+    "original_commit_id": "36840c655806fa1aa5cbb679d3c2a9aa0c8fbb98",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Note sure you are supposed to edit this file by hand 😄 ",
+    "created_at": "2019-10-01T18:24:53Z",
+    "updated_at": "2019-10-10T01:00:08Z",
+    "html_url": "https://github.com/starship/starship/pull/463#discussion_r330205881",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/330205881"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/463#discussion_r330205881"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/330205881/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 386,
+    "original_start_line": 386,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 395,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/330206929",
+    "pull_request_review_id": 295801855,
+    "id": 330206929,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMDIwNjkyOQ==",
+    "diff_hunk": "@@ -30,8 +35,33 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         time_format\n     );\n \n-    let local: DateTime<Local> = Local::now();\n-    let formatted_time_string = format_time(&time_format, local);\n+    let local_time: DateTime<Local> = Local::now();\n+    log::trace!(\"Local time now is {}\", local_time);\n+\n+    let formatted_time_string: String;\n+    if utc_time_offset_str == \"local\" {\n+        formatted_time_string = format_time(&time_format, local_time);\n+    } else {\n+        let utc_time = DateTime::<Utc>::from_utc(local_time.naive_utc(), Utc);\n+        log::trace!(\"UTC time now is {}\", utc_time);\n+\n+        // Using floats to allow 30/45 minute offsets: https://www.timeanddate.com/time/time-zones-interesting.html\n+        let utc_time_offset_in_hours = utc_time_offset_str.parse::<f32>().unwrap_or(0_f32);\n+        if utc_time_offset_in_hours < 24_f32 && utc_time_offset_in_hours > -24_f32 {\n+            let utc_offset_in_seconds: i32 = (utc_time_offset_in_hours * 3600_f32) as i32;\n+            let timezone_offset = FixedOffset::east(utc_offset_in_seconds);\n+            log::trace!(\"Target timezone offset is {}\", timezone_offset);\n+\n+            let target_time = utc_time.with_timezone(&timezone_offset);\n+            log::trace!(\"Time in target timezone now is {}\", target_time);\n+\n+            formatted_time_string = format_time_fixed_offset(&time_format, target_time);\n+        } else {\n+            // Fall back to local time if an invalid offset is provided.",
+    "path": "starship/src/modules/time.rs",
+    "commit_id": "ca213444effdf5631b07562e70e4812c9c1c2a17",
+    "original_commit_id": "36840c655806fa1aa5cbb679d3c2a9aa0c8fbb98",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I would log this as an error.",
+    "created_at": "2019-10-01T18:27:05Z",
+    "updated_at": "2019-10-10T01:00:08Z",
+    "html_url": "https://github.com/starship/starship/pull/463#discussion_r330206929",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/330206929"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/463#discussion_r330206929"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/330206929/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 60,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 47,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/330209842",
+    "pull_request_review_id": 295801855,
+    "id": 330209842,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMDIwOTg0Mg==",
+    "diff_hunk": "@@ -102,4 +136,81 @@ mod tests {\n         let formatted = format_time(\"[%T]\", time);\n         assert_eq!(formatted, \"[15:36:47]\");\n     }\n+\n+    #[test]\n+    fn test_midnight_12hr_fixed_offset() {\n+        let timezone_offset = FixedOffset::east(0);\n+        let time = Utc\n+            .ymd(2014, 7, 8)\n+            .and_hms(0, 0, 0)\n+            .with_timezone(&timezone_offset);\n+        let formatted = format_time_fixed_offset(FMT_12, time);\n+        assert_eq!(formatted, \"12:00:00 AM\");\n+    }\n+\n+    #[test]\n+    fn test_midnight_24hr_fixed_offset() {\n+        let timezone_offset = FixedOffset::east(0);\n+        let time = Utc\n+            .ymd(2014, 7, 8)\n+            .and_hms(0, 0, 0)\n+            .with_timezone(&timezone_offset);\n+        let formatted = format_time_fixed_offset(FMT_24, time);\n+        assert_eq!(formatted, \"00:00:00\");\n+    }\n+\n+    #[test]\n+    fn test_noon_12hr_fixed_offset() {\n+        let timezone_offset = FixedOffset::east(0);\n+        let time = Utc\n+            .ymd(2014, 7, 8)\n+            .and_hms(12, 0, 0)\n+            .with_timezone(&timezone_offset);\n+        let formatted = format_time_fixed_offset(FMT_12, time);\n+        assert_eq!(formatted, \"12:00:00 PM\");\n+    }\n+\n+    #[test]\n+    fn test_noon_24hr_fixed_offset() {\n+        let timezone_offset = FixedOffset::east(0);\n+        let time = Utc\n+            .ymd(2014, 7, 8)\n+            .and_hms(12, 0, 0)\n+            .with_timezone(&timezone_offset);\n+        let formatted = format_time_fixed_offset(FMT_24, time);\n+        assert_eq!(formatted, \"12:00:00\");\n+    }\n+\n+    #[test]\n+    fn test_arbtime_12hr_fixed_offset() {\n+        let timezone_offset = FixedOffset::east(0);\n+        let time = Utc\n+            .ymd(2014, 7, 8)\n+            .and_hms(15, 36, 47)\n+            .with_timezone(&timezone_offset);\n+        let formatted = format_time_fixed_offset(FMT_12, time);\n+        assert_eq!(formatted, \"03:36:47 PM\");\n+    }\n+\n+    #[test]\n+    fn test_arbtime_24hr_fixed_offset() {\n+        let timezone_offset = FixedOffset::east(0);\n+        let time = Utc\n+            .ymd(2014, 7, 8)\n+            .and_hms(15, 36, 47)\n+            .with_timezone(&timezone_offset);\n+        let formatted = format_time_fixed_offset(FMT_24, time);\n+        assert_eq!(formatted, \"15:36:47\");\n+    }\n+\n+    #[test]\n+    fn test_format_with_paren_fixed_offset() {\n+        let timezone_offset = FixedOffset::east(0);\n+        let time = Utc\n+            .ymd(2014, 7, 8)\n+            .and_hms(15, 36, 47)\n+            .with_timezone(&timezone_offset);\n+        let formatted = format_time_fixed_offset(\"[%T]\", time);\n+        assert_eq!(formatted, \"[15:36:47]\");\n+    }",
+    "path": "starship/src/modules/time.rs",
+    "commit_id": "ca213444effdf5631b07562e70e4812c9c1c2a17",
+    "original_commit_id": "36840c655806fa1aa5cbb679d3c2a9aa0c8fbb98",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Cool that you added formatter tests. However I was assuming, you would also test your new offset logic here. Something like\r\n- Happy path +3, -8, +5.5, -3.9, \"local\"\r\n- Edge cases +24, -24\r\n- Wrong input +5000, -200",
+    "created_at": "2019-10-01T18:33:24Z",
+    "updated_at": "2019-10-10T01:00:08Z",
+    "html_url": "https://github.com/starship/starship/pull/463#discussion_r330209842",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/330209842"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/463#discussion_r330209842"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/330209842/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 215,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 146,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/330211873",
+    "pull_request_review_id": 295801855,
+    "id": 330211873,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMDIxMTg3Mw==",
+    "diff_hunk": "@@ -30,8 +35,33 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         time_format\n     );\n \n-    let local: DateTime<Local> = Local::now();\n-    let formatted_time_string = format_time(&time_format, local);\n+    let local_time: DateTime<Local> = Local::now();\n+    log::trace!(\"Local time now is {}\", local_time);\n+\n+    let formatted_time_string: String;",
+    "path": "starship/src/modules/time.rs",
+    "commit_id": "ca213444effdf5631b07562e70e4812c9c1c2a17",
+    "original_commit_id": "36840c655806fa1aa5cbb679d3c2a9aa0c8fbb98",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "you don't need to end the assignment here. It's a simple expression, so you can do\r\n```rust\r\nlet formatted_time_string: String = if utc_time_offset_str == \"local\" {\r\n  format_time(&time_format, local_time)\r\n} else {\r\n...\r\n};\r\n```",
+    "created_at": "2019-10-01T18:37:45Z",
+    "updated_at": "2019-10-10T01:00:08Z",
+    "html_url": "https://github.com/starship/starship/pull/463#discussion_r330211873",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/330211873"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/463#discussion_r330211873"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/330211873/reactions",
+      "total_count": 1,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 1,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 41,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 28,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/330219783",
+    "pull_request_review_id": 295820264,
+    "id": 330219783,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMDIxOTc4Mw==",
+    "diff_hunk": "@@ -383,6 +383,16 @@\n       \"contributions\": [\n         \"code\"\n       ]\n+    },\n+    {\n+      \"login\": \"keawade\",\n+      \"name\": \"Keith Wade\",\n+      \"avatar_url\": \"https://avatars0.githubusercontent.com/u/7308850\",\n+      \"profile\": \"https://github.com/keawade\",\n+      \"contributions\": [\n+        \"code\",\n+        \"test\"\n+      ]",
+    "path": ".all-contributorsrc",
+    "commit_id": "ca213444effdf5631b07562e70e4812c9c1c2a17",
+    "original_commit_id": "36840c655806fa1aa5cbb679d3c2a9aa0c8fbb98",
+    "user": {
+      "login": "keawade",
+      "id": 7308850,
+      "node_id": "MDQ6VXNlcjczMDg4NTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7308850?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/keawade",
+      "html_url": "https://github.com/keawade",
+      "followers_url": "https://api.github.com/users/keawade/followers",
+      "following_url": "https://api.github.com/users/keawade/following{/other_user}",
+      "gists_url": "https://api.github.com/users/keawade/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/keawade/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/keawade/subscriptions",
+      "organizations_url": "https://api.github.com/users/keawade/orgs",
+      "repos_url": "https://api.github.com/users/keawade/repos",
+      "events_url": "https://api.github.com/users/keawade/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/keawade/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Good to know. I'll remove my changes. 😆 ",
+    "created_at": "2019-10-01T18:55:16Z",
+    "updated_at": "2019-10-10T01:00:08Z",
+    "html_url": "https://github.com/starship/starship/pull/463#discussion_r330219783",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/330219783"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/463#discussion_r330219783"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/330219783/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 386,
+    "original_start_line": 386,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 395,
+    "side": "RIGHT",
+    "in_reply_to_id": 330205881,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/330220436",
+    "pull_request_review_id": 295821099,
+    "id": 330220436,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMDIyMDQzNg==",
+    "diff_hunk": "@@ -30,8 +35,33 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         time_format\n     );\n \n-    let local: DateTime<Local> = Local::now();\n-    let formatted_time_string = format_time(&time_format, local);\n+    let local_time: DateTime<Local> = Local::now();\n+    log::trace!(\"Local time now is {}\", local_time);\n+\n+    let formatted_time_string: String;",
+    "path": "starship/src/modules/time.rs",
+    "commit_id": "ca213444effdf5631b07562e70e4812c9c1c2a17",
+    "original_commit_id": "36840c655806fa1aa5cbb679d3c2a9aa0c8fbb98",
+    "user": {
+      "login": "keawade",
+      "id": 7308850,
+      "node_id": "MDQ6VXNlcjczMDg4NTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7308850?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/keawade",
+      "html_url": "https://github.com/keawade",
+      "followers_url": "https://api.github.com/users/keawade/followers",
+      "following_url": "https://api.github.com/users/keawade/following{/other_user}",
+      "gists_url": "https://api.github.com/users/keawade/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/keawade/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/keawade/subscriptions",
+      "organizations_url": "https://api.github.com/users/keawade/orgs",
+      "repos_url": "https://api.github.com/users/keawade/repos",
+      "events_url": "https://api.github.com/users/keawade/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/keawade/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Oh cool. Sorry, I'm pretty new to rust so I'm not aware of things like this. I'll update it. :)",
+    "created_at": "2019-10-01T18:56:40Z",
+    "updated_at": "2019-10-10T01:00:08Z",
+    "html_url": "https://github.com/starship/starship/pull/463#discussion_r330220436",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/330220436"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/463#discussion_r330220436"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/330220436/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 41,
+    "side": "RIGHT",
+    "in_reply_to_id": 330211873,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 28,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/330224349",
+    "pull_request_review_id": 295826177,
+    "id": 330224349,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMDIyNDM0OQ==",
+    "diff_hunk": "@@ -30,8 +35,33 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         time_format\n     );\n \n-    let local: DateTime<Local> = Local::now();\n-    let formatted_time_string = format_time(&time_format, local);\n+    let local_time: DateTime<Local> = Local::now();\n+    log::trace!(\"Local time now is {}\", local_time);\n+\n+    let formatted_time_string: String;",
+    "path": "starship/src/modules/time.rs",
+    "commit_id": "ca213444effdf5631b07562e70e4812c9c1c2a17",
+    "original_commit_id": "36840c655806fa1aa5cbb679d3c2a9aa0c8fbb98",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "No worries. I'm new myself. I just have a head start from Scala 😉 ",
+    "created_at": "2019-10-01T19:05:23Z",
+    "updated_at": "2019-10-10T01:00:08Z",
+    "html_url": "https://github.com/starship/starship/pull/463#discussion_r330224349",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/330224349"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/463#discussion_r330224349"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/330224349/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 41,
+    "side": "RIGHT",
+    "in_reply_to_id": 330211873,
+    "author_association": "NONE",
+    "original_position": 28,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/330335981",
+    "pull_request_review_id": 295968219,
+    "id": 330335981,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMDMzNTk4MQ==",
+    "diff_hunk": "@@ -30,8 +35,33 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         time_format\n     );\n \n-    let local: DateTime<Local> = Local::now();\n-    let formatted_time_string = format_time(&time_format, local);\n+    let local_time: DateTime<Local> = Local::now();\n+    log::trace!(\"Local time now is {}\", local_time);\n+\n+    let formatted_time_string: String;\n+    if utc_time_offset_str == \"local\" {\n+        formatted_time_string = format_time(&time_format, local_time);\n+    } else {\n+        let utc_time = DateTime::<Utc>::from_utc(local_time.naive_utc(), Utc);\n+        log::trace!(\"UTC time now is {}\", utc_time);\n+\n+        // Using floats to allow 30/45 minute offsets: https://www.timeanddate.com/time/time-zones-interesting.html\n+        let utc_time_offset_in_hours = utc_time_offset_str.parse::<f32>().unwrap_or(0_f32);\n+        if utc_time_offset_in_hours < 24_f32 && utc_time_offset_in_hours > -24_f32 {\n+            let utc_offset_in_seconds: i32 = (utc_time_offset_in_hours * 3600_f32) as i32;\n+            let timezone_offset = FixedOffset::east(utc_offset_in_seconds);\n+            log::trace!(\"Target timezone offset is {}\", timezone_offset);\n+\n+            let target_time = utc_time.with_timezone(&timezone_offset);\n+            log::trace!(\"Time in target timezone now is {}\", target_time);\n+\n+            formatted_time_string = format_time_fixed_offset(&time_format, target_time);\n+        } else {\n+            // Fall back to local time if an invalid offset is provided.",
+    "path": "starship/src/modules/time.rs",
+    "commit_id": "ca213444effdf5631b07562e70e4812c9c1c2a17",
+    "original_commit_id": "36840c655806fa1aa5cbb679d3c2a9aa0c8fbb98",
+    "user": {
+      "login": "keawade",
+      "id": 7308850,
+      "node_id": "MDQ6VXNlcjczMDg4NTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7308850?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/keawade",
+      "html_url": "https://github.com/keawade",
+      "followers_url": "https://api.github.com/users/keawade/followers",
+      "following_url": "https://api.github.com/users/keawade/following{/other_user}",
+      "gists_url": "https://api.github.com/users/keawade/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/keawade/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/keawade/subscriptions",
+      "organizations_url": "https://api.github.com/users/keawade/orgs",
+      "repos_url": "https://api.github.com/users/keawade/repos",
+      "events_url": "https://api.github.com/users/keawade/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/keawade/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It is now logging.\r\n\r\nThere aren't any other instances of log level `error` though so I left it at `warn` so the logs won't yell at folks every time they render a prompt unless they purposefully change their log level.",
+    "created_at": "2019-10-02T00:54:07Z",
+    "updated_at": "2019-10-10T01:00:08Z",
+    "html_url": "https://github.com/starship/starship/pull/463#discussion_r330335981",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/330335981"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/463#discussion_r330335981"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/330335981/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 60,
+    "side": "RIGHT",
+    "in_reply_to_id": 330206929,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 47,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/330336141",
+    "pull_request_review_id": 295968411,
+    "id": 330336141,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMDMzNjE0MQ==",
+    "diff_hunk": "@@ -102,4 +136,81 @@ mod tests {\n         let formatted = format_time(\"[%T]\", time);\n         assert_eq!(formatted, \"[15:36:47]\");\n     }\n+\n+    #[test]\n+    fn test_midnight_12hr_fixed_offset() {\n+        let timezone_offset = FixedOffset::east(0);\n+        let time = Utc\n+            .ymd(2014, 7, 8)\n+            .and_hms(0, 0, 0)\n+            .with_timezone(&timezone_offset);\n+        let formatted = format_time_fixed_offset(FMT_12, time);\n+        assert_eq!(formatted, \"12:00:00 AM\");\n+    }\n+\n+    #[test]\n+    fn test_midnight_24hr_fixed_offset() {\n+        let timezone_offset = FixedOffset::east(0);\n+        let time = Utc\n+            .ymd(2014, 7, 8)\n+            .and_hms(0, 0, 0)\n+            .with_timezone(&timezone_offset);\n+        let formatted = format_time_fixed_offset(FMT_24, time);\n+        assert_eq!(formatted, \"00:00:00\");\n+    }\n+\n+    #[test]\n+    fn test_noon_12hr_fixed_offset() {\n+        let timezone_offset = FixedOffset::east(0);\n+        let time = Utc\n+            .ymd(2014, 7, 8)\n+            .and_hms(12, 0, 0)\n+            .with_timezone(&timezone_offset);\n+        let formatted = format_time_fixed_offset(FMT_12, time);\n+        assert_eq!(formatted, \"12:00:00 PM\");\n+    }\n+\n+    #[test]\n+    fn test_noon_24hr_fixed_offset() {\n+        let timezone_offset = FixedOffset::east(0);\n+        let time = Utc\n+            .ymd(2014, 7, 8)\n+            .and_hms(12, 0, 0)\n+            .with_timezone(&timezone_offset);\n+        let formatted = format_time_fixed_offset(FMT_24, time);\n+        assert_eq!(formatted, \"12:00:00\");\n+    }\n+\n+    #[test]\n+    fn test_arbtime_12hr_fixed_offset() {\n+        let timezone_offset = FixedOffset::east(0);\n+        let time = Utc\n+            .ymd(2014, 7, 8)\n+            .and_hms(15, 36, 47)\n+            .with_timezone(&timezone_offset);\n+        let formatted = format_time_fixed_offset(FMT_12, time);\n+        assert_eq!(formatted, \"03:36:47 PM\");\n+    }\n+\n+    #[test]\n+    fn test_arbtime_24hr_fixed_offset() {\n+        let timezone_offset = FixedOffset::east(0);\n+        let time = Utc\n+            .ymd(2014, 7, 8)\n+            .and_hms(15, 36, 47)\n+            .with_timezone(&timezone_offset);\n+        let formatted = format_time_fixed_offset(FMT_24, time);\n+        assert_eq!(formatted, \"15:36:47\");\n+    }\n+\n+    #[test]\n+    fn test_format_with_paren_fixed_offset() {\n+        let timezone_offset = FixedOffset::east(0);\n+        let time = Utc\n+            .ymd(2014, 7, 8)\n+            .and_hms(15, 36, 47)\n+            .with_timezone(&timezone_offset);\n+        let formatted = format_time_fixed_offset(\"[%T]\", time);\n+        assert_eq!(formatted, \"[15:36:47]\");\n+    }",
+    "path": "starship/src/modules/time.rs",
+    "commit_id": "ca213444effdf5631b07562e70e4812c9c1c2a17",
+    "original_commit_id": "36840c655806fa1aa5cbb679d3c2a9aa0c8fbb98",
+    "user": {
+      "login": "keawade",
+      "id": 7308850,
+      "node_id": "MDQ6VXNlcjczMDg4NTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7308850?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/keawade",
+      "html_url": "https://github.com/keawade",
+      "followers_url": "https://api.github.com/users/keawade/followers",
+      "following_url": "https://api.github.com/users/keawade/following{/other_user}",
+      "gists_url": "https://api.github.com/users/keawade/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/keawade/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/keawade/subscriptions",
+      "organizations_url": "https://api.github.com/users/keawade/orgs",
+      "repos_url": "https://api.github.com/users/keawade/repos",
+      "events_url": "https://api.github.com/users/keawade/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/keawade/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I extracted the offset logic into a function so I could test it more easily and added a bunch of tests.",
+    "created_at": "2019-10-02T00:55:04Z",
+    "updated_at": "2019-10-10T01:00:08Z",
+    "html_url": "https://github.com/starship/starship/pull/463#discussion_r330336141",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/330336141"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/463#discussion_r330336141"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/330336141/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 215,
+    "side": "RIGHT",
+    "in_reply_to_id": 330209842,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 146,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/330336254",
+    "pull_request_review_id": 295968535,
+    "id": 330336254,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMDMzNjI1NA==",
+    "diff_hunk": "@@ -30,8 +35,33 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         time_format\n     );\n \n-    let local: DateTime<Local> = Local::now();\n-    let formatted_time_string = format_time(&time_format, local);\n+    let local_time: DateTime<Local> = Local::now();\n+    log::trace!(\"Local time now is {}\", local_time);\n+\n+    let formatted_time_string: String;",
+    "path": "starship/src/modules/time.rs",
+    "commit_id": "ca213444effdf5631b07562e70e4812c9c1c2a17",
+    "original_commit_id": "36840c655806fa1aa5cbb679d3c2a9aa0c8fbb98",
+    "user": {
+      "login": "keawade",
+      "id": 7308850,
+      "node_id": "MDQ6VXNlcjczMDg4NTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7308850?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/keawade",
+      "html_url": "https://github.com/keawade",
+      "followers_url": "https://api.github.com/users/keawade/followers",
+      "following_url": "https://api.github.com/users/keawade/following{/other_user}",
+      "gists_url": "https://api.github.com/users/keawade/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/keawade/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/keawade/subscriptions",
+      "organizations_url": "https://api.github.com/users/keawade/orgs",
+      "repos_url": "https://api.github.com/users/keawade/repos",
+      "events_url": "https://api.github.com/users/keawade/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/keawade/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I've implemented this pattern. Thanks for pointing it out! Really cool. :smile: ",
+    "created_at": "2019-10-02T00:55:42Z",
+    "updated_at": "2019-10-10T01:00:08Z",
+    "html_url": "https://github.com/starship/starship/pull/463#discussion_r330336254",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/330336254"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/463#discussion_r330336254"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/330336254/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 41,
+    "side": "RIGHT",
+    "in_reply_to_id": 330211873,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 28,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

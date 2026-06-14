@@ -1,0 +1,350 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/454989051",
+    "pull_request_review_id": 448873256,
+    "id": 454989051,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1NDk4OTA1MQ==",
+    "diff_hunk": "@@ -104,50 +104,38 @@ pub fn explain(args: ArgMatches) {\n             let value = module.get_segments().join(\"\");\n             ModuleInfo {\n                 value: ansi_term::ANSIStrings(&module.ansi_strings()).to_string(),\n-                value_len: value.chars().count() + count_wide_chars(&value),\n+                value_len: UnicodeWidthStr::width(value.as_str()),\n                 desc: module.get_description().to_owned(),\n             }\n         })\n         .collect::<Vec<ModuleInfo>>();\n \n-    let mut max_ansi_module_width = 0;\n-    let mut max_module_width = 0;\n-\n-    for info in &modules {\n-        max_ansi_module_width = std::cmp::max(\n-            max_ansi_module_width,\n-            info.value.chars().count() + count_wide_chars(&info.value),\n-        );\n-        max_module_width = std::cmp::max(max_module_width, info.value_len);\n-    }\n+    let max_module_width = modules.iter().map(|i| i.value_len).max().unwrap_or(0);\n \n     let desc_width = term_size::dimensions()\n         .map(|(w, _)| w)\n-        .map(|width| width - std::cmp::min(width, max_ansi_module_width));\n+        .map(|width| width - std::cmp::min(width, max_module_width + 6));",
+    "path": "src/print.rs",
+    "commit_id": "9c24df0ceb610dd3f1046099f7f63048c1416e2b",
+    "original_commit_id": "2213572ae4f07a24c58848a1bf29b7aeb7e98ad0",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think it makes sense to fall back to `None` instead of allowing only one char per line. Something like 4 could be a good  cutoff. Any opinions on this?",
+    "created_at": "2020-07-15T11:43:28Z",
+    "updated_at": "2020-08-05T17:06:56Z",
+    "html_url": "https://github.com/starship/starship/pull/1482#discussion_r454989051",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1482",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/454989051"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1482#discussion_r454989051"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1482"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/454989051/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 117,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 35,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/455051088",
+    "pull_request_review_id": 448952608,
+    "id": 455051088,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1NTA1MTA4OA==",
+    "diff_hunk": "@@ -104,50 +104,38 @@ pub fn explain(args: ArgMatches) {\n             let value = module.get_segments().join(\"\");\n             ModuleInfo {\n                 value: ansi_term::ANSIStrings(&module.ansi_strings()).to_string(),\n-                value_len: value.chars().count() + count_wide_chars(&value),\n+                value_len: UnicodeWidthStr::width(value.as_str()),\n                 desc: module.get_description().to_owned(),\n             }\n         })\n         .collect::<Vec<ModuleInfo>>();\n \n-    let mut max_ansi_module_width = 0;\n-    let mut max_module_width = 0;\n-\n-    for info in &modules {\n-        max_ansi_module_width = std::cmp::max(\n-            max_ansi_module_width,\n-            info.value.chars().count() + count_wide_chars(&info.value),\n-        );\n-        max_module_width = std::cmp::max(max_module_width, info.value_len);\n-    }\n+    let max_module_width = modules.iter().map(|i| i.value_len).max().unwrap_or(0);\n \n     let desc_width = term_size::dimensions()\n         .map(|(w, _)| w)\n-        .map(|width| width - std::cmp::min(width, max_ansi_module_width));\n+        .map(|width| width - std::cmp::min(width, max_module_width + 6));",
+    "path": "src/print.rs",
+    "commit_id": "9c24df0ceb610dd3f1046099f7f63048c1416e2b",
+    "original_commit_id": "2213572ae4f07a24c58848a1bf29b7aeb7e98ad0",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Also should I replace the 6 with a 7 so there's padding on both the left and right side?",
+    "created_at": "2020-07-15T13:28:39Z",
+    "updated_at": "2020-08-05T17:06:56Z",
+    "html_url": "https://github.com/starship/starship/pull/1482#discussion_r455051088",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1482",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/455051088"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1482#discussion_r455051088"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1482"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/455051088/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 117,
+    "side": "RIGHT",
+    "in_reply_to_id": 454989051,
+    "author_association": "MEMBER",
+    "original_position": 35,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/464677433",
+    "pull_request_review_id": 460359970,
+    "id": 464677433,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2NDY3NzQzMw==",
+    "diff_hunk": "@@ -104,50 +104,38 @@ pub fn explain(args: ArgMatches) {\n             let value = module.get_segments().join(\"\");\n             ModuleInfo {\n                 value: ansi_term::ANSIStrings(&module.ansi_strings()).to_string(),\n-                value_len: value.chars().count() + count_wide_chars(&value),\n+                value_len: UnicodeWidthStr::width(value.as_str()),\n                 desc: module.get_description().to_owned(),\n             }\n         })\n         .collect::<Vec<ModuleInfo>>();\n \n-    let mut max_ansi_module_width = 0;\n-    let mut max_module_width = 0;\n-\n-    for info in &modules {\n-        max_ansi_module_width = std::cmp::max(\n-            max_ansi_module_width,\n-            info.value.chars().count() + count_wide_chars(&info.value),\n-        );\n-        max_module_width = std::cmp::max(max_module_width, info.value_len);\n-    }\n+    let max_module_width = modules.iter().map(|i| i.value_len).max().unwrap_or(0);\n \n     let desc_width = term_size::dimensions()\n         .map(|(w, _)| w)\n-        .map(|width| width - std::cmp::min(width, max_ansi_module_width));\n+        .map(|width| width - std::cmp::min(width, max_module_width + 6));",
+    "path": "src/print.rs",
+    "commit_id": "9c24df0ceb610dd3f1046099f7f63048c1416e2b",
+    "original_commit_id": "2213572ae4f07a24c58848a1bf29b7aeb7e98ad0",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I've tested this locally and 6 LGTM, only suggestion here would be to maybe add a comment to explain this so if we want to change it in the future it's nice an easy to find what we need to change.",
+    "created_at": "2020-08-03T21:41:51Z",
+    "updated_at": "2020-08-05T17:06:56Z",
+    "html_url": "https://github.com/starship/starship/pull/1482#discussion_r464677433",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1482",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/464677433"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1482#discussion_r464677433"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1482"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/464677433/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 117,
+    "side": "RIGHT",
+    "in_reply_to_id": 454989051,
+    "author_association": "MEMBER",
+    "original_position": 35,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/465861061",
+    "pull_request_review_id": 461840951,
+    "id": 465861061,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2NTg2MTA2MQ==",
+    "diff_hunk": "@@ -104,50 +105,71 @@ pub fn explain(args: ArgMatches) {\n             let value = module.get_segments().join(\"\");\n             ModuleInfo {\n                 value: ansi_term::ANSIStrings(&module.ansi_strings()).to_string(),\n-                value_len: value.chars().count() + count_wide_chars(&value),\n+                value_len: better_width(value.as_str()),\n                 desc: module.get_description().to_owned(),\n             }\n         })\n         .collect::<Vec<ModuleInfo>>();\n \n-    let mut max_ansi_module_width = 0;\n-    let mut max_module_width = 0;\n-\n-    for info in &modules {\n-        max_ansi_module_width = std::cmp::max(\n-            max_ansi_module_width,\n-            info.value.chars().count() + count_wide_chars(&info.value),\n-        );\n-        max_module_width = std::cmp::max(max_module_width, info.value_len);\n-    }\n+    let max_module_width = modules.iter().map(|i| i.value_len).max().unwrap_or(0);\n \n     let desc_width = term_size::dimensions()\n         .map(|(w, _)| w)\n-        .map(|width| width - std::cmp::min(width, max_ansi_module_width));\n+        // In addition to the module width itself there are also 6 padding characters in each line.\n+        // This needs to be updated here and later in the function on line formatting changes.",
+    "path": "src/print.rs",
+    "commit_id": "9c24df0ceb610dd3f1046099f7f63048c1416e2b",
+    "original_commit_id": "4efb9fa08fb199b108871211cb7356dc9b8bf332",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Sorry didn't realise this earlier but if the 6 is used here are later on should we use a constant for this so they don't end up getting out of sync?",
+    "created_at": "2020-08-05T16:42:43Z",
+    "updated_at": "2020-08-05T17:06:56Z",
+    "html_url": "https://github.com/starship/starship/pull/1482#discussion_r465861061",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1482",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/465861061"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1482#discussion_r465861061"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1482"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/465861061/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 119,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 35,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/465876385",
+    "pull_request_review_id": 461860833,
+    "id": 465876385,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2NTg3NjM4NQ==",
+    "diff_hunk": "@@ -104,50 +105,71 @@ pub fn explain(args: ArgMatches) {\n             let value = module.get_segments().join(\"\");\n             ModuleInfo {\n                 value: ansi_term::ANSIStrings(&module.ansi_strings()).to_string(),\n-                value_len: value.chars().count() + count_wide_chars(&value),\n+                value_len: better_width(value.as_str()),\n                 desc: module.get_description().to_owned(),\n             }\n         })\n         .collect::<Vec<ModuleInfo>>();\n \n-    let mut max_ansi_module_width = 0;\n-    let mut max_module_width = 0;\n-\n-    for info in &modules {\n-        max_ansi_module_width = std::cmp::max(\n-            max_ansi_module_width,\n-            info.value.chars().count() + count_wide_chars(&info.value),\n-        );\n-        max_module_width = std::cmp::max(max_module_width, info.value_len);\n-    }\n+    let max_module_width = modules.iter().map(|i| i.value_len).max().unwrap_or(0);\n \n     let desc_width = term_size::dimensions()\n         .map(|(w, _)| w)\n-        .map(|width| width - std::cmp::min(width, max_ansi_module_width));\n+        // In addition to the module width itself there are also 6 padding characters in each line.\n+        // This needs to be updated here and later in the function on line formatting changes.",
+    "path": "src/print.rs",
+    "commit_id": "9c24df0ceb610dd3f1046099f7f63048c1416e2b",
+    "original_commit_id": "4efb9fa08fb199b108871211cb7356dc9b8bf332",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I've replaced it with a constant.",
+    "created_at": "2020-08-05T17:07:57Z",
+    "updated_at": "2020-08-05T17:07:57Z",
+    "html_url": "https://github.com/starship/starship/pull/1482#discussion_r465876385",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1482",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/465876385"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1482#discussion_r465876385"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1482"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/465876385/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 119,
+    "side": "RIGHT",
+    "in_reply_to_id": 465861061,
+    "author_association": "MEMBER",
+    "original_position": 35,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

@@ -1,0 +1,209 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/686213286",
+    "pull_request_review_id": 726697380,
+    "id": 686213286,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY4NjIxMzI4Ng==",
+    "diff_hunk": "@@ -230,43 +230,46 @@ struct RepoStatus {\n }\n \n impl RepoStatus {\n-    fn is_conflicted(status: &str) -> bool {\n-        status.starts_with(\"u \")\n-    }\n-\n-    fn is_deleted(status: &str) -> bool {\n+    fn is_deleted(short_status: &str) -> bool {\n         // is_wt_deleted || is_index_deleted\n-        status.starts_with(\"1 .D\") || status.starts_with(\"1 D\")\n+        short_status.contains('D')\n     }\n \n-    fn is_renamed(status: &str) -> bool {\n-        // is_wt_renamed || is_index_renamed\n-        // Potentially a copy and not a rename\n-        status.starts_with(\"2 \")\n+    fn is_modified(short_status: &str) -> bool {\n+        // is_wt_modified || is_wt_added\n+        short_status.ends_with('M') || short_status.ends_with('A')\n     }\n \n-    fn is_modified(status: &str) -> bool {\n-        // is_wt_modified\n-        status.starts_with(\"1 .M\") || status.starts_with(\"1 .A\")\n+    fn is_staged(short_status: &str) -> bool {\n+        // is_index_modified || is_index_added\n+        short_status.starts_with('M') || short_status.starts_with('A')\n     }\n \n-    fn is_staged(status: &str) -> bool {\n-        // is_index_modified || is_index_new\n-        status.starts_with(\"1 M\") || status.starts_with(\"1 A\")\n-    }\n+    fn parse_normal_status(&mut self, short_status: &str) {\n+        if Self::is_deleted(short_status) {\n+            self.deleted += 1;\n+        }\n \n-    fn is_untracked(status: &str) -> bool {\n-        // is_wt_new\n-        status.starts_with(\"? \")\n+        if Self::is_modified(short_status) {\n+            self.modified += 1;\n+        }\n+\n+        if Self::is_staged(short_status) {\n+            self.staged += 1;\n+        }\n     }\n \n     fn add(&mut self, s: &str) {\n-        self.conflicted += Self::is_conflicted(s) as usize;\n-        self.deleted += Self::is_deleted(s) as usize;\n-        self.renamed += Self::is_renamed(s) as usize;\n-        self.modified += Self::is_modified(s) as usize;\n-        self.staged += Self::is_staged(s) as usize;\n-        self.untracked += Self::is_untracked(s) as usize;\n+        match s.chars().next().unwrap() {\n+            '1' => self.parse_normal_status(&s[2..4]),\n+            '2' => {\n+                self.renamed += 1;\n+                self.parse_normal_status(&s[2..4])\n+            }\n+            'u' => self.conflicted += 1,\n+            '?' => self.untracked += 1,\n+            _ => panic!(\"git_status: unknown line type\"),",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "8ef13558264a2a3bc09439bd3b98f52b588ff11d",
+    "original_commit_id": "01c4c08c24640b0373a904377d8e27d2c504a6e8",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Rather than unwrapping here it would be better to include it in the match, something like (I am on my phone so this might not be completely correct) \n```suggestion\n        match s.chars().next() {\n           Some('1') => self.parse_normal_status(&s[2..4]),\n           Some('2') => {\n                self.renamed += 1;\n                self.parse_normal_status(&s[2..4])\n            }\n            Some('u') => self.conflicted += 1,\n            Some('?') => self.untracked += 1,\n            _ => panic!(\"git_status: unknown line type\"),\n```\n",
+    "created_at": "2021-08-10T18:16:13Z",
+    "updated_at": "2021-08-10T18:27:03Z",
+    "html_url": "https://github.com/starship/starship/pull/2973#discussion_r686213286",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2973",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/686213286"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2973#discussion_r686213286"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2973"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/686213286/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 263,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 272,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 68,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/686220229",
+    "pull_request_review_id": 726697380,
+    "id": 686220229,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY4NjIyMDIyOQ==",
+    "diff_hunk": "@@ -230,43 +230,46 @@ struct RepoStatus {\n }\n \n impl RepoStatus {\n-    fn is_conflicted(status: &str) -> bool {\n-        status.starts_with(\"u \")\n-    }\n-\n-    fn is_deleted(status: &str) -> bool {\n+    fn is_deleted(short_status: &str) -> bool {\n         // is_wt_deleted || is_index_deleted\n-        status.starts_with(\"1 .D\") || status.starts_with(\"1 D\")\n+        short_status.contains('D')\n     }\n \n-    fn is_renamed(status: &str) -> bool {\n-        // is_wt_renamed || is_index_renamed\n-        // Potentially a copy and not a rename\n-        status.starts_with(\"2 \")\n+    fn is_modified(short_status: &str) -> bool {\n+        // is_wt_modified || is_wt_added\n+        short_status.ends_with('M') || short_status.ends_with('A')\n     }\n \n-    fn is_modified(status: &str) -> bool {\n-        // is_wt_modified\n-        status.starts_with(\"1 .M\") || status.starts_with(\"1 .A\")\n+    fn is_staged(short_status: &str) -> bool {\n+        // is_index_modified || is_index_added\n+        short_status.starts_with('M') || short_status.starts_with('A')\n     }\n \n-    fn is_staged(status: &str) -> bool {\n-        // is_index_modified || is_index_new\n-        status.starts_with(\"1 M\") || status.starts_with(\"1 A\")\n-    }\n+    fn parse_normal_status(&mut self, short_status: &str) {\n+        if Self::is_deleted(short_status) {\n+            self.deleted += 1;\n+        }\n \n-    fn is_untracked(status: &str) -> bool {\n-        // is_wt_new\n-        status.starts_with(\"? \")\n+        if Self::is_modified(short_status) {\n+            self.modified += 1;\n+        }\n+\n+        if Self::is_staged(short_status) {\n+            self.staged += 1;\n+        }\n     }\n \n     fn add(&mut self, s: &str) {\n-        self.conflicted += Self::is_conflicted(s) as usize;\n-        self.deleted += Self::is_deleted(s) as usize;\n-        self.renamed += Self::is_renamed(s) as usize;\n-        self.modified += Self::is_modified(s) as usize;\n-        self.staged += Self::is_staged(s) as usize;\n-        self.untracked += Self::is_untracked(s) as usize;\n+        match s.chars().next().unwrap() {\n+            '1' => self.parse_normal_status(&s[2..4]),\n+            '2' => {\n+                self.renamed += 1;\n+                self.parse_normal_status(&s[2..4])\n+            }\n+            'u' => self.conflicted += 1,\n+            '?' => self.untracked += 1,\n+            _ => panic!(\"git_status: unknown line type\"),",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "8ef13558264a2a3bc09439bd3b98f52b588ff11d",
+    "original_commit_id": "01c4c08c24640b0373a904377d8e27d2c504a6e8",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Rather than panicking here it would be better to log an error. ",
+    "created_at": "2021-08-10T18:26:04Z",
+    "updated_at": "2021-08-10T18:27:04Z",
+    "html_url": "https://github.com/starship/starship/pull/2973#discussion_r686220229",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2973",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/686220229"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2973#discussion_r686220229"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2973"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/686220229/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 272,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 68,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/688929221",
+    "pull_request_review_id": 730093883,
+    "id": 688929221,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY4ODkyOTIyMQ==",
+    "diff_hunk": "@@ -230,43 +230,51 @@ struct RepoStatus {\n }\n \n impl RepoStatus {\n-    fn is_conflicted(status: &str) -> bool {\n-        status.starts_with(\"u \")\n-    }\n-\n-    fn is_deleted(status: &str) -> bool {\n+    fn is_deleted(short_status: &str) -> bool {\n         // is_wt_deleted || is_index_deleted\n-        status.starts_with(\"1 .D\") || status.starts_with(\"1 D\")\n+        short_status.contains('D')\n     }\n \n-    fn is_renamed(status: &str) -> bool {\n-        // is_wt_renamed || is_index_renamed\n-        // Potentially a copy and not a rename\n-        status.starts_with(\"2 \")\n+    fn is_modified(short_status: &str) -> bool {\n+        // is_wt_modified || is_wt_added\n+        short_status.ends_with('M') || short_status.ends_with('A')\n     }\n \n-    fn is_modified(status: &str) -> bool {\n-        // is_wt_modified\n-        status.starts_with(\"1 .M\") || status.starts_with(\"1 .A\")\n+    fn is_staged(short_status: &str) -> bool {\n+        // is_index_modified || is_index_added\n+        short_status.starts_with('M') || short_status.starts_with('A')\n     }\n \n-    fn is_staged(status: &str) -> bool {\n-        // is_index_modified || is_index_new\n-        status.starts_with(\"1 M\") || status.starts_with(\"1 A\")\n-    }\n+    fn parse_normal_status(&mut self, short_status: &str) {\n+        if Self::is_deleted(short_status) {\n+            self.deleted += 1;\n+        }\n+\n+        if Self::is_modified(short_status) {\n+            self.modified += 1;\n+        }\n \n-    fn is_untracked(status: &str) -> bool {\n-        // is_wt_new\n-        status.starts_with(\"? \")\n+        if Self::is_staged(short_status) {\n+            self.staged += 1;\n+        }\n     }\n \n     fn add(&mut self, s: &str) {\n-        self.conflicted += Self::is_conflicted(s) as usize;\n-        self.deleted += Self::is_deleted(s) as usize;\n-        self.renamed += Self::is_renamed(s) as usize;\n-        self.modified += Self::is_modified(s) as usize;\n-        self.staged += Self::is_staged(s) as usize;\n-        self.untracked += Self::is_untracked(s) as usize;\n+        if let Some(line_type) = s.chars().next() {\n+            match line_type {\n+                '1' => self.parse_normal_status(&s[2..4]),\n+                '2' => {\n+                    self.renamed += 1;\n+                    self.parse_normal_status(&s[2..4])\n+                }\n+                'u' => self.conflicted += 1,\n+                '?' => self.untracked += 1,\n+                '!' => (),\n+                _ => log::error!(\"Unknown line type in git status output\"),\n+            }\n+        } else {\n+            log::error!(\"Missing line type in git status output\");\n+        }",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "8ef13558264a2a3bc09439bd3b98f52b588ff11d",
+    "original_commit_id": "719c1ff8dbfed02c548b5197dc99d27a03ed1ae9",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Not a blocker but I think the if let can be removed from here\r\n```suggestion\r\n           match s.chars().next() {\r\n              Some('1') => self.parse_normal_status(&s[2..4]),\r\n              Some('2') => {\r\n                  self.renamed += 1;\r\n                  self.parse_normal_status(&s[2..4])\r\n              }\r\n              Some('u') => self.conflicted += 1,\r\n              Some('?') => self.untracked += 1,\r\n              Some('!') => (),\r\n              Some(_) => log::error!(\"Unknown line type in git status output\"),\r\n              _ => log::error!(\"Missing line type in git status output\"),\r\n             }\r\n```",
+    "created_at": "2021-08-14T13:10:43Z",
+    "updated_at": "2021-08-14T13:11:52Z",
+    "html_url": "https://github.com/starship/starship/pull/2973#discussion_r688929221",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2973",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/688929221"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2973#discussion_r688929221"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2973"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/688929221/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 263,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 274,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 74,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

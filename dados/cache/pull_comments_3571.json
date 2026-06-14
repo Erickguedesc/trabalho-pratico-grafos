@@ -1,0 +1,627 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/815463296",
+    "pull_request_review_id": 894523269,
+    "id": 815463296,
+    "node_id": "PRRC_kwDOCqswNs4wmvuA",
+    "diff_hunk": "@@ -105,6 +105,100 @@ jobs:\n           name: ${{ matrix.name }}\n           path: ${{ matrix.name }}\n \n+  # Notarize starship binaries for MacOS and build notarized pkg installers\n+  notarize_and_pkgbuild:\n+    runs-on: macos-latest\n+    needs: github_build\n+    strategy:\n+      fail-fast: false\n+      matrix:\n+        include:\n+          - target: x86_64-apple-darwin\n+            arch: x86_64\n+            name: starship-x86_64-apple-darwin.tar.gz\n+            pkgname: starship-x86_64-apple-darwin.pkg\n+\n+          - target: aarch64-apple-darwin\n+            arch: aarch64\n+            name: starship-aarch64-apple-darwin.tar.gz\n+            pkgname: starship-aarch64-apple-darwin.pkg\n+\n+    env:\n+      KEYCHAIN_FILENAME: app-signing.keychain-db\n+      KEYCHAIN_ENTRY: AC_PASSWORD\n+    steps:\n+    - name: Checkout repository\n+      uses: actions/checkout@v2\n+    - name: Notarize | Set up secrets\n+      env:\n+        APP_CERTIFICATE_BASE64: ${{ secrets.APPLEDEV_APPSIGNKEY_BASE64 }}\n+        INSTALL_CERTIFICATE_BASE64: ${{ secrets.APPLEDEV_INSTALLERSIGNKEY_BASE64 }}\n+        P12_PASSWORD: ${{ secrets.APPLEDEV_SIGNKEY_PASS }}\n+        KEYCHAIN_PASSWORD: ${{ secrets.APPLEDEV_SIGNKEY_PASS }}\n+        APPLEID_USERNAME: ${{ secrets.APPLEDEV_ID_NAME }}\n+        APPLEID_TEAMID: ${{ secrets.APPLEDEV_TEAM_ID }}",
+    "path": ".github/workflows/deploy.yml",
+    "commit_id": "355e9c1218aa74fa57636cba540d39fb26928017",
+    "original_commit_id": "2f5373d6fbedaade0c15407a13a5458e46da4052",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Out of curiosity, will this be signed as Starship or as you?\r\n(Also, please _please_ don't hesitate to expense this to our OpenCollective)",
+    "created_at": "2022-02-27T16:36:15Z",
+    "updated_at": "2022-02-27T16:49:58Z",
+    "html_url": "https://github.com/starship/starship/pull/3571#discussion_r815463296",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3571",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/815463296"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3571#discussion_r815463296"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3571"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/815463296/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 139,
+    "original_line": 139,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 35,
+    "position": 35,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/815463460",
+    "pull_request_review_id": 894523269,
+    "id": 815463460,
+    "node_id": "PRRC_kwDOCqswNs4wmvwk",
+    "diff_hunk": "@@ -0,0 +1,93 @@\n+#!/bin/bash\n+\n+set -euo pipefail\n+\n+# Example envrionmental variables that need to be set.\n+# KEYCHAIN_ENTRY=AC_PASSWORD   # Or whatever you picked for <AUTH_ITEM_NAME> above\n+# RUNNER_TEMP=~/Library/Keychains/\n+# KEYCHAIN_FILENAME=login.keychain\n+\n+usage(){\n+    echo \"Builds, signs, and notarizes starship.\"\n+    echo \"Read readme.md in the script directory to see the assumptions the script makes.\"\n+    echo \"Usage: $0 <path-to-starship-binary> <path-to-docs-directory> <arch> [pkgname]\"\n+    echo \"  Example: $0 target/release/starship docs/ x64\"\n+    echo \"  Example: $0 target/debug/starship docs/ arm64 starship-1.2.1-arm64.pkg\"\n+    echo \"\"\n+    echo \"If no pkgname is provided, the package will be named starship-<version>-<arch>.pkg\"\n+}\n+\n+script_dir=\"$( cd -- \"$( dirname -- \"${BASH_SOURCE[0]}\" )\" &> /dev/null && pwd )\"\n+source \"$script_dir/common.sh\"\n+\n+if [[ -z ${KEYCHAIN_ENTRY+x} ]]; then\n+  error \"Environmental variable KEYCHAIN_ENTRY must be set.\"\n+fi\n+\n+if [[ -z ${RUNNER_TEMP+x} ]]; then\n+  error \"Environmental variable RUNNER_TEMP must be set.\"\n+fi\n+\n+if [[ -z ${KEYCHAIN_FILENAME+x} ]]; then\n+  error \"Environmental variable KEYCHAIN_ENTRY must be set.\"\n+fi\n+\n+keychain_path=\"$RUNNER_TEMP/$KEYCHAIN_FILENAME\"\n+if [[ ! -f \"$keychain_path\" ]]; then\n+  error \"Could not find keychain at $keychain_path\"\n+fi\n+\n+if [[ \"$3\" == \"\" ]]; then\n+    usage\n+    exit 1\n+fi\n+\n+starship_binary=\"$1\"\n+starship_docs_dir=\"$2\"\n+arch=\"$3\"\n+pkgname=\"${4:-}\"\n+\n+if [[ ! -d \"$starship_docs_dir/.vuepress/dist\" ]]; then",
+    "path": "install/macos_packages/build_and_notarize.sh",
+    "commit_id": "355e9c1218aa74fa57636cba540d39fb26928017",
+    "original_commit_id": "2f5373d6fbedaade0c15407a13a5458e46da4052",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Nice 👍",
+    "created_at": "2022-02-27T16:37:36Z",
+    "updated_at": "2022-02-27T16:49:31Z",
+    "html_url": "https://github.com/starship/starship/pull/3571#discussion_r815463460",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3571",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/815463460"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3571#discussion_r815463460"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3571"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/815463460/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 68,
+    "original_line": 50,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 50,
+    "position": 68,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/815464400",
+    "pull_request_review_id": 894523269,
+    "id": 815464400,
+    "node_id": "PRRC_kwDOCqswNs4wmv_Q",
+    "diff_hunk": "@@ -0,0 +1,90 @@\n+#!/bin/bash\n+\n+set -euo pipefail\n+\n+# Requirements:\n+#  - MacOS\n+#  - A starship repository with binaries and documentation already built.\n+# Usage: run this script, passing $1 to the repository path. The script assumes\n+# it is being run from within a starship repository if $1 is not provided.\n+\n+usage(){\n+    echo \"Builds a component package for macOS.\"\n+    echo \"Assumes that the following items already exist:\"\n+    echo \"    - A starship binary which has already been notarized\"\n+    echo \"    - Documentation created by \\`npm run build\\`, usually in a dist\"\n+    echo \"      directory at <repo>/docs/.vuepress/dist\"\n+    echo \"Usage: $0 <path-to-starship-binary> <path-to-dist-directory>\"\n+}\n+\n+script_dir=\"$( cd -- \"$( dirname -- \"${BASH_SOURCE[0]}\" )\" &> /dev/null && pwd )\"\n+source \"$script_dir/common.sh\"\n+\n+cleanup_server(){\n+    if [[ -n \"${server_pid-}\" ]]; then\n+        echo \"Killing HTTP server ($server_pid) to clean up.\"\n+        kill \"$server_pid\"\n+        rm \"x86_64-apple-darwin-simple-http-server\"\n+    else\n+        echo \"No server found, exiting normally.\"\n+    fi\n+}\n+\n+if [[ \"$OSTYPE\" != 'darwin'* ]]; then\n+    error \"This script only works on MacOS\"\n+fi\n+\n+if [[ \"${2-undefined}\" = \"undefined\" ]]; then\n+    usage\n+    exit 1\n+fi\n+\n+starship_program_file=\"$1\"\n+starship_documentation_dir=\"$2\"\n+\n+if [ ! -f \"$starship_program_file\" ]; then\n+    error \"Could not find starship binary at $starship_program_file\"\n+fi\n+\n+if [ ! -d \"$starship_documentation_dir\" ]; then\n+    error \"Could not find starship documentation at $starship_documentation_dir\"\n+fi\n+\n+pkgdir=\"$(mktemp -d)\"\n+mkdir -p \"$pkgdir/usr/local/bin\"\n+cp \"$starship_program_file\" \"$pkgdir/usr/local/bin/starship\"\n+\n+# Now we get to make documentation! Vuepress was not designed to build locally",
+    "path": "install/macos_packages/build_component_package.sh",
+    "commit_id": "355e9c1218aa74fa57636cba540d39fb26928017",
+    "original_commit_id": "2f5373d6fbedaade0c15407a13a5458e46da4052",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Oof. If it must be done! 🙃",
+    "created_at": "2022-02-27T16:45:15Z",
+    "updated_at": "2022-02-27T16:49:31Z",
+    "html_url": "https://github.com/starship/starship/pull/3571#discussion_r815464400",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3571",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/815464400"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3571#discussion_r815464400"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3571"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/815464400/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 57,
+    "original_line": 57,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 57,
+    "position": 57,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/815464802",
+    "pull_request_review_id": 894523269,
+    "id": 815464802,
+    "node_id": "PRRC_kwDOCqswNs4wmwFi",
+    "diff_hunk": "@@ -0,0 +1,262 @@\n+# MacOS Codesigning Scripts",
+    "path": "install/macos_packages/readme.md",
+    "commit_id": "355e9c1218aa74fa57636cba540d39fb26928017",
+    "original_commit_id": "2f5373d6fbedaade0c15407a13a5458e46da4052",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Absolutely *love* this documentation! 😍 \r\nHopefully we won't need to refer to it too often 🤞 ",
+    "created_at": "2022-02-27T16:48:32Z",
+    "updated_at": "2022-02-27T16:49:31Z",
+    "html_url": "https://github.com/starship/starship/pull/3571#discussion_r815464802",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3571",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/815464802"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3571#discussion_r815464802"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3571"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/815464802/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1,
+    "original_line": 1,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 1,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/815468310",
+    "pull_request_review_id": 894527406,
+    "id": 815468310,
+    "node_id": "PRRC_kwDOCqswNs4wmw8W",
+    "diff_hunk": "@@ -105,6 +105,100 @@ jobs:\n           name: ${{ matrix.name }}\n           path: ${{ matrix.name }}\n \n+  # Notarize starship binaries for MacOS and build notarized pkg installers\n+  notarize_and_pkgbuild:\n+    runs-on: macos-latest\n+    needs: github_build\n+    strategy:\n+      fail-fast: false\n+      matrix:\n+        include:\n+          - target: x86_64-apple-darwin\n+            arch: x86_64\n+            name: starship-x86_64-apple-darwin.tar.gz\n+            pkgname: starship-x86_64-apple-darwin.pkg\n+\n+          - target: aarch64-apple-darwin\n+            arch: aarch64\n+            name: starship-aarch64-apple-darwin.tar.gz\n+            pkgname: starship-aarch64-apple-darwin.pkg\n+\n+    env:\n+      KEYCHAIN_FILENAME: app-signing.keychain-db\n+      KEYCHAIN_ENTRY: AC_PASSWORD\n+    steps:\n+    - name: Checkout repository\n+      uses: actions/checkout@v2\n+    - name: Notarize | Set up secrets\n+      env:\n+        APP_CERTIFICATE_BASE64: ${{ secrets.APPLEDEV_APPSIGNKEY_BASE64 }}\n+        INSTALL_CERTIFICATE_BASE64: ${{ secrets.APPLEDEV_INSTALLERSIGNKEY_BASE64 }}\n+        P12_PASSWORD: ${{ secrets.APPLEDEV_SIGNKEY_PASS }}\n+        KEYCHAIN_PASSWORD: ${{ secrets.APPLEDEV_SIGNKEY_PASS }}\n+        APPLEID_USERNAME: ${{ secrets.APPLEDEV_ID_NAME }}\n+        APPLEID_TEAMID: ${{ secrets.APPLEDEV_TEAM_ID }}",
+    "path": ".github/workflows/deploy.yml",
+    "commit_id": "355e9c1218aa74fa57636cba540d39fb26928017",
+    "original_commit_id": "2f5373d6fbedaade0c15407a13a5458e46da4052",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This is going to be signed by me. We can get signing certificates for at least one other mission control member as well, in case I get kidnapped by cephalopods or hit by a bus, but Apple has some [rather high requirements](https://developer.apple.com/programs/enroll/) for enrolling an organization: in particular, the organization needs to have legal entity status (be capable of sued) and a [DUNS number](https://www.dnb.com/duns-number.html).\r\n\r\nAlso, I believe the signing certificate I exported was due to expire in 2027, so if it happens in the next couple years, you should have quite a bit of time to work out a replacement :)",
+    "created_at": "2022-02-27T17:22:14Z",
+    "updated_at": "2022-02-27T17:22:14Z",
+    "html_url": "https://github.com/starship/starship/pull/3571#discussion_r815468310",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3571",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/815468310"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3571#discussion_r815468310"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3571"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/815468310/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 139,
+    "original_line": 139,
+    "side": "RIGHT",
+    "in_reply_to_id": 815463296,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 35,
+    "position": 35,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/815468428",
+    "pull_request_review_id": 894527497,
+    "id": 815468428,
+    "node_id": "PRRC_kwDOCqswNs4wmw-M",
+    "diff_hunk": "@@ -0,0 +1,93 @@\n+#!/bin/bash\n+\n+set -euo pipefail\n+\n+# Example envrionmental variables that need to be set.\n+# KEYCHAIN_ENTRY=AC_PASSWORD   # Or whatever you picked for <AUTH_ITEM_NAME> above\n+# RUNNER_TEMP=~/Library/Keychains/\n+# KEYCHAIN_FILENAME=login.keychain\n+\n+usage(){\n+    echo \"Builds, signs, and notarizes starship.\"\n+    echo \"Read readme.md in the script directory to see the assumptions the script makes.\"\n+    echo \"Usage: $0 <path-to-starship-binary> <path-to-docs-directory> <arch> [pkgname]\"\n+    echo \"  Example: $0 target/release/starship docs/ x64\"\n+    echo \"  Example: $0 target/debug/starship docs/ arm64 starship-1.2.1-arm64.pkg\"\n+    echo \"\"\n+    echo \"If no pkgname is provided, the package will be named starship-<version>-<arch>.pkg\"\n+}\n+\n+script_dir=\"$( cd -- \"$( dirname -- \"${BASH_SOURCE[0]}\" )\" &> /dev/null && pwd )\"\n+source \"$script_dir/common.sh\"\n+\n+if [[ -z ${KEYCHAIN_ENTRY+x} ]]; then\n+  error \"Environmental variable KEYCHAIN_ENTRY must be set.\"\n+fi\n+\n+if [[ -z ${RUNNER_TEMP+x} ]]; then\n+  error \"Environmental variable RUNNER_TEMP must be set.\"\n+fi\n+\n+if [[ -z ${KEYCHAIN_FILENAME+x} ]]; then\n+  error \"Environmental variable KEYCHAIN_ENTRY must be set.\"",
+    "path": "install/macos_packages/build_and_notarize.sh",
+    "commit_id": "355e9c1218aa74fa57636cba540d39fb26928017",
+    "original_commit_id": "2f5373d6fbedaade0c15407a13a5458e46da4052",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Oops.",
+    "created_at": "2022-02-27T17:23:19Z",
+    "updated_at": "2022-02-27T17:23:19Z",
+    "html_url": "https://github.com/starship/starship/pull/3571#discussion_r815468428",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3571",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/815468428"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3571#discussion_r815468428"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3571"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/815468428/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 32,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 32,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/815469226",
+    "pull_request_review_id": 894528146,
+    "id": 815469226,
+    "node_id": "PRRC_kwDOCqswNs4wmxKq",
+    "diff_hunk": "@@ -0,0 +1,90 @@\n+#!/bin/bash\n+\n+set -euo pipefail\n+\n+# Requirements:\n+#  - MacOS\n+#  - A starship repository with binaries and documentation already built.\n+# Usage: run this script, passing $1 to the repository path. The script assumes\n+# it is being run from within a starship repository if $1 is not provided.\n+\n+usage(){\n+    echo \"Builds a component package for macOS.\"\n+    echo \"Assumes that the following items already exist:\"\n+    echo \"    - A starship binary which has already been notarized\"\n+    echo \"    - Documentation created by \\`npm run build\\`, usually in a dist\"\n+    echo \"      directory at <repo>/docs/.vuepress/dist\"\n+    echo \"Usage: $0 <path-to-starship-binary> <path-to-dist-directory>\"\n+}\n+\n+script_dir=\"$( cd -- \"$( dirname -- \"${BASH_SOURCE[0]}\" )\" &> /dev/null && pwd )\"\n+source \"$script_dir/common.sh\"\n+\n+cleanup_server(){\n+    if [[ -n \"${server_pid-}\" ]]; then\n+        echo \"Killing HTTP server ($server_pid) to clean up.\"\n+        kill \"$server_pid\"\n+        rm \"x86_64-apple-darwin-simple-http-server\"\n+    else\n+        echo \"No server found, exiting normally.\"\n+    fi\n+}\n+\n+if [[ \"$OSTYPE\" != 'darwin'* ]]; then\n+    error \"This script only works on MacOS\"\n+fi\n+\n+if [[ \"${2-undefined}\" = \"undefined\" ]]; then\n+    usage\n+    exit 1\n+fi\n+\n+starship_program_file=\"$1\"\n+starship_documentation_dir=\"$2\"\n+\n+if [ ! -f \"$starship_program_file\" ]; then\n+    error \"Could not find starship binary at $starship_program_file\"\n+fi\n+\n+if [ ! -d \"$starship_documentation_dir\" ]; then\n+    error \"Could not find starship documentation at $starship_documentation_dir\"\n+fi\n+\n+pkgdir=\"$(mktemp -d)\"\n+mkdir -p \"$pkgdir/usr/local/bin\"\n+cp \"$starship_program_file\" \"$pkgdir/usr/local/bin/starship\"\n+\n+# Now we get to make documentation! Vuepress was not designed to build locally",
+    "path": "install/macos_packages/build_component_package.sh",
+    "commit_id": "355e9c1218aa74fa57636cba540d39fb26928017",
+    "original_commit_id": "2f5373d6fbedaade0c15407a13a5458e46da4052",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Yeah, I was a little surprised that `npm serve` didn't actually yield an HTML hierarchy that could be scraped by wget. It seems to do the thing where you have a single line of JS which can be evaluated to generate the DOM for the real deal, but wget can't evaluate the JS, so it just pulls a single script.",
+    "created_at": "2022-02-27T17:31:25Z",
+    "updated_at": "2022-02-27T17:31:25Z",
+    "html_url": "https://github.com/starship/starship/pull/3571#discussion_r815469226",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3571",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/815469226"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3571#discussion_r815469226"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3571"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/815469226/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 57,
+    "original_line": 57,
+    "side": "RIGHT",
+    "in_reply_to_id": 815464400,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 57,
+    "position": 57,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/815494487",
+    "pull_request_review_id": 894548303,
+    "id": 815494487,
+    "node_id": "PRRC_kwDOCqswNs4wm3VX",
+    "diff_hunk": "@@ -105,6 +105,100 @@ jobs:\n           name: ${{ matrix.name }}\n           path: ${{ matrix.name }}\n \n+  # Notarize starship binaries for MacOS and build notarized pkg installers\n+  notarize_and_pkgbuild:\n+    runs-on: macos-latest\n+    needs: github_build\n+    strategy:\n+      fail-fast: false\n+      matrix:\n+        include:\n+          - target: x86_64-apple-darwin\n+            arch: x86_64\n+            name: starship-x86_64-apple-darwin.tar.gz\n+            pkgname: starship-x86_64-apple-darwin.pkg\n+\n+          - target: aarch64-apple-darwin\n+            arch: aarch64\n+            name: starship-aarch64-apple-darwin.tar.gz\n+            pkgname: starship-aarch64-apple-darwin.pkg\n+\n+    env:\n+      KEYCHAIN_FILENAME: app-signing.keychain-db\n+      KEYCHAIN_ENTRY: AC_PASSWORD\n+    steps:\n+    - name: Checkout repository\n+      uses: actions/checkout@v2\n+    - name: Notarize | Set up secrets\n+      env:\n+        APP_CERTIFICATE_BASE64: ${{ secrets.APPLEDEV_APPSIGNKEY_BASE64 }}\n+        INSTALL_CERTIFICATE_BASE64: ${{ secrets.APPLEDEV_INSTALLERSIGNKEY_BASE64 }}\n+        P12_PASSWORD: ${{ secrets.APPLEDEV_SIGNKEY_PASS }}\n+        KEYCHAIN_PASSWORD: ${{ secrets.APPLEDEV_SIGNKEY_PASS }}\n+        APPLEID_USERNAME: ${{ secrets.APPLEDEV_ID_NAME }}\n+        APPLEID_TEAMID: ${{ secrets.APPLEDEV_TEAM_ID }}",
+    "path": ".github/workflows/deploy.yml",
+    "commit_id": "355e9c1218aa74fa57636cba540d39fb26928017",
+    "original_commit_id": "2f5373d6fbedaade0c15407a13a5458e46da4052",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'm not at my computer right now, but we may qualify as part of our Open Collective fiscal sponsorship, which qualifies us as a non-profit in the US, which may give us that legal status.",
+    "created_at": "2022-02-27T21:30:49Z",
+    "updated_at": "2022-02-27T21:30:49Z",
+    "html_url": "https://github.com/starship/starship/pull/3571#discussion_r815494487",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3571",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/815494487"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3571#discussion_r815494487"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3571"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/815494487/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 139,
+    "original_line": 139,
+    "side": "RIGHT",
+    "in_reply_to_id": 815463296,
+    "author_association": "MEMBER",
+    "original_position": 35,
+    "position": 35,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/815498353",
+    "pull_request_review_id": 894551624,
+    "id": 815498353,
+    "node_id": "PRRC_kwDOCqswNs4wm4Rx",
+    "diff_hunk": "@@ -105,6 +105,100 @@ jobs:\n           name: ${{ matrix.name }}\n           path: ${{ matrix.name }}\n \n+  # Notarize starship binaries for MacOS and build notarized pkg installers\n+  notarize_and_pkgbuild:\n+    runs-on: macos-latest\n+    needs: github_build\n+    strategy:\n+      fail-fast: false\n+      matrix:\n+        include:\n+          - target: x86_64-apple-darwin\n+            arch: x86_64\n+            name: starship-x86_64-apple-darwin.tar.gz\n+            pkgname: starship-x86_64-apple-darwin.pkg\n+\n+          - target: aarch64-apple-darwin\n+            arch: aarch64\n+            name: starship-aarch64-apple-darwin.tar.gz\n+            pkgname: starship-aarch64-apple-darwin.pkg\n+\n+    env:\n+      KEYCHAIN_FILENAME: app-signing.keychain-db\n+      KEYCHAIN_ENTRY: AC_PASSWORD\n+    steps:\n+    - name: Checkout repository\n+      uses: actions/checkout@v2\n+    - name: Notarize | Set up secrets\n+      env:\n+        APP_CERTIFICATE_BASE64: ${{ secrets.APPLEDEV_APPSIGNKEY_BASE64 }}\n+        INSTALL_CERTIFICATE_BASE64: ${{ secrets.APPLEDEV_INSTALLERSIGNKEY_BASE64 }}\n+        P12_PASSWORD: ${{ secrets.APPLEDEV_SIGNKEY_PASS }}\n+        KEYCHAIN_PASSWORD: ${{ secrets.APPLEDEV_SIGNKEY_PASS }}\n+        APPLEID_USERNAME: ${{ secrets.APPLEDEV_ID_NAME }}\n+        APPLEID_TEAMID: ${{ secrets.APPLEDEV_TEAM_ID }}",
+    "path": ".github/workflows/deploy.yml",
+    "commit_id": "355e9c1218aa74fa57636cba540d39fb26928017",
+    "original_commit_id": "2f5373d6fbedaade0c15407a13a5458e46da4052",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Oh interesting. If that's the case, I believe you would have to be the one to do the registration, since another requirement is\r\n\r\n> As the person enrolling your organization in the Apple Developer Program, you must have the legal authority to bind your organization to legal agreements. You must be the organization’s owner/founder, executive team member, senior project lead, or an employee with legal authority granted to you by a senior employee.\r\n\r\nOnce that's done though, I believe individuals should be able to acquire signing keys that work on behalf of the organization.\r\n\r\nI don't believe that signing keys from an organization would fundamentally be any different than those from an individual (the organization ID + signing key IDs would have to change in the GH secrets, but that's about it) so switching over if we decide to go for an Apple Dev organization shouldn't be too much of an issue.",
+    "created_at": "2022-02-27T22:07:08Z",
+    "updated_at": "2022-02-27T22:07:08Z",
+    "html_url": "https://github.com/starship/starship/pull/3571#discussion_r815498353",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3571",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/815498353"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3571#discussion_r815498353"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3571"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/815498353/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 139,
+    "original_line": 139,
+    "side": "RIGHT",
+    "in_reply_to_id": 815463296,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 35,
+    "position": 35,
+    "subject_type": "line"
+  }
+]

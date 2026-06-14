@@ -1,0 +1,48 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/issues/comments/647795736",
+    "html_url": "https://github.com/starship/starship/issues/590#issuecomment-647795736",
+    "issue_url": "https://api.github.com/repos/starship/starship/issues/590",
+    "id": 647795736,
+    "node_id": "MDEyOklzc3VlQ29tbWVudDY0Nzc5NTczNg==",
+    "user": {
+      "login": "fmaiabatista",
+      "id": 1574224,
+      "node_id": "MDQ6VXNlcjE1NzQyMjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1574224?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/fmaiabatista",
+      "html_url": "https://github.com/fmaiabatista",
+      "followers_url": "https://api.github.com/users/fmaiabatista/followers",
+      "following_url": "https://api.github.com/users/fmaiabatista/following{/other_user}",
+      "gists_url": "https://api.github.com/users/fmaiabatista/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/fmaiabatista/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/fmaiabatista/subscriptions",
+      "organizations_url": "https://api.github.com/users/fmaiabatista/orgs",
+      "repos_url": "https://api.github.com/users/fmaiabatista/repos",
+      "events_url": "https://api.github.com/users/fmaiabatista/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/fmaiabatista/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "created_at": "2020-06-22T22:14:18Z",
+    "updated_at": "2020-06-22T22:14:18Z",
+    "body": "I know this is closed but for reference I wanted to leave a workaround that made me successfully have Starship working under Cygwin/Fish and MSys2/Fish.\r\n\r\nFollowing [this comment](https://github.com/fish-shell/fish-shell/issues/5151#issuecomment-646764438) I was able to run `starship init fish --print-full-init` in the command-line and see that printed a path with \"\\\\\" instead of \"/\" so what I did was:\r\n\r\n1. get the full printed code (ran the command above inside my shell in MSys2):\r\n```\r\nfunction fish_prompt\r\n    switch \"$fish_key_bindings\"\r\n        case fish_hybrid_key_bindings fish_vi_key_bindings\r\n            set keymap \"$fish_bind_mode\"\r\n        case '*'\r\n            set keymap insert\r\n    end\r\n    set -l exit_code $status\r\n    # Account for changes in variable name between v2.7 and v3.0\r\n    set -l starship_duration \"$CMD_DURATION$cmd_duration\"\r\n    \"C:\\msys64\\usr\\local\\bin\\starship.exe\" prompt --status=$exit_code --keymap=$keymap --cmd-duration=$starship_duration --jobs=(count (jobs -p))\r\nend\r\n\r\n# disable virtualenv prompt, it breaks starship\r\nset VIRTUAL_ENV_DISABLE_PROMPT 1\r\n\r\nfunction fish_mode_prompt; end\r\nexport STARSHIP_SHELL=\"fish\"\r\n```\r\n\r\n2. change the path to `C:/msys64/usr/local/bin/starship.exe`.\r\n\r\n3. Now instead of using `starship init fish | source` in my `config.fish`, what I did was just paste the entire (fixed) output there, so my `config.fish` ended up like:\r\n```\r\nfunction fish_prompt\r\n    switch \"$fish_key_bindings\"\r\n        case fish_hybrid_key_bindings fish_vi_key_bindings\r\n            set keymap \"$fish_bind_mode\"\r\n        case '*'\r\n            set keymap insert\r\n    end\r\n    set -l exit_code $status\r\n    # Account for changes in variable name between v2.7 and v3.0\r\n    set -l starship_duration \"$CMD_DURATION$cmd_duration\"\r\n    \"C:/msys64/usr/local/bin/starship.exe\" prompt --status=$exit_code --keymap=$keymap --cmd-duration=$starship_duration --jobs=(count (jobs -p))\r\nend\r\n\r\n# disable virtualenv prompt, it breaks starship\r\nset VIRTUAL_ENV_DISABLE_PROMPT 1\r\n\r\nfunction fish_mode_prompt; end\r\nexport STARSHIP_SHELL=\"fish\"\r\n```\r\n\r\nAnd it works now. 🎉\r\n\r\n![image](https://user-images.githubusercontent.com/1574224/85340272-2d97dd00-b4bc-11ea-9a2d-4dc5151f2b07.png)\r\n",
+    "author_association": "NONE",
+    "pin": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/issues/comments/647795736/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "performed_via_github_app": null
+  }
+]

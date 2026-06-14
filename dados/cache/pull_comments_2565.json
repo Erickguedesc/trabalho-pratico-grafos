@@ -1,0 +1,902 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/610308141",
+    "pull_request_review_id": 631994969,
+    "id": 610308141,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxMDMwODE0MQ==",
+    "diff_hunk": "@@ -57,6 +57,13 @@ Default target: x86_64-apple-macosx\\n\",\n                 \"Dart VM version: 2.8.4 (stable) (Wed Jun 3 12:26:04 2020 +0200) on \\\"macos_x64\\\"\",\n             ),\n         }),\n+        \"deno --version\" => Some(CommandOutput {\n+            stdout: String::from(\"\\\n+deno 1.8.3 (release, x86_64-pc-windows-msvc)\n+v8 9.0.257.3\n+typescript 4.2.2\\n\"),",
+    "path": "src/utils.rs",
+    "commit_id": "e8ec896b3cf5e86adb596d859d2b3473d880e6de",
+    "original_commit_id": "908b04d9a554c64b5e1c3b97223a0f474da63d87",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n        \"deno -V\" => Some(CommandOutput {\r\n            stdout: String::from(\"deno 1.8.3\\n\"),\r\n```",
+    "created_at": "2021-04-09T02:55:58Z",
+    "updated_at": "2021-04-10T16:46:02Z",
+    "html_url": "https://github.com/starship/starship/pull/2565#discussion_r610308141",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2565",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/610308141"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2565#discussion_r610308141"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2565"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/610308141/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 60,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 64,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/610308699",
+    "pull_request_review_id": 631994969,
+    "id": 610308699,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxMDMwODY5OQ==",
+    "diff_hunk": "@@ -0,0 +1,120 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::deno::DenoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Deno version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"deno\");\n+    let config = DenoConfig::try_load(module.config);\n+    let is_deno_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .is_match();\n+\n+    if !is_deno_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"deno\", &[\"--version\"])\n+                    .map(|command_output| command_output.stdout)\n+                    .and_then(|deno_version_output| {\n+                        Some(format!(\"v{}\", parse_deno_version(&deno_version_output)?))\n+                    })\n+                    .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `deno`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_deno_version(version_cmd_output: &str) -> Option<&str> {\n+    version_cmd_output\n+        .lines()\n+        // First line has the version\n+        .next()?\n+        .split(' ')\n+        .find(|&s| s.chars().all(|c| ('0'..='9').contains(&c) || c == '.'))\n+}",
+    "path": "src/modules/deno.rs",
+    "commit_id": "e8ec896b3cf5e86adb596d859d2b3473d880e6de",
+    "original_commit_id": "908b04d9a554c64b5e1c3b97223a0f474da63d87",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\nfn parse_deno_version(deno_version: &str) -> Option<String> {\r\n    let version = deno_version\r\n        // split into [\"deno\", \"1.8.3\"]\r\n        .split_whitespace()\r\n        // return \"1.8.3\"\r\n        .nth(1)?;\r\n\r\n    Some(format!(\"v{}\", version))\r\n}\r\n\r\n```",
+    "created_at": "2021-04-09T02:57:00Z",
+    "updated_at": "2021-04-10T16:46:02Z",
+    "html_url": "https://github.com/starship/starship/pull/2565#discussion_r610308699",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2565",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/610308699"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2565#discussion_r610308699"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2565"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/610308699/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 53,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 60,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 60,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/610309224",
+    "pull_request_review_id": 631994969,
+    "id": 610309224,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxMDMwOTIyNA==",
+    "diff_hunk": "@@ -0,0 +1,120 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::deno::DenoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Deno version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"deno\");\n+    let config = DenoConfig::try_load(module.config);\n+    let is_deno_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .is_match();\n+\n+    if !is_deno_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"deno\", &[\"--version\"])\n+                    .map(|command_output| command_output.stdout)\n+                    .and_then(|deno_version_output| {\n+                        Some(format!(\"v{}\", parse_deno_version(&deno_version_output)?))\n+                    })\n+                    .map(Ok),",
+    "path": "src/modules/deno.rs",
+    "commit_id": "e8ec896b3cf5e86adb596d859d2b3473d880e6de",
+    "original_commit_id": "908b04d9a554c64b5e1c3b97223a0f474da63d87",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n                \"version\" => context\r\n                    .exec_cmd(\"deno\", &[\"--version\"])\r\n                    .and_then(|output| parse_deno_version(output.stdout.trim()))\r\n                    .map(Ok),\r\n```",
+    "created_at": "2021-04-09T02:57:57Z",
+    "updated_at": "2021-04-10T16:46:02Z",
+    "html_url": "https://github.com/starship/starship/pull/2565#discussion_r610309224",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2565",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/610309224"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2565#discussion_r610309224"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2565"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/610309224/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 30,
+    "original_start_line": 30,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 36,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 36,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/610309620",
+    "pull_request_review_id": 631994969,
+    "id": 610309620,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxMDMwOTYyMA==",
+    "diff_hunk": "@@ -0,0 +1,120 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::deno::DenoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Deno version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"deno\");\n+    let config = DenoConfig::try_load(module.config);\n+    let is_deno_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .is_match();\n+\n+    if !is_deno_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"deno\", &[\"--version\"])\n+                    .map(|command_output| command_output.stdout)\n+                    .and_then(|deno_version_output| {\n+                        Some(format!(\"v{}\", parse_deno_version(&deno_version_output)?))\n+                    })\n+                    .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `deno`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_deno_version(version_cmd_output: &str) -> Option<&str> {\n+    version_cmd_output\n+        .lines()\n+        // First line has the version\n+        .next()?\n+        .split(' ')\n+        .find(|&s| s.chars().all(|c| ('0'..='9').contains(&c) || c == '.'))\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::parse_deno_version;\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn deno_version() {\n+        let ok_versions = [\"1.1.1\", \"2.0.0\"];\n+        let not_ok_versions = [\"abc\", \" \\n.\", \". \", \"abc.\"];\n+\n+        let all_some = ok_versions.iter().all(|&v| parse_deno_version(v).is_some());\n+        let all_none = not_ok_versions\n+            .iter()\n+            .any(|&v| parse_deno_version(v).is_some());\n+\n+        assert_eq!(true, all_some);\n+        assert_eq!(true, all_none);\n+\n+        let sample_deno_output = \"\\\n+deno 1.8.3 (release, x86_64-pc-windows-msvc)\n+v8 9.0.257.3\n+typescript 4.2.2\n+        \";\n+\n+        assert_eq!(Some(\"1.8.3\"), parse_deno_version(sample_deno_output))\n+    }",
+    "path": "src/modules/deno.rs",
+    "commit_id": "e8ec896b3cf5e86adb596d859d2b3473d880e6de",
+    "original_commit_id": "908b04d9a554c64b5e1c3b97223a0f474da63d87",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n    #[test]\r\n    fn test_parse_deno_version() {\r\n        const OUTPUT: &str = \"deno 1.8.3\\n\";\r\n        assert_eq!(parse_deno_version(OUTPUT), Some(\"v1.8.3\".to_string()))\r\n    }\r\n```",
+    "created_at": "2021-04-09T02:59:07Z",
+    "updated_at": "2021-04-10T16:46:02Z",
+    "html_url": "https://github.com/starship/starship/pull/2565#discussion_r610309620",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2565",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/610309620"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2565#discussion_r610309620"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2565"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/610309620/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 70,
+    "original_start_line": 70,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 90,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 90,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/610309680",
+    "pull_request_review_id": 631994969,
+    "id": 610309680,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxMDMwOTY4MA==",
+    "diff_hunk": "@@ -0,0 +1,120 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::deno::DenoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Deno version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"deno\");\n+    let config = DenoConfig::try_load(module.config);\n+    let is_deno_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .is_match();\n+\n+    if !is_deno_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"deno\", &[\"--version\"])\n+                    .map(|command_output| command_output.stdout)\n+                    .and_then(|deno_version_output| {\n+                        Some(format!(\"v{}\", parse_deno_version(&deno_version_output)?))\n+                    })\n+                    .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `deno`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_deno_version(version_cmd_output: &str) -> Option<&str> {\n+    version_cmd_output\n+        .lines()\n+        // First line has the version\n+        .next()?\n+        .split(' ')\n+        .find(|&s| s.chars().all(|c| ('0'..='9').contains(&c) || c == '.'))\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::parse_deno_version;\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn deno_version() {\n+        let ok_versions = [\"1.1.1\", \"2.0.0\"];\n+        let not_ok_versions = [\"abc\", \" \\n.\", \". \", \"abc.\"];\n+\n+        let all_some = ok_versions.iter().all(|&v| parse_deno_version(v).is_some());\n+        let all_none = not_ok_versions\n+            .iter()\n+            .any(|&v| parse_deno_version(v).is_some());\n+\n+        assert_eq!(true, all_some);\n+        assert_eq!(true, all_none);\n+\n+        let sample_deno_output = \"\\\n+deno 1.8.3 (release, x86_64-pc-windows-msvc)\n+v8 9.0.257.3\n+typescript 4.2.2\n+        \";\n+\n+        assert_eq!(Some(\"1.8.3\"), parse_deno_version(sample_deno_output))\n+    }\n+\n+    #[test]\n+    fn folder_without_deno() -> io::Result<()> {",
+    "path": "src/modules/deno.rs",
+    "commit_id": "e8ec896b3cf5e86adb596d859d2b3473d880e6de",
+    "original_commit_id": "908b04d9a554c64b5e1c3b97223a0f474da63d87",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n    fn folder_without_deno_files() -> io::Result<()> {\r\n```",
+    "created_at": "2021-04-09T02:59:23Z",
+    "updated_at": "2021-04-10T16:46:02Z",
+    "html_url": "https://github.com/starship/starship/pull/2565#discussion_r610309680",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2565",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/610309680"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2565#discussion_r610309680"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2565"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/610309680/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 93,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 93,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/610603565",
+    "pull_request_review_id": 632381800,
+    "id": 610603565,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxMDYwMzU2NQ==",
+    "diff_hunk": "@@ -0,0 +1,29 @@\n+use crate::config::ModuleConfig;\n+\n+use serde::Serialize;\n+use starship_module_config_derive::ModuleConfig;\n+\n+#[derive(Clone, ModuleConfig, Serialize)]\n+pub struct DenoConfig<'a> {\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+    pub detect_extensions: Vec<&'a str>,\n+    pub detect_files: Vec<&'a str>,\n+    pub detect_folders: Vec<&'a str>,\n+}\n+\n+impl<'a> Default for DenoConfig<'a> {\n+    fn default() -> Self {\n+        DenoConfig {\n+            format: \"via [$symbol($version )]($style)\",\n+            symbol: \"🦕 \",",
+    "path": "src/configs/deno.rs",
+    "commit_id": "e8ec896b3cf5e86adb596d859d2b3473d880e6de",
+    "original_commit_id": "40c46228de6e443520fa73a0b3eb2bd41eff9802",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Emojis need to have two instead of one space after them to avoid rendering bugs:\r\n```suggestion\r\n            symbol: \"🦕  \",\r\n```",
+    "created_at": "2021-04-09T12:56:23Z",
+    "updated_at": "2021-04-10T16:46:02Z",
+    "html_url": "https://github.com/starship/starship/pull/2565#discussion_r610603565",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2565",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/610603565"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2565#discussion_r610603565"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2565"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/610603565/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 21,
+    "original_line": 21,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 21,
+    "position": 21,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/610606727",
+    "pull_request_review_id": 632381800,
+    "id": 610606727,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxMDYwNjcyNw==",
+    "diff_hunk": "@@ -0,0 +1,108 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::deno::DenoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Deno version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"deno\");\n+    let config = DenoConfig::try_load(module.config);\n+    let is_deno_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .is_match();\n+\n+    if !is_deno_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"deno\", &[\"-V\"])\n+                    .and_then(|output| parse_deno_version(output.stdout.trim()))",
+    "path": "src/modules/deno.rs",
+    "commit_id": "e8ec896b3cf5e86adb596d859d2b3473d880e6de",
+    "original_commit_id": "40c46228de6e443520fa73a0b3eb2bd41eff9802",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This calls `.trim()`, but later in the test you don't call `.trim()` before passing to `parse_deno_version`, is it needed?",
+    "created_at": "2021-04-09T13:00:54Z",
+    "updated_at": "2021-04-10T16:46:02Z",
+    "html_url": "https://github.com/starship/starship/pull/2565#discussion_r610606727",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2565",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/610606727"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2565#discussion_r610606727"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2565"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/610606727/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 32,
+    "original_line": 32,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 32,
+    "position": 32,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/610608125",
+    "pull_request_review_id": 632381800,
+    "id": 610608125,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxMDYwODEyNQ==",
+    "diff_hunk": "@@ -0,0 +1,108 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::deno::DenoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Deno version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"deno\");\n+    let config = DenoConfig::try_load(module.config);\n+    let is_deno_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .is_match();\n+\n+    if !is_deno_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"deno\", &[\"-V\"])\n+                    .and_then(|output| parse_deno_version(output.stdout.trim()))\n+                    .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `deno`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_deno_version(deno_version: &str) -> Option<String> {\n+    let version = deno_version\n+        // split into [\"deno 1.8.3\", \"\"]\n+        .split('\\n')\n+        // get first line\n+        .next()\n+        // unwrap\n+        .unwrap()",
+    "path": "src/modules/deno.rs",
+    "commit_id": "e8ec896b3cf5e86adb596d859d2b3473d880e6de",
+    "original_commit_id": "40c46228de6e443520fa73a0b3eb2bd41eff9802",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'd prefer this (no `unwrap`, `split('\\n')` -> `lines()`):\r\n```suggestion\r\n        // split into [\"deno 1.8.3\", \"\"]\r\n        .lines()\r\n        // get first line\r\n        .next()?\r\n```\r\n\r\nBut it even works without these lines for me:\r\n```suggestion\r\n```",
+    "created_at": "2021-04-09T13:03:13Z",
+    "updated_at": "2021-04-10T16:46:02Z",
+    "html_url": "https://github.com/starship/starship/pull/2565#discussion_r610608125",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2565",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/610608125"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2565#discussion_r610608125"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2565"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/610608125/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 52,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 57,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/610608495",
+    "pull_request_review_id": 632381800,
+    "id": 610608495,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxMDYwODQ5NQ==",
+    "diff_hunk": "@@ -650,6 +651,41 @@ By default the module will be shown if any of the following conditions are met:\n format = \"via [🔰 $version](bold red) \"\n ```\n \n+## Deno\n+\n+The `deno` module shows you your currently installed version of Deno.\n+By default the module will be shown if any of the following conditions are met:\n+- The current directory contains a `mod.ts`, `mod.js`, `deps.ts` or `deps.js` file\n+\n+### Options\n+\n+| Option              | Default                                           | Description                                     |\n+| ------------------- | ------------------------------------------------- | ----------------------------------------------- |\n+| `format`            | `\"via [$symbol($version )]($style)\"`              | The format for the module.                      |\n+| `symbol`            | `\"🦕 \"`                                           | A format string representing the symbol of Dart |",
+    "path": "docs/config/README.md",
+    "commit_id": "e8ec896b3cf5e86adb596d859d2b3473d880e6de",
+    "original_commit_id": "40c46228de6e443520fa73a0b3eb2bd41eff9802",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Emojis need to have two instead of one space after them to avoid rendering bugs:\r\n```suggestion\r\n| `symbol`            | `\"🦕  \"`                                           | A format string representing the symbol of Dart |\r\n```",
+    "created_at": "2021-04-09T13:03:46Z",
+    "updated_at": "2021-04-10T16:46:02Z",
+    "html_url": "https://github.com/starship/starship/pull/2565#discussion_r610608495",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2565",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/610608495"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2565#discussion_r610608495"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2565"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/610608495/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 665,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/610612589",
+    "pull_request_review_id": 632394546,
+    "id": 610612589,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxMDYxMjU4OQ==",
+    "diff_hunk": "@@ -0,0 +1,108 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::deno::DenoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Deno version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"deno\");\n+    let config = DenoConfig::try_load(module.config);\n+    let is_deno_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .is_match();\n+\n+    if !is_deno_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"deno\", &[\"-V\"])\n+                    .and_then(|output| parse_deno_version(output.stdout.trim()))",
+    "path": "src/modules/deno.rs",
+    "commit_id": "e8ec896b3cf5e86adb596d859d2b3473d880e6de",
+    "original_commit_id": "40c46228de6e443520fa73a0b3eb2bd41eff9802",
+    "user": {
+      "login": "Milo123459",
+      "id": 50248166,
+      "node_id": "MDQ6VXNlcjUwMjQ4MTY2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/50248166?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Milo123459",
+      "html_url": "https://github.com/Milo123459",
+      "followers_url": "https://api.github.com/users/Milo123459/followers",
+      "following_url": "https://api.github.com/users/Milo123459/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Milo123459/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Milo123459/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Milo123459/subscriptions",
+      "organizations_url": "https://api.github.com/users/Milo123459/orgs",
+      "repos_url": "https://api.github.com/users/Milo123459/repos",
+      "events_url": "https://api.github.com/users/Milo123459/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Milo123459/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "No, but I mean I'll add it.",
+    "created_at": "2021-04-09T13:09:30Z",
+    "updated_at": "2021-04-10T16:46:02Z",
+    "html_url": "https://github.com/starship/starship/pull/2565#discussion_r610612589",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2565",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/610612589"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2565#discussion_r610612589"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2565"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/610612589/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 32,
+    "original_line": 32,
+    "side": "RIGHT",
+    "in_reply_to_id": 610606727,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 32,
+    "position": 32,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/610613208",
+    "pull_request_review_id": 632395401,
+    "id": 610613208,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxMDYxMzIwOA==",
+    "diff_hunk": "@@ -0,0 +1,108 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::deno::DenoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Deno version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"deno\");\n+    let config = DenoConfig::try_load(module.config);\n+    let is_deno_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .is_match();\n+\n+    if !is_deno_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"deno\", &[\"-V\"])\n+                    .and_then(|output| parse_deno_version(output.stdout.trim()))\n+                    .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `deno`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_deno_version(deno_version: &str) -> Option<String> {\n+    let version = deno_version\n+        // split into [\"deno 1.8.3\", \"\"]\n+        .split('\\n')\n+        // get first line\n+        .next()\n+        // unwrap\n+        .unwrap()",
+    "path": "src/modules/deno.rs",
+    "commit_id": "e8ec896b3cf5e86adb596d859d2b3473d880e6de",
+    "original_commit_id": "40c46228de6e443520fa73a0b3eb2bd41eff9802",
+    "user": {
+      "login": "Milo123459",
+      "id": 50248166,
+      "node_id": "MDQ6VXNlcjUwMjQ4MTY2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/50248166?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Milo123459",
+      "html_url": "https://github.com/Milo123459",
+      "followers_url": "https://api.github.com/users/Milo123459/followers",
+      "following_url": "https://api.github.com/users/Milo123459/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Milo123459/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Milo123459/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Milo123459/subscriptions",
+      "organizations_url": "https://api.github.com/users/Milo123459/orgs",
+      "repos_url": "https://api.github.com/users/Milo123459/repos",
+      "events_url": "https://api.github.com/users/Milo123459/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Milo123459/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "For me it didn't work without the long lines of code, but, if it works for you then I suppose I can try again.\r\n\r\nOkay, it worked without it. Wasn't working yesterday so must of been a fluke.",
+    "created_at": "2021-04-09T13:10:25Z",
+    "updated_at": "2021-04-10T16:46:02Z",
+    "html_url": "https://github.com/starship/starship/pull/2565#discussion_r610613208",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2565",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/610613208"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2565#discussion_r610613208"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2565"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/610613208/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 52,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 57,
+    "side": "RIGHT",
+    "in_reply_to_id": 610608125,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/611066017",
+    "pull_request_review_id": 632935179,
+    "id": 611066017,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxMTA2NjAxNw==",
+    "diff_hunk": "@@ -650,6 +651,41 @@ By default the module will be shown if any of the following conditions are met:\n format = \"via [🔰 $version](bold red) \"\n ```\n \n+## Deno\n+\n+The `deno` module shows you your currently installed version of Deno.\n+By default the module will be shown if any of the following conditions are met:\n+- The current directory contains a `mod.ts`, `mod.js`, `deps.ts` or `deps.js` file\n+\n+### Options\n+\n+| Option              | Default                                           | Description                                     |\n+| ------------------- | ------------------------------------------------- | ----------------------------------------------- |\n+| `format`            | `\"via [$symbol($version )]($style)\"`              | The format for the module.                      |\n+| `symbol`            | `\"🦕  \"`                                           | A format string representing the symbol of Deno |",
+    "path": "docs/config/README.md",
+    "commit_id": "e8ec896b3cf5e86adb596d859d2b3473d880e6de",
+    "original_commit_id": "67731747e16caafe926adec36d4a8afd3f82b478",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n| `symbol`            | `\"🦕 \"`                                           | A format string representing the symbol of Deno |\r\n```",
+    "created_at": "2021-04-10T16:39:36Z",
+    "updated_at": "2021-04-10T16:46:02Z",
+    "html_url": "https://github.com/starship/starship/pull/2565#discussion_r611066017",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2565",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/611066017"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2565#discussion_r611066017"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2565"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/611066017/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 665,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/611066306",
+    "pull_request_review_id": 632935369,
+    "id": 611066306,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxMTA2NjMwNg==",
+    "diff_hunk": "@@ -650,6 +651,41 @@ By default the module will be shown if any of the following conditions are met:\n format = \"via [🔰 $version](bold red) \"\n ```\n \n+## Deno\n+\n+The `deno` module shows you your currently installed version of Deno.\n+By default the module will be shown if any of the following conditions are met:\n+- The current directory contains a `mod.ts`, `mod.js`, `deps.ts` or `deps.js` file\n+\n+### Options\n+\n+| Option              | Default                                           | Description                                     |\n+| ------------------- | ------------------------------------------------- | ----------------------------------------------- |\n+| `format`            | `\"via [$symbol($version )]($style)\"`              | The format for the module.                      |\n+| `symbol`            | `\"🦕  \"`                                           | A format string representing the symbol of Deno |",
+    "path": "docs/config/README.md",
+    "commit_id": "e8ec896b3cf5e86adb596d859d2b3473d880e6de",
+    "original_commit_id": "67731747e16caafe926adec36d4a8afd3f82b478",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I know @davidkna requested this earlier https://github.com/starship/starship/pull/2565#discussion_r610603565 but all other emoji symbols have a single trailing space (except gcloud and git tag that have two). Plus this got changed but the code stayed the same.",
+    "created_at": "2021-04-10T16:42:38Z",
+    "updated_at": "2021-04-10T16:46:02Z",
+    "html_url": "https://github.com/starship/starship/pull/2565#discussion_r611066306",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2565",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/611066306"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2565#discussion_r611066306"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2565"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/611066306/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 665,
+    "side": "RIGHT",
+    "in_reply_to_id": 611066017,
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

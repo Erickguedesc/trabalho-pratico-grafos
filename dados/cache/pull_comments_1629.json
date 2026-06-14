@@ -1,0 +1,1882 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/479971779",
+    "pull_request_review_id": 478411854,
+    "id": 479971779,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3OTk3MTc3OQ==",
+    "diff_hunk": "@@ -108,8 +109,11 @@ pub fn explain(args: ArgMatches) {\n             let value = module.get_segments().join(\"\");\n             ModuleInfo {\n                 value: ansi_term::ANSIStrings(&module.ansi_strings()).to_string(),\n-                value_len: better_width(value.as_str()),\n+                value_len: better_width(value.as_str())\n+                    + better_width(module.get_duration().as_str())\n+                    + 3,",
+    "path": "src/print.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "9ebb008051a002ea4ea5da9c3a59ed52e5df6e5a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This should be part of `PADDING_WIDTH`",
+    "created_at": "2020-08-31T08:18:48Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r479971779",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/479971779"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r479971779"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/479971779/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 114,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/479974003",
+    "pull_request_review_id": 478414571,
+    "id": 479974003,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3OTk3NDAwMw==",
+    "diff_hunk": "@@ -55,65 +55,76 @@ mod battery;\n use crate::config::RootModuleConfig;\n use crate::context::{Context, Shell};\n use crate::module::Module;\n+use std::time::Instant;\n \n pub fn handle<'a>(module: &str, context: &'a Context) -> Option<Module<'a>> {\n-    match module {\n-        // Keep these ordered alphabetically.\n-        // Default ordering is handled in configs/mod.rs\n-        \"aws\" => aws::module(context),\n-        #[cfg(feature = \"battery\")]\n-        \"battery\" => battery::module(context),\n-        \"character\" => character::module(context),\n-        \"cmake\" => cmake::module(context),\n-        \"cmd_duration\" => cmd_duration::module(context),\n-        \"conda\" => conda::module(context),\n-        \"dart\" => dart::module(context),\n-        \"directory\" => directory::module(context),\n-        \"docker_context\" => docker_context::module(context),\n-        \"dotnet\" => dotnet::module(context),\n-        \"elixir\" => elixir::module(context),\n-        \"elm\" => elm::module(context),\n-        \"erlang\" => erlang::module(context),\n-        \"env_var\" => env_var::module(context),\n-        \"gcloud\" => gcloud::module(context),\n-        \"git_branch\" => git_branch::module(context),\n-        \"git_commit\" => git_commit::module(context),\n-        \"git_state\" => git_state::module(context),\n-        \"git_status\" => git_status::module(context),\n-        \"golang\" => golang::module(context),\n-        \"helm\" => helm::module(context),\n-        \"hg_branch\" => hg_branch::module(context),\n-        \"hostname\" => hostname::module(context),\n-        \"java\" => java::module(context),\n-        \"jobs\" => jobs::module(context),\n-        \"julia\" => julia::module(context),\n-        \"kubernetes\" => kubernetes::module(context),\n-        \"line_break\" => line_break::module(context),\n-        \"memory_usage\" => memory_usage::module(context),\n-        \"nim\" => nim::module(context),\n-        \"nix_shell\" => nix_shell::module(context),\n-        \"nodejs\" => nodejs::module(context),\n-        \"ocaml\" => ocaml::module(context),\n-        \"package\" => package::module(context),\n-        \"perl\" => perl::module(context),\n-        \"php\" => php::module(context),\n-        \"purescript\" => purescript::module(context),\n-        \"python\" => python::module(context),\n-        \"ruby\" => ruby::module(context),\n-        \"rust\" => rust::module(context),\n-        \"shlvl\" => shlvl::module(context),\n-        \"singularity\" => singularity::module(context),\n-        \"swift\" => swift::module(context),\n-        \"terraform\" => terraform::module(context),\n-        \"time\" => time::module(context),\n-        \"crystal\" => crystal::module(context),\n-        \"username\" => username::module(context),\n-        \"zig\" => zig::module(context),\n-        _ => {\n-            eprintln!(\"Error: Unknown module {}. Use starship module --list to list out all supported modules.\", module);\n-            None\n+    let start: Instant = Instant::now();\n+\n+    let mut m: Option<Module> = {\n+        match module {\n+            // Keep these ordered alphabetically.\n+            // Default ordering is handled in configs/mod.rs\n+            \"aws\" => aws::module(context),\n+            #[cfg(feature = \"battery\")]\n+            \"battery\" => battery::module(context),\n+            \"character\" => character::module(context),\n+            \"cmake\" => cmake::module(context),\n+            \"cmd_duration\" => cmd_duration::module(context),\n+            \"conda\" => conda::module(context),\n+            \"dart\" => dart::module(context),\n+            \"directory\" => directory::module(context),\n+            \"docker_context\" => docker_context::module(context),\n+            \"dotnet\" => dotnet::module(context),\n+            \"elixir\" => elixir::module(context),\n+            \"elm\" => elm::module(context),\n+            \"erlang\" => erlang::module(context),\n+            \"env_var\" => env_var::module(context),\n+            \"gcloud\" => gcloud::module(context),\n+            \"git_branch\" => git_branch::module(context),\n+            \"git_commit\" => git_commit::module(context),\n+            \"git_state\" => git_state::module(context),\n+            \"git_status\" => git_status::module(context),\n+            \"golang\" => golang::module(context),\n+            \"helm\" => helm::module(context),\n+            \"hg_branch\" => hg_branch::module(context),\n+            \"hostname\" => hostname::module(context),\n+            \"java\" => java::module(context),\n+            \"jobs\" => jobs::module(context),\n+            \"julia\" => julia::module(context),\n+            \"kubernetes\" => kubernetes::module(context),\n+            \"line_break\" => line_break::module(context),\n+            \"memory_usage\" => memory_usage::module(context),\n+            \"nim\" => nim::module(context),\n+            \"nix_shell\" => nix_shell::module(context),\n+            \"nodejs\" => nodejs::module(context),\n+            \"ocaml\" => ocaml::module(context),\n+            \"package\" => package::module(context),\n+            \"perl\" => perl::module(context),\n+            \"php\" => php::module(context),\n+            \"purescript\" => purescript::module(context),\n+            \"python\" => python::module(context),\n+            \"ruby\" => ruby::module(context),\n+            \"rust\" => rust::module(context),\n+            \"shlvl\" => shlvl::module(context),\n+            \"singularity\" => singularity::module(context),\n+            \"swift\" => swift::module(context),\n+            \"terraform\" => terraform::module(context),\n+            \"time\" => time::module(context),\n+            \"crystal\" => crystal::module(context),\n+            \"username\" => username::module(context),\n+            \"zig\" => zig::module(context),\n+            _ => {\n+                eprintln!(\"Error: Unknown module {}. Use starship module --list to list out all supported modules.\", module);\n+                None\n+            }\n         }\n+    };\n+\n+    match &mut m {",
+    "path": "src/modules/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "9ebb008051a002ea4ea5da9c3a59ed52e5df6e5a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It might be nice to log the duration as debug/trace so it can also be inspected from the log.\r\nHave you tested if this causes any slowdown in the prompt? If so it would be to move it into explain.",
+    "created_at": "2020-08-31T08:23:16Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r479974003",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/479974003"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r479974003"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/479974003/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 123,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 124,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/481435095",
+    "pull_request_review_id": 480120029,
+    "id": 481435095,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ4MTQzNTA5NQ==",
+    "diff_hunk": "@@ -108,8 +109,11 @@ pub fn explain(args: ArgMatches) {\n             let value = module.get_segments().join(\"\");\n             ModuleInfo {\n                 value: ansi_term::ANSIStrings(&module.ansi_strings()).to_string(),\n-                value_len: better_width(value.as_str()),\n+                value_len: better_width(value.as_str())\n+                    + better_width(module.get_duration().as_str())\n+                    + 3,",
+    "path": "src/print.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "9ebb008051a002ea4ea5da9c3a59ed52e5df6e5a",
+    "user": {
+      "login": "jankatins",
+      "id": 890156,
+      "node_id": "MDQ6VXNlcjg5MDE1Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/890156?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jankatins",
+      "html_url": "https://github.com/jankatins",
+      "followers_url": "https://api.github.com/users/jankatins/followers",
+      "following_url": "https://api.github.com/users/jankatins/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jankatins/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jankatins/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jankatins/subscriptions",
+      "organizations_url": "https://api.github.com/users/jankatins/orgs",
+      "repos_url": "https://api.github.com/users/jankatins/repos",
+      "events_url": "https://api.github.com/users/jankatins/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jankatins/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "done",
+    "created_at": "2020-09-01T21:13:36Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r481435095",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/481435095"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r481435095"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/481435095/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 114,
+    "side": "RIGHT",
+    "in_reply_to_id": 479971779,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/487951577",
+    "pull_request_review_id": 487806346,
+    "id": 487951577,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ4Nzk1MTU3Nw==",
+    "diff_hunk": "@@ -55,65 +55,73 @@ mod battery;\n use crate::config::RootModuleConfig;\n use crate::context::{Context, Shell};\n use crate::module::Module;\n+use std::time::Instant;\n \n pub fn handle<'a>(module: &str, context: &'a Context) -> Option<Module<'a>> {",
+    "path": "src/modules/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "70cbaa55b62837db22329e62c18e6ccb725d3ff3",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This should return `Module<'a>` instead now",
+    "created_at": "2020-09-14T14:06:17Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r487951577",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/487951577"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r487951577"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/487951577/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 60,
+    "original_line": 60,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 6,
+    "position": 6,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/488187287",
+    "pull_request_review_id": 488098927,
+    "id": 488187287,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ4ODE4NzI4Nw==",
+    "diff_hunk": "@@ -55,65 +55,73 @@ mod battery;\n use crate::config::RootModuleConfig;\n use crate::context::{Context, Shell};\n use crate::module::Module;\n+use std::time::Instant;\n \n pub fn handle<'a>(module: &str, context: &'a Context) -> Option<Module<'a>> {",
+    "path": "src/modules/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "70cbaa55b62837db22329e62c18e6ccb725d3ff3",
+    "user": {
+      "login": "jankatins",
+      "id": 890156,
+      "node_id": "MDQ6VXNlcjg5MDE1Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/890156?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jankatins",
+      "html_url": "https://github.com/jankatins",
+      "followers_url": "https://api.github.com/users/jankatins/followers",
+      "following_url": "https://api.github.com/users/jankatins/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jankatins/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jankatins/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jankatins/subscriptions",
+      "organizations_url": "https://api.github.com/users/jankatins/orgs",
+      "repos_url": "https://api.github.com/users/jankatins/repos",
+      "events_url": "https://api.github.com/users/jankatins/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jankatins/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I tried and it's a bit over my head right now (this is my first rust project): it breaks all over the place as this has than a different return type as the custom module which is handled special. Will try again if you insist but would appreciate a merge without that change if possible...",
+    "created_at": "2020-09-14T20:01:47Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r488187287",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/488187287"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r488187287"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/488187287/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 60,
+    "original_line": 60,
+    "side": "RIGHT",
+    "in_reply_to_id": 487951577,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 6,
+    "position": 6,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/490851556",
+    "pull_request_review_id": 491339277,
+    "id": 490851556,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MDg1MTU1Ng==",
+    "diff_hunk": "@@ -55,65 +55,73 @@ mod battery;\n use crate::config::RootModuleConfig;\n use crate::context::{Context, Shell};\n use crate::module::Module;\n+use std::time::Instant;\n \n pub fn handle<'a>(module: &str, context: &'a Context) -> Option<Module<'a>> {\n-    match module {\n-        // Keep these ordered alphabetically.\n-        // Default ordering is handled in configs/starship_root.rs\n-        \"aws\" => aws::module(context),\n-        #[cfg(feature = \"battery\")]\n-        \"battery\" => battery::module(context),\n-        \"character\" => character::module(context),\n-        \"cmake\" => cmake::module(context),\n-        \"cmd_duration\" => cmd_duration::module(context),\n-        \"conda\" => conda::module(context),\n-        \"dart\" => dart::module(context),\n-        \"directory\" => directory::module(context),\n-        \"docker_context\" => docker_context::module(context),\n-        \"dotnet\" => dotnet::module(context),\n-        \"elixir\" => elixir::module(context),\n-        \"elm\" => elm::module(context),\n-        \"erlang\" => erlang::module(context),\n-        \"env_var\" => env_var::module(context),\n-        \"gcloud\" => gcloud::module(context),\n-        \"git_branch\" => git_branch::module(context),\n-        \"git_commit\" => git_commit::module(context),\n-        \"git_state\" => git_state::module(context),\n-        \"git_status\" => git_status::module(context),\n-        \"golang\" => golang::module(context),\n-        \"helm\" => helm::module(context),\n-        \"hg_branch\" => hg_branch::module(context),\n-        \"hostname\" => hostname::module(context),\n-        \"java\" => java::module(context),\n-        \"jobs\" => jobs::module(context),\n-        \"julia\" => julia::module(context),\n-        \"kubernetes\" => kubernetes::module(context),\n-        \"line_break\" => line_break::module(context),\n-        \"memory_usage\" => memory_usage::module(context),\n-        \"nim\" => nim::module(context),\n-        \"nix_shell\" => nix_shell::module(context),\n-        \"nodejs\" => nodejs::module(context),\n-        \"ocaml\" => ocaml::module(context),\n-        \"package\" => package::module(context),\n-        \"perl\" => perl::module(context),\n-        \"php\" => php::module(context),\n-        \"purescript\" => purescript::module(context),\n-        \"python\" => python::module(context),\n-        \"ruby\" => ruby::module(context),\n-        \"rust\" => rust::module(context),\n-        \"shlvl\" => shlvl::module(context),\n-        \"singularity\" => singularity::module(context),\n-        \"swift\" => swift::module(context),\n-        \"terraform\" => terraform::module(context),\n-        \"time\" => time::module(context),\n-        \"crystal\" => crystal::module(context),\n-        \"username\" => username::module(context),\n-        \"zig\" => zig::module(context),\n-        _ => {\n-            eprintln!(\"Error: Unknown module {}. Use starship module --list to list out all supported modules.\", module);\n-            None\n+    let start: Instant = Instant::now();\n+\n+    let mut m: Option<Module> = {\n+        match module {\n+            // Keep these ordered alphabetically.\n+            // Default ordering is handled in configs/starship_root.rs\n+            \"aws\" => aws::module(context),\n+            #[cfg(feature = \"battery\")]\n+            \"battery\" => battery::module(context),\n+            \"character\" => character::module(context),\n+            \"cmake\" => cmake::module(context),\n+            \"cmd_duration\" => cmd_duration::module(context),\n+            \"conda\" => conda::module(context),\n+            \"dart\" => dart::module(context),\n+            \"directory\" => directory::module(context),\n+            \"docker_context\" => docker_context::module(context),\n+            \"dotnet\" => dotnet::module(context),\n+            \"elixir\" => elixir::module(context),\n+            \"elm\" => elm::module(context),\n+            \"erlang\" => erlang::module(context),\n+            \"env_var\" => env_var::module(context),\n+            \"gcloud\" => gcloud::module(context),\n+            \"git_branch\" => git_branch::module(context),\n+            \"git_commit\" => git_commit::module(context),\n+            \"git_state\" => git_state::module(context),\n+            \"git_status\" => git_status::module(context),\n+            \"golang\" => golang::module(context),\n+            \"helm\" => helm::module(context),\n+            \"hg_branch\" => hg_branch::module(context),\n+            \"hostname\" => hostname::module(context),\n+            \"java\" => java::module(context),\n+            \"jobs\" => jobs::module(context),\n+            \"julia\" => julia::module(context),\n+            \"kubernetes\" => kubernetes::module(context),\n+            \"line_break\" => line_break::module(context),\n+            \"memory_usage\" => memory_usage::module(context),\n+            \"nim\" => nim::module(context),\n+            \"nix_shell\" => nix_shell::module(context),\n+            \"nodejs\" => nodejs::module(context),\n+            \"ocaml\" => ocaml::module(context),\n+            \"package\" => package::module(context),\n+            \"perl\" => perl::module(context),\n+            \"php\" => php::module(context),\n+            \"purescript\" => purescript::module(context),\n+            \"python\" => python::module(context),\n+            \"ruby\" => ruby::module(context),\n+            \"rust\" => rust::module(context),\n+            \"shlvl\" => shlvl::module(context),\n+            \"singularity\" => singularity::module(context),\n+            \"swift\" => swift::module(context),\n+            \"terraform\" => terraform::module(context),\n+            \"time\" => time::module(context),\n+            \"crystal\" => crystal::module(context),\n+            \"username\" => username::module(context),\n+            \"zig\" => zig::module(context),\n+            _ => {\n+                eprintln!(\"Error: Unknown module {}. Use starship module --list to list out all supported modules.\", module);\n+                None\n+            }\n         }\n-    }\n+    };\n+\n+    m.get_or_insert(context.new_module(module)).duration = Option::from(start.elapsed());",
+    "path": "src/modules/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "06917ff16c57ed258da0d754eda1c2cbfc3aa7d3",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n    let elapsed = start.elapsed();\r\n    if elapsed.as_millis() > 0 {\r\n        m = m.or_else(|| {\r\n            let mut m = context.new_module(module);\r\n            m.duration = Some(elapsed);\r\n            Some(m)\r\n        })\r\n    }\r\n```\r\nI think with this keeping it as `Option` makes sense.",
+    "created_at": "2020-09-18T10:24:59Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r490851556",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/490851556"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r490851556"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/490851556/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 123,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 125,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/490852150",
+    "pull_request_review_id": 491340041,
+    "id": 490852150,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MDg1MjE1MA==",
+    "diff_hunk": "@@ -73,6 +74,9 @@ pub struct Module<'a> {\n \n     /// The collection of segments that compose this module.\n     pub segments: Vec<Segment>,\n+\n+    /// the time it took to compute this module\n+    pub duration: Option<Duration>,",
+    "path": "src/module.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "06917ff16c57ed258da0d754eda1c2cbfc3aa7d3",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this could be plain `Duration`, initiliazed as `Duration::default()` (0) when it is not set yet.",
+    "created_at": "2020-09-18T10:26:12Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r490852150",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/490852150"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r490852150"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/490852150/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 79,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 14,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/490853140",
+    "pull_request_review_id": 491341092,
+    "id": 490853140,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MDg1MzE0MA==",
+    "diff_hunk": "@@ -84,7 +84,21 @@ impl<'a> ModuleRenderer<'a> {\n \n     /// Renders the module returning its output\n     pub fn collect(self) -> Option<String> {\n-        crate::print::get_module(self.name, self.context)\n+        let ret = crate::print::get_module(self.name, self.context);\n+        // all tests rely on the fact that an empty module produces None as output as the\n+        // convention was that there would be no module but None. This is nowadays not anymore\n+        // the case (to get durations for all modules). So here we make it so, that an empty\n+        // module returns None in the tests...\n+        match &ret {",
+    "path": "src/test/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "06917ff16c57ed258da0d754eda1c2cbfc3aa7d3",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'd prefer something like this:\r\n```rust\r\nmatch ret {\r\n    Some(\"\") => None,\r\n    Some(_) => ret,\r\n    None => None,\r\n}\r\n```",
+    "created_at": "2020-09-18T10:27:54Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r490853140",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/490853140"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r490853140"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/490853140/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 92,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 10,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/490855151",
+    "pull_request_review_id": 491343479,
+    "id": 490855151,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MDg1NTE1MQ==",
+    "diff_hunk": "@@ -105,7 +110,8 @@ impl<'a> Module<'a> {\n     pub fn is_empty(&self) -> bool {\n         self.segments\n             .iter()\n-            .all(|segment| segment.value.trim().is_empty())\n+            // no trim: if we add spaces/linebreaks it's not \"empty\" as we change the final output\n+            .all(|segment| segment.value.is_empty())",
+    "path": "src/module.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "06917ff16c57ed258da0d754eda1c2cbfc3aa7d3",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n           .all(|segment| segment.value.chars().any(|c| c != ' '))\r\n```\r\nSince this is mostly about the line_break I think it makes sense to still treat space only segments as empty.",
+    "created_at": "2020-09-18T10:31:56Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r490855151",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/490855151"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r490855151"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/490855151/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 114,
+    "original_line": 114,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 32,
+    "position": 32,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/490888749",
+    "pull_request_review_id": 491386673,
+    "id": 490888749,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MDg4ODc0OQ==",
+    "diff_hunk": "@@ -105,7 +110,8 @@ impl<'a> Module<'a> {\n     pub fn is_empty(&self) -> bool {\n         self.segments\n             .iter()\n-            .all(|segment| segment.value.trim().is_empty())\n+            // no trim: if we add spaces/linebreaks it's not \"empty\" as we change the final output\n+            .all(|segment| segment.value.is_empty())",
+    "path": "src/module.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "06917ff16c57ed258da0d754eda1c2cbfc3aa7d3",
+    "user": {
+      "login": "jankatins",
+      "id": 890156,
+      "node_id": "MDQ6VXNlcjg5MDE1Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/890156?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jankatins",
+      "html_url": "https://github.com/jankatins",
+      "followers_url": "https://api.github.com/users/jankatins/followers",
+      "following_url": "https://api.github.com/users/jankatins/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jankatins/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jankatins/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jankatins/subscriptions",
+      "organizations_url": "https://api.github.com/users/jankatins/orgs",
+      "repos_url": "https://api.github.com/users/jankatins/repos",
+      "events_url": "https://api.github.com/users/jankatins/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jankatins/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Opposing argument is that even a single space shows up on the prompt and is clearly visible and therefore the corresponding module not \"empty\"",
+    "created_at": "2020-09-18T11:37:02Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r490888749",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/490888749"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r490888749"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/490888749/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 114,
+    "original_line": 114,
+    "side": "RIGHT",
+    "in_reply_to_id": 490855151,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 32,
+    "position": 32,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/490896464",
+    "pull_request_review_id": 491395065,
+    "id": 490896464,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MDg5NjQ2NA==",
+    "diff_hunk": "@@ -105,7 +110,8 @@ impl<'a> Module<'a> {\n     pub fn is_empty(&self) -> bool {\n         self.segments\n             .iter()\n-            .all(|segment| segment.value.trim().is_empty())\n+            // no trim: if we add spaces/linebreaks it's not \"empty\" as we change the final output\n+            .all(|segment| segment.value.is_empty())",
+    "path": "src/module.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "06917ff16c57ed258da0d754eda1c2cbfc3aa7d3",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Yes that makes sense.",
+    "created_at": "2020-09-18T11:51:03Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r490896464",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/490896464"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r490896464"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/490896464/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 114,
+    "original_line": 114,
+    "side": "RIGHT",
+    "in_reply_to_id": 490855151,
+    "author_association": "MEMBER",
+    "original_position": 32,
+    "position": 32,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/490945136",
+    "pull_request_review_id": 491458791,
+    "id": 490945136,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MDk0NTEzNg==",
+    "diff_hunk": "@@ -84,7 +84,21 @@ impl<'a> ModuleRenderer<'a> {\n \n     /// Renders the module returning its output\n     pub fn collect(self) -> Option<String> {\n-        crate::print::get_module(self.name, self.context)\n+        let ret = crate::print::get_module(self.name, self.context);\n+        // all tests rely on the fact that an empty module produces None as output as the\n+        // convention was that there would be no module but None. This is nowadays not anymore\n+        // the case (to get durations for all modules). So here we make it so, that an empty\n+        // module returns None in the tests...\n+        match &ret {",
+    "path": "src/test/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "06917ff16c57ed258da0d754eda1c2cbfc3aa7d3",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "better yet:\r\n```rust\r\nmatch ret {\r\n    Some(\"\") => None,\r\n    _ => ret,\r\n}\r\n```\r\nor\r\n```rust\r\nmatch ret {\r\n    Some(\"\") => None,\r\n    ret => ret,\r\n}\r\n```",
+    "created_at": "2020-09-18T13:22:18Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r490945136",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/490945136"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r490945136"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/490945136/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 92,
+    "side": "RIGHT",
+    "in_reply_to_id": 490853140,
+    "author_association": "MEMBER",
+    "original_position": 10,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491142733",
+    "pull_request_review_id": 491720412,
+    "id": 491142733,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTE0MjczMw==",
+    "diff_hunk": "@@ -55,65 +55,73 @@ mod battery;\n use crate::config::RootModuleConfig;\n use crate::context::{Context, Shell};\n use crate::module::Module;\n+use std::time::Instant;\n \n pub fn handle<'a>(module: &str, context: &'a Context) -> Option<Module<'a>> {\n-    match module {\n-        // Keep these ordered alphabetically.\n-        // Default ordering is handled in configs/starship_root.rs\n-        \"aws\" => aws::module(context),\n-        #[cfg(feature = \"battery\")]\n-        \"battery\" => battery::module(context),\n-        \"character\" => character::module(context),\n-        \"cmake\" => cmake::module(context),\n-        \"cmd_duration\" => cmd_duration::module(context),\n-        \"conda\" => conda::module(context),\n-        \"dart\" => dart::module(context),\n-        \"directory\" => directory::module(context),\n-        \"docker_context\" => docker_context::module(context),\n-        \"dotnet\" => dotnet::module(context),\n-        \"elixir\" => elixir::module(context),\n-        \"elm\" => elm::module(context),\n-        \"erlang\" => erlang::module(context),\n-        \"env_var\" => env_var::module(context),\n-        \"gcloud\" => gcloud::module(context),\n-        \"git_branch\" => git_branch::module(context),\n-        \"git_commit\" => git_commit::module(context),\n-        \"git_state\" => git_state::module(context),\n-        \"git_status\" => git_status::module(context),\n-        \"golang\" => golang::module(context),\n-        \"helm\" => helm::module(context),\n-        \"hg_branch\" => hg_branch::module(context),\n-        \"hostname\" => hostname::module(context),\n-        \"java\" => java::module(context),\n-        \"jobs\" => jobs::module(context),\n-        \"julia\" => julia::module(context),\n-        \"kubernetes\" => kubernetes::module(context),\n-        \"line_break\" => line_break::module(context),\n-        \"memory_usage\" => memory_usage::module(context),\n-        \"nim\" => nim::module(context),\n-        \"nix_shell\" => nix_shell::module(context),\n-        \"nodejs\" => nodejs::module(context),\n-        \"ocaml\" => ocaml::module(context),\n-        \"package\" => package::module(context),\n-        \"perl\" => perl::module(context),\n-        \"php\" => php::module(context),\n-        \"purescript\" => purescript::module(context),\n-        \"python\" => python::module(context),\n-        \"ruby\" => ruby::module(context),\n-        \"rust\" => rust::module(context),\n-        \"shlvl\" => shlvl::module(context),\n-        \"singularity\" => singularity::module(context),\n-        \"swift\" => swift::module(context),\n-        \"terraform\" => terraform::module(context),\n-        \"time\" => time::module(context),\n-        \"crystal\" => crystal::module(context),\n-        \"username\" => username::module(context),\n-        \"zig\" => zig::module(context),\n-        _ => {\n-            eprintln!(\"Error: Unknown module {}. Use starship module --list to list out all supported modules.\", module);\n-            None\n+    let start: Instant = Instant::now();\n+\n+    let mut m: Option<Module> = {\n+        match module {\n+            // Keep these ordered alphabetically.\n+            // Default ordering is handled in configs/starship_root.rs\n+            \"aws\" => aws::module(context),\n+            #[cfg(feature = \"battery\")]\n+            \"battery\" => battery::module(context),\n+            \"character\" => character::module(context),\n+            \"cmake\" => cmake::module(context),\n+            \"cmd_duration\" => cmd_duration::module(context),\n+            \"conda\" => conda::module(context),\n+            \"dart\" => dart::module(context),\n+            \"directory\" => directory::module(context),\n+            \"docker_context\" => docker_context::module(context),\n+            \"dotnet\" => dotnet::module(context),\n+            \"elixir\" => elixir::module(context),\n+            \"elm\" => elm::module(context),\n+            \"erlang\" => erlang::module(context),\n+            \"env_var\" => env_var::module(context),\n+            \"gcloud\" => gcloud::module(context),\n+            \"git_branch\" => git_branch::module(context),\n+            \"git_commit\" => git_commit::module(context),\n+            \"git_state\" => git_state::module(context),\n+            \"git_status\" => git_status::module(context),\n+            \"golang\" => golang::module(context),\n+            \"helm\" => helm::module(context),\n+            \"hg_branch\" => hg_branch::module(context),\n+            \"hostname\" => hostname::module(context),\n+            \"java\" => java::module(context),\n+            \"jobs\" => jobs::module(context),\n+            \"julia\" => julia::module(context),\n+            \"kubernetes\" => kubernetes::module(context),\n+            \"line_break\" => line_break::module(context),\n+            \"memory_usage\" => memory_usage::module(context),\n+            \"nim\" => nim::module(context),\n+            \"nix_shell\" => nix_shell::module(context),\n+            \"nodejs\" => nodejs::module(context),\n+            \"ocaml\" => ocaml::module(context),\n+            \"package\" => package::module(context),\n+            \"perl\" => perl::module(context),\n+            \"php\" => php::module(context),\n+            \"purescript\" => purescript::module(context),\n+            \"python\" => python::module(context),\n+            \"ruby\" => ruby::module(context),\n+            \"rust\" => rust::module(context),\n+            \"shlvl\" => shlvl::module(context),\n+            \"singularity\" => singularity::module(context),\n+            \"swift\" => swift::module(context),\n+            \"terraform\" => terraform::module(context),\n+            \"time\" => time::module(context),\n+            \"crystal\" => crystal::module(context),\n+            \"username\" => username::module(context),\n+            \"zig\" => zig::module(context),\n+            _ => {\n+                eprintln!(\"Error: Unknown module {}. Use starship module --list to list out all supported modules.\", module);\n+                None\n+            }\n         }\n-    }\n+    };\n+\n+    m.get_or_insert(context.new_module(module)).duration = Option::from(start.elapsed());",
+    "path": "src/modules/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "06917ff16c57ed258da0d754eda1c2cbfc3aa7d3",
+    "user": {
+      "login": "jankatins",
+      "id": 890156,
+      "node_id": "MDQ6VXNlcjg5MDE1Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/890156?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jankatins",
+      "html_url": "https://github.com/jankatins",
+      "followers_url": "https://api.github.com/users/jankatins/followers",
+      "following_url": "https://api.github.com/users/jankatins/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jankatins/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jankatins/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jankatins/subscriptions",
+      "organizations_url": "https://api.github.com/users/jankatins/orgs",
+      "repos_url": "https://api.github.com/users/jankatins/repos",
+      "events_url": "https://api.github.com/users/jankatins/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jankatins/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "wrote it a bit differently because as far as I could understand your code, it only set the duration for the None case.",
+    "created_at": "2020-09-18T19:14:07Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r491142733",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491142733"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r491142733"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491142733/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 123,
+    "side": "RIGHT",
+    "in_reply_to_id": 490851556,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 125,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491157158",
+    "pull_request_review_id": 491738436,
+    "id": 491157158,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTE1NzE1OA==",
+    "diff_hunk": "@@ -84,7 +84,21 @@ impl<'a> ModuleRenderer<'a> {\n \n     /// Renders the module returning its output\n     pub fn collect(self) -> Option<String> {\n-        crate::print::get_module(self.name, self.context)\n+        let ret = crate::print::get_module(self.name, self.context);\n+        // all tests rely on the fact that an empty module produces None as output as the\n+        // convention was that there would be no module but None. This is nowadays not anymore\n+        // the case (to get durations for all modules). So here we make it so, that an empty\n+        // module returns None in the tests...\n+        match &ret {",
+    "path": "src/test/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "06917ff16c57ed258da0d754eda1c2cbfc3aa7d3",
+    "user": {
+      "login": "jankatins",
+      "id": 890156,
+      "node_id": "MDQ6VXNlcjg5MDE1Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/890156?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jankatins",
+      "html_url": "https://github.com/jankatins",
+      "followers_url": "https://api.github.com/users/jankatins/followers",
+      "following_url": "https://api.github.com/users/jankatins/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jankatins/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jankatins/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jankatins/subscriptions",
+      "organizations_url": "https://api.github.com/users/jankatins/orgs",
+      "repos_url": "https://api.github.com/users/jankatins/repos",
+      "events_url": "https://api.github.com/users/jankatins/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jankatins/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Tried to do it but rust doesn't like it: `ret` is a `Option<String>` but `Some(\"\")` is a `Option<str>`. And `Some(String::from(\"\"))` is an illegal function call in the match and matching `ret.ref()` doesn't work because ret is an Option  :-(\r\n\r\nThe best I could come up with is \r\n\r\n``` \r\nif ret.is_none() {\r\n            return None\r\n        } else {\r\n            let s = ret.unwrap();\r\n            match s.as_str() {\r\n                \"\" => None,\r\n                _ => Some(s),\r\n            }\r\n        }\r\n``` \r\n\r\nand this doesn't look much better than what is in there now :-(",
+    "created_at": "2020-09-18T19:46:31Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r491157158",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491157158"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r491157158"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491157158/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 92,
+    "side": "RIGHT",
+    "in_reply_to_id": 490853140,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 10,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491158459",
+    "pull_request_review_id": 491740202,
+    "id": 491158459,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTE1ODQ1OQ==",
+    "diff_hunk": "@@ -55,65 +55,73 @@ mod battery;\n use crate::config::RootModuleConfig;\n use crate::context::{Context, Shell};\n use crate::module::Module;\n+use std::time::Instant;\n \n pub fn handle<'a>(module: &str, context: &'a Context) -> Option<Module<'a>> {\n-    match module {\n-        // Keep these ordered alphabetically.\n-        // Default ordering is handled in configs/starship_root.rs\n-        \"aws\" => aws::module(context),\n-        #[cfg(feature = \"battery\")]\n-        \"battery\" => battery::module(context),\n-        \"character\" => character::module(context),\n-        \"cmake\" => cmake::module(context),\n-        \"cmd_duration\" => cmd_duration::module(context),\n-        \"conda\" => conda::module(context),\n-        \"dart\" => dart::module(context),\n-        \"directory\" => directory::module(context),\n-        \"docker_context\" => docker_context::module(context),\n-        \"dotnet\" => dotnet::module(context),\n-        \"elixir\" => elixir::module(context),\n-        \"elm\" => elm::module(context),\n-        \"erlang\" => erlang::module(context),\n-        \"env_var\" => env_var::module(context),\n-        \"gcloud\" => gcloud::module(context),\n-        \"git_branch\" => git_branch::module(context),\n-        \"git_commit\" => git_commit::module(context),\n-        \"git_state\" => git_state::module(context),\n-        \"git_status\" => git_status::module(context),\n-        \"golang\" => golang::module(context),\n-        \"helm\" => helm::module(context),\n-        \"hg_branch\" => hg_branch::module(context),\n-        \"hostname\" => hostname::module(context),\n-        \"java\" => java::module(context),\n-        \"jobs\" => jobs::module(context),\n-        \"julia\" => julia::module(context),\n-        \"kubernetes\" => kubernetes::module(context),\n-        \"line_break\" => line_break::module(context),\n-        \"memory_usage\" => memory_usage::module(context),\n-        \"nim\" => nim::module(context),\n-        \"nix_shell\" => nix_shell::module(context),\n-        \"nodejs\" => nodejs::module(context),\n-        \"ocaml\" => ocaml::module(context),\n-        \"package\" => package::module(context),\n-        \"perl\" => perl::module(context),\n-        \"php\" => php::module(context),\n-        \"purescript\" => purescript::module(context),\n-        \"python\" => python::module(context),\n-        \"ruby\" => ruby::module(context),\n-        \"rust\" => rust::module(context),\n-        \"shlvl\" => shlvl::module(context),\n-        \"singularity\" => singularity::module(context),\n-        \"swift\" => swift::module(context),\n-        \"terraform\" => terraform::module(context),\n-        \"time\" => time::module(context),\n-        \"crystal\" => crystal::module(context),\n-        \"username\" => username::module(context),\n-        \"zig\" => zig::module(context),\n-        _ => {\n-            eprintln!(\"Error: Unknown module {}. Use starship module --list to list out all supported modules.\", module);\n-            None\n+    let start: Instant = Instant::now();\n+\n+    let mut m: Option<Module> = {\n+        match module {\n+            // Keep these ordered alphabetically.\n+            // Default ordering is handled in configs/starship_root.rs\n+            \"aws\" => aws::module(context),\n+            #[cfg(feature = \"battery\")]\n+            \"battery\" => battery::module(context),\n+            \"character\" => character::module(context),\n+            \"cmake\" => cmake::module(context),\n+            \"cmd_duration\" => cmd_duration::module(context),\n+            \"conda\" => conda::module(context),\n+            \"dart\" => dart::module(context),\n+            \"directory\" => directory::module(context),\n+            \"docker_context\" => docker_context::module(context),\n+            \"dotnet\" => dotnet::module(context),\n+            \"elixir\" => elixir::module(context),\n+            \"elm\" => elm::module(context),\n+            \"erlang\" => erlang::module(context),\n+            \"env_var\" => env_var::module(context),\n+            \"gcloud\" => gcloud::module(context),\n+            \"git_branch\" => git_branch::module(context),\n+            \"git_commit\" => git_commit::module(context),\n+            \"git_state\" => git_state::module(context),\n+            \"git_status\" => git_status::module(context),\n+            \"golang\" => golang::module(context),\n+            \"helm\" => helm::module(context),\n+            \"hg_branch\" => hg_branch::module(context),\n+            \"hostname\" => hostname::module(context),\n+            \"java\" => java::module(context),\n+            \"jobs\" => jobs::module(context),\n+            \"julia\" => julia::module(context),\n+            \"kubernetes\" => kubernetes::module(context),\n+            \"line_break\" => line_break::module(context),\n+            \"memory_usage\" => memory_usage::module(context),\n+            \"nim\" => nim::module(context),\n+            \"nix_shell\" => nix_shell::module(context),\n+            \"nodejs\" => nodejs::module(context),\n+            \"ocaml\" => ocaml::module(context),\n+            \"package\" => package::module(context),\n+            \"perl\" => perl::module(context),\n+            \"php\" => php::module(context),\n+            \"purescript\" => purescript::module(context),\n+            \"python\" => python::module(context),\n+            \"ruby\" => ruby::module(context),\n+            \"rust\" => rust::module(context),\n+            \"shlvl\" => shlvl::module(context),\n+            \"singularity\" => singularity::module(context),\n+            \"swift\" => swift::module(context),\n+            \"terraform\" => terraform::module(context),\n+            \"time\" => time::module(context),\n+            \"crystal\" => crystal::module(context),\n+            \"username\" => username::module(context),\n+            \"zig\" => zig::module(context),\n+            _ => {\n+                eprintln!(\"Error: Unknown module {}. Use starship module --list to list out all supported modules.\", module);\n+                None\n+            }\n         }\n-    }\n+    };\n+\n+    m.get_or_insert(context.new_module(module)).duration = Option::from(start.elapsed());",
+    "path": "src/modules/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "06917ff16c57ed258da0d754eda1c2cbfc3aa7d3",
+    "user": {
+      "login": "jankatins",
+      "id": 890156,
+      "node_id": "MDQ6VXNlcjg5MDE1Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/890156?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jankatins",
+      "html_url": "https://github.com/jankatins",
+      "followers_url": "https://api.github.com/users/jankatins/followers",
+      "following_url": "https://api.github.com/users/jankatins/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jankatins/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jankatins/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jankatins/subscriptions",
+      "organizations_url": "https://api.github.com/users/jankatins/orgs",
+      "repos_url": "https://api.github.com/users/jankatins/repos",
+      "events_url": "https://api.github.com/users/jankatins/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jankatins/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "One bad side effect of this: if a module is now returning None, this code makes it more or less random if this is then a `None` or a `Some(Module)`, depending if it took more or less than a 1ms. I'm not familiar enough with the tests if this might result in flaky tests :-(",
+    "created_at": "2020-09-18T19:49:52Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r491158459",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491158459"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r491158459"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491158459/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 123,
+    "side": "RIGHT",
+    "in_reply_to_id": 490851556,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 125,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491163239",
+    "pull_request_review_id": 491746557,
+    "id": 491163239,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTE2MzIzOQ==",
+    "diff_hunk": "@@ -84,7 +84,21 @@ impl<'a> ModuleRenderer<'a> {\n \n     /// Renders the module returning its output\n     pub fn collect(self) -> Option<String> {\n-        crate::print::get_module(self.name, self.context)\n+        let ret = crate::print::get_module(self.name, self.context);\n+        // all tests rely on the fact that an empty module produces None as output as the\n+        // convention was that there would be no module but None. This is nowadays not anymore\n+        // the case (to get durations for all modules). So here we make it so, that an empty\n+        // module returns None in the tests...\n+        match &ret {",
+    "path": "src/test/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "06917ff16c57ed258da0d754eda1c2cbfc3aa7d3",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Sorry I just ran `cargo check` and I forgot that doesnt include this function, try: `ret.and_then(|s| if s == \"\" { None } else { Some(s) })`",
+    "created_at": "2020-09-18T20:01:10Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r491163239",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491163239"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r491163239"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491163239/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 92,
+    "side": "RIGHT",
+    "in_reply_to_id": 490853140,
+    "author_association": "MEMBER",
+    "original_position": 10,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491165246",
+    "pull_request_review_id": 491749235,
+    "id": 491165246,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTE2NTI0Ng==",
+    "diff_hunk": "@@ -84,7 +84,21 @@ impl<'a> ModuleRenderer<'a> {\n \n     /// Renders the module returning its output\n     pub fn collect(self) -> Option<String> {\n-        crate::print::get_module(self.name, self.context)\n+        let ret = crate::print::get_module(self.name, self.context);\n+        // all tests rely on the fact that an empty module produces None as output as the\n+        // convention was that there would be no module but None. This is nowadays not anymore\n+        // the case (to get durations for all modules). So here we make it so, that an empty\n+        // module returns None in the tests...\n+        match &ret {",
+    "path": "src/test/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "06917ff16c57ed258da0d754eda1c2cbfc3aa7d3",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Wait there's also `filter`!: `ret.filter(|s| s != \"\")`",
+    "created_at": "2020-09-18T20:06:07Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r491165246",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491165246"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r491165246"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491165246/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 92,
+    "side": "RIGHT",
+    "in_reply_to_id": 490853140,
+    "author_association": "MEMBER",
+    "original_position": 10,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491173412",
+    "pull_request_review_id": 491759651,
+    "id": 491173412,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTE3MzQxMg==",
+    "diff_hunk": "@@ -73,6 +74,9 @@ pub struct Module<'a> {\n \n     /// The collection of segments that compose this module.\n     pub segments: Vec<Segment>,\n+\n+    /// the time it took to compute this module\n+    pub duration: Option<Duration>,",
+    "path": "src/module.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "06917ff16c57ed258da0d754eda1c2cbfc3aa7d3",
+    "user": {
+      "login": "jankatins",
+      "id": 890156,
+      "node_id": "MDQ6VXNlcjg5MDE1Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/890156?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jankatins",
+      "html_url": "https://github.com/jankatins",
+      "followers_url": "https://api.github.com/users/jankatins/followers",
+      "following_url": "https://api.github.com/users/jankatins/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jankatins/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jankatins/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jankatins/subscriptions",
+      "organizations_url": "https://api.github.com/users/jankatins/orgs",
+      "repos_url": "https://api.github.com/users/jankatins/repos",
+      "events_url": "https://api.github.com/users/jankatins/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jankatins/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "done",
+    "created_at": "2020-09-18T20:24:49Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r491173412",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491173412"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r491173412"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491173412/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 79,
+    "side": "RIGHT",
+    "in_reply_to_id": 490852150,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 14,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491173521",
+    "pull_request_review_id": 491759778,
+    "id": 491173521,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTE3MzUyMQ==",
+    "diff_hunk": "@@ -84,7 +84,21 @@ impl<'a> ModuleRenderer<'a> {\n \n     /// Renders the module returning its output\n     pub fn collect(self) -> Option<String> {\n-        crate::print::get_module(self.name, self.context)\n+        let ret = crate::print::get_module(self.name, self.context);\n+        // all tests rely on the fact that an empty module produces None as output as the\n+        // convention was that there would be no module but None. This is nowadays not anymore\n+        // the case (to get durations for all modules). So here we make it so, that an empty\n+        // module returns None in the tests...\n+        match &ret {",
+    "path": "src/test/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "06917ff16c57ed258da0d754eda1c2cbfc3aa7d3",
+    "user": {
+      "login": "jankatins",
+      "id": 890156,
+      "node_id": "MDQ6VXNlcjg5MDE1Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/890156?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jankatins",
+      "html_url": "https://github.com/jankatins",
+      "followers_url": "https://api.github.com/users/jankatins/followers",
+      "following_url": "https://api.github.com/users/jankatins/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jankatins/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jankatins/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jankatins/subscriptions",
+      "organizations_url": "https://api.github.com/users/jankatins/orgs",
+      "repos_url": "https://api.github.com/users/jankatins/repos",
+      "events_url": "https://api.github.com/users/jankatins/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jankatins/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Wow, nice!",
+    "created_at": "2020-09-18T20:25:00Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r491173521",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491173521"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r491173521"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491173521/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 92,
+    "side": "RIGHT",
+    "in_reply_to_id": 490853140,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 10,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491173926",
+    "pull_request_review_id": 491760301,
+    "id": 491173926,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTE3MzkyNg==",
+    "diff_hunk": "@@ -84,7 +84,21 @@ impl<'a> ModuleRenderer<'a> {\n \n     /// Renders the module returning its output\n     pub fn collect(self) -> Option<String> {\n-        crate::print::get_module(self.name, self.context)\n+        let ret = crate::print::get_module(self.name, self.context);\n+        // all tests rely on the fact that an empty module produces None as output as the\n+        // convention was that there would be no module but None. This is nowadays not anymore\n+        // the case (to get durations for all modules). So here we make it so, that an empty\n+        // module returns None in the tests...\n+        match &ret {",
+    "path": "src/test/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "06917ff16c57ed258da0d754eda1c2cbfc3aa7d3",
+    "user": {
+      "login": "jankatins",
+      "id": 890156,
+      "node_id": "MDQ6VXNlcjg5MDE1Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/890156?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jankatins",
+      "html_url": "https://github.com/jankatins",
+      "followers_url": "https://api.github.com/users/jankatins/followers",
+      "following_url": "https://api.github.com/users/jankatins/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jankatins/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jankatins/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jankatins/subscriptions",
+      "organizations_url": "https://api.github.com/users/jankatins/orgs",
+      "repos_url": "https://api.github.com/users/jankatins/repos",
+      "events_url": "https://api.github.com/users/jankatins/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jankatins/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "done",
+    "created_at": "2020-09-18T20:25:56Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r491173926",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491173926"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r491173926"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491173926/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 92,
+    "side": "RIGHT",
+    "in_reply_to_id": 490853140,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 10,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491180623",
+    "pull_request_review_id": 491768740,
+    "id": 491180623,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTE4MDYyMw==",
+    "diff_hunk": "@@ -55,64 +55,81 @@ mod battery;\n use crate::config::RootModuleConfig;\n use crate::context::{Context, Shell};\n use crate::module::Module;\n+use std::time::Instant;\n \n pub fn handle<'a>(module: &str, context: &'a Context) -> Option<Module<'a>> {\n-    match module {\n-        // Keep these ordered alphabetically.\n-        // Default ordering is handled in configs/starship_root.rs\n-        \"aws\" => aws::module(context),\n-        #[cfg(feature = \"battery\")]\n-        \"battery\" => battery::module(context),\n-        \"character\" => character::module(context),\n-        \"cmake\" => cmake::module(context),\n-        \"cmd_duration\" => cmd_duration::module(context),\n-        \"conda\" => conda::module(context),\n-        \"dart\" => dart::module(context),\n-        \"directory\" => directory::module(context),\n-        \"docker_context\" => docker_context::module(context),\n-        \"dotnet\" => dotnet::module(context),\n-        \"elixir\" => elixir::module(context),\n-        \"elm\" => elm::module(context),\n-        \"erlang\" => erlang::module(context),\n-        \"env_var\" => env_var::module(context),\n-        \"gcloud\" => gcloud::module(context),\n-        \"git_branch\" => git_branch::module(context),\n-        \"git_commit\" => git_commit::module(context),\n-        \"git_state\" => git_state::module(context),\n-        \"git_status\" => git_status::module(context),\n-        \"golang\" => golang::module(context),\n-        \"helm\" => helm::module(context),\n-        \"hg_branch\" => hg_branch::module(context),\n-        \"hostname\" => hostname::module(context),\n-        \"java\" => java::module(context),\n-        \"jobs\" => jobs::module(context),\n-        \"julia\" => julia::module(context),\n-        \"kubernetes\" => kubernetes::module(context),\n-        \"line_break\" => line_break::module(context),\n-        \"memory_usage\" => memory_usage::module(context),\n-        \"nim\" => nim::module(context),\n-        \"nix_shell\" => nix_shell::module(context),\n-        \"nodejs\" => nodejs::module(context),\n-        \"ocaml\" => ocaml::module(context),\n-        \"package\" => package::module(context),\n-        \"perl\" => perl::module(context),\n-        \"php\" => php::module(context),\n-        \"purescript\" => purescript::module(context),\n-        \"python\" => python::module(context),\n-        \"ruby\" => ruby::module(context),\n-        \"rust\" => rust::module(context),\n-        \"shlvl\" => shlvl::module(context),\n-        \"singularity\" => singularity::module(context),\n-        \"swift\" => swift::module(context),\n-        \"terraform\" => terraform::module(context),\n-        \"time\" => time::module(context),\n-        \"crystal\" => crystal::module(context),\n-        \"username\" => username::module(context),\n-        \"zig\" => zig::module(context),\n-        _ => {\n-            eprintln!(\"Error: Unknown module {}. Use starship module --list to list out all supported modules.\", module);\n-            None\n+    let start: Instant = Instant::now();\n+\n+    let mut m: Option<Module> = {\n+        match module {\n+            // Keep these ordered alphabetically.\n+            // Default ordering is handled in configs/starship_root.rs\n+            \"aws\" => aws::module(context),\n+            #[cfg(feature = \"battery\")]\n+            \"battery\" => battery::module(context),\n+            \"character\" => character::module(context),\n+            \"cmake\" => cmake::module(context),\n+            \"cmd_duration\" => cmd_duration::module(context),\n+            \"conda\" => conda::module(context),\n+            \"dart\" => dart::module(context),\n+            \"directory\" => directory::module(context),\n+            \"docker_context\" => docker_context::module(context),\n+            \"dotnet\" => dotnet::module(context),\n+            \"elixir\" => elixir::module(context),\n+            \"elm\" => elm::module(context),\n+            \"erlang\" => erlang::module(context),\n+            \"env_var\" => env_var::module(context),\n+            \"gcloud\" => gcloud::module(context),\n+            \"git_branch\" => git_branch::module(context),\n+            \"git_commit\" => git_commit::module(context),\n+            \"git_state\" => git_state::module(context),\n+            \"git_status\" => git_status::module(context),\n+            \"golang\" => golang::module(context),\n+            \"helm\" => helm::module(context),\n+            \"hg_branch\" => hg_branch::module(context),\n+            \"hostname\" => hostname::module(context),\n+            \"java\" => java::module(context),\n+            \"jobs\" => jobs::module(context),\n+            \"julia\" => julia::module(context),\n+            \"kubernetes\" => kubernetes::module(context),\n+            \"line_break\" => line_break::module(context),\n+            \"memory_usage\" => memory_usage::module(context),\n+            \"nim\" => nim::module(context),\n+            \"nix_shell\" => nix_shell::module(context),\n+            \"nodejs\" => nodejs::module(context),\n+            \"ocaml\" => ocaml::module(context),\n+            \"package\" => package::module(context),\n+            \"perl\" => perl::module(context),\n+            \"php\" => php::module(context),\n+            \"purescript\" => purescript::module(context),\n+            \"python\" => python::module(context),\n+            \"ruby\" => ruby::module(context),\n+            \"rust\" => rust::module(context),\n+            \"shlvl\" => shlvl::module(context),\n+            \"singularity\" => singularity::module(context),\n+            \"swift\" => swift::module(context),\n+            \"terraform\" => terraform::module(context),\n+            \"time\" => time::module(context),\n+            \"crystal\" => crystal::module(context),\n+            \"username\" => username::module(context),\n+            \"zig\" => zig::module(context),\n+            _ => {\n+                eprintln!(\"Error: Unknown module {}. Use starship module --list to list out all supported modules.\", module);\n+                None\n+            }\n         }\n+    };\n+\n+    let elapsed = start.elapsed();\n+    if elapsed.as_millis() < 1 {\n+        // If we take less than 1ms to compute a None, then we will not return a module at all\n+        // if we have a module: default duration is 0 so no need to change it\n+        m\n+    } else {\n+        // if we took more than 1ms we want to report that and so--in case we have None currently--\n+        // need to create an empty module just to hold the duration for that case\n+        m.get_or_insert(context.new_module(module)).duration = elapsed;",
+    "path": "src/modules/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "c0052259980d1e1a0c61e33e4684ad9a059c0539",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```\r\nm.ok_or(|| context.new_module(module)).map(|m| m.duration = elapsed);`\r\n```\r\nWould be better because otherwise `context.new_module(module)` will be called whether the module exists or not.",
+    "created_at": "2020-09-18T20:41:43Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r491180623",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491180623"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r491180623"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491180623/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 131,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 132,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491186081",
+    "pull_request_review_id": 491775464,
+    "id": 491186081,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTE4NjA4MQ==",
+    "diff_hunk": "@@ -89,16 +89,7 @@ impl<'a> ModuleRenderer<'a> {\n         // convention was that there would be no module but None. This is nowadays not anymore\n         // the case (to get durations for all modules). So here we make it so, that an empty\n         // module returns None in the tests...\n-        match &ret {\n-            Some(value) => {\n-                if value == &String::from(\"\") {\n-                    None\n-                } else {\n-                    ret\n-                }\n-            }\n-            None => None,\n-        }\n+        ret.filter(|s| s != &String::from(\"\"))",
+    "path": "src/test/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "c0052259980d1e1a0c61e33e4684ad9a059c0539",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "for me it works without `&String::from(\"\")`\r\nString literals are already `&str` and `&String` ought to be the same as `&str`.\r\n```suggestion\r\n        ret.filter(|s| s != \"\")\r\n```",
+    "created_at": "2020-09-18T20:54:30Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r491186081",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491186081"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r491186081"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491186081/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 92,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 14,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491317256",
+    "pull_request_review_id": 491980170,
+    "id": 491317256,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTMxNzI1Ng==",
+    "diff_hunk": "@@ -55,65 +55,73 @@ mod battery;\n use crate::config::RootModuleConfig;\n use crate::context::{Context, Shell};\n use crate::module::Module;\n+use std::time::Instant;\n \n pub fn handle<'a>(module: &str, context: &'a Context) -> Option<Module<'a>> {\n-    match module {\n-        // Keep these ordered alphabetically.\n-        // Default ordering is handled in configs/starship_root.rs\n-        \"aws\" => aws::module(context),\n-        #[cfg(feature = \"battery\")]\n-        \"battery\" => battery::module(context),\n-        \"character\" => character::module(context),\n-        \"cmake\" => cmake::module(context),\n-        \"cmd_duration\" => cmd_duration::module(context),\n-        \"conda\" => conda::module(context),\n-        \"dart\" => dart::module(context),\n-        \"directory\" => directory::module(context),\n-        \"docker_context\" => docker_context::module(context),\n-        \"dotnet\" => dotnet::module(context),\n-        \"elixir\" => elixir::module(context),\n-        \"elm\" => elm::module(context),\n-        \"erlang\" => erlang::module(context),\n-        \"env_var\" => env_var::module(context),\n-        \"gcloud\" => gcloud::module(context),\n-        \"git_branch\" => git_branch::module(context),\n-        \"git_commit\" => git_commit::module(context),\n-        \"git_state\" => git_state::module(context),\n-        \"git_status\" => git_status::module(context),\n-        \"golang\" => golang::module(context),\n-        \"helm\" => helm::module(context),\n-        \"hg_branch\" => hg_branch::module(context),\n-        \"hostname\" => hostname::module(context),\n-        \"java\" => java::module(context),\n-        \"jobs\" => jobs::module(context),\n-        \"julia\" => julia::module(context),\n-        \"kubernetes\" => kubernetes::module(context),\n-        \"line_break\" => line_break::module(context),\n-        \"memory_usage\" => memory_usage::module(context),\n-        \"nim\" => nim::module(context),\n-        \"nix_shell\" => nix_shell::module(context),\n-        \"nodejs\" => nodejs::module(context),\n-        \"ocaml\" => ocaml::module(context),\n-        \"package\" => package::module(context),\n-        \"perl\" => perl::module(context),\n-        \"php\" => php::module(context),\n-        \"purescript\" => purescript::module(context),\n-        \"python\" => python::module(context),\n-        \"ruby\" => ruby::module(context),\n-        \"rust\" => rust::module(context),\n-        \"shlvl\" => shlvl::module(context),\n-        \"singularity\" => singularity::module(context),\n-        \"swift\" => swift::module(context),\n-        \"terraform\" => terraform::module(context),\n-        \"time\" => time::module(context),\n-        \"crystal\" => crystal::module(context),\n-        \"username\" => username::module(context),\n-        \"zig\" => zig::module(context),\n-        _ => {\n-            eprintln!(\"Error: Unknown module {}. Use starship module --list to list out all supported modules.\", module);\n-            None\n+    let start: Instant = Instant::now();\n+\n+    let mut m: Option<Module> = {\n+        match module {\n+            // Keep these ordered alphabetically.\n+            // Default ordering is handled in configs/starship_root.rs\n+            \"aws\" => aws::module(context),\n+            #[cfg(feature = \"battery\")]\n+            \"battery\" => battery::module(context),\n+            \"character\" => character::module(context),\n+            \"cmake\" => cmake::module(context),\n+            \"cmd_duration\" => cmd_duration::module(context),\n+            \"conda\" => conda::module(context),\n+            \"dart\" => dart::module(context),\n+            \"directory\" => directory::module(context),\n+            \"docker_context\" => docker_context::module(context),\n+            \"dotnet\" => dotnet::module(context),\n+            \"elixir\" => elixir::module(context),\n+            \"elm\" => elm::module(context),\n+            \"erlang\" => erlang::module(context),\n+            \"env_var\" => env_var::module(context),\n+            \"gcloud\" => gcloud::module(context),\n+            \"git_branch\" => git_branch::module(context),\n+            \"git_commit\" => git_commit::module(context),\n+            \"git_state\" => git_state::module(context),\n+            \"git_status\" => git_status::module(context),\n+            \"golang\" => golang::module(context),\n+            \"helm\" => helm::module(context),\n+            \"hg_branch\" => hg_branch::module(context),\n+            \"hostname\" => hostname::module(context),\n+            \"java\" => java::module(context),\n+            \"jobs\" => jobs::module(context),\n+            \"julia\" => julia::module(context),\n+            \"kubernetes\" => kubernetes::module(context),\n+            \"line_break\" => line_break::module(context),\n+            \"memory_usage\" => memory_usage::module(context),\n+            \"nim\" => nim::module(context),\n+            \"nix_shell\" => nix_shell::module(context),\n+            \"nodejs\" => nodejs::module(context),\n+            \"ocaml\" => ocaml::module(context),\n+            \"package\" => package::module(context),\n+            \"perl\" => perl::module(context),\n+            \"php\" => php::module(context),\n+            \"purescript\" => purescript::module(context),\n+            \"python\" => python::module(context),\n+            \"ruby\" => ruby::module(context),\n+            \"rust\" => rust::module(context),\n+            \"shlvl\" => shlvl::module(context),\n+            \"singularity\" => singularity::module(context),\n+            \"swift\" => swift::module(context),\n+            \"terraform\" => terraform::module(context),\n+            \"time\" => time::module(context),\n+            \"crystal\" => crystal::module(context),\n+            \"username\" => username::module(context),\n+            \"zig\" => zig::module(context),\n+            _ => {\n+                eprintln!(\"Error: Unknown module {}. Use starship module --list to list out all supported modules.\", module);\n+                None\n+            }\n         }\n-    }\n+    };\n+\n+    m.get_or_insert(context.new_module(module)).duration = Option::from(start.elapsed());",
+    "path": "src/modules/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "06917ff16c57ed258da0d754eda1c2cbfc3aa7d3",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The tests ran successfully with and without that change so it seems to be fine. If it becomes an issues `Module` could be extended with an extra poperty to tell if it was created to provide timing information only.",
+    "created_at": "2020-09-19T07:47:07Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r491317256",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491317256"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r491317256"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491317256/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 123,
+    "side": "RIGHT",
+    "in_reply_to_id": 490851556,
+    "author_association": "MEMBER",
+    "original_position": 125,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491728186",
+    "pull_request_review_id": 492218909,
+    "id": 491728186,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTcyODE4Ng==",
+    "diff_hunk": "@@ -55,64 +55,81 @@ mod battery;\n use crate::config::RootModuleConfig;\n use crate::context::{Context, Shell};\n use crate::module::Module;\n+use std::time::Instant;\n \n pub fn handle<'a>(module: &str, context: &'a Context) -> Option<Module<'a>> {\n-    match module {\n-        // Keep these ordered alphabetically.\n-        // Default ordering is handled in configs/starship_root.rs\n-        \"aws\" => aws::module(context),\n-        #[cfg(feature = \"battery\")]\n-        \"battery\" => battery::module(context),\n-        \"character\" => character::module(context),\n-        \"cmake\" => cmake::module(context),\n-        \"cmd_duration\" => cmd_duration::module(context),\n-        \"conda\" => conda::module(context),\n-        \"dart\" => dart::module(context),\n-        \"directory\" => directory::module(context),\n-        \"docker_context\" => docker_context::module(context),\n-        \"dotnet\" => dotnet::module(context),\n-        \"elixir\" => elixir::module(context),\n-        \"elm\" => elm::module(context),\n-        \"erlang\" => erlang::module(context),\n-        \"env_var\" => env_var::module(context),\n-        \"gcloud\" => gcloud::module(context),\n-        \"git_branch\" => git_branch::module(context),\n-        \"git_commit\" => git_commit::module(context),\n-        \"git_state\" => git_state::module(context),\n-        \"git_status\" => git_status::module(context),\n-        \"golang\" => golang::module(context),\n-        \"helm\" => helm::module(context),\n-        \"hg_branch\" => hg_branch::module(context),\n-        \"hostname\" => hostname::module(context),\n-        \"java\" => java::module(context),\n-        \"jobs\" => jobs::module(context),\n-        \"julia\" => julia::module(context),\n-        \"kubernetes\" => kubernetes::module(context),\n-        \"line_break\" => line_break::module(context),\n-        \"memory_usage\" => memory_usage::module(context),\n-        \"nim\" => nim::module(context),\n-        \"nix_shell\" => nix_shell::module(context),\n-        \"nodejs\" => nodejs::module(context),\n-        \"ocaml\" => ocaml::module(context),\n-        \"package\" => package::module(context),\n-        \"perl\" => perl::module(context),\n-        \"php\" => php::module(context),\n-        \"purescript\" => purescript::module(context),\n-        \"python\" => python::module(context),\n-        \"ruby\" => ruby::module(context),\n-        \"rust\" => rust::module(context),\n-        \"shlvl\" => shlvl::module(context),\n-        \"singularity\" => singularity::module(context),\n-        \"swift\" => swift::module(context),\n-        \"terraform\" => terraform::module(context),\n-        \"time\" => time::module(context),\n-        \"crystal\" => crystal::module(context),\n-        \"username\" => username::module(context),\n-        \"zig\" => zig::module(context),\n-        _ => {\n-            eprintln!(\"Error: Unknown module {}. Use starship module --list to list out all supported modules.\", module);\n-            None\n+    let start: Instant = Instant::now();\n+\n+    let mut m: Option<Module> = {\n+        match module {\n+            // Keep these ordered alphabetically.\n+            // Default ordering is handled in configs/starship_root.rs\n+            \"aws\" => aws::module(context),\n+            #[cfg(feature = \"battery\")]\n+            \"battery\" => battery::module(context),\n+            \"character\" => character::module(context),\n+            \"cmake\" => cmake::module(context),\n+            \"cmd_duration\" => cmd_duration::module(context),\n+            \"conda\" => conda::module(context),\n+            \"dart\" => dart::module(context),\n+            \"directory\" => directory::module(context),\n+            \"docker_context\" => docker_context::module(context),\n+            \"dotnet\" => dotnet::module(context),\n+            \"elixir\" => elixir::module(context),\n+            \"elm\" => elm::module(context),\n+            \"erlang\" => erlang::module(context),\n+            \"env_var\" => env_var::module(context),\n+            \"gcloud\" => gcloud::module(context),\n+            \"git_branch\" => git_branch::module(context),\n+            \"git_commit\" => git_commit::module(context),\n+            \"git_state\" => git_state::module(context),\n+            \"git_status\" => git_status::module(context),\n+            \"golang\" => golang::module(context),\n+            \"helm\" => helm::module(context),\n+            \"hg_branch\" => hg_branch::module(context),\n+            \"hostname\" => hostname::module(context),\n+            \"java\" => java::module(context),\n+            \"jobs\" => jobs::module(context),\n+            \"julia\" => julia::module(context),\n+            \"kubernetes\" => kubernetes::module(context),\n+            \"line_break\" => line_break::module(context),\n+            \"memory_usage\" => memory_usage::module(context),\n+            \"nim\" => nim::module(context),\n+            \"nix_shell\" => nix_shell::module(context),\n+            \"nodejs\" => nodejs::module(context),\n+            \"ocaml\" => ocaml::module(context),\n+            \"package\" => package::module(context),\n+            \"perl\" => perl::module(context),\n+            \"php\" => php::module(context),\n+            \"purescript\" => purescript::module(context),\n+            \"python\" => python::module(context),\n+            \"ruby\" => ruby::module(context),\n+            \"rust\" => rust::module(context),\n+            \"shlvl\" => shlvl::module(context),\n+            \"singularity\" => singularity::module(context),\n+            \"swift\" => swift::module(context),\n+            \"terraform\" => terraform::module(context),\n+            \"time\" => time::module(context),\n+            \"crystal\" => crystal::module(context),\n+            \"username\" => username::module(context),\n+            \"zig\" => zig::module(context),\n+            _ => {\n+                eprintln!(\"Error: Unknown module {}. Use starship module --list to list out all supported modules.\", module);\n+                None\n+            }\n         }\n+    };\n+\n+    let elapsed = start.elapsed();\n+    if elapsed.as_millis() < 1 {\n+        // If we take less than 1ms to compute a None, then we will not return a module at all\n+        // if we have a module: default duration is 0 so no need to change it\n+        m\n+    } else {\n+        // if we took more than 1ms we want to report that and so--in case we have None currently--\n+        // need to create an empty module just to hold the duration for that case\n+        m.get_or_insert(context.new_module(module)).duration = elapsed;",
+    "path": "src/modules/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "c0052259980d1e1a0c61e33e4684ad9a059c0539",
+    "user": {
+      "login": "jankatins",
+      "id": 890156,
+      "node_id": "MDQ6VXNlcjg5MDE1Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/890156?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jankatins",
+      "html_url": "https://github.com/jankatins",
+      "followers_url": "https://api.github.com/users/jankatins/followers",
+      "following_url": "https://api.github.com/users/jankatins/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jankatins/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jankatins/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jankatins/subscriptions",
+      "organizations_url": "https://api.github.com/users/jankatins/orgs",
+      "repos_url": "https://api.github.com/users/jankatins/repos",
+      "events_url": "https://api.github.com/users/jankatins/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jankatins/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Used `get_or_insert_with` to have the same effect but avoid the `ok_or` to take the ownership of `m`...",
+    "created_at": "2020-09-20T19:59:33Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r491728186",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491728186"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r491728186"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491728186/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 131,
+    "side": "RIGHT",
+    "in_reply_to_id": 491180623,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 132,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491728497",
+    "pull_request_review_id": 492219104,
+    "id": 491728497,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTcyODQ5Nw==",
+    "diff_hunk": "@@ -89,16 +89,7 @@ impl<'a> ModuleRenderer<'a> {\n         // convention was that there would be no module but None. This is nowadays not anymore\n         // the case (to get durations for all modules). So here we make it so, that an empty\n         // module returns None in the tests...\n-        match &ret {\n-            Some(value) => {\n-                if value == &String::from(\"\") {\n-                    None\n-                } else {\n-                    ret\n-                }\n-            }\n-            None => None,\n-        }\n+        ret.filter(|s| s != &String::from(\"\"))",
+    "path": "src/test/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "c0052259980d1e1a0c61e33e4684ad9a059c0539",
+    "user": {
+      "login": "jankatins",
+      "id": 890156,
+      "node_id": "MDQ6VXNlcjg5MDE1Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/890156?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jankatins",
+      "html_url": "https://github.com/jankatins",
+      "followers_url": "https://api.github.com/users/jankatins/followers",
+      "following_url": "https://api.github.com/users/jankatins/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jankatins/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jankatins/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jankatins/subscriptions",
+      "organizations_url": "https://api.github.com/users/jankatins/orgs",
+      "repos_url": "https://api.github.com/users/jankatins/repos",
+      "events_url": "https://api.github.com/users/jankatins/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jankatins/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Changed",
+    "created_at": "2020-09-20T20:02:43Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r491728497",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491728497"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r491728497"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491728497/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 92,
+    "side": "RIGHT",
+    "in_reply_to_id": 491186081,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 14,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491861958",
+    "pull_request_review_id": 492365755,
+    "id": 491861958,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTg2MTk1OA==",
+    "diff_hunk": "@@ -55,64 +55,81 @@ mod battery;\n use crate::config::RootModuleConfig;\n use crate::context::{Context, Shell};\n use crate::module::Module;\n+use std::time::Instant;\n \n pub fn handle<'a>(module: &str, context: &'a Context) -> Option<Module<'a>> {\n-    match module {\n-        // Keep these ordered alphabetically.\n-        // Default ordering is handled in configs/starship_root.rs\n-        \"aws\" => aws::module(context),\n-        #[cfg(feature = \"battery\")]\n-        \"battery\" => battery::module(context),\n-        \"character\" => character::module(context),\n-        \"cmake\" => cmake::module(context),\n-        \"cmd_duration\" => cmd_duration::module(context),\n-        \"conda\" => conda::module(context),\n-        \"dart\" => dart::module(context),\n-        \"directory\" => directory::module(context),\n-        \"docker_context\" => docker_context::module(context),\n-        \"dotnet\" => dotnet::module(context),\n-        \"elixir\" => elixir::module(context),\n-        \"elm\" => elm::module(context),\n-        \"erlang\" => erlang::module(context),\n-        \"env_var\" => env_var::module(context),\n-        \"gcloud\" => gcloud::module(context),\n-        \"git_branch\" => git_branch::module(context),\n-        \"git_commit\" => git_commit::module(context),\n-        \"git_state\" => git_state::module(context),\n-        \"git_status\" => git_status::module(context),\n-        \"golang\" => golang::module(context),\n-        \"helm\" => helm::module(context),\n-        \"hg_branch\" => hg_branch::module(context),\n-        \"hostname\" => hostname::module(context),\n-        \"java\" => java::module(context),\n-        \"jobs\" => jobs::module(context),\n-        \"julia\" => julia::module(context),\n-        \"kubernetes\" => kubernetes::module(context),\n-        \"line_break\" => line_break::module(context),\n-        \"memory_usage\" => memory_usage::module(context),\n-        \"nim\" => nim::module(context),\n-        \"nix_shell\" => nix_shell::module(context),\n-        \"nodejs\" => nodejs::module(context),\n-        \"ocaml\" => ocaml::module(context),\n-        \"package\" => package::module(context),\n-        \"perl\" => perl::module(context),\n-        \"php\" => php::module(context),\n-        \"purescript\" => purescript::module(context),\n-        \"python\" => python::module(context),\n-        \"ruby\" => ruby::module(context),\n-        \"rust\" => rust::module(context),\n-        \"shlvl\" => shlvl::module(context),\n-        \"singularity\" => singularity::module(context),\n-        \"swift\" => swift::module(context),\n-        \"terraform\" => terraform::module(context),\n-        \"time\" => time::module(context),\n-        \"crystal\" => crystal::module(context),\n-        \"username\" => username::module(context),\n-        \"zig\" => zig::module(context),\n-        _ => {\n-            eprintln!(\"Error: Unknown module {}. Use starship module --list to list out all supported modules.\", module);\n-            None\n+    let start: Instant = Instant::now();\n+\n+    let mut m: Option<Module> = {\n+        match module {\n+            // Keep these ordered alphabetically.\n+            // Default ordering is handled in configs/starship_root.rs\n+            \"aws\" => aws::module(context),\n+            #[cfg(feature = \"battery\")]\n+            \"battery\" => battery::module(context),\n+            \"character\" => character::module(context),\n+            \"cmake\" => cmake::module(context),\n+            \"cmd_duration\" => cmd_duration::module(context),\n+            \"conda\" => conda::module(context),\n+            \"dart\" => dart::module(context),\n+            \"directory\" => directory::module(context),\n+            \"docker_context\" => docker_context::module(context),\n+            \"dotnet\" => dotnet::module(context),\n+            \"elixir\" => elixir::module(context),\n+            \"elm\" => elm::module(context),\n+            \"erlang\" => erlang::module(context),\n+            \"env_var\" => env_var::module(context),\n+            \"gcloud\" => gcloud::module(context),\n+            \"git_branch\" => git_branch::module(context),\n+            \"git_commit\" => git_commit::module(context),\n+            \"git_state\" => git_state::module(context),\n+            \"git_status\" => git_status::module(context),\n+            \"golang\" => golang::module(context),\n+            \"helm\" => helm::module(context),\n+            \"hg_branch\" => hg_branch::module(context),\n+            \"hostname\" => hostname::module(context),\n+            \"java\" => java::module(context),\n+            \"jobs\" => jobs::module(context),\n+            \"julia\" => julia::module(context),\n+            \"kubernetes\" => kubernetes::module(context),\n+            \"line_break\" => line_break::module(context),\n+            \"memory_usage\" => memory_usage::module(context),\n+            \"nim\" => nim::module(context),\n+            \"nix_shell\" => nix_shell::module(context),\n+            \"nodejs\" => nodejs::module(context),\n+            \"ocaml\" => ocaml::module(context),\n+            \"package\" => package::module(context),\n+            \"perl\" => perl::module(context),\n+            \"php\" => php::module(context),\n+            \"purescript\" => purescript::module(context),\n+            \"python\" => python::module(context),\n+            \"ruby\" => ruby::module(context),\n+            \"rust\" => rust::module(context),\n+            \"shlvl\" => shlvl::module(context),\n+            \"singularity\" => singularity::module(context),\n+            \"swift\" => swift::module(context),\n+            \"terraform\" => terraform::module(context),\n+            \"time\" => time::module(context),\n+            \"crystal\" => crystal::module(context),\n+            \"username\" => username::module(context),\n+            \"zig\" => zig::module(context),\n+            _ => {\n+                eprintln!(\"Error: Unknown module {}. Use starship module --list to list out all supported modules.\", module);\n+                None\n+            }\n         }\n+    };\n+\n+    let elapsed = start.elapsed();",
+    "path": "src/modules/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "ebd8ab1504a33860def614f31c545c3df69aa451",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Minor suggestion but can we log the duration here?\r\nSomething like \r\n```suggestion\r\n    let elapsed = start.elapsed();\r\n    log::trace!(\"Took {:?} to compute module {:?}\", elapsed, module);\r\n```",
+    "created_at": "2020-09-21T08:15:11Z",
+    "updated_at": "2020-09-21T12:31:13Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r491861958",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491861958"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r491861958"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491861958/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 123,
+    "original_line": 123,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 124,
+    "position": 124,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/492006030",
+    "pull_request_review_id": 492548980,
+    "id": 492006030,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MjAwNjAzMA==",
+    "diff_hunk": "@@ -55,64 +55,81 @@ mod battery;\n use crate::config::RootModuleConfig;\n use crate::context::{Context, Shell};\n use crate::module::Module;\n+use std::time::Instant;\n \n pub fn handle<'a>(module: &str, context: &'a Context) -> Option<Module<'a>> {\n-    match module {\n-        // Keep these ordered alphabetically.\n-        // Default ordering is handled in configs/starship_root.rs\n-        \"aws\" => aws::module(context),\n-        #[cfg(feature = \"battery\")]\n-        \"battery\" => battery::module(context),\n-        \"character\" => character::module(context),\n-        \"cmake\" => cmake::module(context),\n-        \"cmd_duration\" => cmd_duration::module(context),\n-        \"conda\" => conda::module(context),\n-        \"dart\" => dart::module(context),\n-        \"directory\" => directory::module(context),\n-        \"docker_context\" => docker_context::module(context),\n-        \"dotnet\" => dotnet::module(context),\n-        \"elixir\" => elixir::module(context),\n-        \"elm\" => elm::module(context),\n-        \"erlang\" => erlang::module(context),\n-        \"env_var\" => env_var::module(context),\n-        \"gcloud\" => gcloud::module(context),\n-        \"git_branch\" => git_branch::module(context),\n-        \"git_commit\" => git_commit::module(context),\n-        \"git_state\" => git_state::module(context),\n-        \"git_status\" => git_status::module(context),\n-        \"golang\" => golang::module(context),\n-        \"helm\" => helm::module(context),\n-        \"hg_branch\" => hg_branch::module(context),\n-        \"hostname\" => hostname::module(context),\n-        \"java\" => java::module(context),\n-        \"jobs\" => jobs::module(context),\n-        \"julia\" => julia::module(context),\n-        \"kubernetes\" => kubernetes::module(context),\n-        \"line_break\" => line_break::module(context),\n-        \"memory_usage\" => memory_usage::module(context),\n-        \"nim\" => nim::module(context),\n-        \"nix_shell\" => nix_shell::module(context),\n-        \"nodejs\" => nodejs::module(context),\n-        \"ocaml\" => ocaml::module(context),\n-        \"package\" => package::module(context),\n-        \"perl\" => perl::module(context),\n-        \"php\" => php::module(context),\n-        \"purescript\" => purescript::module(context),\n-        \"python\" => python::module(context),\n-        \"ruby\" => ruby::module(context),\n-        \"rust\" => rust::module(context),\n-        \"shlvl\" => shlvl::module(context),\n-        \"singularity\" => singularity::module(context),\n-        \"swift\" => swift::module(context),\n-        \"terraform\" => terraform::module(context),\n-        \"time\" => time::module(context),\n-        \"crystal\" => crystal::module(context),\n-        \"username\" => username::module(context),\n-        \"zig\" => zig::module(context),\n-        _ => {\n-            eprintln!(\"Error: Unknown module {}. Use starship module --list to list out all supported modules.\", module);\n-            None\n+    let start: Instant = Instant::now();\n+\n+    let mut m: Option<Module> = {\n+        match module {\n+            // Keep these ordered alphabetically.\n+            // Default ordering is handled in configs/starship_root.rs\n+            \"aws\" => aws::module(context),\n+            #[cfg(feature = \"battery\")]\n+            \"battery\" => battery::module(context),\n+            \"character\" => character::module(context),\n+            \"cmake\" => cmake::module(context),\n+            \"cmd_duration\" => cmd_duration::module(context),\n+            \"conda\" => conda::module(context),\n+            \"dart\" => dart::module(context),\n+            \"directory\" => directory::module(context),\n+            \"docker_context\" => docker_context::module(context),\n+            \"dotnet\" => dotnet::module(context),\n+            \"elixir\" => elixir::module(context),\n+            \"elm\" => elm::module(context),\n+            \"erlang\" => erlang::module(context),\n+            \"env_var\" => env_var::module(context),\n+            \"gcloud\" => gcloud::module(context),\n+            \"git_branch\" => git_branch::module(context),\n+            \"git_commit\" => git_commit::module(context),\n+            \"git_state\" => git_state::module(context),\n+            \"git_status\" => git_status::module(context),\n+            \"golang\" => golang::module(context),\n+            \"helm\" => helm::module(context),\n+            \"hg_branch\" => hg_branch::module(context),\n+            \"hostname\" => hostname::module(context),\n+            \"java\" => java::module(context),\n+            \"jobs\" => jobs::module(context),\n+            \"julia\" => julia::module(context),\n+            \"kubernetes\" => kubernetes::module(context),\n+            \"line_break\" => line_break::module(context),\n+            \"memory_usage\" => memory_usage::module(context),\n+            \"nim\" => nim::module(context),\n+            \"nix_shell\" => nix_shell::module(context),\n+            \"nodejs\" => nodejs::module(context),\n+            \"ocaml\" => ocaml::module(context),\n+            \"package\" => package::module(context),\n+            \"perl\" => perl::module(context),\n+            \"php\" => php::module(context),\n+            \"purescript\" => purescript::module(context),\n+            \"python\" => python::module(context),\n+            \"ruby\" => ruby::module(context),\n+            \"rust\" => rust::module(context),\n+            \"shlvl\" => shlvl::module(context),\n+            \"singularity\" => singularity::module(context),\n+            \"swift\" => swift::module(context),\n+            \"terraform\" => terraform::module(context),\n+            \"time\" => time::module(context),\n+            \"crystal\" => crystal::module(context),\n+            \"username\" => username::module(context),\n+            \"zig\" => zig::module(context),\n+            _ => {\n+                eprintln!(\"Error: Unknown module {}. Use starship module --list to list out all supported modules.\", module);\n+                None\n+            }\n         }\n+    };\n+\n+    let elapsed = start.elapsed();",
+    "path": "src/modules/mod.rs",
+    "commit_id": "43b61a6443cafb60dbf5a4151aea0c72aa6d7097",
+    "original_commit_id": "ebd8ab1504a33860def614f31c545c3df69aa451",
+    "user": {
+      "login": "jankatins",
+      "id": 890156,
+      "node_id": "MDQ6VXNlcjg5MDE1Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/890156?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jankatins",
+      "html_url": "https://github.com/jankatins",
+      "followers_url": "https://api.github.com/users/jankatins/followers",
+      "following_url": "https://api.github.com/users/jankatins/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jankatins/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jankatins/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jankatins/subscriptions",
+      "organizations_url": "https://api.github.com/users/jankatins/orgs",
+      "repos_url": "https://api.github.com/users/jankatins/repos",
+      "events_url": "https://api.github.com/users/jankatins/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jankatins/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Also added that to the custom module as well",
+    "created_at": "2020-09-21T12:31:29Z",
+    "updated_at": "2020-09-21T12:31:30Z",
+    "html_url": "https://github.com/starship/starship/pull/1629#discussion_r492006030",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1629",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/492006030"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1629#discussion_r492006030"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1629"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/492006030/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 123,
+    "original_line": 123,
+    "side": "RIGHT",
+    "in_reply_to_id": 491861958,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 124,
+    "position": 124,
+    "subject_type": "line"
+  }
+]

@@ -1,0 +1,488 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/615415691",
+    "pull_request_review_id": 638342361,
+    "id": 615415691,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxNTQxNTY5MQ==",
+    "diff_hunk": "@@ -2236,6 +2237,45 @@ python_binary = \"python3\"\n detect_extensions = []\n ```\n \n+## Red\n+\n+By default the `red` module shows the currently installed version of Red.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a file ending with `.red` or `.reds`\n+\n+### Options\n+\n+| Option              | Default                              | Description                                                               |\n+| ------------------- | ------------------------------------ | ------------------------------------------------------------------------- |\n+| `format`            | `\"via [$symbol($version )]($style)\"` | The format for the module.                                                |\n+| `version_format`    | `v{raw}`                             | The version format. Available vars are `raw`, `major`, `minor`, & `patch` |\n+| `symbol`            | `\"🔺 \"`                              | A format string representing the symbol of Red.                          |\n+| `detect_extensions` | `[\"red\"]`                             | Which extensions should trigger this module.                              |\n+| `detect_files`      | `[]`       | Which filenames should trigger this module.                               |\n+| `detect_folders`    | `[]`                                 | Which folders should trigger this module.                                 |\n+| `style`             | `\"red bold\"`                         | The style for the module.                                                 |\n+| `disabled`          | `false`                              | Disables the `red` module.                                               |\n+\n+### Variables\n+\n+| Variable | Example  | Description                          |\n+| -------- | -------- | ------------------------------------ |\n+| version  | `v2.5.1` | The version of `red`                |\n+| symbol   |          | Mirrors the value of option `symbol` |\n+| style\\*  |          | Mirrors the value of option `style`  |\n+\n+\\*: This variable can only be used as a part of a style string\n+\n+### Example\n+\n+```toml\n+# ~/.config/starship.toml\n+\n+[ruby]",
+    "path": "docs/config/README.md",
+    "commit_id": "70fc50b95482f97b6d8bf62ccad89821bbdf6ae1",
+    "original_commit_id": "227048c0b91a24f9756506bbfecaa9c9be223b7a",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\n[red]\n```\n",
+    "created_at": "2021-04-18T15:36:45Z",
+    "updated_at": "2021-04-20T06:19:30Z",
+    "html_url": "https://github.com/starship/starship/pull/2599#discussion_r615415691",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2599",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/615415691"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2599#discussion_r615415691"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2599"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/615415691/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 2275,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 47,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/615416133",
+    "pull_request_review_id": 638342361,
+    "id": 615416133,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxNTQxNjEzMw==",
+    "diff_hunk": "@@ -0,0 +1,97 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::red::RedConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current  Red version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"red\");\n+    let config = RedConfig::try_load(module.config);\n+    let is_red_project = context\n+        .try_begin_scan()?\n+        .set_extensions(&config.detect_extensions)\n+        .is_match();\n+\n+    if !is_red_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"red\", &[\"--version\"])\n+                    .and_then(|output| parse_red_version(output.stdout.trim()))",
+    "path": "src/modules/red.rs",
+    "commit_id": "70fc50b95482f97b6d8bf62ccad89821bbdf6ae1",
+    "original_commit_id": "227048c0b91a24f9756506bbfecaa9c9be223b7a",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Use `.map` here instead so you can get rid of unnecessary option wrap.",
+    "created_at": "2021-04-18T15:39:16Z",
+    "updated_at": "2021-04-20T06:19:30Z",
+    "html_url": "https://github.com/starship/starship/pull/2599#discussion_r615416133",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2599",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/615416133"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2599#discussion_r615416133"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2599"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/615416133/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 32,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 32,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/615416196",
+    "pull_request_review_id": 638342361,
+    "id": 615416196,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxNTQxNjE5Ng==",
+    "diff_hunk": "@@ -0,0 +1,97 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::red::RedConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current  Red version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"red\");\n+    let config = RedConfig::try_load(module.config);\n+    let is_red_project = context\n+        .try_begin_scan()?\n+        .set_extensions(&config.detect_extensions)\n+        .is_match();\n+\n+    if !is_red_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"red\", &[\"--version\"])\n+                    .and_then(|output| parse_red_version(output.stdout.trim()))\n+                    .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `red`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[allow(clippy::clippy::unnecessary_wraps)]\n+fn parse_red_version(red_version: &str) -> Option<String> {",
+    "path": "src/modules/red.rs",
+    "commit_id": "70fc50b95482f97b6d8bf62ccad89821bbdf6ae1",
+    "original_commit_id": "227048c0b91a24f9756506bbfecaa9c9be223b7a",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Return `String` instead.",
+    "created_at": "2021-04-18T15:39:41Z",
+    "updated_at": "2021-04-20T06:19:30Z",
+    "html_url": "https://github.com/starship/starship/pull/2599#discussion_r615416196",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2599",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/615416196"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2599#discussion_r615416196"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2599"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/615416196/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 50,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 51,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 51,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/615417308",
+    "pull_request_review_id": 638343356,
+    "id": 615417308,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxNTQxNzMwOA==",
+    "diff_hunk": "@@ -2236,6 +2237,45 @@ python_binary = \"python3\"\n detect_extensions = []\n ```\n \n+## Red\n+\n+By default the `red` module shows the currently installed version of Red.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a file ending with `.red` or `.reds`\n+\n+### Options\n+\n+| Option              | Default                              | Description                                                               |\n+| ------------------- | ------------------------------------ | ------------------------------------------------------------------------- |\n+| `format`            | `\"via [$symbol($version )]($style)\"` | The format for the module.                                                |\n+| `version_format`    | `v{raw}`                             | The version format. Available vars are `raw`, `major`, `minor`, & `patch` |\n+| `symbol`            | `\"🔺 \"`                              | A format string representing the symbol of Red.                          |\n+| `detect_extensions` | `[\"red\"]`                             | Which extensions should trigger this module.                              |\n+| `detect_files`      | `[]`       | Which filenames should trigger this module.                               |\n+| `detect_folders`    | `[]`                                 | Which folders should trigger this module.                                 |\n+| `style`             | `\"red bold\"`                         | The style for the module.                                                 |\n+| `disabled`          | `false`                              | Disables the `red` module.                                               |\n+\n+### Variables\n+\n+| Variable | Example  | Description                          |\n+| -------- | -------- | ------------------------------------ |\n+| version  | `v2.5.1` | The version of `red`                |\n+| symbol   |          | Mirrors the value of option `symbol` |\n+| style\\*  |          | Mirrors the value of option `style`  |\n+\n+\\*: This variable can only be used as a part of a style string\n+\n+### Example\n+\n+```toml\n+# ~/.config/starship.toml\n+\n+[ruby]",
+    "path": "docs/config/README.md",
+    "commit_id": "70fc50b95482f97b6d8bf62ccad89821bbdf6ae1",
+    "original_commit_id": "227048c0b91a24f9756506bbfecaa9c9be223b7a",
+    "user": {
+      "login": "Milo123459",
+      "id": 50248166,
+      "node_id": "MDQ6VXNlcjUwMjQ4MTY2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/50248166?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Milo123459",
+      "html_url": "https://github.com/Milo123459",
+      "followers_url": "https://api.github.com/users/Milo123459/followers",
+      "following_url": "https://api.github.com/users/Milo123459/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Milo123459/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Milo123459/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Milo123459/subscriptions",
+      "organizations_url": "https://api.github.com/users/Milo123459/orgs",
+      "repos_url": "https://api.github.com/users/Milo123459/repos",
+      "events_url": "https://api.github.com/users/Milo123459/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Milo123459/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "My bad, as per usual...",
+    "created_at": "2021-04-18T15:47:52Z",
+    "updated_at": "2021-04-20T06:19:30Z",
+    "html_url": "https://github.com/starship/starship/pull/2599#discussion_r615417308",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2599",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/615417308"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2599#discussion_r615417308"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2599"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/615417308/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 2275,
+    "side": "RIGHT",
+    "in_reply_to_id": 615415691,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 47,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/615732114",
+    "pull_request_review_id": 638711555,
+    "id": 615732114,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxNTczMjExNA==",
+    "diff_hunk": "@@ -2236,6 +2237,45 @@ python_binary = \"python3\"\n detect_extensions = []\n ```\n \n+## Red\n+\n+By default the `red` module shows the currently installed version of Red.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a file ending with `.red` or `.reds`",
+    "path": "docs/config/README.md",
+    "commit_id": "70fc50b95482f97b6d8bf62ccad89821bbdf6ae1",
+    "original_commit_id": "783c0d7088ec9cc282ed2af5f40acb557842a7be",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Follow wording style set by other doc sections:\n```suggestion\n- The current directory contains a file with `.red` or `.reds` extension\n```\n",
+    "created_at": "2021-04-19T10:33:29Z",
+    "updated_at": "2021-04-20T06:19:30Z",
+    "html_url": "https://github.com/starship/starship/pull/2599#discussion_r615732114",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2599",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/615732114"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2599#discussion_r615732114"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2599"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/615732114/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 2245,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 17,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/615733060",
+    "pull_request_review_id": 638711555,
+    "id": 615733060,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxNTczMzA2MA==",
+    "diff_hunk": "@@ -0,0 +1,97 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::red::RedConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current  Red version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"red\");\n+    let config = RedConfig::try_load(module.config);\n+    let is_red_project = context\n+        .try_begin_scan()?\n+        .set_extensions(&config.detect_extensions)\n+        .is_match();\n+\n+    if !is_red_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"red\", &[\"--version\"])\n+                    .and_then(|output| parse_red_version(output.stdout.trim()))",
+    "path": "src/modules/red.rs",
+    "commit_id": "70fc50b95482f97b6d8bf62ccad89821bbdf6ae1",
+    "original_commit_id": "227048c0b91a24f9756506bbfecaa9c9be223b7a",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This is still actual 🙃",
+    "created_at": "2021-04-19T10:34:54Z",
+    "updated_at": "2021-04-20T06:19:30Z",
+    "html_url": "https://github.com/starship/starship/pull/2599#discussion_r615733060",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2599",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/615733060"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2599#discussion_r615733060"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2599"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/615733060/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 32,
+    "side": "RIGHT",
+    "in_reply_to_id": 615416133,
+    "author_association": "MEMBER",
+    "original_position": 32,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/615733765",
+    "pull_request_review_id": 638711555,
+    "id": 615733765,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxNTczMzc2NQ==",
+    "diff_hunk": "@@ -0,0 +1,97 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::red::RedConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current  Red version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"red\");\n+    let config = RedConfig::try_load(module.config);\n+    let is_red_project = context\n+        .try_begin_scan()?\n+        .set_extensions(&config.detect_extensions)\n+        .is_match();\n+\n+    if !is_red_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"red\", &[\"--version\"])\n+                    .and_then(|output| parse_red_version(output.stdout.trim()))\n+                    .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `red`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[allow(clippy::clippy::unnecessary_wraps)]\n+fn parse_red_version(red_version: &str) -> Option<String> {",
+    "path": "src/modules/red.rs",
+    "commit_id": "70fc50b95482f97b6d8bf62ccad89821bbdf6ae1",
+    "original_commit_id": "227048c0b91a24f9756506bbfecaa9c9be223b7a",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Avoid adding clippy warning overrides - simply return a `String`.",
+    "created_at": "2021-04-19T10:35:58Z",
+    "updated_at": "2021-04-20T06:19:30Z",
+    "html_url": "https://github.com/starship/starship/pull/2599#discussion_r615733765",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2599",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/615733765"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2599#discussion_r615733765"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2599"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/615733765/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 50,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 51,
+    "side": "RIGHT",
+    "in_reply_to_id": 615416196,
+    "author_association": "MEMBER",
+    "original_position": 51,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

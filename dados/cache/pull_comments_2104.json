@@ -1,0 +1,2300 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/554376769",
+    "pull_request_review_id": 564775917,
+    "id": 554376769,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NDM3Njc2OQ==",
+    "diff_hunk": "@@ -33,43 +31,52 @@ const HOME_SYMBOL: &str = \"~\";\n ///\n /// **Truncation**\n /// Paths will be limited in length to `3` path components by default.\n+///\n+/// **Logical vs Physical directory paths**\n+/// The `logical_dir` is always displayed in preference over the `physical_dir`, if it is provided.\n+/// The \"read only\" flag is always displayed based on the `physical_dir`.\n pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let mut module = context.new_module(\"directory\");\n     let config: DirectoryConfig = DirectoryConfig::try_load(module.config);\n \n-    let current_dir = &get_current_dir(&context, &config);\n-\n     let home_dir = dirs_next::home_dir().unwrap();\n-    log::debug!(\"Current directory: {:?}\", current_dir);\n-\n-    let repo = &context.get_repo().ok()?;\n-    let dir_string = match &repo.root {\n-        Some(repo_root) if config.truncate_to_repo && (repo_root != &home_dir) => {\n-            log::debug!(\"Repo root: {:?}\", repo_root);\n-            // Contract the path to the git repo root\n-            contract_repo_path(current_dir, repo_root)\n-                .unwrap_or_else(|| contract_path(current_dir, &home_dir, HOME_SYMBOL))\n-        }\n-        // Contract the path to the home directory\n-        _ => contract_path(current_dir, &home_dir, HOME_SYMBOL),\n+    let physical_dir = &context.current_dir;\n+    let logical_dir = context.logical_dir.as_ref().unwrap_or(physical_dir);",
+    "path": "src/modules/directory.rs",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "a08c0e857cd74dccbdd7d7563c8f6dfd63c46bbd",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think `std::fs::canonicalize` should be run on if `use_logical_dir` is false.",
+    "created_at": "2021-01-09T11:05:56Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r554376769",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/554376769"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r554376769"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/554376769/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 44,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 47,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/554379039",
+    "pull_request_review_id": 564775917,
+    "id": 554379039,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NDM3OTAzOQ==",
+    "diff_hunk": "@@ -9,7 +9,6 @@ pub struct DirectoryConfig<'a> {\n     pub truncate_to_repo: bool,\n     pub substitutions: IndexMap<String, &'a str>,\n     pub fish_style_pwd_dir_length: i64,\n-    pub use_logical_path: bool,",
+    "path": "src/configs/directory.rs",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "a08c0e857cd74dccbdd7d7563c8f6dfd63c46bbd",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Why did you remove this option?",
+    "created_at": "2021-01-09T11:11:58Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r554379039",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/554379039"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r554379039"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/554379039/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 12,
+    "side": "LEFT",
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/554380424",
+    "pull_request_review_id": 564775917,
+    "id": 554380424,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NDM4MDQyNA==",
+    "diff_hunk": "@@ -1,16 +1,50 @@\n #!/usr/bin/env pwsh\n \n+function Get-Cwd {\n+    $cwd = Get-Location\n+    $provider_prefix = \"$($cwd.Provider.ModuleName)\\$($cwd.Provider.Name)::\"\n+    return @{\n+        # Resolve the actual/physical path\n+        # NOTE: ProviderPath is only a physical filesystem path for the \"FileSystem\" provider\n+        # E.g. `Dev:\\` -> `C:\\Users\\Joe Bloggs\\Dev\\`\n+        Path = $cwd.ProviderPath;\n+        # Resolve the provider-logical path \n+        # NOTE: Attempt to trim any \"provider prefix\" from the path string.\n+        # E.g. `Microsoft.PowerShell.Core\\FileSystem::Dev:\\` -> `Dev:\\`\n+        LogicalPath =\n+            if ($cwd.Path.StartsWith($provider_prefix)) {\n+                $cwd.Path.Substring($provider_prefix.Length)\n+            } else {\n+                $cwd.Path\n+            };\n+    }\n+}\n+\n+function Fix-Arg ($arg) {",
+    "path": "src/init/starship.ps1",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "a08c0e857cd74dccbdd7d7563c8f6dfd63c46bbd",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Manual quoting doesn't work? And backslashes aren't even supposed to be escape characters in powershell. Also why would the shell need to add literal quotes?",
+    "created_at": "2021-01-09T11:15:33Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r554380424",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/554380424"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r554380424"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/554380424/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 23,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/554384801",
+    "pull_request_review_id": 564776856,
+    "id": 554384801,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NDM4NDgwMQ==",
+    "diff_hunk": "@@ -1,16 +1,50 @@\n #!/usr/bin/env pwsh\n \n+function Get-Cwd {\n+    $cwd = Get-Location\n+    $provider_prefix = \"$($cwd.Provider.ModuleName)\\$($cwd.Provider.Name)::\"\n+    return @{\n+        # Resolve the actual/physical path\n+        # NOTE: ProviderPath is only a physical filesystem path for the \"FileSystem\" provider\n+        # E.g. `Dev:\\` -> `C:\\Users\\Joe Bloggs\\Dev\\`\n+        Path = $cwd.ProviderPath;\n+        # Resolve the provider-logical path \n+        # NOTE: Attempt to trim any \"provider prefix\" from the path string.\n+        # E.g. `Microsoft.PowerShell.Core\\FileSystem::Dev:\\` -> `Dev:\\`\n+        LogicalPath =\n+            if ($cwd.Path.StartsWith($provider_prefix)) {\n+                $cwd.Path.Substring($provider_prefix.Length)\n+            } else {\n+                $cwd.Path\n+            };\n+    }\n+}\n+\n+function Fix-Arg ($arg) {",
+    "path": "src/init/starship.ps1",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "a08c0e857cd74dccbdd7d7563c8f6dfd63c46bbd",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Edit: looks like this is an actual issue but you could use `.TrimEnd(\"\\\")`",
+    "created_at": "2021-01-09T11:25:45Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r554384801",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/554384801"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r554384801"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/554384801/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 23,
+    "side": "RIGHT",
+    "in_reply_to_id": 554380424,
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/554495598",
+    "pull_request_review_id": 564821967,
+    "id": 554495598,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NDQ5NTU5OA==",
+    "diff_hunk": "@@ -9,7 +9,6 @@ pub struct DirectoryConfig<'a> {\n     pub truncate_to_repo: bool,\n     pub substitutions: IndexMap<String, &'a str>,\n     pub fish_style_pwd_dir_length: i64,\n-    pub use_logical_path: bool,",
+    "path": "src/configs/directory.rs",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "a08c0e857cd74dccbdd7d7563c8f6dfd63c46bbd",
+    "user": {
+      "login": "deadalusai",
+      "id": 918952,
+      "node_id": "MDQ6VXNlcjkxODk1Mg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/918952?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/deadalusai",
+      "html_url": "https://github.com/deadalusai",
+      "followers_url": "https://api.github.com/users/deadalusai/followers",
+      "following_url": "https://api.github.com/users/deadalusai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/deadalusai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/deadalusai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/deadalusai/subscriptions",
+      "organizations_url": "https://api.github.com/users/deadalusai/orgs",
+      "repos_url": "https://api.github.com/users/deadalusai/repos",
+      "events_url": "https://api.github.com/users/deadalusai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/deadalusai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Apologies, I should have dropped a PR comment explaining this.\r\n\r\nSo I spent a bit of time considering this option and decided that it had the potential to be a bit of a footgun. As I understand it there's currently only one shell which supports logical paths (PowerShell) and I found that it was very easy to get \"stuck\" in a virtual path... here's an example of what I mean in GIF form:\r\n\r\n![use_logical_path_false_behavior](https://user-images.githubusercontent.com/918952/104112236-23063d80-5351-11eb-876d-9b93997fc179.gif)\r\n\r\n",
+    "created_at": "2021-01-10T01:37:05Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r554495598",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/554495598"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r554495598"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/554495598/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 12,
+    "side": "LEFT",
+    "in_reply_to_id": 554379039,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/554497082",
+    "pull_request_review_id": 564822594,
+    "id": 554497082,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NDQ5NzA4Mg==",
+    "diff_hunk": "@@ -1,16 +1,50 @@\n #!/usr/bin/env pwsh\n \n+function Get-Cwd {\n+    $cwd = Get-Location\n+    $provider_prefix = \"$($cwd.Provider.ModuleName)\\$($cwd.Provider.Name)::\"\n+    return @{\n+        # Resolve the actual/physical path\n+        # NOTE: ProviderPath is only a physical filesystem path for the \"FileSystem\" provider\n+        # E.g. `Dev:\\` -> `C:\\Users\\Joe Bloggs\\Dev\\`\n+        Path = $cwd.ProviderPath;\n+        # Resolve the provider-logical path \n+        # NOTE: Attempt to trim any \"provider prefix\" from the path string.\n+        # E.g. `Microsoft.PowerShell.Core\\FileSystem::Dev:\\` -> `Dev:\\`\n+        LogicalPath =\n+            if ($cwd.Path.StartsWith($provider_prefix)) {\n+                $cwd.Path.Substring($provider_prefix.Length)\n+            } else {\n+                $cwd.Path\n+            };\n+    }\n+}\n+\n+function Fix-Arg ($arg) {",
+    "path": "src/init/starship.ps1",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "a08c0e857cd74dccbdd7d7563c8f6dfd63c46bbd",
+    "user": {
+      "login": "deadalusai",
+      "id": 918952,
+      "node_id": "MDQ6VXNlcjkxODk1Mg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/918952?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/deadalusai",
+      "html_url": "https://github.com/deadalusai",
+      "followers_url": "https://api.github.com/users/deadalusai/followers",
+      "following_url": "https://api.github.com/users/deadalusai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/deadalusai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/deadalusai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/deadalusai/subscriptions",
+      "organizations_url": "https://api.github.com/users/deadalusai/orgs",
+      "repos_url": "https://api.github.com/users/deadalusai/repos",
+      "events_url": "https://api.github.com/users/deadalusai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/deadalusai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This isn't an issue with escaping characters in PowerShell code, but rather in the way PS generates the [C++ command-line argument string](https://docs.microsoft.com/en-us/previous-versions//17w5ykft(v=vs.85)?redirectedfrom=MSDN) when it invokes an external program. There seems to be issues in the routine it uses to do this.\r\n\r\nIn the documentation I linked above, note the final three rules:\r\n- Backslashes are interpreted literally, unless they immediately precede a double quotation mark.\r\n- If an even number of backslashes is followed by a double quotation mark, one backslash is placed in the argv array for every pair of backslashes, and the double quotation mark is interpreted as a string delimiter.\r\n- If an odd number of backslashes is followed by a double quotation mark, one backslash is placed in the argv array for every pair of backslashes, and the double quotation mark is \"escaped\" by the remaining backslash, causing a literal double quotation mark (\") to be placed in argv.\r\n\r\nE.g. for the following external command invocation:\r\n```powershell\r\n> $a = 'hello \"world\" goodbye \"moon\"'\r\n> $b = 'path\\without\\whitespace\\'\r\n> $c = 'path\\with whitespace\\'\r\n> externalprogram $a $b $c\r\n```\r\nPS generates the following command-line string:\r\n```cmd\r\nexternalprogram \"hello \"world\" goodbye \"moon\"\" path\\without\\whitespace\\ \"path\\with whitespace\\\"\r\n```\r\n\r\nThe first argument is quoted incorrectly as the quote marks are not escaped. ❌\r\nThe second argument is not quoted at all as it does not contain any whitespace. ✔️ \r\nThe third argument however has whitespace _and_ a trailing, odd number of backslashes which ends up escaping the closing quote mark. ❌\r\n\r\nPowerShell could handle this by detecting a trailing backslash and escaping it as part of the quoted command-line string serialisation, but for some reason it doesn't. It could also trivially escape quote marks in the string. This seems an obvious oversight honestly, it's very surprising.\r\n\r\n~I'm using PowerShell 5.0 - I haven't tested with the cross-platform PowerShell version yet so maybe they've fixed it there.~\r\n**Edit:** There's a _four year old_ open issue on this problem: https://github.com/PowerShell/PowerShell/issues/1995\r\n\r\n",
+    "created_at": "2021-01-10T01:56:26Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r554497082",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/554497082"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r554497082"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/554497082/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 23,
+    "side": "RIGHT",
+    "in_reply_to_id": 554380424,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/554502476",
+    "pull_request_review_id": 564824880,
+    "id": 554502476,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NDUwMjQ3Ng==",
+    "diff_hunk": "@@ -1,16 +1,50 @@\n #!/usr/bin/env pwsh\n \n+function Get-Cwd {\n+    $cwd = Get-Location\n+    $provider_prefix = \"$($cwd.Provider.ModuleName)\\$($cwd.Provider.Name)::\"\n+    return @{\n+        # Resolve the actual/physical path\n+        # NOTE: ProviderPath is only a physical filesystem path for the \"FileSystem\" provider\n+        # E.g. `Dev:\\` -> `C:\\Users\\Joe Bloggs\\Dev\\`\n+        Path = $cwd.ProviderPath;\n+        # Resolve the provider-logical path \n+        # NOTE: Attempt to trim any \"provider prefix\" from the path string.\n+        # E.g. `Microsoft.PowerShell.Core\\FileSystem::Dev:\\` -> `Dev:\\`\n+        LogicalPath =\n+            if ($cwd.Path.StartsWith($provider_prefix)) {\n+                $cwd.Path.Substring($provider_prefix.Length)\n+            } else {\n+                $cwd.Path\n+            };\n+    }\n+}\n+\n+function Fix-Arg ($arg) {",
+    "path": "src/init/starship.ps1",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "a08c0e857cd74dccbdd7d7563c8f6dfd63c46bbd",
+    "user": {
+      "login": "deadalusai",
+      "id": 918952,
+      "node_id": "MDQ6VXNlcjkxODk1Mg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/918952?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/deadalusai",
+      "html_url": "https://github.com/deadalusai",
+      "followers_url": "https://api.github.com/users/deadalusai/followers",
+      "following_url": "https://api.github.com/users/deadalusai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/deadalusai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/deadalusai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/deadalusai/subscriptions",
+      "organizations_url": "https://api.github.com/users/deadalusai/orgs",
+      "repos_url": "https://api.github.com/users/deadalusai/repos",
+      "events_url": "https://api.github.com/users/deadalusai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/deadalusai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "In reading through that PowerShell issue thread I learnt about the the [stop-parsing symbol (`--%`)](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parsing?view=powershell-7.1). This was introduced in PowerShell 3.0 (released in 2012) so I think we can rely on it being available.\r\n\r\nWith the stop-parsing symbol, we can manually construct a command string which we know will be correctly parsed and PS will pass it unchanged to the new process.",
+    "created_at": "2021-01-10T03:05:38Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r554502476",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/554502476"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r554502476"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/554502476/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 23,
+    "side": "RIGHT",
+    "in_reply_to_id": 554380424,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/554509955",
+    "pull_request_review_id": 564828405,
+    "id": 554509955,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NDUwOTk1NQ==",
+    "diff_hunk": "@@ -1,16 +1,50 @@\n #!/usr/bin/env pwsh\n \n+function Get-Cwd {\n+    $cwd = Get-Location\n+    $provider_prefix = \"$($cwd.Provider.ModuleName)\\$($cwd.Provider.Name)::\"\n+    return @{\n+        # Resolve the actual/physical path\n+        # NOTE: ProviderPath is only a physical filesystem path for the \"FileSystem\" provider\n+        # E.g. `Dev:\\` -> `C:\\Users\\Joe Bloggs\\Dev\\`\n+        Path = $cwd.ProviderPath;\n+        # Resolve the provider-logical path \n+        # NOTE: Attempt to trim any \"provider prefix\" from the path string.\n+        # E.g. `Microsoft.PowerShell.Core\\FileSystem::Dev:\\` -> `Dev:\\`\n+        LogicalPath =\n+            if ($cwd.Path.StartsWith($provider_prefix)) {\n+                $cwd.Path.Substring($provider_prefix.Length)\n+            } else {\n+                $cwd.Path\n+            };\n+    }\n+}\n+\n+function Fix-Arg ($arg) {",
+    "path": "src/init/starship.ps1",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "a08c0e857cd74dccbdd7d7563c8f6dfd63c46bbd",
+    "user": {
+      "login": "deadalusai",
+      "id": 918952,
+      "node_id": "MDQ6VXNlcjkxODk1Mg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/918952?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/deadalusai",
+      "html_url": "https://github.com/deadalusai",
+      "followers_url": "https://api.github.com/users/deadalusai/followers",
+      "following_url": "https://api.github.com/users/deadalusai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/deadalusai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/deadalusai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/deadalusai/subscriptions",
+      "organizations_url": "https://api.github.com/users/deadalusai/orgs",
+      "repos_url": "https://api.github.com/users/deadalusai/repos",
+      "events_url": "https://api.github.com/users/deadalusai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/deadalusai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I've been experimenting with an `Invoke-Native` function over here:\r\nhttps://github.com/deadalusai/printargs/blob/master/test.ps1\r\n\r\nThis function works around the argument escaping issue by quoting/escaping arguments manually and using `--%` to pass the argument string through to the rust executable directly. The string is quoted using the ~Windows~ C++ command-line argument string rules, and the code _appears_ to work on Linux (Ubuntu/Mint) correctly too.",
+    "created_at": "2021-01-10T04:38:57Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r554509955",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/554509955"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r554509955"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/554509955/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 23,
+    "side": "RIGHT",
+    "in_reply_to_id": 554380424,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/554557813",
+    "pull_request_review_id": 564857425,
+    "id": 554557813,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NDU1NzgxMw==",
+    "diff_hunk": "@@ -1,16 +1,50 @@\n #!/usr/bin/env pwsh\n \n+function Get-Cwd {\n+    $cwd = Get-Location\n+    $provider_prefix = \"$($cwd.Provider.ModuleName)\\$($cwd.Provider.Name)::\"\n+    return @{\n+        # Resolve the actual/physical path\n+        # NOTE: ProviderPath is only a physical filesystem path for the \"FileSystem\" provider\n+        # E.g. `Dev:\\` -> `C:\\Users\\Joe Bloggs\\Dev\\`\n+        Path = $cwd.ProviderPath;\n+        # Resolve the provider-logical path \n+        # NOTE: Attempt to trim any \"provider prefix\" from the path string.\n+        # E.g. `Microsoft.PowerShell.Core\\FileSystem::Dev:\\` -> `Dev:\\`\n+        LogicalPath =\n+            if ($cwd.Path.StartsWith($provider_prefix)) {\n+                $cwd.Path.Substring($provider_prefix.Length)\n+            } else {\n+                $cwd.Path\n+            };\n+    }\n+}\n+\n+function Fix-Arg ($arg) {",
+    "path": "src/init/starship.ps1",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "a08c0e857cd74dccbdd7d7563c8f6dfd63c46bbd",
+    "user": {
+      "login": "deadalusai",
+      "id": 918952,
+      "node_id": "MDQ6VXNlcjkxODk1Mg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/918952?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/deadalusai",
+      "html_url": "https://github.com/deadalusai",
+      "followers_url": "https://api.github.com/users/deadalusai/followers",
+      "following_url": "https://api.github.com/users/deadalusai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/deadalusai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/deadalusai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/deadalusai/subscriptions",
+      "organizations_url": "https://api.github.com/users/deadalusai/orgs",
+      "repos_url": "https://api.github.com/users/deadalusai/repos",
+      "events_url": "https://api.github.com/users/deadalusai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/deadalusai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ok, it works correctly on Linux/Unix because the Unix .NET runtime itself [parses the argument string into the `argv` collection](https://github.com/dotnet/runtime/blob/9c41693194e3b005c91ee471ab3e649d2479d34d/src/libraries/System.Diagnostics.Process/src/System/Diagnostics/Process.Unix.cs#L430) before forking the new process, so we don't need to rely on distro-specific \"command string to argv\" parsing behavior.\r\n\r\n[\"This follows the rules outlined in \"Parsing C++ Command-Line Arguments\" at https://msdn.microsoft.com/en-us/library/17w5ykft.aspx.\"](https://github.com/dotnet/runtime/blob/9c41693194e3b005c91ee471ab3e649d2479d34d/src/libraries/System.Diagnostics.Process/src/System/Diagnostics/Process.Unix.cs#L786-L789).",
+    "created_at": "2021-01-10T12:06:42Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r554557813",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/554557813"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r554557813"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/554557813/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 23,
+    "side": "RIGHT",
+    "in_reply_to_id": 554380424,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/554561732",
+    "pull_request_review_id": 564859958,
+    "id": 554561732,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NDU2MTczMg==",
+    "diff_hunk": "@@ -1,16 +1,50 @@\n #!/usr/bin/env pwsh\n \n+function Get-Cwd {\n+    $cwd = Get-Location\n+    $provider_prefix = \"$($cwd.Provider.ModuleName)\\$($cwd.Provider.Name)::\"\n+    return @{\n+        # Resolve the actual/physical path\n+        # NOTE: ProviderPath is only a physical filesystem path for the \"FileSystem\" provider\n+        # E.g. `Dev:\\` -> `C:\\Users\\Joe Bloggs\\Dev\\`\n+        Path = $cwd.ProviderPath;\n+        # Resolve the provider-logical path \n+        # NOTE: Attempt to trim any \"provider prefix\" from the path string.\n+        # E.g. `Microsoft.PowerShell.Core\\FileSystem::Dev:\\` -> `Dev:\\`\n+        LogicalPath =\n+            if ($cwd.Path.StartsWith($provider_prefix)) {\n+                $cwd.Path.Substring($provider_prefix.Length)\n+            } else {\n+                $cwd.Path\n+            };\n+    }\n+}\n+\n+function Fix-Arg ($arg) {",
+    "path": "src/init/starship.ps1",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "a08c0e857cd74dccbdd7d7563c8f6dfd63c46bbd",
+    "user": {
+      "login": "deadalusai",
+      "id": 918952,
+      "node_id": "MDQ6VXNlcjkxODk1Mg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/918952?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/deadalusai",
+      "html_url": "https://github.com/deadalusai",
+      "followers_url": "https://api.github.com/users/deadalusai/followers",
+      "following_url": "https://api.github.com/users/deadalusai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/deadalusai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/deadalusai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/deadalusai/subscriptions",
+      "organizations_url": "https://api.github.com/users/deadalusai/orgs",
+      "repos_url": "https://api.github.com/users/deadalusai/repos",
+      "events_url": "https://api.github.com/users/deadalusai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/deadalusai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I've updated the PR with a more robust solution for invoking native executables (`Invoke-Native`) which ensures that the strings passed as arguments make their way into the Rust argv list in the same shape as they started, trailing backslashes and all.",
+    "created_at": "2021-01-10T12:40:16Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r554561732",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/554561732"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r554561732"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/554561732/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 23,
+    "side": "RIGHT",
+    "in_reply_to_id": 554380424,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/555392294",
+    "pull_request_review_id": 565803784,
+    "id": 555392294,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NTM5MjI5NA==",
+    "diff_hunk": "@@ -9,7 +9,6 @@ pub struct DirectoryConfig<'a> {\n     pub truncate_to_repo: bool,\n     pub substitutions: IndexMap<String, &'a str>,\n     pub fish_style_pwd_dir_length: i64,\n-    pub use_logical_path: bool,",
+    "path": "src/configs/directory.rs",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "a08c0e857cd74dccbdd7d7563c8f6dfd63c46bbd",
+    "user": {
+      "login": "deadalusai",
+      "id": 918952,
+      "node_id": "MDQ6VXNlcjkxODk1Mg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/918952?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/deadalusai",
+      "html_url": "https://github.com/deadalusai",
+      "followers_url": "https://api.github.com/users/deadalusai/followers",
+      "following_url": "https://api.github.com/users/deadalusai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/deadalusai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/deadalusai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/deadalusai/subscriptions",
+      "organizations_url": "https://api.github.com/users/deadalusai/orgs",
+      "repos_url": "https://api.github.com/users/deadalusai/repos",
+      "events_url": "https://api.github.com/users/deadalusai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/deadalusai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I've restored this configuration flag, though I think clearing it (at least under PowerShell) would be a bad idea.",
+    "created_at": "2021-01-11T22:55:14Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r555392294",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/555392294"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r555392294"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/555392294/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 12,
+    "side": "LEFT",
+    "in_reply_to_id": 554379039,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/556482329",
+    "pull_request_review_id": 567170891,
+    "id": 556482329,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NjQ4MjMyOQ==",
+    "diff_hunk": "@@ -242,6 +236,28 @@ fn real_path<P: AsRef<Path>>(path: P) -> PathBuf {\n     buf.canonicalize().unwrap_or_else(|_| path.into())\n }\n \n+fn canonical_path_cleaned_for_display<P: AsRef<Path>>(path: P) -> PathBuf {\n+    let path = path.as_ref();\n+    // On Windows, a canonical path will include the Windows extended-path prefix.\n+    // Strip that for display purposes\n+    #[cfg(windows)]\n+    {\n+        path.iter()\n+            .enumerate()\n+            .map(|(i, segment)| match (i, segment.to_str()) {\n+                // Match and strip the Windows extended-path prefix segment if it is there\n+                (0, Some(s)) if s.starts_with(\"\\\\\\\\?\\\\\") => std::ffi::OsStr::new(&s[4..]),\n+                _ => segment,\n+            })\n+            .collect::<PathBuf>()",
+    "path": "src/modules/directory.rs",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "56106c4d39d71647a945ebbeb47ff51181ce5655",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "You can directly strip the prefix with something like this:\r\n\r\n```suggestion\r\n        path.strip_prefix(r\"\\\\?\\\").unwrap_or(path).to_path_buf()\r\n```",
+    "created_at": "2021-01-13T12:25:20Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r556482329",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/556482329"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r556482329"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/556482329/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 245,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 252,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 185,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/556495633",
+    "pull_request_review_id": 567170891,
+    "id": 556495633,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NjQ5NTYzMw==",
+    "diff_hunk": "@@ -242,6 +236,28 @@ fn real_path<P: AsRef<Path>>(path: P) -> PathBuf {\n     buf.canonicalize().unwrap_or_else(|_| path.into())\n }\n \n+fn canonical_path_cleaned_for_display<P: AsRef<Path>>(path: P) -> PathBuf {\n+    let path = path.as_ref();\n+    // On Windows, a canonical path will include the Windows extended-path prefix.\n+    // Strip that for display purposes\n+    #[cfg(windows)]\n+    {\n+        path.iter()\n+            .enumerate()\n+            .map(|(i, segment)| match (i, segment.to_str()) {\n+                // Match and strip the Windows extended-path prefix segment if it is there\n+                (0, Some(s)) if s.starts_with(\"\\\\\\\\?\\\\\") => std::ffi::OsStr::new(&s[4..]),\n+                _ => segment,\n+            })\n+            .collect::<PathBuf>()",
+    "path": "src/modules/directory.rs",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "56106c4d39d71647a945ebbeb47ff51181ce5655",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Some paths (SMB) also have a longer prefix: `\\\\?\\UNC\\server\\share`, which should be `\\\\server\\share`. I guess this means you might not be able to use my suggestion from above.",
+    "created_at": "2021-01-13T12:49:07Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r556495633",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/556495633"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r556495633"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/556495633/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 245,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 252,
+    "side": "RIGHT",
+    "in_reply_to_id": 556482329,
+    "author_association": "MEMBER",
+    "original_position": 185,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/556496634",
+    "pull_request_review_id": 567170891,
+    "id": 556496634,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NjQ5NjYzNA==",
+    "diff_hunk": "@@ -33,43 +31,72 @@ const HOME_SYMBOL: &str = \"~\";\n ///\n /// **Truncation**\n /// Paths will be limited in length to `3` path components by default.\n+///\n+/// **Logical vs Physical directory paths**\n+/// The `logical_dir` is always displayed in preference over the `physical_dir`, if it is provided.\n+/// The \"read only\" flag is always displayed based on the `physical_dir`.\n pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let mut module = context.new_module(\"directory\");\n     let config: DirectoryConfig = DirectoryConfig::try_load(module.config);\n \n-    let current_dir = &get_current_dir(&context, &config);\n+    let home_dir = dirs_next::home_dir().expect(\"Unable to determine HOME_DIR for user\");\n \n-    let home_dir = dirs_next::home_dir().unwrap();\n-    log::debug!(\"Current directory: {:?}\", current_dir);\n+    let (physical_dir, logical_dir) = if config.use_logical_path {\n+        // Map the configured physical and logical paths directly.\n+        // If no logical path is configured, fall back to current_dir.\n+        let physical_dir = &context.current_dir;\n+        let logical_dir = context.logical_dir.as_ref().unwrap_or(physical_dir);\n+        (physical_dir.clone(), logical_dir.clone())\n+    } else {\n+        // Explicitly canonicalize the current path to expand symlinks.\n+        // For the logical path, use a cleaned version of the canonical path.\n+        let p = &context.current_dir;\n+        let physical_dir = p.canonicalize().unwrap_or_else(|_| p.clone());\n+        let logical_dir = canonical_path_cleaned_for_display(&physical_dir);\n+        (physical_dir, logical_dir)\n+    };",
+    "path": "src/modules/directory.rs",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "56106c4d39d71647a945ebbeb47ff51181ce5655",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "You could prevent these clones with `std::borrow::Cow`, but I'm not sure it's worth the effort to implement here to be honest.",
+    "created_at": "2021-01-13T12:50:48Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r556496634",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/556496634"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r556496634"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/556496634/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 44,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 57,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 49,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/556497873",
+    "pull_request_review_id": 567170891,
+    "id": 556497873,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NjQ5Nzg3Mw==",
+    "diff_hunk": "@@ -33,43 +31,72 @@ const HOME_SYMBOL: &str = \"~\";\n ///\n /// **Truncation**\n /// Paths will be limited in length to `3` path components by default.\n+///\n+/// **Logical vs Physical directory paths**\n+/// The `logical_dir` is always displayed in preference over the `physical_dir`, if it is provided.\n+/// The \"read only\" flag is always displayed based on the `physical_dir`.\n pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let mut module = context.new_module(\"directory\");\n     let config: DirectoryConfig = DirectoryConfig::try_load(module.config);\n \n-    let current_dir = &get_current_dir(&context, &config);\n+    let home_dir = dirs_next::home_dir().expect(\"Unable to determine HOME_DIR for user\");\n \n-    let home_dir = dirs_next::home_dir().unwrap();\n-    log::debug!(\"Current directory: {:?}\", current_dir);\n+    let (physical_dir, logical_dir) = if config.use_logical_path {\n+        // Map the configured physical and logical paths directly.\n+        // If no logical path is configured, fall back to current_dir.\n+        let physical_dir = &context.current_dir;\n+        let logical_dir = context.logical_dir.as_ref().unwrap_or(physical_dir);\n+        (physical_dir.clone(), logical_dir.clone())\n+    } else {\n+        // Explicitly canonicalize the current path to expand symlinks.\n+        // For the logical path, use a cleaned version of the canonical path.\n+        let p = &context.current_dir;\n+        let physical_dir = p.canonicalize().unwrap_or_else(|_| p.clone());",
+    "path": "src/modules/directory.rs",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "56106c4d39d71647a945ebbeb47ff51181ce5655",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Actually I was thinking of always canonicalizing `context.current_dir` in `context` (at least on windows, so starship on windows supports long paths).",
+    "created_at": "2021-01-13T12:53:02Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r556497873",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/556497873"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r556497873"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/556497873/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 54,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 46,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/556500332",
+    "pull_request_review_id": 567170891,
+    "id": 556500332,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NjUwMDMzMg==",
+    "diff_hunk": "@@ -33,43 +31,72 @@ const HOME_SYMBOL: &str = \"~\";\n ///\n /// **Truncation**\n /// Paths will be limited in length to `3` path components by default.\n+///\n+/// **Logical vs Physical directory paths**\n+/// The `logical_dir` is always displayed in preference over the `physical_dir`, if it is provided.\n+/// The \"read only\" flag is always displayed based on the `physical_dir`.\n pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let mut module = context.new_module(\"directory\");\n     let config: DirectoryConfig = DirectoryConfig::try_load(module.config);\n \n-    let current_dir = &get_current_dir(&context, &config);\n+    let home_dir = dirs_next::home_dir().expect(\"Unable to determine HOME_DIR for user\");\n \n-    let home_dir = dirs_next::home_dir().unwrap();\n-    log::debug!(\"Current directory: {:?}\", current_dir);\n+    let (physical_dir, logical_dir) = if config.use_logical_path {",
+    "path": "src/modules/directory.rs",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "56106c4d39d71647a945ebbeb47ff51181ce5655",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please update the `directory` docs for `use_logical_path` in `docs/config/README.md` with the new behavior.",
+    "created_at": "2021-01-13T12:57:16Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r556500332",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/556500332"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r556500332"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/556500332/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 44,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 36,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/556937150",
+    "pull_request_review_id": 567731997,
+    "id": 556937150,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NjkzNzE1MA==",
+    "diff_hunk": "@@ -242,6 +236,28 @@ fn real_path<P: AsRef<Path>>(path: P) -> PathBuf {\n     buf.canonicalize().unwrap_or_else(|_| path.into())\n }\n \n+fn canonical_path_cleaned_for_display<P: AsRef<Path>>(path: P) -> PathBuf {\n+    let path = path.as_ref();\n+    // On Windows, a canonical path will include the Windows extended-path prefix.\n+    // Strip that for display purposes\n+    #[cfg(windows)]\n+    {\n+        path.iter()\n+            .enumerate()\n+            .map(|(i, segment)| match (i, segment.to_str()) {\n+                // Match and strip the Windows extended-path prefix segment if it is there\n+                (0, Some(s)) if s.starts_with(\"\\\\\\\\?\\\\\") => std::ffi::OsStr::new(&s[4..]),\n+                _ => segment,\n+            })\n+            .collect::<PathBuf>()",
+    "path": "src/modules/directory.rs",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "56106c4d39d71647a945ebbeb47ff51181ce5655",
+    "user": {
+      "login": "deadalusai",
+      "id": 918952,
+      "node_id": "MDQ6VXNlcjkxODk1Mg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/918952?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/deadalusai",
+      "html_url": "https://github.com/deadalusai",
+      "followers_url": "https://api.github.com/users/deadalusai/followers",
+      "following_url": "https://api.github.com/users/deadalusai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/deadalusai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/deadalusai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/deadalusai/subscriptions",
+      "organizations_url": "https://api.github.com/users/deadalusai/orgs",
+      "repos_url": "https://api.github.com/users/deadalusai/repos",
+      "events_url": "https://api.github.com/users/deadalusai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/deadalusai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "That's much simpler than what I was doing 🤦 \r\nAccording to https://docs.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation there are only two variations of the extended path prefix, so I'll just attempt to strip them both.",
+    "created_at": "2021-01-13T23:07:50Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r556937150",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/556937150"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r556937150"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/556937150/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 245,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 252,
+    "side": "RIGHT",
+    "in_reply_to_id": 556482329,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 185,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/556951123",
+    "pull_request_review_id": 567748937,
+    "id": 556951123,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1Njk1MTEyMw==",
+    "diff_hunk": "@@ -242,6 +236,28 @@ fn real_path<P: AsRef<Path>>(path: P) -> PathBuf {\n     buf.canonicalize().unwrap_or_else(|_| path.into())\n }\n \n+fn canonical_path_cleaned_for_display<P: AsRef<Path>>(path: P) -> PathBuf {\n+    let path = path.as_ref();\n+    // On Windows, a canonical path will include the Windows extended-path prefix.\n+    // Strip that for display purposes\n+    #[cfg(windows)]\n+    {\n+        path.iter()\n+            .enumerate()\n+            .map(|(i, segment)| match (i, segment.to_str()) {\n+                // Match and strip the Windows extended-path prefix segment if it is there\n+                (0, Some(s)) if s.starts_with(\"\\\\\\\\?\\\\\") => std::ffi::OsStr::new(&s[4..]),\n+                _ => segment,\n+            })\n+            .collect::<PathBuf>()",
+    "path": "src/modules/directory.rs",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "56106c4d39d71647a945ebbeb47ff51181ce5655",
+    "user": {
+      "login": "deadalusai",
+      "id": 918952,
+      "node_id": "MDQ6VXNlcjkxODk1Mg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/918952?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/deadalusai",
+      "html_url": "https://github.com/deadalusai",
+      "followers_url": "https://api.github.com/users/deadalusai/followers",
+      "following_url": "https://api.github.com/users/deadalusai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/deadalusai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/deadalusai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/deadalusai/subscriptions",
+      "organizations_url": "https://api.github.com/users/deadalusai/orgs",
+      "repos_url": "https://api.github.com/users/deadalusai/repos",
+      "events_url": "https://api.github.com/users/deadalusai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/deadalusai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Hmm, `strip_prefix` doesn't appear to work with extended path prefixes - something to do with how the path components are calculated.",
+    "created_at": "2021-01-13T23:46:23Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r556951123",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/556951123"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r556951123"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/556951123/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 245,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 252,
+    "side": "RIGHT",
+    "in_reply_to_id": 556482329,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 185,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/557054467",
+    "pull_request_review_id": 567863204,
+    "id": 557054467,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NzA1NDQ2Nw==",
+    "diff_hunk": "@@ -242,6 +236,28 @@ fn real_path<P: AsRef<Path>>(path: P) -> PathBuf {\n     buf.canonicalize().unwrap_or_else(|_| path.into())\n }\n \n+fn canonical_path_cleaned_for_display<P: AsRef<Path>>(path: P) -> PathBuf {\n+    let path = path.as_ref();\n+    // On Windows, a canonical path will include the Windows extended-path prefix.\n+    // Strip that for display purposes\n+    #[cfg(windows)]\n+    {\n+        path.iter()\n+            .enumerate()\n+            .map(|(i, segment)| match (i, segment.to_str()) {\n+                // Match and strip the Windows extended-path prefix segment if it is there\n+                (0, Some(s)) if s.starts_with(\"\\\\\\\\?\\\\\") => std::ffi::OsStr::new(&s[4..]),\n+                _ => segment,\n+            })\n+            .collect::<PathBuf>()",
+    "path": "src/modules/directory.rs",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "56106c4d39d71647a945ebbeb47ff51181ce5655",
+    "user": {
+      "login": "deadalusai",
+      "id": 918952,
+      "node_id": "MDQ6VXNlcjkxODk1Mg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/918952?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/deadalusai",
+      "html_url": "https://github.com/deadalusai",
+      "followers_url": "https://api.github.com/users/deadalusai/followers",
+      "following_url": "https://api.github.com/users/deadalusai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/deadalusai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/deadalusai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/deadalusai/subscriptions",
+      "organizations_url": "https://api.github.com/users/deadalusai/orgs",
+      "repos_url": "https://api.github.com/users/deadalusai/repos",
+      "events_url": "https://api.github.com/users/deadalusai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/deadalusai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I've worked around this issue by doing the extended-path prefix stripping later in the process.",
+    "created_at": "2021-01-14T05:37:33Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r557054467",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/557054467"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r557054467"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/557054467/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 245,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 252,
+    "side": "RIGHT",
+    "in_reply_to_id": 556482329,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 185,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/557054680",
+    "pull_request_review_id": 567863430,
+    "id": 557054680,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NzA1NDY4MA==",
+    "diff_hunk": "@@ -33,43 +31,72 @@ const HOME_SYMBOL: &str = \"~\";\n ///\n /// **Truncation**\n /// Paths will be limited in length to `3` path components by default.\n+///\n+/// **Logical vs Physical directory paths**\n+/// The `logical_dir` is always displayed in preference over the `physical_dir`, if it is provided.\n+/// The \"read only\" flag is always displayed based on the `physical_dir`.\n pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let mut module = context.new_module(\"directory\");\n     let config: DirectoryConfig = DirectoryConfig::try_load(module.config);\n \n-    let current_dir = &get_current_dir(&context, &config);\n+    let home_dir = dirs_next::home_dir().expect(\"Unable to determine HOME_DIR for user\");\n \n-    let home_dir = dirs_next::home_dir().unwrap();\n-    log::debug!(\"Current directory: {:?}\", current_dir);\n+    let (physical_dir, logical_dir) = if config.use_logical_path {\n+        // Map the configured physical and logical paths directly.\n+        // If no logical path is configured, fall back to current_dir.\n+        let physical_dir = &context.current_dir;\n+        let logical_dir = context.logical_dir.as_ref().unwrap_or(physical_dir);\n+        (physical_dir.clone(), logical_dir.clone())\n+    } else {\n+        // Explicitly canonicalize the current path to expand symlinks.\n+        // For the logical path, use a cleaned version of the canonical path.\n+        let p = &context.current_dir;\n+        let physical_dir = p.canonicalize().unwrap_or_else(|_| p.clone());\n+        let logical_dir = canonical_path_cleaned_for_display(&physical_dir);\n+        (physical_dir, logical_dir)\n+    };",
+    "path": "src/modules/directory.rs",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "56106c4d39d71647a945ebbeb47ff51181ce5655",
+    "user": {
+      "login": "deadalusai",
+      "id": 918952,
+      "node_id": "MDQ6VXNlcjkxODk1Mg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/918952?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/deadalusai",
+      "html_url": "https://github.com/deadalusai",
+      "followers_url": "https://api.github.com/users/deadalusai/followers",
+      "following_url": "https://api.github.com/users/deadalusai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/deadalusai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/deadalusai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/deadalusai/subscriptions",
+      "organizations_url": "https://api.github.com/users/deadalusai/orgs",
+      "repos_url": "https://api.github.com/users/deadalusai/repos",
+      "events_url": "https://api.github.com/users/deadalusai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/deadalusai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "No longer an issue after the `Context.current_dir`/`Context.logical_dir` refactor.",
+    "created_at": "2021-01-14T05:38:13Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r557054680",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/557054680"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r557054680"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/557054680/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 44,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 57,
+    "side": "RIGHT",
+    "in_reply_to_id": 556496634,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 49,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/557058862",
+    "pull_request_review_id": 567868048,
+    "id": 557058862,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1NzA1ODg2Mg==",
+    "diff_hunk": "@@ -33,43 +31,72 @@ const HOME_SYMBOL: &str = \"~\";\n ///\n /// **Truncation**\n /// Paths will be limited in length to `3` path components by default.\n+///\n+/// **Logical vs Physical directory paths**\n+/// The `logical_dir` is always displayed in preference over the `physical_dir`, if it is provided.\n+/// The \"read only\" flag is always displayed based on the `physical_dir`.\n pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let mut module = context.new_module(\"directory\");\n     let config: DirectoryConfig = DirectoryConfig::try_load(module.config);\n \n-    let current_dir = &get_current_dir(&context, &config);\n+    let home_dir = dirs_next::home_dir().expect(\"Unable to determine HOME_DIR for user\");\n \n-    let home_dir = dirs_next::home_dir().unwrap();\n-    log::debug!(\"Current directory: {:?}\", current_dir);\n+    let (physical_dir, logical_dir) = if config.use_logical_path {\n+        // Map the configured physical and logical paths directly.\n+        // If no logical path is configured, fall back to current_dir.\n+        let physical_dir = &context.current_dir;\n+        let logical_dir = context.logical_dir.as_ref().unwrap_or(physical_dir);\n+        (physical_dir.clone(), logical_dir.clone())\n+    } else {\n+        // Explicitly canonicalize the current path to expand symlinks.\n+        // For the logical path, use a cleaned version of the canonical path.\n+        let p = &context.current_dir;\n+        let physical_dir = p.canonicalize().unwrap_or_else(|_| p.clone());",
+    "path": "src/modules/directory.rs",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "56106c4d39d71647a945ebbeb47ff51181ce5655",
+    "user": {
+      "login": "deadalusai",
+      "id": 918952,
+      "node_id": "MDQ6VXNlcjkxODk1Mg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/918952?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/deadalusai",
+      "html_url": "https://github.com/deadalusai",
+      "followers_url": "https://api.github.com/users/deadalusai/followers",
+      "following_url": "https://api.github.com/users/deadalusai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/deadalusai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/deadalusai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/deadalusai/subscriptions",
+      "organizations_url": "https://api.github.com/users/deadalusai/orgs",
+      "repos_url": "https://api.github.com/users/deadalusai/repos",
+      "events_url": "https://api.github.com/users/deadalusai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/deadalusai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ok, so I've run with this suggestion and made the following changes:\r\n\r\n- `Context::current_dir` is now initialised from `--path` or `std::env::current_dir`\r\n- Additionally `current_dir` is now always canonicalized (on *nix and windows), which expands symlinks.\r\n   On Windows, this means that `current_dir` is now always using extended-path prefixes.\r\n- `Context::logical_dir` is now initialised from `--logical-path` or `PWD` or `current_dir` (before canonicalization)\r\n\r\nThe `directory::module` routine now just picks between rendering `current_dir` and `logical_dir` depending on the `use_logical_dir` config setting.",
+    "created_at": "2021-01-14T05:53:26Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r557058862",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/557058862"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r557058862"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/557058862/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 54,
+    "side": "RIGHT",
+    "in_reply_to_id": 556497873,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 46,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/558873960",
+    "pull_request_review_id": 569937247,
+    "id": 558873960,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1ODg3Mzk2MA==",
+    "diff_hunk": "@@ -1,38 +1,79 @@\n #!/usr/bin/env pwsh\n \n+function Get-Cwd {\n+    $cwd = Get-Location\n+    $provider_prefix = \"$($cwd.Provider.ModuleName)\\$($cwd.Provider.Name)::\"\n+    return @{\n+        # Resolve the actual/physical path\n+        # NOTE: ProviderPath is only a physical filesystem path for the \"FileSystem\" provider\n+        # E.g. `Dev:\\` -> `C:\\Users\\Joe Bloggs\\Dev\\`\n+        Path = $cwd.ProviderPath;\n+        # Resolve the provider-logical path \n+        # NOTE: Attempt to trim any \"provider prefix\" from the path string.\n+        # E.g. `Microsoft.PowerShell.Core\\FileSystem::Dev:\\` -> `Dev:\\`\n+        LogicalPath =\n+            if ($cwd.Path.StartsWith($provider_prefix)) {\n+                $cwd.Path.Substring($provider_prefix.Length)\n+            } else {\n+                $cwd.Path\n+            };\n+    }\n+}\n+\n+function Invoke-Native {\n+    param($Executable, $Arguments)\n+    # Build an arguments string which follows the C++ command-line argument quoting rules\n+    # See: https://docs.microsoft.com/en-us/previous-versions//17w5ykft(v=vs.85)?redirectedfrom=MSDN\n+    $Arguments = $Arguments | ForEach-Object {\n+        $_ = $_ -Replace '(\\\\+)\"','$1$1\"' # Escape backslash chains immediately preceeding quote marks.\n+        $_ = $_ -Replace '(\\\\+)$','$1$1'  # Escape backslash chains immediately preceeding the end of the string.\n+        $_ = $_ -Replace '\"','\\\"'         # Escape internal quote marks.\n+        \"`\"$_`\"\"                          # Quote the argument.\n+    }\n+    # Use the stop-parsing symbol (--%) to ensure the argument string is passed along unchanged \n+    # See: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parsing?view=powershell-5.1\n+    Invoke-Expression \"& `\"$Executable`\" --% $($Arguments -Join ' ')\"\n+}",
+    "path": "src/init/starship.ps1",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "ab8b107ca163b59628e971fa81a6b24786b3703f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Some of the stuff that broke long paths appears to be happening in the powershell part. Here's a fix:\r\n```suggestion\r\nfunction Invoke-Native {\r\n    param($Executable, $Arguments)\r\n\r\n    $startInfo = New-Object System.Diagnostics.ProcessStartInfo -ArgumentList $Executable -Property  @{\r\n        # Use UTF-8\r\n        StandardOutputEncoding = [System.Text.Encoding]::UTF8;\r\n        # Required for UTF-8\r\n        RedirectStandardOutput = $true;\r\n\r\n        CreateNoWindow         = $true;\r\n        UseShellExecute        = $false;\r\n    }\r\n\r\n    \r\n    foreach ($arg in $Arguments) {\r\n        $startInfo.ArgumentList.Add($arg)\r\n    }\r\n\r\n    [System.Diagnostics.Process]::Start($startInfo).StandardOutput.ReadToEnd()\r\n}\r\n```",
+    "created_at": "2021-01-16T13:08:20Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r558873960",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/558873960"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r558873960"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/558873960/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 23,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 36,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 36,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/558874291",
+    "pull_request_review_id": 569937287,
+    "id": 558874291,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1ODg3NDI5MQ==",
+    "diff_hunk": "@@ -1,38 +1,79 @@\n #!/usr/bin/env pwsh\n \n+function Get-Cwd {\n+    $cwd = Get-Location\n+    $provider_prefix = \"$($cwd.Provider.ModuleName)\\$($cwd.Provider.Name)::\"\n+    return @{\n+        # Resolve the actual/physical path\n+        # NOTE: ProviderPath is only a physical filesystem path for the \"FileSystem\" provider\n+        # E.g. `Dev:\\` -> `C:\\Users\\Joe Bloggs\\Dev\\`\n+        Path = $cwd.ProviderPath;\n+        # Resolve the provider-logical path \n+        # NOTE: Attempt to trim any \"provider prefix\" from the path string.\n+        # E.g. `Microsoft.PowerShell.Core\\FileSystem::Dev:\\` -> `Dev:\\`\n+        LogicalPath =\n+            if ($cwd.Path.StartsWith($provider_prefix)) {\n+                $cwd.Path.Substring($provider_prefix.Length)\n+            } else {\n+                $cwd.Path\n+            };\n+    }\n+}\n+\n+function Invoke-Native {\n+    param($Executable, $Arguments)\n+    # Build an arguments string which follows the C++ command-line argument quoting rules\n+    # See: https://docs.microsoft.com/en-us/previous-versions//17w5ykft(v=vs.85)?redirectedfrom=MSDN\n+    $Arguments = $Arguments | ForEach-Object {\n+        $_ = $_ -Replace '(\\\\+)\"','$1$1\"' # Escape backslash chains immediately preceeding quote marks.\n+        $_ = $_ -Replace '(\\\\+)$','$1$1'  # Escape backslash chains immediately preceeding the end of the string.\n+        $_ = $_ -Replace '\"','\\\"'         # Escape internal quote marks.\n+        \"`\"$_`\"\"                          # Quote the argument.\n+    }\n+    # Use the stop-parsing symbol (--%) to ensure the argument string is passed along unchanged \n+    # See: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parsing?view=powershell-5.1\n+    Invoke-Expression \"& `\"$Executable`\" --% $($Arguments -Join ' ')\"\n+}\n+\n function global:prompt {\n     $origDollarQuestion = $global:?\n     $origLastExitCode = $global:LASTEXITCODE\n \n-    $out = $null\n     # @ makes sure the result is an array even if single or no values are returned\n     $jobs = @(Get-Job | Where-Object { $_.State -eq 'Running' }).Count\n-\n-    $env:PWD = $PWD\n-    $current_directory = (Convert-Path -LiteralPath $PWD)\n     \n-    # Whe start from the premise that the command executed correctly, which covers also the fresh console.\n-    $lastExitCodeForPrompt = 0\n+    $cwd = Get-Cwd\n+    $arguments = @(\n+        \"prompt\"\n+        \"--path=$($cwd.Path)\",\n+        \"--logical-path=$($cwd.LogicalPath)\",\n+        \"--jobs=$($jobs)\"\n+    )\n \n     # Save old output encoding and set it to UTF-8\n     $origOutputEncoding = [Console]::OutputEncoding\n     [Console]::OutputEncoding = [System.Text.Encoding]::UTF8",
+    "path": "src/init/starship.ps1",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "ab8b107ca163b59628e971fa81a6b24786b3703f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Whit the fix above this isn't needed anymore.\r\n```suggestion\r\n```",
+    "created_at": "2021-01-16T13:08:55Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r558874291",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/558874291"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r558874291"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/558874291/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 52,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 55,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 61,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/558875146",
+    "pull_request_review_id": 569937407,
+    "id": 558875146,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1ODg3NTE0Ng==",
+    "diff_hunk": "@@ -1,38 +1,79 @@\n #!/usr/bin/env pwsh\n \n+function Get-Cwd {\n+    $cwd = Get-Location\n+    $provider_prefix = \"$($cwd.Provider.ModuleName)\\$($cwd.Provider.Name)::\"\n+    return @{\n+        # Resolve the actual/physical path\n+        # NOTE: ProviderPath is only a physical filesystem path for the \"FileSystem\" provider\n+        # E.g. `Dev:\\` -> `C:\\Users\\Joe Bloggs\\Dev\\`\n+        Path = $cwd.ProviderPath;\n+        # Resolve the provider-logical path \n+        # NOTE: Attempt to trim any \"provider prefix\" from the path string.\n+        # E.g. `Microsoft.PowerShell.Core\\FileSystem::Dev:\\` -> `Dev:\\`\n+        LogicalPath =\n+            if ($cwd.Path.StartsWith($provider_prefix)) {\n+                $cwd.Path.Substring($provider_prefix.Length)\n+            } else {\n+                $cwd.Path\n+            };\n+    }\n+}\n+\n+function Invoke-Native {\n+    param($Executable, $Arguments)\n+    # Build an arguments string which follows the C++ command-line argument quoting rules\n+    # See: https://docs.microsoft.com/en-us/previous-versions//17w5ykft(v=vs.85)?redirectedfrom=MSDN\n+    $Arguments = $Arguments | ForEach-Object {\n+        $_ = $_ -Replace '(\\\\+)\"','$1$1\"' # Escape backslash chains immediately preceeding quote marks.\n+        $_ = $_ -Replace '(\\\\+)$','$1$1'  # Escape backslash chains immediately preceeding the end of the string.\n+        $_ = $_ -Replace '\"','\\\"'         # Escape internal quote marks.\n+        \"`\"$_`\"\"                          # Quote the argument.\n+    }\n+    # Use the stop-parsing symbol (--%) to ensure the argument string is passed along unchanged \n+    # See: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parsing?view=powershell-5.1\n+    Invoke-Expression \"& `\"$Executable`\" --% $($Arguments -Join ' ')\"\n+}\n+\n function global:prompt {\n     $origDollarQuestion = $global:?\n     $origLastExitCode = $global:LASTEXITCODE\n \n-    $out = $null\n     # @ makes sure the result is an array even if single or no values are returned\n     $jobs = @(Get-Job | Where-Object { $_.State -eq 'Running' }).Count\n-\n-    $env:PWD = $PWD\n-    $current_directory = (Convert-Path -LiteralPath $PWD)\n     \n-    # Whe start from the premise that the command executed correctly, which covers also the fresh console.\n-    $lastExitCodeForPrompt = 0\n+    $cwd = Get-Cwd\n+    $arguments = @(\n+        \"prompt\"\n+        \"--path=$($cwd.Path)\",\n+        \"--logical-path=$($cwd.LogicalPath)\",\n+        \"--jobs=$($jobs)\"\n+    )\n \n     # Save old output encoding and set it to UTF-8\n     $origOutputEncoding = [Console]::OutputEncoding\n     [Console]::OutputEncoding = [System.Text.Encoding]::UTF8\n+    \n+    # Whe start from the premise that the command executed correctly, which covers also the fresh console.\n+    $lastExitCodeForPrompt = 0\n     if ($lastCmd = Get-History -Count 1) {\n         # In case we have a False on the Dollar hook, we know there's an error.\n         if (-not $origDollarQuestion) {\n             # We retrieve the InvocationInfo from the most recent error.\n             $lastCmdletError = try { Get-Error |  Where-Object { $_ -ne $null } | Select-Object -expand InvocationInfo } catch { $null }\n-            # We check if the las command executed matches the line that caused the last error , in which case we know\n+            # We check if the last command executed matches the line that caused the last error, in which case we know\n             # it was an internal Powershell command, otherwise, there MUST be an error code.\n             $lastExitCodeForPrompt = if ($null -ne $lastCmdletError -and $lastCmd.CommandLine -eq $lastCmdletError.Line) { 1 } else { $origLastExitCode }\n         }\n-\n         $duration = [math]::Round(($lastCmd.EndExecutionTime - $lastCmd.StartExecutionTime).TotalMilliseconds)\n-        # & ensures the path is interpreted as something to execute\n-        $out = @(&::STARSHIP:: prompt \"--path=$current_directory\" --status=$lastExitCodeForPrompt --jobs=$jobs --cmd-duration=$duration)\n-    } else {\n-        $out = @(&::STARSHIP:: prompt \"--path=$current_directory\" --status=$lastExitCodeForPrompt --jobs=$jobs)\n+        \n+        $arguments += \"--cmd-duration=$($duration)\"\n     }\n+\n+    $arguments += \"--status=$($lastExitCodeForPrompt)\"\n+\n+    $out = Invoke-Native -Executable ::STARSHIP:: -Arguments $arguments",
+    "path": "src/init/starship.ps1",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "ab8b107ca163b59628e971fa81a6b24786b3703f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Just this is enough to get the prompt with the above changes:\r\n`Invoke-Native -Executable ::STARSHIP:: -Arguments $argument`\r\n\r\nPlease get rid of `$out` and the `[Console]::OutputEncoding` stuff.",
+    "created_at": "2021-01-16T13:10:51Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r558875146",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/558875146"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r558875146"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/558875146/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 75,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 87,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/558879491",
+    "pull_request_review_id": 569938146,
+    "id": 558879491,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1ODg3OTQ5MQ==",
+    "diff_hunk": "@@ -0,0 +1,320 @@\n+use std::ffi::OsStr;\n+use std::path::{Component, Path, Prefix};\n+\n+#[derive(Debug, PartialEq, Eq)]\n+enum NormalizedPrefix<'a> {\n+    // No prefix, e.g. `\\cat_pics` or `/cat_pics`\n+    None,\n+    /// Simple verbatim prefix, e.g. `\\\\?\\cat_pics`.\n+    Verbatim(&'a OsStr),\n+    /// Device namespace prefix, e.g. `\\\\.\\COM42`.\n+    DeviceNS(&'a OsStr),\n+    /// Prefix using Windows' _**U**niform **N**aming **C**onvention_, e.g. `\\\\server\\share` or `\\\\?\\UNC\\server\\share`\n+    UNC(&'a OsStr, &'a OsStr),\n+    /// Windows disk/drive prefix e.g. `C:` or `\\\\?\\C:`\n+    Disk(u8),\n+}\n+\n+/// Normalise Verbatim and Non-Verbatim path prefixes into a comparable structure.\n+/// NOTE: \"Verbatim\" paths are the rust std library's name for Windows extended-path prefixed paths.\n+fn normalize_prefix(prefix: Prefix) -> NormalizedPrefix {\n+    match prefix {\n+        Prefix::Verbatim(segment) => NormalizedPrefix::Verbatim(segment),\n+        Prefix::VerbatimUNC(server, share) => NormalizedPrefix::UNC(server, share),\n+        Prefix::VerbatimDisk(disk) => NormalizedPrefix::Disk(disk),\n+        Prefix::DeviceNS(device) => NormalizedPrefix::DeviceNS(device),\n+        Prefix::UNC(server, share) => NormalizedPrefix::UNC(server, share),\n+        Prefix::Disk(disk) => NormalizedPrefix::Disk(disk),\n+    }\n+}\n+\n+fn normalize_path(path: &Path) -> (NormalizedPrefix, &std::path::Path) {",
+    "path": "src/modules/utils/path.rs",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "ab8b107ca163b59628e971fa81a6b24786b3703f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Can you make these two functions no-op when not on windows with `#[cfg(windows)]`?",
+    "created_at": "2021-01-16T13:21:30Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r558879491",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/558879491"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r558879491"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/558879491/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 20,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 31,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 31,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/558914498",
+    "pull_request_review_id": 569944110,
+    "id": 558914498,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1ODkxNDQ5OA==",
+    "diff_hunk": "@@ -1,38 +1,79 @@\n #!/usr/bin/env pwsh\n \n+function Get-Cwd {\n+    $cwd = Get-Location\n+    $provider_prefix = \"$($cwd.Provider.ModuleName)\\$($cwd.Provider.Name)::\"\n+    return @{\n+        # Resolve the actual/physical path\n+        # NOTE: ProviderPath is only a physical filesystem path for the \"FileSystem\" provider\n+        # E.g. `Dev:\\` -> `C:\\Users\\Joe Bloggs\\Dev\\`\n+        Path = $cwd.ProviderPath;\n+        # Resolve the provider-logical path \n+        # NOTE: Attempt to trim any \"provider prefix\" from the path string.\n+        # E.g. `Microsoft.PowerShell.Core\\FileSystem::Dev:\\` -> `Dev:\\`\n+        LogicalPath =\n+            if ($cwd.Path.StartsWith($provider_prefix)) {\n+                $cwd.Path.Substring($provider_prefix.Length)\n+            } else {\n+                $cwd.Path\n+            };\n+    }\n+}\n+\n+function Invoke-Native {\n+    param($Executable, $Arguments)\n+    # Build an arguments string which follows the C++ command-line argument quoting rules\n+    # See: https://docs.microsoft.com/en-us/previous-versions//17w5ykft(v=vs.85)?redirectedfrom=MSDN\n+    $Arguments = $Arguments | ForEach-Object {\n+        $_ = $_ -Replace '(\\\\+)\"','$1$1\"' # Escape backslash chains immediately preceeding quote marks.\n+        $_ = $_ -Replace '(\\\\+)$','$1$1'  # Escape backslash chains immediately preceeding the end of the string.\n+        $_ = $_ -Replace '\"','\\\"'         # Escape internal quote marks.\n+        \"`\"$_`\"\"                          # Quote the argument.\n+    }\n+    # Use the stop-parsing symbol (--%) to ensure the argument string is passed along unchanged \n+    # See: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parsing?view=powershell-5.1\n+    Invoke-Expression \"& `\"$Executable`\" --% $($Arguments -Join ' ')\"\n+}",
+    "path": "src/init/starship.ps1",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "ab8b107ca163b59628e971fa81a6b24786b3703f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Edit: with this approach to command execution, instead of your escape code, this worked:\r\n```ps1\r\n    foreach ($arg in $Arguments) {\r\n        $startInfo.ArgumentList.Add($arg)\r\n    }\r\n```",
+    "created_at": "2021-01-16T14:55:00Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r558914498",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/558914498"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r558914498"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/558914498/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 23,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 36,
+    "side": "RIGHT",
+    "in_reply_to_id": 558873960,
+    "author_association": "MEMBER",
+    "original_position": 36,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/558923580",
+    "pull_request_review_id": 569945736,
+    "id": 558923580,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1ODkyMzU4MA==",
+    "diff_hunk": "@@ -1,38 +1,79 @@\n #!/usr/bin/env pwsh\n \n+function Get-Cwd {",
+    "path": "src/init/starship.ps1",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "ab8b107ca163b59628e971fa81a6b24786b3703f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Would you please prefix these with `starship-` or find some way to avoid getting these functions into the shell scope?",
+    "created_at": "2021-01-16T15:18:10Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r558923580",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/558923580"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r558923580"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/558923580/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 3,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 3,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/558951649",
+    "pull_request_review_id": 569950468,
+    "id": 558951649,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1ODk1MTY0OQ==",
+    "diff_hunk": "@@ -1,38 +1,79 @@\n #!/usr/bin/env pwsh\n \n+function Get-Cwd {\n+    $cwd = Get-Location\n+    $provider_prefix = \"$($cwd.Provider.ModuleName)\\$($cwd.Provider.Name)::\"\n+    return @{\n+        # Resolve the actual/physical path\n+        # NOTE: ProviderPath is only a physical filesystem path for the \"FileSystem\" provider\n+        # E.g. `Dev:\\` -> `C:\\Users\\Joe Bloggs\\Dev\\`\n+        Path = $cwd.ProviderPath;\n+        # Resolve the provider-logical path \n+        # NOTE: Attempt to trim any \"provider prefix\" from the path string.\n+        # E.g. `Microsoft.PowerShell.Core\\FileSystem::Dev:\\` -> `Dev:\\`\n+        LogicalPath =\n+            if ($cwd.Path.StartsWith($provider_prefix)) {\n+                $cwd.Path.Substring($provider_prefix.Length)\n+            } else {\n+                $cwd.Path\n+            };\n+    }\n+}\n+\n+function Invoke-Native {\n+    param($Executable, $Arguments)\n+    # Build an arguments string which follows the C++ command-line argument quoting rules\n+    # See: https://docs.microsoft.com/en-us/previous-versions//17w5ykft(v=vs.85)?redirectedfrom=MSDN\n+    $Arguments = $Arguments | ForEach-Object {\n+        $_ = $_ -Replace '(\\\\+)\"','$1$1\"' # Escape backslash chains immediately preceeding quote marks.\n+        $_ = $_ -Replace '(\\\\+)$','$1$1'  # Escape backslash chains immediately preceeding the end of the string.\n+        $_ = $_ -Replace '\"','\\\"'         # Escape internal quote marks.\n+        \"`\"$_`\"\"                          # Quote the argument.\n+    }\n+    # Use the stop-parsing symbol (--%) to ensure the argument string is passed along unchanged \n+    # See: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parsing?view=powershell-5.1\n+    Invoke-Expression \"& `\"$Executable`\" --% $($Arguments -Join ' ')\"\n+}",
+    "path": "src/init/starship.ps1",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "ab8b107ca163b59628e971fa81a6b24786b3703f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I tested your version of argument escaping, because it looks like `ArgumentList` doesn't work on PS5, but it looks like it doesn't work. Maybe try  implementing a solution based on something like https://github.com/PowerShell/PowerShell/pull/13482#issuecomment-678522514? (I'd still prefer using `ArgumentList` for PS 6.1 and up)\r\n\r\nBecause this all looks very broken without `ArgumentList` I think it might be best to just drop support for PS < 6.1 if you don't feel like doing that.",
+    "created_at": "2021-01-16T16:29:35Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r558951649",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/558951649"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r558951649"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/558951649/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 23,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 36,
+    "side": "RIGHT",
+    "in_reply_to_id": 558873960,
+    "author_association": "MEMBER",
+    "original_position": 36,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/559035912",
+    "pull_request_review_id": 569965589,
+    "id": 559035912,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1OTAzNTkxMg==",
+    "diff_hunk": "@@ -1,38 +1,79 @@\n #!/usr/bin/env pwsh\n \n+function Get-Cwd {\n+    $cwd = Get-Location\n+    $provider_prefix = \"$($cwd.Provider.ModuleName)\\$($cwd.Provider.Name)::\"\n+    return @{\n+        # Resolve the actual/physical path\n+        # NOTE: ProviderPath is only a physical filesystem path for the \"FileSystem\" provider\n+        # E.g. `Dev:\\` -> `C:\\Users\\Joe Bloggs\\Dev\\`\n+        Path = $cwd.ProviderPath;\n+        # Resolve the provider-logical path \n+        # NOTE: Attempt to trim any \"provider prefix\" from the path string.\n+        # E.g. `Microsoft.PowerShell.Core\\FileSystem::Dev:\\` -> `Dev:\\`\n+        LogicalPath =\n+            if ($cwd.Path.StartsWith($provider_prefix)) {\n+                $cwd.Path.Substring($provider_prefix.Length)\n+            } else {\n+                $cwd.Path\n+            };\n+    }\n+}\n+\n+function Invoke-Native {\n+    param($Executable, $Arguments)\n+    # Build an arguments string which follows the C++ command-line argument quoting rules\n+    # See: https://docs.microsoft.com/en-us/previous-versions//17w5ykft(v=vs.85)?redirectedfrom=MSDN\n+    $Arguments = $Arguments | ForEach-Object {\n+        $_ = $_ -Replace '(\\\\+)\"','$1$1\"' # Escape backslash chains immediately preceeding quote marks.\n+        $_ = $_ -Replace '(\\\\+)$','$1$1'  # Escape backslash chains immediately preceeding the end of the string.\n+        $_ = $_ -Replace '\"','\\\"'         # Escape internal quote marks.\n+        \"`\"$_`\"\"                          # Quote the argument.\n+    }\n+    # Use the stop-parsing symbol (--%) to ensure the argument string is passed along unchanged \n+    # See: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parsing?view=powershell-5.1\n+    Invoke-Expression \"& `\"$Executable`\" --% $($Arguments -Join ' ')\"\n+}",
+    "path": "src/init/starship.ps1",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "ab8b107ca163b59628e971fa81a6b24786b3703f",
+    "user": {
+      "login": "deadalusai",
+      "id": 918952,
+      "node_id": "MDQ6VXNlcjkxODk1Mg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/918952?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/deadalusai",
+      "html_url": "https://github.com/deadalusai",
+      "followers_url": "https://api.github.com/users/deadalusai/followers",
+      "following_url": "https://api.github.com/users/deadalusai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/deadalusai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/deadalusai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/deadalusai/subscriptions",
+      "organizations_url": "https://api.github.com/users/deadalusai/orgs",
+      "repos_url": "https://api.github.com/users/deadalusai/repos",
+      "events_url": "https://api.github.com/users/deadalusai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/deadalusai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`ProcessStartInfo.ArgumentList` was only added in .NET 5.0, so this code will only work in PowerShell 6+\r\n\r\nhttps://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.processstartinfo.argumentlist?view=net-5.0&viewFallbackFrom=netframework-4.8#System_Diagnostics_ProcessStartInfo_ArgumentList\r\n\r\n(which sucks because I'd much rather not be doing this manual escaping)\r\n\r\nThe escaping code in https://github.com/PowerShell/PowerShell/pull/13482#issuecomment-678522514 is almost identical to my escaping code, with additional complexity for unquoted arguments and batch quoting which we don't need.",
+    "created_at": "2021-01-16T20:25:21Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r559035912",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/559035912"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r559035912"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/559035912/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 23,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 36,
+    "side": "RIGHT",
+    "in_reply_to_id": 558873960,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 36,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/559051598",
+    "pull_request_review_id": 569974377,
+    "id": 559051598,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1OTA1MTU5OA==",
+    "diff_hunk": "@@ -1,38 +1,79 @@\n #!/usr/bin/env pwsh\n \n+function Get-Cwd {",
+    "path": "src/init/starship.ps1",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "ab8b107ca163b59628e971fa81a6b24786b3703f",
+    "user": {
+      "login": "deadalusai",
+      "id": 918952,
+      "node_id": "MDQ6VXNlcjkxODk1Mg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/918952?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/deadalusai",
+      "html_url": "https://github.com/deadalusai",
+      "followers_url": "https://api.github.com/users/deadalusai/followers",
+      "following_url": "https://api.github.com/users/deadalusai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/deadalusai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/deadalusai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/deadalusai/subscriptions",
+      "organizations_url": "https://api.github.com/users/deadalusai/orgs",
+      "repos_url": "https://api.github.com/users/deadalusai/repos",
+      "events_url": "https://api.github.com/users/deadalusai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/deadalusai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I've moved these function declarations into the `global:prompt` function itself so they no longer leak into the user's shell scope.",
+    "created_at": "2021-01-16T23:18:15Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r559051598",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/559051598"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r559051598"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/559051598/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 3,
+    "side": "RIGHT",
+    "in_reply_to_id": 558923580,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 3,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/559051879",
+    "pull_request_review_id": 569974488,
+    "id": 559051879,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1OTA1MTg3OQ==",
+    "diff_hunk": "@@ -1,38 +1,79 @@\n #!/usr/bin/env pwsh\n \n+function Get-Cwd {\n+    $cwd = Get-Location\n+    $provider_prefix = \"$($cwd.Provider.ModuleName)\\$($cwd.Provider.Name)::\"\n+    return @{\n+        # Resolve the actual/physical path\n+        # NOTE: ProviderPath is only a physical filesystem path for the \"FileSystem\" provider\n+        # E.g. `Dev:\\` -> `C:\\Users\\Joe Bloggs\\Dev\\`\n+        Path = $cwd.ProviderPath;\n+        # Resolve the provider-logical path \n+        # NOTE: Attempt to trim any \"provider prefix\" from the path string.\n+        # E.g. `Microsoft.PowerShell.Core\\FileSystem::Dev:\\` -> `Dev:\\`\n+        LogicalPath =\n+            if ($cwd.Path.StartsWith($provider_prefix)) {\n+                $cwd.Path.Substring($provider_prefix.Length)\n+            } else {\n+                $cwd.Path\n+            };\n+    }\n+}\n+\n+function Invoke-Native {\n+    param($Executable, $Arguments)\n+    # Build an arguments string which follows the C++ command-line argument quoting rules\n+    # See: https://docs.microsoft.com/en-us/previous-versions//17w5ykft(v=vs.85)?redirectedfrom=MSDN\n+    $Arguments = $Arguments | ForEach-Object {\n+        $_ = $_ -Replace '(\\\\+)\"','$1$1\"' # Escape backslash chains immediately preceeding quote marks.\n+        $_ = $_ -Replace '(\\\\+)$','$1$1'  # Escape backslash chains immediately preceeding the end of the string.\n+        $_ = $_ -Replace '\"','\\\"'         # Escape internal quote marks.\n+        \"`\"$_`\"\"                          # Quote the argument.\n+    }\n+    # Use the stop-parsing symbol (--%) to ensure the argument string is passed along unchanged \n+    # See: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parsing?view=powershell-5.1\n+    Invoke-Expression \"& `\"$Executable`\" --% $($Arguments -Join ' ')\"\n+}",
+    "path": "src/init/starship.ps1",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "ab8b107ca163b59628e971fa81a6b24786b3703f",
+    "user": {
+      "login": "deadalusai",
+      "id": 918952,
+      "node_id": "MDQ6VXNlcjkxODk1Mg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/918952?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/deadalusai",
+      "html_url": "https://github.com/deadalusai",
+      "followers_url": "https://api.github.com/users/deadalusai/followers",
+      "following_url": "https://api.github.com/users/deadalusai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/deadalusai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/deadalusai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/deadalusai/subscriptions",
+      "organizations_url": "https://api.github.com/users/deadalusai/orgs",
+      "repos_url": "https://api.github.com/users/deadalusai/repos",
+      "events_url": "https://api.github.com/users/deadalusai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/deadalusai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I've adjusted the `Invoke-Native` function to use `System.Diagnostics.ProcessStartInfo` as in your suggested change above. If `ArgumentList` is available we use it, otherwise we fall back to building an escaped argument string.\r\n\r\nDo you have any examples of argument strings which break the manual escaping process? All my test sample strings work correctly:\r\n\r\n```powershell\r\n$TestArguments = @(\r\n    'hello \"world\" \\\" \\\\\" goodbye \"moon\"',\r\n    'path\\without\\whitespace\\',\r\n    'path\\with whitespace\\',\r\n    '--flag=argument passed to flag',\r\n    'five trailing backslashes \\\\\\\\\\',\r\n    '\\\\\\\\\\five leading backslashes',\r\n    '\\\\?\\C:\\Windows\\Extended Path Syntax\\',\r\n    # Test strings from https://github.com/PowerShell/PowerShell/pull/13482\r\n    '',\r\n    'foo=bar none',\r\n    '/foo:bar none',\r\n    '-foo:bar none',\r\n    'foo=bar \"quote\" none',\r\n    'foo:not me',\r\n    'foo=notme',\r\n    'notmeeither',\r\n    'c:\\program files\\',\r\n    'a \"b c\" d',\r\n    'a \\\"b c\\\" d',\r\n    '3\" of snow',\r\n    'ab\\',\r\n    'a b\\\\',\r\n    'a&b',\r\n    'a\"b'\r\n);\r\n```",
+    "created_at": "2021-01-16T23:21:13Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r559051879",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/559051879"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r559051879"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/559051879/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 23,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 36,
+    "side": "RIGHT",
+    "in_reply_to_id": 558873960,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 36,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/559176241",
+    "pull_request_review_id": 570053877,
+    "id": 559176241,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1OTE3NjI0MQ==",
+    "diff_hunk": "@@ -1,38 +1,79 @@\n #!/usr/bin/env pwsh\n \n+function Get-Cwd {\n+    $cwd = Get-Location\n+    $provider_prefix = \"$($cwd.Provider.ModuleName)\\$($cwd.Provider.Name)::\"\n+    return @{\n+        # Resolve the actual/physical path\n+        # NOTE: ProviderPath is only a physical filesystem path for the \"FileSystem\" provider\n+        # E.g. `Dev:\\` -> `C:\\Users\\Joe Bloggs\\Dev\\`\n+        Path = $cwd.ProviderPath;\n+        # Resolve the provider-logical path \n+        # NOTE: Attempt to trim any \"provider prefix\" from the path string.\n+        # E.g. `Microsoft.PowerShell.Core\\FileSystem::Dev:\\` -> `Dev:\\`\n+        LogicalPath =\n+            if ($cwd.Path.StartsWith($provider_prefix)) {\n+                $cwd.Path.Substring($provider_prefix.Length)\n+            } else {\n+                $cwd.Path\n+            };\n+    }\n+}\n+\n+function Invoke-Native {\n+    param($Executable, $Arguments)\n+    # Build an arguments string which follows the C++ command-line argument quoting rules\n+    # See: https://docs.microsoft.com/en-us/previous-versions//17w5ykft(v=vs.85)?redirectedfrom=MSDN\n+    $Arguments = $Arguments | ForEach-Object {\n+        $_ = $_ -Replace '(\\\\+)\"','$1$1\"' # Escape backslash chains immediately preceeding quote marks.\n+        $_ = $_ -Replace '(\\\\+)$','$1$1'  # Escape backslash chains immediately preceeding the end of the string.\n+        $_ = $_ -Replace '\"','\\\"'         # Escape internal quote marks.\n+        \"`\"$_`\"\"                          # Quote the argument.\n+    }\n+    # Use the stop-parsing symbol (--%) to ensure the argument string is passed along unchanged \n+    # See: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parsing?view=powershell-5.1\n+    Invoke-Expression \"& `\"$Executable`\" --% $($Arguments -Join ' ')\"\n+}",
+    "path": "src/init/starship.ps1",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "ab8b107ca163b59628e971fa81a6b24786b3703f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It looks like your solution is sometimes appending `;` to the argument.\r\nWhen I got rid of all the `;` in `ForEach-Object` it appeared to work fine. You also might want to avoid assigning to `$_`. The VSCode PowerShell extension complains about that.\r\nBeyond that: `ArgumentList` was added in PowerShell 6.1 with .Net Core 2.1. I think only PowerShell 7.1 has .Net 5.",
+    "created_at": "2021-01-17T12:43:46Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r559176241",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/559176241"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r559176241"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/559176241/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 23,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 36,
+    "side": "RIGHT",
+    "in_reply_to_id": 558873960,
+    "author_association": "MEMBER",
+    "original_position": 36,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/559238010",
+    "pull_request_review_id": 570094121,
+    "id": 559238010,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU1OTIzODAxMA==",
+    "diff_hunk": "@@ -1,38 +1,79 @@\n #!/usr/bin/env pwsh\n \n+function Get-Cwd {\n+    $cwd = Get-Location\n+    $provider_prefix = \"$($cwd.Provider.ModuleName)\\$($cwd.Provider.Name)::\"\n+    return @{\n+        # Resolve the actual/physical path\n+        # NOTE: ProviderPath is only a physical filesystem path for the \"FileSystem\" provider\n+        # E.g. `Dev:\\` -> `C:\\Users\\Joe Bloggs\\Dev\\`\n+        Path = $cwd.ProviderPath;\n+        # Resolve the provider-logical path \n+        # NOTE: Attempt to trim any \"provider prefix\" from the path string.\n+        # E.g. `Microsoft.PowerShell.Core\\FileSystem::Dev:\\` -> `Dev:\\`\n+        LogicalPath =\n+            if ($cwd.Path.StartsWith($provider_prefix)) {\n+                $cwd.Path.Substring($provider_prefix.Length)\n+            } else {\n+                $cwd.Path\n+            };\n+    }\n+}\n+\n+function Invoke-Native {\n+    param($Executable, $Arguments)\n+    # Build an arguments string which follows the C++ command-line argument quoting rules\n+    # See: https://docs.microsoft.com/en-us/previous-versions//17w5ykft(v=vs.85)?redirectedfrom=MSDN\n+    $Arguments = $Arguments | ForEach-Object {\n+        $_ = $_ -Replace '(\\\\+)\"','$1$1\"' # Escape backslash chains immediately preceeding quote marks.\n+        $_ = $_ -Replace '(\\\\+)$','$1$1'  # Escape backslash chains immediately preceeding the end of the string.\n+        $_ = $_ -Replace '\"','\\\"'         # Escape internal quote marks.\n+        \"`\"$_`\"\"                          # Quote the argument.\n+    }\n+    # Use the stop-parsing symbol (--%) to ensure the argument string is passed along unchanged \n+    # See: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_parsing?view=powershell-5.1\n+    Invoke-Expression \"& `\"$Executable`\" --% $($Arguments -Join ' ')\"\n+}",
+    "path": "src/init/starship.ps1",
+    "commit_id": "32ca654dffb0c376e9f87795b84ab8369e70ffa8",
+    "original_commit_id": "ab8b107ca163b59628e971fa81a6b24786b3703f",
+    "user": {
+      "login": "deadalusai",
+      "id": 918952,
+      "node_id": "MDQ6VXNlcjkxODk1Mg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/918952?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/deadalusai",
+      "html_url": "https://github.com/deadalusai",
+      "followers_url": "https://api.github.com/users/deadalusai/followers",
+      "following_url": "https://api.github.com/users/deadalusai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/deadalusai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/deadalusai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/deadalusai/subscriptions",
+      "organizations_url": "https://api.github.com/users/deadalusai/orgs",
+      "repos_url": "https://api.github.com/users/deadalusai/repos",
+      "events_url": "https://api.github.com/users/deadalusai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/deadalusai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ah, there was a mistyped `;` I thought I'd already fixed, but I'd only fixed it in my testing script 🤦‍♂️.\r\n\r\nRe: `ArgumentList` that makes sense. I was following the docs but I think I was in the \"framework\" docs not the \"core\" docs. I'm testing for the property, not the PowerShell version so it will work on PS 6 & 7.",
+    "created_at": "2021-01-17T21:04:06Z",
+    "updated_at": "2021-01-27T22:24:22Z",
+    "html_url": "https://github.com/starship/starship/pull/2104#discussion_r559238010",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2104",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/559238010"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2104#discussion_r559238010"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2104"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/559238010/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 23,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 36,
+    "side": "RIGHT",
+    "in_reply_to_id": 558873960,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 36,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

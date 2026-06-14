@@ -1,0 +1,42 @@
+[
+  {
+    "id": 841188090,
+    "node_id": "PRR_kwDOCqswNs4yI4L6",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?u=8eada86f74d58a0dc8cf90da0ff547dacc0eae9f&v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "For some reason, GitHub will not let me make individual review comments on this PR (literally just this PR, other PRs work fine), so you get one giant blob comment instead of any sane sort of breakdown.\r\n\r\nLine numbers refer to lines in the proposed changes unless otherwise stated.\r\n\r\n### Using `has`\r\n\r\nOn line 158, you use both `sha256sum` and `awk` to generate the checksum. I'd like to see these wrapped in a check to `has` (see e.g. line 46 where we use it to check if mktemp exists).\r\n\r\nI honestly don't expect that it'll ever actually trigger, but we do support some relatively rare platforms, and I'd like to make sure we get a graceful message if we don't have those tools.\r\n\r\n### Double brackets\r\n\r\nThis install script is intended to be run as a POSIX script, so double brackets (`[[` `]]`) are not supported.\r\n\r\n### Failure behaviour\r\n\r\nRight now, if the checksums don't match, the install script will print \"Starship installed\" (line 498) without actually installing anything. This isn't great. (This will also become an issue when you add `has` checks from the first section: what will you do if those checks fail?)\r\n\r\nIdeally I'd like to see an interactive option to continue, paired with a command line option (e.g. `--no-checksum`) which allows a user to skip checksum validation pre-emptively. However, I would also accept just printing an error message and exiting the script immediately---something that isn't saying \"Install successful\" without actually installing anything.",
+    "state": "CHANGES_REQUESTED",
+    "html_url": "https://github.com/starship/starship/pull/3244#pullrequestreview-841188090",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3244",
+    "author_association": "CONTRIBUTOR",
+    "_links": {
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3244#pullrequestreview-841188090"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3244"
+      }
+    },
+    "submitted_at": "2021-12-29T05:13:47Z",
+    "commit_id": "c0cc0ea62324bfcc7806bfc39c1f9489e88780a8"
+  }
+]

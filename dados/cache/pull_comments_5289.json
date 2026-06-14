@@ -1,0 +1,280 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1248872736",
+    "pull_request_review_id": 1508666606,
+    "id": 1248872736,
+    "node_id": "PRRC_kwDOCqswNs5KcEkg",
+    "diff_hunk": "@@ -219,4 +227,29 @@ mod tests {\n \n         assert_eq!(expected, actual);\n     }\n+\n+    #[test]\n+    fn repeat_offset() {\n+        fn get_actual(shlvl: usize, repeat_offset: usize, threshold: usize) -> Option<String> {\n+            ModuleRenderer::new(\"shlvl\")\n+                .config(toml::toml! {\n+                    [shlvl]\n+                    format = \"[$symbol]($style)\"\n+                    symbol = \"~\"\n+                    repeat = true\n+                    repeat_offset = repeat_offset\n+                    disabled = false\n+                    threshold = threshold\n+                })\n+                .env(SHLVL_ENV_VAR, format!(\"{}\", shlvl))\n+                .collect()\n+        }\n+\n+        assert_eq!(get_actual(2, 0, 0), Some(format!(\"{}\", style().paint(\"~~\"))));\n+        assert_eq!(get_actual(2, 1, 0), Some(format!(\"{}\", style().paint(\"~\"))));\n+        assert_eq!(get_actual(2, 2, 0), None); // offset same as shlvl; hide\n+        assert_eq!(get_actual(2, 3, 0), None); // offset larger than shlvl; hide",
+    "path": "src/modules/shlvl.rs",
+    "commit_id": "a07b0cb1b6eac04ddf0dd5ad23d01d399fc01919",
+    "original_commit_id": "b14790d7a188b044648fd2edb11cd61a886d1f5b",
+    "user": {
+      "login": "yoursvivek",
+      "id": 163296,
+      "node_id": "MDQ6VXNlcjE2MzI5Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/163296?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/yoursvivek",
+      "html_url": "https://github.com/yoursvivek",
+      "followers_url": "https://api.github.com/users/yoursvivek/followers",
+      "following_url": "https://api.github.com/users/yoursvivek/following{/other_user}",
+      "gists_url": "https://api.github.com/users/yoursvivek/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/yoursvivek/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/yoursvivek/subscriptions",
+      "organizations_url": "https://api.github.com/users/yoursvivek/orgs",
+      "repos_url": "https://api.github.com/users/yoursvivek/repos",
+      "events_url": "https://api.github.com/users/yoursvivek/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/yoursvivek/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I can't think of a reason why anyone would like to keep threshold with repeat_offset settings, but I ensured everything works just for completeness.",
+    "created_at": "2023-07-01T15:26:13Z",
+    "updated_at": "2023-07-01T15:27:37Z",
+    "html_url": "https://github.com/starship/starship/pull/5289#discussion_r1248872736",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5289",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1248872736"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5289#discussion_r1248872736"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5289"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1248872736/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 255,
+    "original_line": 255,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 46,
+    "position": 50,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1248872889",
+    "pull_request_review_id": 1508666606,
+    "id": 1248872889,
+    "node_id": "PRRC_kwDOCqswNs5KcEm5",
+    "diff_hunk": "@@ -22,11 +22,19 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     let shlvl_str = &shlvl.to_string();\n \n-    let repeat_count = if config.repeat {\n+    let mut repeat_count: usize = if config.repeat {",
+    "path": "src/modules/shlvl.rs",
+    "commit_id": "a07b0cb1b6eac04ddf0dd5ad23d01d399fc01919",
+    "original_commit_id": "b14790d7a188b044648fd2edb11cd61a886d1f5b",
+    "user": {
+      "login": "yoursvivek",
+      "id": 163296,
+      "node_id": "MDQ6VXNlcjE2MzI5Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/163296?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/yoursvivek",
+      "html_url": "https://github.com/yoursvivek",
+      "followers_url": "https://api.github.com/users/yoursvivek/followers",
+      "following_url": "https://api.github.com/users/yoursvivek/following{/other_user}",
+      "gists_url": "https://api.github.com/users/yoursvivek/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/yoursvivek/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/yoursvivek/subscriptions",
+      "organizations_url": "https://api.github.com/users/yoursvivek/orgs",
+      "repos_url": "https://api.github.com/users/yoursvivek/repos",
+      "events_url": "https://api.github.com/users/yoursvivek/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/yoursvivek/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`repeat_count` was implicitly `usize`, I'm sticking to that.",
+    "created_at": "2023-07-01T15:27:04Z",
+    "updated_at": "2023-07-01T15:27:37Z",
+    "html_url": "https://github.com/starship/starship/pull/5289#discussion_r1248872889",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5289",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1248872889"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5289#discussion_r1248872889"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5289"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1248872889/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 25,
+    "original_line": 25,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 5,
+    "position": 5,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1254020599",
+    "pull_request_review_id": 1515887555,
+    "id": 1254020599,
+    "node_id": "PRRC_kwDOCqswNs5KvtX3",
+    "diff_hunk": "@@ -22,11 +22,19 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     let shlvl_str = &shlvl.to_string();\n \n-    let repeat_count = if config.repeat {\n+    let mut repeat_count: usize = if config.repeat {",
+    "path": "src/modules/shlvl.rs",
+    "commit_id": "a07b0cb1b6eac04ddf0dd5ad23d01d399fc01919",
+    "original_commit_id": "b14790d7a188b044648fd2edb11cd61a886d1f5b",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`i64` or `u64` have the advantage of not having a platform-dependent size that also works the same on 32-bit systems.",
+    "created_at": "2023-07-06T07:02:16Z",
+    "updated_at": "2023-07-06T08:54:37Z",
+    "html_url": "https://github.com/starship/starship/pull/5289#discussion_r1254020599",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5289",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1254020599"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5289#discussion_r1254020599"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5289"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1254020599/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 25,
+    "original_line": 25,
+    "side": "RIGHT",
+    "in_reply_to_id": 1248872889,
+    "author_association": "MEMBER",
+    "original_position": 5,
+    "position": 5,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1254726217",
+    "pull_request_review_id": 1517005782,
+    "id": 1254726217,
+    "node_id": "PRRC_kwDOCqswNs5KyZpJ",
+    "diff_hunk": "@@ -22,11 +22,19 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     let shlvl_str = &shlvl.to_string();\n \n-    let repeat_count = if config.repeat {\n+    let mut repeat_count: usize = if config.repeat {",
+    "path": "src/modules/shlvl.rs",
+    "commit_id": "a07b0cb1b6eac04ddf0dd5ad23d01d399fc01919",
+    "original_commit_id": "b14790d7a188b044648fd2edb11cd61a886d1f5b",
+    "user": {
+      "login": "yoursvivek",
+      "id": 163296,
+      "node_id": "MDQ6VXNlcjE2MzI5Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/163296?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/yoursvivek",
+      "html_url": "https://github.com/yoursvivek",
+      "followers_url": "https://api.github.com/users/yoursvivek/followers",
+      "following_url": "https://api.github.com/users/yoursvivek/following{/other_user}",
+      "gists_url": "https://api.github.com/users/yoursvivek/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/yoursvivek/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/yoursvivek/subscriptions",
+      "organizations_url": "https://api.github.com/users/yoursvivek/orgs",
+      "repos_url": "https://api.github.com/users/yoursvivek/repos",
+      "events_url": "https://api.github.com/users/yoursvivek/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/yoursvivek/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Used `u64` for config param `repeat_offset`.\r\n\r\n`repeat_count` is used in repeat calls which needs `usize`; so nothing to gain from changing its type.",
+    "created_at": "2023-07-06T17:24:24Z",
+    "updated_at": "2023-07-06T17:24:51Z",
+    "html_url": "https://github.com/starship/starship/pull/5289#discussion_r1254726217",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5289",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1254726217"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5289#discussion_r1254726217"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5289"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1254726217/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 25,
+    "original_line": 25,
+    "side": "RIGHT",
+    "in_reply_to_id": 1248872889,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 5,
+    "position": 5,
+    "subject_type": "line"
+  }
+]

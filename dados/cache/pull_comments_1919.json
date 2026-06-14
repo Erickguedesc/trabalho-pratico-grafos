@@ -1,0 +1,420 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/536832509",
+    "pull_request_review_id": 545632869,
+    "id": 536832509,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUzNjgzMjUwOQ==",
+    "diff_hunk": "@@ -335,4 +339,76 @@ mod tests {\n         assert_eq!(expected, actual);\n         Ok(())\n     }\n+\n+    #[test]\n+    fn test_latest_tag_shown_with_tag_enabled() -> io::Result<()> {\n+        use std::{thread, time};\n+\n+        let repo_dir = fixture_repo(FixtureProvider::GIT)?;\n+\n+        let mut git_commit = Command::new(\"git\")\n+            .args(&[\"rev-parse\", \"HEAD\"])\n+            .current_dir(&repo_dir.path())\n+            .output()?\n+            .stdout;\n+        git_commit.truncate(7);\n+        let commit_output = str::from_utf8(&git_commit).unwrap().trim();\n+\n+        Command::new(\"git\")\n+            .args(&[\"tag\", \"v2\", \"-m\", \"Testing tags v2\"])\n+            .current_dir(&repo_dir.path())\n+            .output()?;\n+\n+        // Wait one second between tags\n+        thread::sleep(time::Duration::from_millis(1000));",
+    "path": "src/modules/git_commit.rs",
+    "commit_id": "8618b465f1966b87e3fbfcbd32eddc374848b95e",
+    "original_commit_id": "8618b465f1966b87e3fbfcbd32eddc374848b95e",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'm a little bit suspicious of this line because it seems to rely on wallclock properties (e.g. if a daylight-savings or multiple leap-second timechange occur while the sleep is happening, does the test still work?) but I don't see a better way of testing it at the moment since you can't artifically specify creation times in git.\r\n\r\nNothing to be done for the moment, just something to remember if we see this test start failing in GH Actions for no apparent reason.",
+    "created_at": "2020-12-05T18:01:03Z",
+    "updated_at": "2020-12-05T18:06:44Z",
+    "html_url": "https://github.com/starship/starship/pull/1919#discussion_r536832509",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1919",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/536832509"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1919#discussion_r536832509"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1919"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/536832509/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 363,
+    "original_line": 363,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 58,
+    "position": 58,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/536833317",
+    "pull_request_review_id": 545632869,
+    "id": 536833317,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUzNjgzMzMxNw==",
+    "diff_hunk": "@@ -335,4 +339,76 @@ mod tests {\n         assert_eq!(expected, actual);\n         Ok(())\n     }\n+\n+    #[test]\n+    fn test_latest_tag_shown_with_tag_enabled() -> io::Result<()> {\n+        use std::{thread, time};\n+\n+        let repo_dir = fixture_repo(FixtureProvider::GIT)?;\n+\n+        let mut git_commit = Command::new(\"git\")\n+            .args(&[\"rev-parse\", \"HEAD\"])\n+            .current_dir(&repo_dir.path())\n+            .output()?\n+            .stdout;\n+        git_commit.truncate(7);\n+        let commit_output = str::from_utf8(&git_commit).unwrap().trim();\n+\n+        Command::new(\"git\")\n+            .args(&[\"tag\", \"v2\", \"-m\", \"Testing tags v2\"])\n+            .current_dir(&repo_dir.path())\n+            .output()?;\n+\n+        // Wait one second between tags\n+        thread::sleep(time::Duration::from_millis(1000));\n+\n+        Command::new(\"git\")\n+            .args(&[\"tag\", \"v0\", \"-m\", \"Testing tags v0\", \"HEAD~1\"])\n+            .current_dir(&repo_dir.path())\n+            .output()?;\n+\n+        Command::new(\"git\")\n+            .args(&[\"tag\", \"v1\", \"-m\", \"Testing tags v1\"])\n+            .current_dir(&repo_dir.path())\n+            .output()?;\n+\n+        let git_tag = Command::new(\"git\")",
+    "path": "src/modules/git_commit.rs",
+    "commit_id": "8618b465f1966b87e3fbfcbd32eddc374848b95e",
+    "original_commit_id": "8618b465f1966b87e3fbfcbd32eddc374848b95e",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Just to confirm, the output format of this shouldn't change with newer git versions right? Git generally doesn't consider the output text of commands to be an API contract, but it looks to me like there's enough specifiers in here that there's not really a way git could change the output without rendering the flags broken?",
+    "created_at": "2020-12-05T18:06:09Z",
+    "updated_at": "2020-12-05T18:06:44Z",
+    "html_url": "https://github.com/starship/starship/pull/1919#discussion_r536833317",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1919",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/536833317"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1919#discussion_r536833317"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1919"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/536833317/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 375,
+    "original_line": 375,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 70,
+    "position": 70,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/536863006",
+    "pull_request_review_id": 545641835,
+    "id": 536863006,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUzNjg2MzAwNg==",
+    "diff_hunk": "@@ -335,4 +339,76 @@ mod tests {\n         assert_eq!(expected, actual);\n         Ok(())\n     }\n+\n+    #[test]\n+    fn test_latest_tag_shown_with_tag_enabled() -> io::Result<()> {\n+        use std::{thread, time};\n+\n+        let repo_dir = fixture_repo(FixtureProvider::GIT)?;\n+\n+        let mut git_commit = Command::new(\"git\")\n+            .args(&[\"rev-parse\", \"HEAD\"])\n+            .current_dir(&repo_dir.path())\n+            .output()?\n+            .stdout;\n+        git_commit.truncate(7);\n+        let commit_output = str::from_utf8(&git_commit).unwrap().trim();\n+\n+        Command::new(\"git\")\n+            .args(&[\"tag\", \"v2\", \"-m\", \"Testing tags v2\"])\n+            .current_dir(&repo_dir.path())\n+            .output()?;\n+\n+        // Wait one second between tags\n+        thread::sleep(time::Duration::from_millis(1000));",
+    "path": "src/modules/git_commit.rs",
+    "commit_id": "8618b465f1966b87e3fbfcbd32eddc374848b95e",
+    "original_commit_id": "8618b465f1966b87e3fbfcbd32eddc374848b95e",
+    "user": {
+      "login": "miguelfito",
+      "id": 879123,
+      "node_id": "MDQ6VXNlcjg3OTEyMw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/879123?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/miguelfito",
+      "html_url": "https://github.com/miguelfito",
+      "followers_url": "https://api.github.com/users/miguelfito/followers",
+      "following_url": "https://api.github.com/users/miguelfito/following{/other_user}",
+      "gists_url": "https://api.github.com/users/miguelfito/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/miguelfito/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/miguelfito/subscriptions",
+      "organizations_url": "https://api.github.com/users/miguelfito/orgs",
+      "repos_url": "https://api.github.com/users/miguelfito/repos",
+      "events_url": "https://api.github.com/users/miguelfito/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/miguelfito/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Totally agree with you! It's a little bit _dirty_ solution for generate two tags in a row and then make sure starship is showing the latest one, but I didn't found another way of testing it...\r\n\r\nI hope this _trick_ won't broke test, but honestly, I don't know how GitHub Actions will react in those all scenarios... 😓 ",
+    "created_at": "2020-12-05T18:56:52Z",
+    "updated_at": "2020-12-05T18:56:52Z",
+    "html_url": "https://github.com/starship/starship/pull/1919#discussion_r536863006",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1919",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/536863006"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1919#discussion_r536863006"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1919"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/536863006/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 363,
+    "original_line": 363,
+    "side": "RIGHT",
+    "in_reply_to_id": 536832509,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 58,
+    "position": 58,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/536866118",
+    "pull_request_review_id": 545642129,
+    "id": 536866118,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUzNjg2NjExOA==",
+    "diff_hunk": "@@ -335,4 +339,76 @@ mod tests {\n         assert_eq!(expected, actual);\n         Ok(())\n     }\n+\n+    #[test]\n+    fn test_latest_tag_shown_with_tag_enabled() -> io::Result<()> {\n+        use std::{thread, time};\n+\n+        let repo_dir = fixture_repo(FixtureProvider::GIT)?;\n+\n+        let mut git_commit = Command::new(\"git\")\n+            .args(&[\"rev-parse\", \"HEAD\"])\n+            .current_dir(&repo_dir.path())\n+            .output()?\n+            .stdout;\n+        git_commit.truncate(7);\n+        let commit_output = str::from_utf8(&git_commit).unwrap().trim();\n+\n+        Command::new(\"git\")\n+            .args(&[\"tag\", \"v2\", \"-m\", \"Testing tags v2\"])\n+            .current_dir(&repo_dir.path())\n+            .output()?;\n+\n+        // Wait one second between tags\n+        thread::sleep(time::Duration::from_millis(1000));\n+\n+        Command::new(\"git\")\n+            .args(&[\"tag\", \"v0\", \"-m\", \"Testing tags v0\", \"HEAD~1\"])\n+            .current_dir(&repo_dir.path())\n+            .output()?;\n+\n+        Command::new(\"git\")\n+            .args(&[\"tag\", \"v1\", \"-m\", \"Testing tags v1\"])\n+            .current_dir(&repo_dir.path())\n+            .output()?;\n+\n+        let git_tag = Command::new(\"git\")",
+    "path": "src/modules/git_commit.rs",
+    "commit_id": "8618b465f1966b87e3fbfcbd32eddc374848b95e",
+    "original_commit_id": "8618b465f1966b87e3fbfcbd32eddc374848b95e",
+    "user": {
+      "login": "miguelfito",
+      "id": 879123,
+      "node_id": "MDQ6VXNlcjg3OTEyMw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/879123?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/miguelfito",
+      "html_url": "https://github.com/miguelfito",
+      "followers_url": "https://api.github.com/users/miguelfito/followers",
+      "following_url": "https://api.github.com/users/miguelfito/following{/other_user}",
+      "gists_url": "https://api.github.com/users/miguelfito/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/miguelfito/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/miguelfito/subscriptions",
+      "organizations_url": "https://api.github.com/users/miguelfito/orgs",
+      "repos_url": "https://api.github.com/users/miguelfito/repos",
+      "events_url": "https://api.github.com/users/miguelfito/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/miguelfito/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Yes, this output shouldn't change with newer git releases. If so, I think we should find another way to get the latest tag on a commit... ",
+    "created_at": "2020-12-05T19:01:34Z",
+    "updated_at": "2020-12-05T19:01:34Z",
+    "html_url": "https://github.com/starship/starship/pull/1919#discussion_r536866118",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1919",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/536866118"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1919#discussion_r536866118"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1919"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/536866118/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 375,
+    "original_line": 375,
+    "side": "RIGHT",
+    "in_reply_to_id": 536833317,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 70,
+    "position": 70,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/536882849",
+    "pull_request_review_id": 545645734,
+    "id": 536882849,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUzNjg4Mjg0OQ==",
+    "diff_hunk": "@@ -335,4 +339,76 @@ mod tests {\n         assert_eq!(expected, actual);\n         Ok(())\n     }\n+\n+    #[test]\n+    fn test_latest_tag_shown_with_tag_enabled() -> io::Result<()> {\n+        use std::{thread, time};\n+\n+        let repo_dir = fixture_repo(FixtureProvider::GIT)?;\n+\n+        let mut git_commit = Command::new(\"git\")\n+            .args(&[\"rev-parse\", \"HEAD\"])\n+            .current_dir(&repo_dir.path())\n+            .output()?\n+            .stdout;\n+        git_commit.truncate(7);\n+        let commit_output = str::from_utf8(&git_commit).unwrap().trim();\n+\n+        Command::new(\"git\")\n+            .args(&[\"tag\", \"v2\", \"-m\", \"Testing tags v2\"])\n+            .current_dir(&repo_dir.path())\n+            .output()?;\n+\n+        // Wait one second between tags\n+        thread::sleep(time::Duration::from_millis(1000));\n+\n+        Command::new(\"git\")\n+            .args(&[\"tag\", \"v0\", \"-m\", \"Testing tags v0\", \"HEAD~1\"])\n+            .current_dir(&repo_dir.path())\n+            .output()?;\n+\n+        Command::new(\"git\")\n+            .args(&[\"tag\", \"v1\", \"-m\", \"Testing tags v1\"])\n+            .current_dir(&repo_dir.path())\n+            .output()?;\n+\n+        let git_tag = Command::new(\"git\")",
+    "path": "src/modules/git_commit.rs",
+    "commit_id": "8618b465f1966b87e3fbfcbd32eddc374848b95e",
+    "original_commit_id": "8618b465f1966b87e3fbfcbd32eddc374848b95e",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Okay, sounds good!",
+    "created_at": "2020-12-05T19:59:42Z",
+    "updated_at": "2020-12-05T19:59:42Z",
+    "html_url": "https://github.com/starship/starship/pull/1919#discussion_r536882849",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1919",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/536882849"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1919#discussion_r536882849"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1919"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/536882849/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 375,
+    "original_line": 375,
+    "side": "RIGHT",
+    "in_reply_to_id": 536833317,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 70,
+    "position": 70,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/536882992",
+    "pull_request_review_id": 545645804,
+    "id": 536882992,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUzNjg4Mjk5Mg==",
+    "diff_hunk": "@@ -335,4 +339,76 @@ mod tests {\n         assert_eq!(expected, actual);\n         Ok(())\n     }\n+\n+    #[test]\n+    fn test_latest_tag_shown_with_tag_enabled() -> io::Result<()> {\n+        use std::{thread, time};\n+\n+        let repo_dir = fixture_repo(FixtureProvider::GIT)?;\n+\n+        let mut git_commit = Command::new(\"git\")\n+            .args(&[\"rev-parse\", \"HEAD\"])\n+            .current_dir(&repo_dir.path())\n+            .output()?\n+            .stdout;\n+        git_commit.truncate(7);\n+        let commit_output = str::from_utf8(&git_commit).unwrap().trim();\n+\n+        Command::new(\"git\")\n+            .args(&[\"tag\", \"v2\", \"-m\", \"Testing tags v2\"])\n+            .current_dir(&repo_dir.path())\n+            .output()?;\n+\n+        // Wait one second between tags\n+        thread::sleep(time::Duration::from_millis(1000));",
+    "path": "src/modules/git_commit.rs",
+    "commit_id": "8618b465f1966b87e3fbfcbd32eddc374848b95e",
+    "original_commit_id": "8618b465f1966b87e3fbfcbd32eddc374848b95e",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Yeah, I don't think we really have a choice but to hope that this keeps working (it definitely works for now, since the GH Actions build is passing). Just making a note here in case it breaks in a future release so that we have an easier time tracking it down.",
+    "created_at": "2020-12-05T20:00:48Z",
+    "updated_at": "2020-12-05T20:00:48Z",
+    "html_url": "https://github.com/starship/starship/pull/1919#discussion_r536882992",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1919",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/536882992"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1919#discussion_r536882992"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1919"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/536882992/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 363,
+    "original_line": 363,
+    "side": "RIGHT",
+    "in_reply_to_id": 536832509,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 58,
+    "position": 58,
+    "subject_type": "line"
+  }
+]

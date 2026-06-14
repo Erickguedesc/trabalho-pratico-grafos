@@ -1,0 +1,140 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1287004510",
+    "pull_request_review_id": 1567118475,
+    "id": 1287004510,
+    "node_id": "PRRC_kwDOCqswNs5MtiFe",
+    "diff_hunk": "@@ -683,6 +683,9 @@ pub struct Properties {\n     /// The number of currently running jobs\n     #[clap(short, long, default_value_t, value_parser=parse_jobs)]\n     pub jobs: i64,\n+    /// The current value of SHLVL, for shells that mis-handle it in $()\n+    #[clap(long)]",
+    "path": "src/context.rs",
+    "commit_id": "28be0fdd91f066b97e48ae1a5e83db1a647eb9e7",
+    "original_commit_id": "d6f654900fd555212e1477d4471d156681a1fe63",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n    #[clap(long, value_parser=parse_jobs)]\r\n```\r\nAnd maybe change als the function name to `parse_i64`.",
+    "created_at": "2023-08-08T11:49:25Z",
+    "updated_at": "2023-08-08T11:53:28Z",
+    "html_url": "https://github.com/starship/starship/pull/4912#discussion_r1287004510",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4912",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1287004510"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4912#discussion_r1287004510"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4912"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1287004510/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 687,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 5,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1287004835",
+    "pull_request_review_id": 1567118475,
+    "id": 1287004835,
+    "node_id": "PRRC_kwDOCqswNs5MtiKj",
+    "diff_hunk": "@@ -9,7 +9,10 @@ use std::convert::TryInto;\n const SHLVL_ENV_VAR: &str = \"SHLVL\";\n \n pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n-    let shlvl = context.get_env(SHLVL_ENV_VAR)?.parse::<i64>().ok()?;\n+    let props = &context.properties;\n+    let shlvl = props\n+        .shlvl\n+        .unwrap_or(context.get_env(SHLVL_ENV_VAR)?.parse::<i64>().ok()?);",
+    "path": "src/modules/shlvl.rs",
+    "commit_id": "28be0fdd91f066b97e48ae1a5e83db1a647eb9e7",
+    "original_commit_id": "d6f654900fd555212e1477d4471d156681a1fe63",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n        .or_else(|| context.get_env(SHLVL_ENV_VAR)?.parse::<i64>().ok())?;\r\n```",
+    "created_at": "2023-08-08T11:49:41Z",
+    "updated_at": "2023-08-08T11:53:28Z",
+    "html_url": "https://github.com/starship/starship/pull/4912#discussion_r1287004835",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4912",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1287004835"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4912#discussion_r1287004835"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4912"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1287004835/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 15,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

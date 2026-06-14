@@ -1,0 +1,489 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/779168261",
+    "pull_request_review_id": 845108160,
+    "id": 779168261,
+    "node_id": "PRRC_kwDOCqswNs4ucSoF",
+    "diff_hunk": "@@ -670,6 +671,39 @@ This does not suppress conda's own prompt modifier, you may want to run `conda c\n format = \"[$symbol$environment](dimmed green) \"\n ```\n \n+## Container\n+\n+The `container` module displays a symbol and container name, if inside a container.\n+\n+\n+### Options\n+\n+| Option          | Default             | Description                               |\n+|-----------------|---------------------|-------------------------------------------|\n+| `symbol`        | `\"⬢\"`               | The symbol shown, when inside a container |",
+    "path": "docs/config/README.md",
+    "commit_id": "65f83b724d8b5023ae7b50a65f676384651c9776",
+    "original_commit_id": "940ee96d44b59b32820b8b6db38ea5bdd2a902c8",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "We need to add the `format` option here.\r\n\r\n```suggestion\r\n| `symbol`        | `\"⬢\"`               | The symbol shown, when inside a container |\r\n| `format`        | \"[$symbol \\\\[$name\\\\]]($style) \" | The format for the module.   |\r\n```",
+    "created_at": "2022-01-05T22:05:57Z",
+    "updated_at": "2022-01-08T10:22:13Z",
+    "html_url": "https://github.com/starship/starship/pull/3304#discussion_r779168261",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3304",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/779168261"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3304#discussion_r779168261"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3304"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/779168261/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 683,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 21,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/780654434",
+    "pull_request_review_id": 845108160,
+    "id": 780654434,
+    "node_id": "PRRC_kwDOCqswNs4uh9di",
+    "diff_hunk": "@@ -0,0 +1,181 @@\n+use super::{Context, Module};\n+\n+#[cfg(not(target_os = \"linux\"))]\n+pub fn module<'a>(_context: &'a Context) -> Option<Module<'a>> {\n+    None\n+}\n+\n+#[cfg(target_os = \"linux\")]\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    use super::RootModuleConfig;\n+    use crate::configs::container::ContainerConfig;\n+    use crate::formatter::StringFormatter;\n+    use std::io::BufRead;\n+\n+    pub fn container_name(context: &Context) -> Option<String> {\n+        use crate::utils::context_path;\n+\n+        if context_path(context, \"/proc/vz\").exists() && !context_path(context, \"/proc/bc\").exists()\n+        {\n+            // OpenVZ\n+            return Some(\"OpenVZ\".into());\n+        }\n+\n+        if context_path(context, \"/run/host/container-manager\").exists() {\n+            // OCI\n+            return Some(\"OCI\".into());\n+        }\n+\n+        if context_path(context, \"/run/systemd/container\").exists() {\n+            // systemd\n+            return Some(\"Systemd\".into());\n+        }\n+\n+        let container_env_path = context_path(context, \"/run/.containerenv\");\n+\n+        if container_env_path.exists() {\n+            // podman and others\n+\n+            let image_res = std::fs::File::open(container_env_path)",
+    "path": "src/modules/container.rs",
+    "commit_id": "65f83b724d8b5023ae7b50a65f676384651c9776",
+    "original_commit_id": "940ee96d44b59b32820b8b6db38ea5bdd2a902c8",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Not a blocker but it is recommended to use  [`utils::read_file`](https://github.com/starship/starship/blob/master/src/utils.rs#L13) for getting the contents of a file unless there is a very specific reason not to.",
+    "created_at": "2022-01-08T10:17:09Z",
+    "updated_at": "2022-01-08T10:22:13Z",
+    "html_url": "https://github.com/starship/starship/pull/3304#discussion_r780654434",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3304",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/780654434"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3304#discussion_r780654434"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3304"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/780654434/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 39,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 39,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/782093563",
+    "pull_request_review_id": 849093497,
+    "id": 782093563,
+    "node_id": "PRRC_kwDOCqswNs4uncz7",
+    "diff_hunk": "@@ -0,0 +1,181 @@\n+use super::{Context, Module};\n+\n+#[cfg(not(target_os = \"linux\"))]\n+pub fn module<'a>(_context: &'a Context) -> Option<Module<'a>> {\n+    None\n+}\n+\n+#[cfg(target_os = \"linux\")]\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    use super::RootModuleConfig;\n+    use crate::configs::container::ContainerConfig;\n+    use crate::formatter::StringFormatter;\n+    use std::io::BufRead;\n+\n+    pub fn container_name(context: &Context) -> Option<String> {\n+        use crate::utils::context_path;\n+\n+        if context_path(context, \"/proc/vz\").exists() && !context_path(context, \"/proc/bc\").exists()\n+        {\n+            // OpenVZ\n+            return Some(\"OpenVZ\".into());\n+        }\n+\n+        if context_path(context, \"/run/host/container-manager\").exists() {\n+            // OCI\n+            return Some(\"OCI\".into());\n+        }\n+\n+        if context_path(context, \"/run/systemd/container\").exists() {\n+            // systemd\n+            return Some(\"Systemd\".into());\n+        }\n+\n+        let container_env_path = context_path(context, \"/run/.containerenv\");\n+\n+        if container_env_path.exists() {\n+            // podman and others\n+\n+            let image_res = std::fs::File::open(container_env_path)",
+    "path": "src/modules/container.rs",
+    "commit_id": "65f83b724d8b5023ae7b50a65f676384651c9776",
+    "original_commit_id": "940ee96d44b59b32820b8b6db38ea5bdd2a902c8",
+    "user": {
+      "login": "haraldh",
+      "id": 427825,
+      "node_id": "MDQ6VXNlcjQyNzgyNQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/427825?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/haraldh",
+      "html_url": "https://github.com/haraldh",
+      "followers_url": "https://api.github.com/users/haraldh/followers",
+      "following_url": "https://api.github.com/users/haraldh/following{/other_user}",
+      "gists_url": "https://api.github.com/users/haraldh/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/haraldh/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/haraldh/subscriptions",
+      "organizations_url": "https://api.github.com/users/haraldh/orgs",
+      "repos_url": "https://api.github.com/users/haraldh/repos",
+      "events_url": "https://api.github.com/users/haraldh/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/haraldh/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "fixed",
+    "created_at": "2022-01-11T12:21:53Z",
+    "updated_at": "2022-01-11T12:21:53Z",
+    "html_url": "https://github.com/starship/starship/pull/3304#discussion_r782093563",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3304",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/782093563"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3304#discussion_r782093563"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3304"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/782093563/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 39,
+    "side": "RIGHT",
+    "in_reply_to_id": 780654434,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 39,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/782093632",
+    "pull_request_review_id": 849093588,
+    "id": 782093632,
+    "node_id": "PRRC_kwDOCqswNs4unc1A",
+    "diff_hunk": "@@ -670,6 +671,39 @@ This does not suppress conda's own prompt modifier, you may want to run `conda c\n format = \"[$symbol$environment](dimmed green) \"\n ```\n \n+## Container\n+\n+The `container` module displays a symbol and container name, if inside a container.\n+\n+\n+### Options\n+\n+| Option          | Default             | Description                               |\n+|-----------------|---------------------|-------------------------------------------|\n+| `symbol`        | `\"⬢\"`               | The symbol shown, when inside a container |",
+    "path": "docs/config/README.md",
+    "commit_id": "65f83b724d8b5023ae7b50a65f676384651c9776",
+    "original_commit_id": "940ee96d44b59b32820b8b6db38ea5bdd2a902c8",
+    "user": {
+      "login": "haraldh",
+      "id": 427825,
+      "node_id": "MDQ6VXNlcjQyNzgyNQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/427825?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/haraldh",
+      "html_url": "https://github.com/haraldh",
+      "followers_url": "https://api.github.com/users/haraldh/followers",
+      "following_url": "https://api.github.com/users/haraldh/following{/other_user}",
+      "gists_url": "https://api.github.com/users/haraldh/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/haraldh/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/haraldh/subscriptions",
+      "organizations_url": "https://api.github.com/users/haraldh/orgs",
+      "repos_url": "https://api.github.com/users/haraldh/repos",
+      "events_url": "https://api.github.com/users/haraldh/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/haraldh/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "fixed",
+    "created_at": "2022-01-11T12:21:58Z",
+    "updated_at": "2022-01-11T12:21:58Z",
+    "html_url": "https://github.com/starship/starship/pull/3304#discussion_r782093632",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3304",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/782093632"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3304#discussion_r782093632"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3304"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/782093632/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 683,
+    "side": "RIGHT",
+    "in_reply_to_id": 779168261,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 21,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/782293808",
+    "pull_request_review_id": 849399235,
+    "id": 782293808,
+    "node_id": "PRRC_kwDOCqswNs4uoNsw",
+    "diff_hunk": "@@ -674,6 +675,40 @@ This does not suppress conda's own prompt modifier, you may want to run `conda c\n format = \"[$symbol$environment](dimmed green) \"\n ```\n \n+## Container\n+\n+The `container` module displays a symbol and container name, if inside a container.",
+    "path": "docs/config/README.md",
+    "commit_id": "65f83b724d8b5023ae7b50a65f676384651c9776",
+    "original_commit_id": "65f83b724d8b5023ae7b50a65f676384651c9776",
+    "user": {
+      "login": "jankatins",
+      "id": 890156,
+      "node_id": "MDQ6VXNlcjg5MDE1Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/890156?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jankatins",
+      "html_url": "https://github.com/jankatins",
+      "followers_url": "https://api.github.com/users/jankatins/followers",
+      "following_url": "https://api.github.com/users/jankatins/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jankatins/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jankatins/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jankatins/subscriptions",
+      "organizations_url": "https://api.github.com/users/jankatins/orgs",
+      "repos_url": "https://api.github.com/users/jankatins/repos",
+      "events_url": "https://api.github.com/users/jankatins/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jankatins/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Do I read the code right, that only podman containers (e.g. ones with `/run/.containerenv` which contain a `image=...`line) get a non-generic name? If so I would be nice to describe that somehow.\r\n\r\n(I'm just a starship user trying to figure out the functionality and how this interacts with https://github.com/89luca89/distrobox)",
+    "created_at": "2022-01-11T16:01:28Z",
+    "updated_at": "2022-01-11T16:04:13Z",
+    "html_url": "https://github.com/starship/starship/pull/3304#discussion_r782293808",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3304",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/782293808"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3304#discussion_r782293808"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3304"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/782293808/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 680,
+    "original_line": 680,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 14,
+    "position": 14,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/786496850",
+    "pull_request_review_id": 855058806,
+    "id": 786496850,
+    "node_id": "PRRC_kwDOCqswNs4u4P1S",
+    "diff_hunk": "@@ -674,6 +675,40 @@ This does not suppress conda's own prompt modifier, you may want to run `conda c\n format = \"[$symbol$environment](dimmed green) \"\n ```\n \n+## Container\n+\n+The `container` module displays a symbol and container name, if inside a container.",
+    "path": "docs/config/README.md",
+    "commit_id": "65f83b724d8b5023ae7b50a65f676384651c9776",
+    "original_commit_id": "65f83b724d8b5023ae7b50a65f676384651c9776",
+    "user": {
+      "login": "haraldh",
+      "id": 427825,
+      "node_id": "MDQ6VXNlcjQyNzgyNQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/427825?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/haraldh",
+      "html_url": "https://github.com/haraldh",
+      "followers_url": "https://api.github.com/users/haraldh/followers",
+      "following_url": "https://api.github.com/users/haraldh/following{/other_user}",
+      "gists_url": "https://api.github.com/users/haraldh/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/haraldh/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/haraldh/subscriptions",
+      "organizations_url": "https://api.github.com/users/haraldh/orgs",
+      "repos_url": "https://api.github.com/users/haraldh/repos",
+      "events_url": "https://api.github.com/users/haraldh/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/haraldh/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```\r\n~ via 🐹 v1.16.13 via ☕ v11.0.13 via  via 🐪 v5.34.0 via 🐍 v3.10.1 via 🦀 v1.58.0 \r\n❯ toolbox enter \r\n\r\n~ via 🐹 via ☕ via  via 🐪 v5.34.0 via 🐍 v3.10.0 via 🦀 v1.58.0 \r\n[fedora-toolbox:35] ❯ cat /run/.containerenv\r\nengine=\"podman-3.4.4\"\r\nname=\"fedora-toolbox-35\"\r\nid=\"1e61eb104cd571b8a8b535542cedcdef225a9f53c6ff24e905b3b2ccc98a98a3\"\r\nimage=\"registry.fedoraproject.org/fedora-toolbox:35\"\r\nimageid=\"ab8bc106d4a710a7a27c538762864610467b3559f80b413d30e0a1bfcfe272a5\"\r\nrootless=1\r\ngraphRootMounted=1\r\n```",
+    "created_at": "2022-01-18T08:08:21Z",
+    "updated_at": "2022-01-18T08:08:22Z",
+    "html_url": "https://github.com/starship/starship/pull/3304#discussion_r786496850",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3304",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/786496850"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3304#discussion_r786496850"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3304"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/786496850/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 680,
+    "original_line": 680,
+    "side": "RIGHT",
+    "in_reply_to_id": 782293808,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 14,
+    "position": 14,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/786497054",
+    "pull_request_review_id": 855059062,
+    "id": 786497054,
+    "node_id": "PRRC_kwDOCqswNs4u4P4e",
+    "diff_hunk": "@@ -674,6 +675,40 @@ This does not suppress conda's own prompt modifier, you may want to run `conda c\n format = \"[$symbol$environment](dimmed green) \"\n ```\n \n+## Container\n+\n+The `container` module displays a symbol and container name, if inside a container.",
+    "path": "docs/config/README.md",
+    "commit_id": "65f83b724d8b5023ae7b50a65f676384651c9776",
+    "original_commit_id": "65f83b724d8b5023ae7b50a65f676384651c9776",
+    "user": {
+      "login": "haraldh",
+      "id": 427825,
+      "node_id": "MDQ6VXNlcjQyNzgyNQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/427825?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/haraldh",
+      "html_url": "https://github.com/haraldh",
+      "followers_url": "https://api.github.com/users/haraldh/followers",
+      "following_url": "https://api.github.com/users/haraldh/following{/other_user}",
+      "gists_url": "https://api.github.com/users/haraldh/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/haraldh/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/haraldh/subscriptions",
+      "organizations_url": "https://api.github.com/users/haraldh/orgs",
+      "repos_url": "https://api.github.com/users/haraldh/repos",
+      "events_url": "https://api.github.com/users/haraldh/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/haraldh/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "@jankatins ^",
+    "created_at": "2022-01-18T08:08:38Z",
+    "updated_at": "2022-01-18T08:08:38Z",
+    "html_url": "https://github.com/starship/starship/pull/3304#discussion_r786497054",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3304",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/786497054"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3304#discussion_r786497054"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3304"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/786497054/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 680,
+    "original_line": 680,
+    "side": "RIGHT",
+    "in_reply_to_id": 782293808,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 14,
+    "position": 14,
+    "subject_type": "line"
+  }
+]

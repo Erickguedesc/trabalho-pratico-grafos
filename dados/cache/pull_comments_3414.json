@@ -1,0 +1,1045 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/782799620",
+    "pull_request_review_id": 850094571,
+    "id": 782799620,
+    "node_id": "PRRC_kwDOCqswNs4uqJME",
+    "diff_hunk": "@@ -258,77 +368,161 @@ fn format_rustc_version(rustc_version: &str, version_format: &str) -> Option<Str\n     }\n }\n \n+fn format_toolchain(toolchain: &str, default_host_triple: Option<&str>) -> String {\n+    default_host_triple\n+        .map(|triple| toolchain.trim_end_matches(&format!(\"-{}\", triple)))\n+        .unwrap_or(toolchain)\n+        .to_owned()\n+}\n+\n+fn format_rustc_version_verbose(stdout: &str, toolchain: Option<&str>) -> Option<(String, String)> {\n+    let (mut release, mut host) = (None, None);\n+    for line in stdout.lines() {\n+        if line.starts_with(\"release: \") {\n+            release = Some(line.trim_start_matches(\"release: \"));\n+        }\n+        if line.starts_with(\"host: \") {\n+            host = Some(line.trim_start_matches(\"host: \"));\n+        }\n+    }\n+    let (release, host) = (release?, host?);\n+    let version = format_semver(release);\n+    let toolchain = toolchain\n+        .map(ToOwned::to_owned)\n+        .unwrap_or_else(|| format!(\"?-{}\", host));\n+    Some((version, toolchain))\n+}\n+\n+fn format_semver(semver: &str) -> String {\n+    format!(\n+        \"v{}\",\n+        semver.find('-').map(|i| &semver[..i]).unwrap_or(semver)\n+    )\n+}\n+\n #[derive(Debug, PartialEq)]\n enum RustupRunRustcVersionOutcome {\n     RustcVersion(String),\n-    ToolchainName(String),\n+    ToolchainNotInstalled(String),\n+    ToolchainUnknown,\n     RustupNotWorking,\n     Err,\n }\n \n+#[derive(Default, Debug, PartialEq)]\n+struct RustupSettings {\n+    default_host_triple: Option<String>,\n+    default_toolchain: Option<String>,\n+    overrides: Vec<(PathBuf, String)>,\n+}\n+\n+impl RustupSettings {\n+    fn load(context: &Context) -> Option<Self> {\n+        // `rustup` uses `home::home_dir`, which might work differently from `dirs::home_dir` on\n+        // Windows.",
+    "path": "src/modules/rust.rs",
+    "commit_id": "87802e469e800479fec51d56c574cdefccd05e5b",
+    "original_commit_id": "f29be54dbababc02941beb5bc76c5d26c4fab079",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`rustup` seems to use something else now, but not sure if it behaves more like `UserDirs::new().map(|d| d.home_dir()` or `home::home_dir()` — either way, the comment doesn't really match the code. ",
+    "created_at": "2022-01-12T08:13:52Z",
+    "updated_at": "2022-01-13T15:21:53Z",
+    "html_url": "https://github.com/starship/starship/pull/3414#discussion_r782799620",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3414",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/782799620"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3414#discussion_r782799620"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3414"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/782799620/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 421,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 422,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 401,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/782800231",
+    "pull_request_review_id": 850094571,
+    "id": 782800231,
+    "node_id": "PRRC_kwDOCqswNs4uqJVn",
+    "diff_hunk": "@@ -258,77 +368,161 @@ fn format_rustc_version(rustc_version: &str, version_format: &str) -> Option<Str\n     }\n }\n \n+fn format_toolchain(toolchain: &str, default_host_triple: Option<&str>) -> String {\n+    default_host_triple\n+        .map(|triple| toolchain.trim_end_matches(&format!(\"-{}\", triple)))\n+        .unwrap_or(toolchain)\n+        .to_owned()\n+}\n+\n+fn format_rustc_version_verbose(stdout: &str, toolchain: Option<&str>) -> Option<(String, String)> {\n+    let (mut release, mut host) = (None, None);\n+    for line in stdout.lines() {\n+        if line.starts_with(\"release: \") {\n+            release = Some(line.trim_start_matches(\"release: \"));\n+        }\n+        if line.starts_with(\"host: \") {\n+            host = Some(line.trim_start_matches(\"host: \"));\n+        }\n+    }\n+    let (release, host) = (release?, host?);\n+    let version = format_semver(release);\n+    let toolchain = toolchain\n+        .map(ToOwned::to_owned)\n+        .unwrap_or_else(|| format!(\"?-{}\", host));\n+    Some((version, toolchain))\n+}\n+\n+fn format_semver(semver: &str) -> String {\n+    format!(\n+        \"v{}\",\n+        semver.find('-').map(|i| &semver[..i]).unwrap_or(semver)\n+    )\n+}\n+\n #[derive(Debug, PartialEq)]\n enum RustupRunRustcVersionOutcome {\n     RustcVersion(String),\n-    ToolchainName(String),\n+    ToolchainNotInstalled(String),\n+    ToolchainUnknown,\n     RustupNotWorking,\n     Err,\n }\n \n+#[derive(Default, Debug, PartialEq)]\n+struct RustupSettings {\n+    default_host_triple: Option<String>,\n+    default_toolchain: Option<String>,\n+    overrides: Vec<(PathBuf, String)>,\n+}\n+\n+impl RustupSettings {\n+    fn load(context: &Context) -> Option<Self> {\n+        // `rustup` uses `home::home_dir`, which might work differently from `dirs::home_dir` on\n+        // Windows.\n+\n+        // https://github.com/rust-lang/rustup.rs/blob/13979c9685bfc4f5baa578ad13c1cd1999419dd1/src/config.rs#L51-L55\n+        // https://docs.rs/home/0.5.1/src/home/lib.rs.html#169-183\n+        let path = context\n+            .get_env(\"RUSTUP_HOME\")\n+            .map(|rustup_home| {\n+                if Path::new(&rustup_home).is_absolute() {\n+                    rustup_home.into()\n+                } else {\n+                    context.current_dir.join(rustup_home)\n+                }\n+            })\n+            .or_else(|| UserDirs::new().map(|d| d.home_dir().to_path_buf().join(\".rustup\")))?\n+            .join(\"settings.toml\");\n+        let value = toml::from_str::<toml::Value>(&fs::read_to_string(path).ok()?).ok()?;\n+        Self::from_toml_value(&value)\n+    }\n+\n+    fn from_toml_value(value: &toml::Value) -> Option<Self> {\n+        let version = value.get(\"version\")?.as_str()?;\n+        // The version has not changed since 2015.\n+        if version != \"12\" {\n+            log::warn!(\"the version is {:?}. expected \\\"12\\\"\", version);\n+        }\n+        Some(Self {\n+            default_host_triple: value\n+                .get(\"default_host_triple\")\n+                .and_then(toml::Value::as_str)\n+                .map(ToOwned::to_owned),\n+            default_toolchain: value\n+                .get(\"default_toolchain\")\n+                .and_then(toml::Value::as_str)\n+                .map(ToOwned::to_owned),\n+            overrides: value\n+                .get(\"overrides\")\n+                .and_then(toml::Value::as_table)\n+                .map(|table| {\n+                    table\n+                        .into_iter()\n+                        .flat_map(|(k, v)| v.as_str().map(|v| (k.into(), v.to_owned())))\n+                        .collect()\n+                })\n+                .unwrap_or_default(),\n+        })\n+    }",
+    "path": "src/modules/rust.rs",
+    "commit_id": "87802e469e800479fec51d56c574cdefccd05e5b",
+    "original_commit_id": "f29be54dbababc02941beb5bc76c5d26c4fab079",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This could all or at least mostly be handled by `#[derive(Deserialize)]`",
+    "created_at": "2022-01-12T08:14:46Z",
+    "updated_at": "2022-01-13T15:20:49Z",
+    "html_url": "https://github.com/starship/starship/pull/3414#discussion_r782800231",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3414",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/782800231"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3414#discussion_r782800231"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3414"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/782800231/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 441,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 437,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 446,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/782800953",
+    "pull_request_review_id": 850094571,
+    "id": 782800953,
+    "node_id": "PRRC_kwDOCqswNs4uqJg5",
+    "diff_hunk": "@@ -56,59 +176,84 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     Some(module)\n }\n \n-fn get_module_version(context: &Context, config: &RustConfig) -> Option<String> {\n-    // `$CARGO_HOME/bin/rustc(.exe) --version` may attempt installing a rustup toolchain.\n-    // https://github.com/starship/starship/issues/417\n-    //\n-    // To display appropriate versions preventing `rustc` from downloading toolchains, we have to\n-    // check\n-    // 1. `$RUSTUP_TOOLCHAIN`\n-    // 2. `rustup override list`\n-    // 3. `rust-toolchain` or `rust-toolchain.toml` in `.` or parent directories\n-    // 4. `rustup default`\n-    // as `rustup` does.\n-    // https://github.com/rust-lang/rustup.rs/tree/eb694fcada7becc5d9d160bf7c623abe84f8971d#override-precedence\n-    //\n-    // Probably we have no other way to know whether any toolchain override is specified for the\n-    // current directory. The following commands also cause toolchain installations.\n-    // - `rustup show`\n-    // - `rustup show active-toolchain`\n-    // - `rustup which`\n-    if let Some(toolchain) = env_rustup_toolchain(context)\n-        .or_else(|| execute_rustup_override_list(context))\n-        .or_else(|| find_rust_toolchain_file(context))\n-        .or_else(|| execute_rustup_default(context))\n-    {\n-        match execute_rustup_run_rustc_version(context, &toolchain) {\n-            RustupRunRustcVersionOutcome::RustcVersion(rustc_version) => {\n-                format_rustc_version(&rustc_version, config.version_format)\n-            }\n-            RustupRunRustcVersionOutcome::ToolchainName(toolchain) => Some(toolchain),\n-            RustupRunRustcVersionOutcome::RustupNotWorking => {\n-                // If `rustup` is not in `$PATH` or cannot be executed for other reasons, we can\n-                // safely execute `rustc --version`.\n-                format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n-            }\n-            RustupRunRustcVersionOutcome::Err => None,\n+fn get_module_version(\n+    context: &Context,\n+    config: &RustConfig,\n+    rust_env_info: &RustToolingEnvironmentInfo,\n+) -> Option<String> {\n+    match rust_env_info.get_rustup_rustc_version(context) {\n+        RustupRunRustcVersionOutcome::RustcVersion(rustc_version) => {\n+            format_rustc_version(rustc_version, config.version_format)\n         }\n-    } else {\n-        format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n+        RustupRunRustcVersionOutcome::RustupNotWorking\n+        | RustupRunRustcVersionOutcome::ToolchainUnknown => {\n+            // If `rustup` can't be executed, or there is no environmental toolchain, we can\n+            // execute `rustc --version` without triggering a toolchain download\n+            format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n+        }\n+        RustupRunRustcVersionOutcome::ToolchainNotInstalled(name) => Some(name.to_string()),\n+        RustupRunRustcVersionOutcome::Err => None,\n+    }\n+}\n+\n+fn get_module_numeric_version(\n+    context: &Context,\n+    _config: &RustConfig,\n+    rust_env_info: &RustToolingEnvironmentInfo,\n+) -> Option<String> {\n+    const UNKNOWN_RUSTC_VERSION: &str = \"v?.?.?\";",
+    "path": "src/modules/rust.rs",
+    "commit_id": "87802e469e800479fec51d56c574cdefccd05e5b",
+    "original_commit_id": "f29be54dbababc02941beb5bc76c5d26c4fab079",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "For consistency, this should be `None`.",
+    "created_at": "2022-01-12T08:15:47Z",
+    "updated_at": "2022-01-13T15:20:49Z",
+    "html_url": "https://github.com/starship/starship/pull/3414#discussion_r782800953",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3414",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/782800953"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3414#discussion_r782800953"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3414"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/782800953/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 204,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 221,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/784190584",
+    "pull_request_review_id": 852055334,
+    "id": 784190584,
+    "node_id": "PRRC_kwDOCqswNs4uvcx4",
+    "diff_hunk": "@@ -258,77 +368,161 @@ fn format_rustc_version(rustc_version: &str, version_format: &str) -> Option<Str\n     }\n }\n \n+fn format_toolchain(toolchain: &str, default_host_triple: Option<&str>) -> String {\n+    default_host_triple\n+        .map(|triple| toolchain.trim_end_matches(&format!(\"-{}\", triple)))\n+        .unwrap_or(toolchain)\n+        .to_owned()\n+}\n+\n+fn format_rustc_version_verbose(stdout: &str, toolchain: Option<&str>) -> Option<(String, String)> {\n+    let (mut release, mut host) = (None, None);\n+    for line in stdout.lines() {\n+        if line.starts_with(\"release: \") {\n+            release = Some(line.trim_start_matches(\"release: \"));\n+        }\n+        if line.starts_with(\"host: \") {\n+            host = Some(line.trim_start_matches(\"host: \"));\n+        }\n+    }\n+    let (release, host) = (release?, host?);\n+    let version = format_semver(release);\n+    let toolchain = toolchain\n+        .map(ToOwned::to_owned)\n+        .unwrap_or_else(|| format!(\"?-{}\", host));\n+    Some((version, toolchain))\n+}\n+\n+fn format_semver(semver: &str) -> String {\n+    format!(\n+        \"v{}\",\n+        semver.find('-').map(|i| &semver[..i]).unwrap_or(semver)\n+    )\n+}\n+\n #[derive(Debug, PartialEq)]\n enum RustupRunRustcVersionOutcome {\n     RustcVersion(String),\n-    ToolchainName(String),\n+    ToolchainNotInstalled(String),\n+    ToolchainUnknown,\n     RustupNotWorking,\n     Err,\n }\n \n+#[derive(Default, Debug, PartialEq)]\n+struct RustupSettings {\n+    default_host_triple: Option<String>,\n+    default_toolchain: Option<String>,\n+    overrides: Vec<(PathBuf, String)>,\n+}\n+\n+impl RustupSettings {\n+    fn load(context: &Context) -> Option<Self> {\n+        // `rustup` uses `home::home_dir`, which might work differently from `dirs::home_dir` on\n+        // Windows.",
+    "path": "src/modules/rust.rs",
+    "commit_id": "87802e469e800479fec51d56c574cdefccd05e5b",
+    "original_commit_id": "f29be54dbababc02941beb5bc76c5d26c4fab079",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It turns out rustup was kind enough to factor out their homedir-determining code into a crate, so we can just use [`home::rustup_home()`](https://docs.rs/home/latest/home/fn.rustup_home.html) to get it now.",
+    "created_at": "2022-01-13T17:48:44Z",
+    "updated_at": "2022-01-13T17:48:44Z",
+    "html_url": "https://github.com/starship/starship/pull/3414#discussion_r784190584",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3414",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/784190584"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3414#discussion_r784190584"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3414"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/784190584/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 421,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 422,
+    "side": "RIGHT",
+    "in_reply_to_id": 782799620,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 401,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/784198342",
+    "pull_request_review_id": 852060894,
+    "id": 784198342,
+    "node_id": "PRRC_kwDOCqswNs4uverG",
+    "diff_hunk": "@@ -56,59 +176,84 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     Some(module)\n }\n \n-fn get_module_version(context: &Context, config: &RustConfig) -> Option<String> {\n-    // `$CARGO_HOME/bin/rustc(.exe) --version` may attempt installing a rustup toolchain.\n-    // https://github.com/starship/starship/issues/417\n-    //\n-    // To display appropriate versions preventing `rustc` from downloading toolchains, we have to\n-    // check\n-    // 1. `$RUSTUP_TOOLCHAIN`\n-    // 2. `rustup override list`\n-    // 3. `rust-toolchain` or `rust-toolchain.toml` in `.` or parent directories\n-    // 4. `rustup default`\n-    // as `rustup` does.\n-    // https://github.com/rust-lang/rustup.rs/tree/eb694fcada7becc5d9d160bf7c623abe84f8971d#override-precedence\n-    //\n-    // Probably we have no other way to know whether any toolchain override is specified for the\n-    // current directory. The following commands also cause toolchain installations.\n-    // - `rustup show`\n-    // - `rustup show active-toolchain`\n-    // - `rustup which`\n-    if let Some(toolchain) = env_rustup_toolchain(context)\n-        .or_else(|| execute_rustup_override_list(context))\n-        .or_else(|| find_rust_toolchain_file(context))\n-        .or_else(|| execute_rustup_default(context))\n-    {\n-        match execute_rustup_run_rustc_version(context, &toolchain) {\n-            RustupRunRustcVersionOutcome::RustcVersion(rustc_version) => {\n-                format_rustc_version(&rustc_version, config.version_format)\n-            }\n-            RustupRunRustcVersionOutcome::ToolchainName(toolchain) => Some(toolchain),\n-            RustupRunRustcVersionOutcome::RustupNotWorking => {\n-                // If `rustup` is not in `$PATH` or cannot be executed for other reasons, we can\n-                // safely execute `rustc --version`.\n-                format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n-            }\n-            RustupRunRustcVersionOutcome::Err => None,\n+fn get_module_version(\n+    context: &Context,\n+    config: &RustConfig,\n+    rust_env_info: &RustToolingEnvironmentInfo,\n+) -> Option<String> {\n+    match rust_env_info.get_rustup_rustc_version(context) {\n+        RustupRunRustcVersionOutcome::RustcVersion(rustc_version) => {\n+            format_rustc_version(rustc_version, config.version_format)\n         }\n-    } else {\n-        format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n+        RustupRunRustcVersionOutcome::RustupNotWorking\n+        | RustupRunRustcVersionOutcome::ToolchainUnknown => {\n+            // If `rustup` can't be executed, or there is no environmental toolchain, we can\n+            // execute `rustc --version` without triggering a toolchain download\n+            format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n+        }\n+        RustupRunRustcVersionOutcome::ToolchainNotInstalled(name) => Some(name.to_string()),\n+        RustupRunRustcVersionOutcome::Err => None,\n+    }\n+}\n+\n+fn get_module_numeric_version(\n+    context: &Context,\n+    _config: &RustConfig,\n+    rust_env_info: &RustToolingEnvironmentInfo,\n+) -> Option<String> {\n+    const UNKNOWN_RUSTC_VERSION: &str = \"v?.?.?\";",
+    "path": "src/modules/rust.rs",
+    "commit_id": "87802e469e800479fec51d56c574cdefccd05e5b",
+    "original_commit_id": "f29be54dbababc02941beb5bc76c5d26c4fab079",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This one is interesting, and I'm not sure what the right behavior here is.\r\n\r\nThe intention in the original PR is to have a display output like `symbol version (toolchain)`, e.g. `🦀 v.1.75.3 (stable)`. If we set this to `None` when the version is unknown, we get `🦀  (toolchain)` (with two intermediate spaces) as our output.\r\n\r\nI haven't thought about the format strings in a while--is there a way to solve the double-space problem?",
+    "created_at": "2022-01-13T17:53:51Z",
+    "updated_at": "2022-01-13T17:53:51Z",
+    "html_url": "https://github.com/starship/starship/pull/3414#discussion_r784198342",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3414",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/784198342"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3414#discussion_r784198342"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3414"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/784198342/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 204,
+    "side": "RIGHT",
+    "in_reply_to_id": 782800953,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 221,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/784315787",
+    "pull_request_review_id": 852229209,
+    "id": 784315787,
+    "node_id": "PRRC_kwDOCqswNs4uv7WL",
+    "diff_hunk": "@@ -56,59 +176,84 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     Some(module)\n }\n \n-fn get_module_version(context: &Context, config: &RustConfig) -> Option<String> {\n-    // `$CARGO_HOME/bin/rustc(.exe) --version` may attempt installing a rustup toolchain.\n-    // https://github.com/starship/starship/issues/417\n-    //\n-    // To display appropriate versions preventing `rustc` from downloading toolchains, we have to\n-    // check\n-    // 1. `$RUSTUP_TOOLCHAIN`\n-    // 2. `rustup override list`\n-    // 3. `rust-toolchain` or `rust-toolchain.toml` in `.` or parent directories\n-    // 4. `rustup default`\n-    // as `rustup` does.\n-    // https://github.com/rust-lang/rustup.rs/tree/eb694fcada7becc5d9d160bf7c623abe84f8971d#override-precedence\n-    //\n-    // Probably we have no other way to know whether any toolchain override is specified for the\n-    // current directory. The following commands also cause toolchain installations.\n-    // - `rustup show`\n-    // - `rustup show active-toolchain`\n-    // - `rustup which`\n-    if let Some(toolchain) = env_rustup_toolchain(context)\n-        .or_else(|| execute_rustup_override_list(context))\n-        .or_else(|| find_rust_toolchain_file(context))\n-        .or_else(|| execute_rustup_default(context))\n-    {\n-        match execute_rustup_run_rustc_version(context, &toolchain) {\n-            RustupRunRustcVersionOutcome::RustcVersion(rustc_version) => {\n-                format_rustc_version(&rustc_version, config.version_format)\n-            }\n-            RustupRunRustcVersionOutcome::ToolchainName(toolchain) => Some(toolchain),\n-            RustupRunRustcVersionOutcome::RustupNotWorking => {\n-                // If `rustup` is not in `$PATH` or cannot be executed for other reasons, we can\n-                // safely execute `rustc --version`.\n-                format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n-            }\n-            RustupRunRustcVersionOutcome::Err => None,\n+fn get_module_version(\n+    context: &Context,\n+    config: &RustConfig,\n+    rust_env_info: &RustToolingEnvironmentInfo,\n+) -> Option<String> {\n+    match rust_env_info.get_rustup_rustc_version(context) {\n+        RustupRunRustcVersionOutcome::RustcVersion(rustc_version) => {\n+            format_rustc_version(rustc_version, config.version_format)\n         }\n-    } else {\n-        format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n+        RustupRunRustcVersionOutcome::RustupNotWorking\n+        | RustupRunRustcVersionOutcome::ToolchainUnknown => {\n+            // If `rustup` can't be executed, or there is no environmental toolchain, we can\n+            // execute `rustc --version` without triggering a toolchain download\n+            format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n+        }\n+        RustupRunRustcVersionOutcome::ToolchainNotInstalled(name) => Some(name.to_string()),\n+        RustupRunRustcVersionOutcome::Err => None,\n+    }\n+}\n+\n+fn get_module_numeric_version(\n+    context: &Context,\n+    _config: &RustConfig,\n+    rust_env_info: &RustToolingEnvironmentInfo,\n+) -> Option<String> {\n+    const UNKNOWN_RUSTC_VERSION: &str = \"v?.?.?\";",
+    "path": "src/modules/rust.rs",
+    "commit_id": "87802e469e800479fec51d56c574cdefccd05e5b",
+    "original_commit_id": "f29be54dbababc02941beb5bc76c5d26c4fab079",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "> This one is interesting, and I'm not sure what the right behavior here is.\n> \n> The intention in the original PR is to have a display output like `symbol version (toolchain)`, e.g. `🦀 v.1.75.3 (stable)`. If we set this to `None` when the version is unknown, we get `🦀  (toolchain)` (with two intermediate spaces) as our output.\n> \n> I haven't thought about the format strings in a while--is there a way to solve the double-space problem?\n\nI think you could do something using conditioning formatting maybe something like `$symbol ($version )(\\($toolchain\\) )`. ",
+    "created_at": "2022-01-13T20:53:40Z",
+    "updated_at": "2022-01-13T20:54:10Z",
+    "html_url": "https://github.com/starship/starship/pull/3414#discussion_r784315787",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3414",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/784315787"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3414#discussion_r784315787"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3414"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/784315787/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 204,
+    "side": "RIGHT",
+    "in_reply_to_id": 782800953,
+    "author_association": "MEMBER",
+    "original_position": 221,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/784318045",
+    "pull_request_review_id": 852232312,
+    "id": 784318045,
+    "node_id": "PRRC_kwDOCqswNs4uv75d",
+    "diff_hunk": "@@ -56,59 +176,84 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     Some(module)\n }\n \n-fn get_module_version(context: &Context, config: &RustConfig) -> Option<String> {\n-    // `$CARGO_HOME/bin/rustc(.exe) --version` may attempt installing a rustup toolchain.\n-    // https://github.com/starship/starship/issues/417\n-    //\n-    // To display appropriate versions preventing `rustc` from downloading toolchains, we have to\n-    // check\n-    // 1. `$RUSTUP_TOOLCHAIN`\n-    // 2. `rustup override list`\n-    // 3. `rust-toolchain` or `rust-toolchain.toml` in `.` or parent directories\n-    // 4. `rustup default`\n-    // as `rustup` does.\n-    // https://github.com/rust-lang/rustup.rs/tree/eb694fcada7becc5d9d160bf7c623abe84f8971d#override-precedence\n-    //\n-    // Probably we have no other way to know whether any toolchain override is specified for the\n-    // current directory. The following commands also cause toolchain installations.\n-    // - `rustup show`\n-    // - `rustup show active-toolchain`\n-    // - `rustup which`\n-    if let Some(toolchain) = env_rustup_toolchain(context)\n-        .or_else(|| execute_rustup_override_list(context))\n-        .or_else(|| find_rust_toolchain_file(context))\n-        .or_else(|| execute_rustup_default(context))\n-    {\n-        match execute_rustup_run_rustc_version(context, &toolchain) {\n-            RustupRunRustcVersionOutcome::RustcVersion(rustc_version) => {\n-                format_rustc_version(&rustc_version, config.version_format)\n-            }\n-            RustupRunRustcVersionOutcome::ToolchainName(toolchain) => Some(toolchain),\n-            RustupRunRustcVersionOutcome::RustupNotWorking => {\n-                // If `rustup` is not in `$PATH` or cannot be executed for other reasons, we can\n-                // safely execute `rustc --version`.\n-                format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n-            }\n-            RustupRunRustcVersionOutcome::Err => None,\n+fn get_module_version(\n+    context: &Context,\n+    config: &RustConfig,\n+    rust_env_info: &RustToolingEnvironmentInfo,\n+) -> Option<String> {\n+    match rust_env_info.get_rustup_rustc_version(context) {\n+        RustupRunRustcVersionOutcome::RustcVersion(rustc_version) => {\n+            format_rustc_version(rustc_version, config.version_format)\n         }\n-    } else {\n-        format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n+        RustupRunRustcVersionOutcome::RustupNotWorking\n+        | RustupRunRustcVersionOutcome::ToolchainUnknown => {\n+            // If `rustup` can't be executed, or there is no environmental toolchain, we can\n+            // execute `rustc --version` without triggering a toolchain download\n+            format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n+        }\n+        RustupRunRustcVersionOutcome::ToolchainNotInstalled(name) => Some(name.to_string()),\n+        RustupRunRustcVersionOutcome::Err => None,\n+    }\n+}\n+\n+fn get_module_numeric_version(\n+    context: &Context,\n+    _config: &RustConfig,\n+    rust_env_info: &RustToolingEnvironmentInfo,\n+) -> Option<String> {\n+    const UNKNOWN_RUSTC_VERSION: &str = \"v?.?.?\";",
+    "path": "src/modules/rust.rs",
+    "commit_id": "87802e469e800479fec51d56c574cdefccd05e5b",
+    "original_commit_id": "f29be54dbababc02941beb5bc76c5d26c4fab079",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Excellent!",
+    "created_at": "2022-01-13T20:57:13Z",
+    "updated_at": "2022-01-13T20:57:13Z",
+    "html_url": "https://github.com/starship/starship/pull/3414#discussion_r784318045",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3414",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/784318045"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3414#discussion_r784318045"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3414"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/784318045/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 204,
+    "side": "RIGHT",
+    "in_reply_to_id": 782800953,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 221,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/794013068",
+    "pull_request_review_id": 865448727,
+    "id": 794013068,
+    "node_id": "PRRC_kwDOCqswNs4vU62M",
+    "diff_hunk": "@@ -258,14 +367,91 @@ fn format_rustc_version(rustc_version: &str, version_format: &str) -> Option<Str\n     }\n }\n \n+fn format_toolchain(toolchain: &str, default_host_triple: Option<&str>) -> String {\n+    default_host_triple\n+        .map(|triple| toolchain.trim_end_matches(&format!(\"-{}\", triple)))\n+        .unwrap_or(toolchain)\n+        .to_owned()\n+}\n+\n+fn format_rustc_version_verbose(stdout: &str, toolchain: Option<&str>) -> Option<(String, String)> {\n+    let (mut release, mut host) = (None, None);\n+    for line in stdout.lines() {\n+        if line.starts_with(\"release: \") {\n+            release = Some(line.trim_start_matches(\"release: \"));\n+        }\n+        if line.starts_with(\"host: \") {\n+            host = Some(line.trim_start_matches(\"host: \"));\n+        }\n+    }\n+    let (release, host) = (release?, host?);\n+    let version = format_semver(release);\n+    let toolchain = toolchain\n+        .map(ToOwned::to_owned)\n+        .unwrap_or_else(|| format!(\"?-{}\", host));",
+    "path": "src/modules/rust.rs",
+    "commit_id": "87802e469e800479fec51d56c574cdefccd05e5b",
+    "original_commit_id": "11bc8957f979cbbeefac85324adfb23b8f12a44f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Another `?-` for unknown values used here.",
+    "created_at": "2022-01-27T21:28:35Z",
+    "updated_at": "2022-02-12T11:42:26Z",
+    "html_url": "https://github.com/starship/starship/pull/3414#discussion_r794013068",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3414",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/794013068"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3414#discussion_r794013068"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3414"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/794013068/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 391,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 369,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/806408781",
+    "pull_request_review_id": 882412973,
+    "id": 806408781,
+    "node_id": "PRRC_kwDOCqswNs4wENJN",
+    "diff_hunk": "@@ -258,14 +367,91 @@ fn format_rustc_version(rustc_version: &str, version_format: &str) -> Option<Str\n     }\n }\n \n+fn format_toolchain(toolchain: &str, default_host_triple: Option<&str>) -> String {\n+    default_host_triple\n+        .map(|triple| toolchain.trim_end_matches(&format!(\"-{}\", triple)))\n+        .unwrap_or(toolchain)\n+        .to_owned()\n+}\n+\n+fn format_rustc_version_verbose(stdout: &str, toolchain: Option<&str>) -> Option<(String, String)> {\n+    let (mut release, mut host) = (None, None);\n+    for line in stdout.lines() {\n+        if line.starts_with(\"release: \") {\n+            release = Some(line.trim_start_matches(\"release: \"));\n+        }\n+        if line.starts_with(\"host: \") {\n+            host = Some(line.trim_start_matches(\"host: \"));\n+        }\n+    }\n+    let (release, host) = (release?, host?);\n+    let version = format_semver(release);\n+    let toolchain = toolchain\n+        .map(ToOwned::to_owned)\n+        .unwrap_or_else(|| format!(\"?-{}\", host));",
+    "path": "src/modules/rust.rs",
+    "commit_id": "87802e469e800479fec51d56c574cdefccd05e5b",
+    "original_commit_id": "11bc8957f979cbbeefac85324adfb23b8f12a44f",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "@davidkna Sorry, not sure I understand. Do you mean that it should be `?-?-{}`?",
+    "created_at": "2022-02-15T03:02:57Z",
+    "updated_at": "2022-02-15T03:02:57Z",
+    "html_url": "https://github.com/starship/starship/pull/3414#discussion_r806408781",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3414",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/806408781"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3414#discussion_r806408781"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3414"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/806408781/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 391,
+    "side": "RIGHT",
+    "in_reply_to_id": 794013068,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 369,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/806591205",
+    "pull_request_review_id": 882651664,
+    "id": 806591205,
+    "node_id": "PRRC_kwDOCqswNs4wE5rl",
+    "diff_hunk": "@@ -258,14 +367,91 @@ fn format_rustc_version(rustc_version: &str, version_format: &str) -> Option<Str\n     }\n }\n \n+fn format_toolchain(toolchain: &str, default_host_triple: Option<&str>) -> String {\n+    default_host_triple\n+        .map(|triple| toolchain.trim_end_matches(&format!(\"-{}\", triple)))\n+        .unwrap_or(toolchain)\n+        .to_owned()\n+}\n+\n+fn format_rustc_version_verbose(stdout: &str, toolchain: Option<&str>) -> Option<(String, String)> {\n+    let (mut release, mut host) = (None, None);\n+    for line in stdout.lines() {\n+        if line.starts_with(\"release: \") {\n+            release = Some(line.trim_start_matches(\"release: \"));\n+        }\n+        if line.starts_with(\"host: \") {\n+            host = Some(line.trim_start_matches(\"host: \"));\n+        }\n+    }\n+    let (release, host) = (release?, host?);\n+    let version = format_semver(release);\n+    let toolchain = toolchain\n+        .map(ToOwned::to_owned)\n+        .unwrap_or_else(|| format!(\"?-{}\", host));",
+    "path": "src/modules/rust.rs",
+    "commit_id": "87802e469e800479fec51d56c574cdefccd05e5b",
+    "original_commit_id": "11bc8957f979cbbeefac85324adfb23b8f12a44f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I meant that other modules just tend to omit inputs that are missing instead of filling them in with placeholder values like `?`, so just `host`.",
+    "created_at": "2022-02-15T08:54:00Z",
+    "updated_at": "2022-02-15T08:54:00Z",
+    "html_url": "https://github.com/starship/starship/pull/3414#discussion_r806591205",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3414",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/806591205"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3414#discussion_r806591205"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3414"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/806591205/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 391,
+    "side": "RIGHT",
+    "in_reply_to_id": 794013068,
+    "author_association": "MEMBER",
+    "original_position": 369,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/821906972",
+    "pull_request_review_id": 903357263,
+    "id": 821906972,
+    "node_id": "PRRC_kwDOCqswNs4w_U4c",
+    "diff_hunk": "@@ -258,14 +367,91 @@ fn format_rustc_version(rustc_version: &str, version_format: &str) -> Option<Str\n     }\n }\n \n+fn format_toolchain(toolchain: &str, default_host_triple: Option<&str>) -> String {\n+    default_host_triple\n+        .map(|triple| toolchain.trim_end_matches(&format!(\"-{}\", triple)))\n+        .unwrap_or(toolchain)\n+        .to_owned()\n+}\n+\n+fn format_rustc_version_verbose(stdout: &str, toolchain: Option<&str>) -> Option<(String, String)> {\n+    let (mut release, mut host) = (None, None);\n+    for line in stdout.lines() {\n+        if line.starts_with(\"release: \") {\n+            release = Some(line.trim_start_matches(\"release: \"));\n+        }\n+        if line.starts_with(\"host: \") {\n+            host = Some(line.trim_start_matches(\"host: \"));\n+        }\n+    }\n+    let (release, host) = (release?, host?);\n+    let version = format_semver(release);\n+    let toolchain = toolchain\n+        .map(ToOwned::to_owned)\n+        .unwrap_or_else(|| format!(\"{}\", host));\n+    Some((version, toolchain))\n+}\n+\n+fn format_semver(semver: &str) -> String {\n+    format!(\n+        \"v{}\",\n+        semver.find('-').map(|i| &semver[..i]).unwrap_or(semver)\n+    )\n+}\n+\n #[derive(Debug, PartialEq)]\n enum RustupRunRustcVersionOutcome {\n     RustcVersion(String),\n-    ToolchainName(String),\n+    ToolchainNotInstalled(String),\n+    ToolchainUnknown,\n     RustupNotWorking,\n     Err,\n }\n \n+#[derive(Default, Debug, PartialEq, Deserialize)]\n+struct RustupSettings {\n+    default_host_triple: Option<String>,\n+    default_toolchain: Option<String>,\n+    overrides: HashMap<PathBuf, String>,\n+    version: Option<String>,\n+}\n+\n+impl RustupSettings {\n+    fn load(_context: &Context) -> Option<Self> {\n+        let path = rustup_home().ok()?.join(\"settings.toml\");\n+        Self::from_toml_str(&fs::read_to_string(path).ok()?)\n+    }\n+\n+    fn from_toml_str(toml_str: &str) -> Option<Self> {\n+        let settings = toml::from_str::<Self>(toml_str).ok()?;\n+        match settings.version.as_deref() {\n+            Some(\"12\") => Some(settings),\n+            _ => {\n+                log::warn!(\n+                    r#\"Rustup settings version is {:?}, expected \"12\"\"#,\n+                    settings.version\n+                );\n+                None\n+            }\n+        }\n+    }\n+\n+    fn default_host_triple(&self) -> Option<&str> {\n+        self.default_host_triple.as_deref()\n+    }\n+\n+    fn default_toolchain(&self) -> Option<&str> {\n+        self.default_toolchain.as_deref()\n+    }\n+\n+    fn lookup_override(&self, cwd: &Path) -> Option<String> {\n+        self.overrides\n+            .iter()\n+            .find(|(dir, _)| cwd.starts_with(dir))\n+            .map(|(_, name)| name.to_owned())\n+    }",
+    "path": "src/modules/rust.rs",
+    "commit_id": "87802e469e800479fec51d56c574cdefccd05e5b",
+    "original_commit_id": "523f49346047c9a6879b80e4220bbc250ec40472",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This will need to integrate the changes from #3359 (longest match) and #3668 (proper prefix handling).",
+    "created_at": "2022-03-08T17:35:25Z",
+    "updated_at": "2022-03-08T17:35:25Z",
+    "html_url": "https://github.com/starship/starship/pull/3414#discussion_r821906972",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3414",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/821906972"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3414#discussion_r821906972"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3414"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/821906972/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 447,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 452,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 431,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/864618654",
+    "pull_request_review_id": 961564519,
+    "id": 864618654,
+    "node_id": "PRRC_kwDOCqswNs4ziQie",
+    "diff_hunk": "@@ -1,601 +1,919 @@\n-use std::fs;\n-use std::path::Path;\n-#[cfg(windows)]\n-use std::path::PathBuf;\n-use std::process::Output;\n-\n-use serde::Deserialize;\n-\n-use super::{Context, Module, ModuleConfig};\n-\n-use crate::configs::rust::RustConfig;\n-use crate::formatter::{StringFormatter, VersionFormatter};\n-use crate::utils::create_command;\n-\n-/// Creates a module with the current Rust version\n-pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n-    let mut module = context.new_module(\"rust\");\n-    let config = RustConfig::try_load(module.config);\n-\n-    let is_rs_project = context\n-        .try_begin_scan()?\n-        .set_files(&config.detect_files)\n-        .set_extensions(&config.detect_extensions)\n-        .set_folders(&config.detect_folders)\n-        .is_match();\n-\n-    if !is_rs_project {\n-        return None;\n-    }\n-\n-    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n-        formatter\n-            .map_meta(|var, _| match var {\n-                \"symbol\" => Some(config.symbol),\n-                _ => None,\n-            })\n-            .map_style(|variable| match variable {\n-                \"style\" => Some(Ok(config.style)),\n-                _ => None,\n-            })\n-            .map(|variable| match variable {\n-                // This may result in multiple calls to `get_module_version` when a user have\n-                // multiple `$version` variables defined in `format`.\n-                \"version\" => get_module_version(context, &config).map(Ok),\n-                _ => None,\n-            })\n-            .parse(None, Some(context))\n-    });\n-\n-    module.set_segments(match parsed {\n-        Ok(segments) => segments,\n-        Err(error) => {\n-            log::warn!(\"Error in module `rust`:\\n{}\", error);\n-            return None;\n-        }\n-    });\n-\n-    Some(module)\n-}\n-\n-fn get_module_version(context: &Context, config: &RustConfig) -> Option<String> {\n-    // `$CARGO_HOME/bin/rustc(.exe) --version` may attempt installing a rustup toolchain.\n-    // https://github.com/starship/starship/issues/417\n-    //\n-    // To display appropriate versions preventing `rustc` from downloading toolchains, we have to\n-    // check\n-    // 1. `$RUSTUP_TOOLCHAIN`\n-    // 2. `rustup override list`\n-    // 3. `rust-toolchain` or `rust-toolchain.toml` in `.` or parent directories\n-    // 4. `rustup default`\n-    // as `rustup` does.\n-    // https://github.com/rust-lang/rustup.rs/tree/eb694fcada7becc5d9d160bf7c623abe84f8971d#override-precedence\n-    //\n-    // Probably we have no other way to know whether any toolchain override is specified for the\n-    // current directory. The following commands also cause toolchain installations.\n-    // - `rustup show`\n-    // - `rustup show active-toolchain`\n-    // - `rustup which`\n-    if let Some(toolchain) = env_rustup_toolchain(context)\n-        .or_else(|| execute_rustup_override_list(context))\n-        .or_else(|| find_rust_toolchain_file(context))\n-        .or_else(|| execute_rustup_default(context))\n-    {\n-        match execute_rustup_run_rustc_version(context, &toolchain) {\n-            RustupRunRustcVersionOutcome::RustcVersion(rustc_version) => {\n-                format_rustc_version(&rustc_version, config.version_format)\n-            }\n-            RustupRunRustcVersionOutcome::ToolchainName(toolchain) => Some(toolchain),\n-            RustupRunRustcVersionOutcome::RustupNotWorking => {\n-                // If `rustup` is not in `$PATH` or cannot be executed for other reasons, we can\n-                // safely execute `rustc --version`.\n-                format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n-            }\n-            RustupRunRustcVersionOutcome::Err => None,\n-        }\n-    } else {\n-        format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n-    }\n-}\n-\n-fn env_rustup_toolchain(context: &Context) -> Option<String> {\n-    let val = context.get_env(\"RUSTUP_TOOLCHAIN\")?;\n-    Some(val.trim().to_owned())\n-}\n-\n-fn execute_rustup_override_list(context: &Context) -> Option<String> {\n-    extract_toolchain_from_rustup_override_list(\n-        &context.exec_cmd(\"rustup\", &[\"override\", \"list\"])?.stdout,\n-        &context.current_dir,\n-    )\n-}\n-\n-fn execute_rustup_default(context: &Context) -> Option<String> {\n-    // `rustup default` output is:\n-    //    stable-x86_64-apple-darwin (default)\n-    context\n-        .exec_cmd(\"rustup\", &[\"default\"])?\n-        .stdout\n-        .split_whitespace()\n-        .next()\n-        .map(str::to_owned)\n-}\n-\n-fn extract_toolchain_from_rustup_override_list(stdout: &str, cwd: &Path) -> Option<String> {\n-    if stdout == \"no overrides\\n\" {\n-        return None;\n-    }\n-\n-    #[cfg(windows)]\n-    let cwd = {\n-        // use display version of path, also allows stripping \\\\?\\\n-        let cwd = cwd.to_string_lossy();\n-        // rustup strips \\\\?\\ prefix,\n-        // so we do the same and convert back to a `Path`\n-        PathBuf::from(cwd.strip_prefix(r\"\\\\?\\\").unwrap_or(&cwd))\n-    };\n-\n-    stdout\n-        .lines()\n-        .filter_map(|line| {\n-            let (dir, toolchain) = line.split_once('\\t')?;\n-            Some((dir.trim(), toolchain.trim()))\n-        })\n-        // find most specific match\n-        .filter(|(dir, _)| cwd.starts_with(dir))\n-        .max_by_key(|(dir, _)| dir.len())\n-        .map(|(_, toolchain)| toolchain.to_owned())\n-}\n-\n-fn find_rust_toolchain_file(context: &Context) -> Option<String> {\n-    // Look for 'rust-toolchain' or 'rust-toolchain.toml' as rustup does.\n-    // for more information:\n-    // https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file\n-    // for the implementation in 'rustup':\n-    // https://github.com/rust-lang/rustup/blob/a45e4cd21748b04472fce51ba29999ee4b62bdec/src/config.rs#L631\n-\n-    #[derive(Deserialize)]\n-    struct OverrideFile {\n-        toolchain: ToolchainSection,\n-    }\n-\n-    #[derive(Deserialize)]\n-    struct ToolchainSection {\n-        channel: Option<String>,\n-    }\n-\n-    fn read_channel(path: &Path, only_toml: bool) -> Option<String> {\n-        let contents = fs::read_to_string(path).ok()?;\n-\n-        match contents.lines().count() {\n-            0 => None,\n-            1 if !only_toml => Some(contents),\n-            _ => {\n-                toml::from_str::<OverrideFile>(&contents)\n-                    .ok()?\n-                    .toolchain\n-                    .channel\n-            }\n-        }\n-        .filter(|c| !c.trim().is_empty())\n-        .map(|c| c.trim().to_owned())\n-    }\n-\n-    if context\n-        .dir_contents()\n-        .map_or(false, |dir| dir.has_file(\"rust-toolchain\"))\n-    {\n-        if let Some(toolchain) = read_channel(Path::new(\"rust-toolchain\"), false) {\n-            return Some(toolchain);\n-        }\n-    }\n-\n-    if context\n-        .dir_contents()\n-        .map_or(false, |dir| dir.has_file(\"rust-toolchain.toml\"))\n-    {\n-        if let Some(toolchain) = read_channel(Path::new(\"rust-toolchain.toml\"), true) {\n-            return Some(toolchain);\n-        }\n-    }\n-\n-    let mut dir = &*context.current_dir;\n-    loop {\n-        if let Some(toolchain) = read_channel(&dir.join(\"rust-toolchain\"), false) {\n-            return Some(toolchain);\n-        }\n-        if let Some(toolchain) = read_channel(&dir.join(\"rust-toolchain.toml\"), true) {\n-            return Some(toolchain);\n-        }\n-        dir = dir.parent()?;\n-    }\n-}\n-\n-fn execute_rustup_run_rustc_version(\n-    context: &Context,\n-    toolchain: &str,\n-) -> RustupRunRustcVersionOutcome {\n-    create_command(\"rustup\")\n-        .and_then(|mut cmd| {\n-            cmd.args(&[\"run\", toolchain, \"rustc\", \"--version\"])\n-                .current_dir(&context.current_dir)\n-                .output()\n-        })\n-        .map(extract_toolchain_from_rustup_run_rustc_version)\n-        .unwrap_or(RustupRunRustcVersionOutcome::RustupNotWorking)\n-}\n-\n-fn extract_toolchain_from_rustup_run_rustc_version(output: Output) -> RustupRunRustcVersionOutcome {\n-    if output.status.success() {\n-        if let Ok(output) = String::from_utf8(output.stdout) {\n-            return RustupRunRustcVersionOutcome::RustcVersion(output);\n-        }\n-    } else if let Ok(stderr) = String::from_utf8(output.stderr) {\n-        if stderr.starts_with(\"error: toolchain '\") && stderr.ends_with(\"' is not installed\\n\") {\n-            let stderr = stderr\n-                [\"error: toolchain '\".len()..stderr.len() - \"' is not installed\\n\".len()]\n-                .to_owned();\n-            return RustupRunRustcVersionOutcome::ToolchainName(stderr);\n-        }\n-    }\n-    RustupRunRustcVersionOutcome::Err\n-}\n-\n-fn execute_rustc_version(context: &Context) -> Option<String> {\n-    context\n-        .exec_cmd(\"rustc\", &[\"--version\"])\n-        .map(|o| o.stdout)\n-        .filter(|s| !s.is_empty())\n-}\n-\n-fn format_rustc_version(rustc_version: &str, version_format: &str) -> Option<String> {\n-    let version = rustc_version\n-        // split into [\"rustc\", \"1.34.0\", ...]\n-        .split_whitespace()\n-        // get down to \"1.34.0\"\n-        .nth(1)?;\n-\n-    match VersionFormatter::format_version(version, version_format) {\n-        Ok(formatted) => Some(formatted),\n-        Err(error) => {\n-            log::warn!(\"Error formatting `rust` version:\\n{}\", error);\n-            Some(format!(\"v{}\", version))\n-        }\n-    }\n-}\n-\n-#[derive(Debug, PartialEq)]\n-enum RustupRunRustcVersionOutcome {\n-    RustcVersion(String),\n-    ToolchainName(String),\n-    RustupNotWorking,\n-    Err,\n-}\n-\n-#[cfg(test)]\n-mod tests {\n-    use crate::context::{Shell, Target};\n-    use once_cell::sync::Lazy;\n-    use std::io;\n-    use std::process::{ExitStatus, Output};\n-\n-    use super::*;\n-\n-    #[test]\n-    fn test_extract_toolchain_from_rustup_override_list() {\n-        static NO_OVERRIDES_INPUT: &str = \"no overrides\\n\";\n-        static NO_OVERRIDES_CWD: &str = \"\";\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(\n-                NO_OVERRIDES_INPUT,\n-                NO_OVERRIDES_CWD.as_ref(),\n-            ),\n-            None,\n-        );\n-\n-        static OVERRIDES_INPUT: &str =\n-            \"/home/user/src/a                \\t                beta-x86_64-unknown-linux-gnu\\n\\\n-             /home/user/src/b                \\t                nightly-x86_64-unknown-linux-gnu\\n\\\n-             /home/user/src/b/d c            \\t                stable-x86_64-pc-windows-msvc\\n\";\n-        static OVERRIDES_CWD_A: &str = \"/home/user/src/a/src\";\n-        static OVERRIDES_CWD_B: &str = \"/home/user/src/b/tests\";\n-        static OVERRIDES_CWD_C: &str = \"/home/user/src/c/examples\";\n-        static OVERRIDES_CWD_D: &str = \"/home/user/src/b/d c/spaces\";\n-        static OVERRIDES_CWD_E: &str = \"/home/user/src/b_and_more\";\n-        static OVERRIDES_CWD_F: &str = \"/home/user/src/b\";\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_A.as_ref()),\n-            Some(\"beta-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_B.as_ref()),\n-            Some(\"nightly-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_C.as_ref()),\n-            None,\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_D.as_ref()),\n-            Some(\"stable-x86_64-pc-windows-msvc\".to_owned()),\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_E.as_ref()),\n-            None,\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_F.as_ref()),\n-            Some(\"nightly-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-    }\n-\n-    #[test]\n-    #[cfg(windows)]\n-    fn test_extract_toolchain_from_rustup_override_list_win() {\n-        static OVERRIDES_INPUT: &str =\n-            \"C:\\\\src                \\t                beta-x86_64-unknown-linux-gnu\\n\";\n-        static OVERRIDES_CWD_A: &str = r\"\\\\?\\C:\\src\";\n-        static OVERRIDES_CWD_B: &str = r\"C:\\src\";\n-\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_A.as_ref()),\n-            Some(\"beta-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_B.as_ref()),\n-            Some(\"beta-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-    }\n-\n-    #[cfg(any(unix, windows))]\n-    #[test]\n-    fn test_extract_toolchain_from_rustup_run_rustc_version() {\n-        #[cfg(unix)]\n-        use std::os::unix::process::ExitStatusExt as _;\n-        #[cfg(windows)]\n-        use std::os::windows::process::ExitStatusExt as _;\n-\n-        static RUSTC_VERSION: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(0),\n-            stdout: b\"rustc 1.34.0\\n\"[..].to_owned(),\n-            stderr: vec![],\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(RUSTC_VERSION.clone()),\n-            RustupRunRustcVersionOutcome::RustcVersion(\"rustc 1.34.0\\n\".to_owned()),\n-        );\n-\n-        static TOOLCHAIN_NAME: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(1),\n-            stdout: vec![],\n-            stderr: b\"error: toolchain 'channel-triple' is not installed\\n\"[..].to_owned(),\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(TOOLCHAIN_NAME.clone()),\n-            RustupRunRustcVersionOutcome::ToolchainName(\"channel-triple\".to_owned()),\n-        );\n-\n-        static INVALID_STDOUT: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(0),\n-            stdout: b\"\\xc3\\x28\"[..].to_owned(),\n-            stderr: vec![],\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(INVALID_STDOUT.clone()),\n-            RustupRunRustcVersionOutcome::Err,\n-        );\n-\n-        static INVALID_STDERR: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(1),\n-            stdout: vec![],\n-            stderr: b\"\\xc3\\x28\"[..].to_owned(),\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(INVALID_STDERR.clone()),\n-            RustupRunRustcVersionOutcome::Err,\n-        );\n-\n-        static UNEXPECTED_FORMAT_OF_ERROR: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(1),\n-            stdout: vec![],\n-            stderr: b\"error:\"[..].to_owned(),\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(UNEXPECTED_FORMAT_OF_ERROR.clone()),\n-            RustupRunRustcVersionOutcome::Err,\n-        );\n-    }\n-\n-    #[test]\n-    fn test_format_rustc_version() {\n-        let config = RustConfig::default();\n-        let rustc_stable = \"rustc 1.34.0 (91856ed52 2019-04-10)\";\n-        let rustc_beta = \"rustc 1.34.0-beta.1 (2bc1d406d 2019-04-10)\";\n-        let rustc_nightly = \"rustc 1.34.0-nightly (b139669f3 2019-04-10)\";\n-        assert_eq!(\n-            format_rustc_version(rustc_nightly, config.version_format),\n-            Some(\"v1.34.0-nightly\".to_string())\n-        );\n-        assert_eq!(\n-            format_rustc_version(rustc_beta, config.version_format),\n-            Some(\"v1.34.0-beta.1\".to_string())\n-        );\n-        assert_eq!(\n-            format_rustc_version(rustc_stable, config.version_format),\n-            Some(\"v1.34.0\".to_string())\n-        );\n-        assert_eq!(\n-            format_rustc_version(\"rustc 1.34.0\", config.version_format),\n-            Some(\"v1.34.0\".to_string())\n-        );\n-    }\n-\n-    #[test]\n-    fn test_find_rust_toolchain_file() -> io::Result<()> {\n-        // `rust-toolchain` with toolchain in one line\n-        let dir = tempfile::tempdir()?;\n-        fs::write(dir.path().join(\"rust-toolchain\"), \"1.34.0\")?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain` in toml format\n-        let dir = tempfile::tempdir()?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain\"),\n-            \"[toolchain]\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain` in toml format with new lines\n-        let dir = tempfile::tempdir()?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain\"),\n-            \"\\n\\n[toolchain]\\n\\n\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain` in parent directory.\n-        let dir = tempfile::tempdir()?;\n-        let child_dir_path = dir.path().join(\"child\");\n-        fs::create_dir(&child_dir_path)?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain\"),\n-            \"\\n\\n[toolchain]\\n\\n\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            child_dir_path.clone(),\n-            child_dir_path,\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain.toml` with toolchain in one line\n-        // This should not work!\n-        // See https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file\n-        let dir = tempfile::tempdir()?;\n-        fs::write(dir.path().join(\"rust-toolchain.toml\"), \"1.34.0\")?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(find_rust_toolchain_file(&context), None);\n-        dir.close()?;\n-\n-        // `rust-toolchain.toml` in toml format\n-        let dir = tempfile::tempdir()?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain.toml\"),\n-            \"[toolchain]\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain.toml` in toml format with new lines\n-        let dir = tempfile::tempdir()?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain.toml\"),\n-            \"\\n\\n[toolchain]\\n\\n\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain.toml` in parent directory.\n-        let dir = tempfile::tempdir()?;\n-        let child_dir_path = dir.path().join(\"child\");\n-        fs::create_dir(&child_dir_path)?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain.toml\"),\n-            \"\\n\\n[toolchain]\\n\\n\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            child_dir_path.clone(),\n-            child_dir_path,\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()\n-    }\n-}\n+use std::fs;\r\n+use std::path::{Path, PathBuf};\r\n+use std::process::Output;\r\n+\r\n+use serde::Deserialize;\r\n+use std::collections::HashMap;\r\n+\r\n+use super::{Context, Module, ModuleConfig};\r\n+\r\n+use crate::configs::rust::RustConfig;\r\n+use crate::formatter::{StringFormatter, VersionFormatter};\r\n+use crate::utils::create_command;\r\n+use home::rustup_home;\r\n+\r\n+use once_cell::sync::OnceCell;\r\n+\r\n+type VersionString = String;\r\n+type ToolchainString = String;\r\n+\r\n+/// A struct to cache the output of any commands that need to be run.\r\n+struct RustToolingEnvironmentInfo {\r\n+    /// Rustup settings parsed from $HOME/.rustup/settings.toml\r\n+    rustup_settings: OnceCell<RustupSettings>,\r\n+    /// Rustc toolchain overrides as contained in the environment or files\r\n+    env_toolchain_override: OnceCell<Option<String>>,\r\n+    /// The output of `rustup rustc --version` with a fixed toolchain\r\n+    rustup_rustc_output: OnceCell<RustupRunRustcVersionOutcome>,\r\n+    /// The output of running rustc -vV. Only called if rustup rustc fails or\r\n+    /// is unavailable.\r\n+    rustc_verbose_output: OnceCell<Option<(VersionString, ToolchainString)>>,\r\n+}\r\n+\r\n+impl RustToolingEnvironmentInfo {\r\n+    fn new() -> Self {\r\n+        Self {\r\n+            rustup_settings: OnceCell::new(),\r\n+            env_toolchain_override: OnceCell::new(),\r\n+            rustup_rustc_output: OnceCell::new(),\r\n+            rustc_verbose_output: OnceCell::new(),\r\n+        }\r\n+    }\r\n+\r\n+    fn get_rustup_settings(&self, context: &Context) -> &RustupSettings {\r\n+        self.rustup_settings\r\n+            .get_or_init(|| RustupSettings::load(context).unwrap_or_default())\r\n+    }\r\n+\r\n+    /// Gets any environmental toolchain overrides without downloading cargo toolchains\r\n+    fn get_env_toolchain_override(&self, context: &Context) -> Option<&str> {\r\n+        // `$CARGO_HOME/bin/rustc(.exe) --version` may attempt installing a rustup toolchain.\r\n+        // https://github.com/starship/starship/issues/417\r\n+        //\r\n+        // To display appropriate versions preventing `rustc` from downloading toolchains, we have to\r\n+        // check\r\n+        // 1. `$RUSTUP_TOOLCHAIN`\r\n+        // 2. `rustup override list`\r\n+        // 3. `rust-toolchain` or `rust-toolchain.toml` in `.` or parent directories\r\n+        // 4. `rustup default`\r\n+        // as `rustup` does.\r\n+        // https://github.com/rust-lang/rustup.rs/tree/eb694fcada7becc5d9d160bf7c623abe84f8971d#override-precedence\r\n+        //\r\n+        // Probably we have no other way to know whether any toolchain override is specified for the\r\n+        // current directory. The following commands also cause toolchain installations.\r\n+        // - `rustup show`\r\n+        // - `rustup show active-toolchain`\r\n+        // - `rustup which`\r\n+        self.env_toolchain_override\r\n+            .get_or_init(|| {\r\n+                let out = env_rustup_toolchain(context)\r\n+                    .or_else(|| {\r\n+                        self.get_rustup_settings(context)\r\n+                            .lookup_override(context.current_dir.as_path())\r\n+                    })\r\n+                    .or_else(|| find_rust_toolchain_file(context))\r\n+                    .or_else(|| execute_rustup_default(context));\r\n+\r\n+                log::debug!(\"Environmental toolchain override is {:?}\", out);\r\n+                out\r\n+            })\r\n+            .as_deref()\r\n+    }\r\n+\r\n+    /// Gets the output of running `rustup rustc --version` with a toolchain\r\n+    /// specified by self.get_env_toolchain_override()\r\n+    fn get_rustup_rustc_version(&self, context: &Context) -> &RustupRunRustcVersionOutcome {\r\n+        self.rustup_rustc_output.get_or_init(|| {\r\n+            let out = if let Some(toolchain) = self.get_env_toolchain_override(context) {\r\n+                create_command(\"rustup\")\r\n+                    .and_then(|mut cmd| {\r\n+                        cmd.args(&[\"run\", toolchain, \"rustc\", \"--version\"])\r\n+                            .current_dir(&context.current_dir)\r\n+                            .output()\r\n+                    })\r\n+                    .map(extract_toolchain_from_rustup_run_rustc_version)\r\n+                    .unwrap_or(RustupRunRustcVersionOutcome::RustupNotWorking)\r\n+            } else {\r\n+                RustupRunRustcVersionOutcome::ToolchainUnknown\r\n+            };\r\n+\r\n+            log::debug!(\"Rustup rustc version is {:?}\", out);\r\n+            out\r\n+        })\r\n+    }\r\n+\r\n+    /// Gets the (version, toolchain) string as returned by `rustc -vV`\r\n+    fn get_rustc_verbose_version(&self, context: &Context) -> Option<(&str, &str)> {\r\n+        let toolchain = self.get_rustup_settings(context).default_toolchain();\r\n+\r\n+        self.rustc_verbose_output\r\n+            .get_or_init(|| {\r\n+                let Output { status, stdout, .. } = create_command(\"rustc\")\r\n+                    .and_then(|mut cmd| {\r\n+                        cmd.args(&[\"-Vv\"])\r\n+                            .current_dir(&context.current_dir)\r\n+                            .output()\r\n+                    })\r\n+                    .ok()?;\r\n+                if !status.success() {\r\n+                    return None;\r\n+                }\r\n+                let out =\r\n+                    format_rustc_version_verbose(std::str::from_utf8(&stdout).ok()?, toolchain);\r\n+\r\n+                log::debug!(\"Rustup verbose version is {:?}\", out);\r\n+                out\r\n+            })\r\n+            .as_ref()\r\n+            .map(|(x, y)| (&x[..], &y[..]))\r\n+    }\r\n+}\r\n+\r\n+/// Creates a module with the current Rust version\r\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\r\n+    let mut module = context.new_module(\"rust\");\r\n+    let config = RustConfig::try_load(module.config);\r\n+\r\n+    let is_rs_project = context\r\n+        .try_begin_scan()?\r\n+        .set_files(&config.detect_files)\r\n+        .set_extensions(&config.detect_extensions)\r\n+        .set_folders(&config.detect_folders)\r\n+        .is_match();\r\n+\r\n+    if !is_rs_project {\r\n+        return None;\r\n+    }\r\n+\r\n+    let rust_env_info = RustToolingEnvironmentInfo::new();\r\n+\r\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\r\n+        formatter\r\n+            .map_meta(|var, _| match var {\r\n+                \"symbol\" => Some(config.symbol),\r\n+                _ => None,\r\n+            })\r\n+            .map_style(|variable| match variable {\r\n+                \"style\" => Some(Ok(config.style)),\r\n+                _ => None,\r\n+            })\r\n+            .map(|variable| match variable {\r\n+                \"version\" => get_module_version(context, &config, &rust_env_info).map(Ok),\r\n+                \"numver\" => get_module_numeric_version(context, &config, &rust_env_info).map(Ok),\r\n+                \"toolchain\" => get_toolchain_version(context, &config, &rust_env_info).map(Ok),\r\n+                _ => None,\r\n+            })\r\n+            .parse(None, Some(context))\r\n+    });\r\n+\r\n+    module.set_segments(match parsed {\r\n+        Ok(segments) => segments,\r\n+        Err(error) => {\r\n+            log::warn!(\"Error in module `rust`:\\n{}\", error);\r\n+            return None;\r\n+        }\r\n+    });\r\n+\r\n+    Some(module)\r\n+}\r\n+\r\n+fn get_module_version(\r\n+    context: &Context,\r\n+    config: &RustConfig,\r\n+    rust_env_info: &RustToolingEnvironmentInfo,\r\n+) -> Option<String> {\r\n+    type Outcome = RustupRunRustcVersionOutcome;\r\n+\r\n+    match rust_env_info.get_rustup_rustc_version(context) {\r\n+        Outcome::RustcVersion(rustc_version) => {\r\n+            format_rustc_version(rustc_version, config.version_format)\r\n+        }\r\n+        Outcome::RustupNotWorking | Outcome::ToolchainUnknown => {\r\n+            // If `rustup` can't be executed, or there is no environmental toolchain, we can\r\n+            // execute `rustc --version` without triggering a toolchain download\r\n+            format_rustc_version(&execute_rustc_version(context)?, config.version_format)\r\n+        }\r\n+        Outcome::ToolchainNotInstalled(name) => Some(name.to_string()),\r\n+        Outcome::Err => None,\r\n+    }\r\n+}\r\n+\r\n+fn get_module_numeric_version(\r\n+    context: &Context,\r\n+    _config: &RustConfig,\r\n+    rust_env_info: &RustToolingEnvironmentInfo,\r\n+) -> Option<String> {\r\n+    type Outcome = RustupRunRustcVersionOutcome;\r\n+\r\n+    match rust_env_info.get_rustup_rustc_version(context) {\r\n+        Outcome::RustcVersion(version) => {\r\n+            let release = version.split_whitespace().nth(1).unwrap_or(version);\r\n+            Some(format_semver(release))\r\n+        }\r\n+        Outcome::RustupNotWorking | Outcome::ToolchainUnknown => {\r\n+            let (numver, _toolchain) = rust_env_info.get_rustc_verbose_version(context)?;\r\n+            Some(numver.to_string())\r\n+        }\r\n+        Outcome::ToolchainNotInstalled(_) | RustupRunRustcVersionOutcome::Err => None,\r\n+    }\r\n+}\r\n+\r\n+fn get_toolchain_version(\r\n+    context: &Context,\r\n+    _config: &RustConfig,\r\n+    rust_env_info: &RustToolingEnvironmentInfo,\r\n+) -> Option<String> {\r\n+    type Outcome = RustupRunRustcVersionOutcome;\r\n+\r\n+    match rust_env_info.get_rustup_rustc_version(context) {\r\n+        Outcome::RustcVersion(_) | Outcome::ToolchainNotInstalled(_) => {\r\n+            let toolchain_override = rust_env_info\r\n+                .get_env_toolchain_override(context)\r\n+                // This match arm should only trigger if the toolchain override\r\n+                // is not None because of how get_rustup_rustc_version works\r\n+                .expect(\"Toolchain override was None: programming error.\");\r\n+            Some(toolchain_override.to_string())\r\n+        }\r\n+        Outcome::RustupNotWorking | Outcome::ToolchainUnknown => {\r\n+            let default_host_triple = rust_env_info\r\n+                .get_rustup_settings(context)\r\n+                .default_host_triple();\r\n+            let (_numver, toolchain) = rust_env_info.get_rustc_verbose_version(context)?;\r\n+            Some(format_toolchain(toolchain, default_host_triple))\r\n+        }\r\n+        Outcome::Err => None,\r\n+    }\r\n+}\r\n+\r\n+fn env_rustup_toolchain(context: &Context) -> Option<String> {\r\n+    log::trace!(\"Searching for rustup toolchain in environment.\");\r\n+    let val = context.get_env(\"RUSTUP_TOOLCHAIN\")?;\r\n+    Some(val.trim().to_owned())\r\n+}\r\n+\r\n+fn execute_rustup_default(context: &Context) -> Option<String> {\r",
+    "path": "src/modules/rust.rs",
+    "commit_id": "87802e469e800479fec51d56c574cdefccd05e5b",
+    "original_commit_id": "efef72885fe78059b039fa5c107b66fafa70bb14",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Is this still needed, or does `default_toolchain` from the config file handle this? But this could also be handled at a later date.",
+    "created_at": "2022-05-04T09:18:59Z",
+    "updated_at": "2022-05-04T09:34:10Z",
+    "html_url": "https://github.com/starship/starship/pull/3414#discussion_r864618654",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3414",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/864618654"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3414#discussion_r864618654"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3414"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/864618654/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 262,
+    "original_line": 262,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 855,
+    "position": 863,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/865244524",
+    "pull_request_review_id": 962441855,
+    "id": 865244524,
+    "node_id": "PRRC_kwDOCqswNs4zkpVs",
+    "diff_hunk": "@@ -1,601 +1,919 @@\n-use std::fs;\n-use std::path::Path;\n-#[cfg(windows)]\n-use std::path::PathBuf;\n-use std::process::Output;\n-\n-use serde::Deserialize;\n-\n-use super::{Context, Module, ModuleConfig};\n-\n-use crate::configs::rust::RustConfig;\n-use crate::formatter::{StringFormatter, VersionFormatter};\n-use crate::utils::create_command;\n-\n-/// Creates a module with the current Rust version\n-pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n-    let mut module = context.new_module(\"rust\");\n-    let config = RustConfig::try_load(module.config);\n-\n-    let is_rs_project = context\n-        .try_begin_scan()?\n-        .set_files(&config.detect_files)\n-        .set_extensions(&config.detect_extensions)\n-        .set_folders(&config.detect_folders)\n-        .is_match();\n-\n-    if !is_rs_project {\n-        return None;\n-    }\n-\n-    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n-        formatter\n-            .map_meta(|var, _| match var {\n-                \"symbol\" => Some(config.symbol),\n-                _ => None,\n-            })\n-            .map_style(|variable| match variable {\n-                \"style\" => Some(Ok(config.style)),\n-                _ => None,\n-            })\n-            .map(|variable| match variable {\n-                // This may result in multiple calls to `get_module_version` when a user have\n-                // multiple `$version` variables defined in `format`.\n-                \"version\" => get_module_version(context, &config).map(Ok),\n-                _ => None,\n-            })\n-            .parse(None, Some(context))\n-    });\n-\n-    module.set_segments(match parsed {\n-        Ok(segments) => segments,\n-        Err(error) => {\n-            log::warn!(\"Error in module `rust`:\\n{}\", error);\n-            return None;\n-        }\n-    });\n-\n-    Some(module)\n-}\n-\n-fn get_module_version(context: &Context, config: &RustConfig) -> Option<String> {\n-    // `$CARGO_HOME/bin/rustc(.exe) --version` may attempt installing a rustup toolchain.\n-    // https://github.com/starship/starship/issues/417\n-    //\n-    // To display appropriate versions preventing `rustc` from downloading toolchains, we have to\n-    // check\n-    // 1. `$RUSTUP_TOOLCHAIN`\n-    // 2. `rustup override list`\n-    // 3. `rust-toolchain` or `rust-toolchain.toml` in `.` or parent directories\n-    // 4. `rustup default`\n-    // as `rustup` does.\n-    // https://github.com/rust-lang/rustup.rs/tree/eb694fcada7becc5d9d160bf7c623abe84f8971d#override-precedence\n-    //\n-    // Probably we have no other way to know whether any toolchain override is specified for the\n-    // current directory. The following commands also cause toolchain installations.\n-    // - `rustup show`\n-    // - `rustup show active-toolchain`\n-    // - `rustup which`\n-    if let Some(toolchain) = env_rustup_toolchain(context)\n-        .or_else(|| execute_rustup_override_list(context))\n-        .or_else(|| find_rust_toolchain_file(context))\n-        .or_else(|| execute_rustup_default(context))\n-    {\n-        match execute_rustup_run_rustc_version(context, &toolchain) {\n-            RustupRunRustcVersionOutcome::RustcVersion(rustc_version) => {\n-                format_rustc_version(&rustc_version, config.version_format)\n-            }\n-            RustupRunRustcVersionOutcome::ToolchainName(toolchain) => Some(toolchain),\n-            RustupRunRustcVersionOutcome::RustupNotWorking => {\n-                // If `rustup` is not in `$PATH` or cannot be executed for other reasons, we can\n-                // safely execute `rustc --version`.\n-                format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n-            }\n-            RustupRunRustcVersionOutcome::Err => None,\n-        }\n-    } else {\n-        format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n-    }\n-}\n-\n-fn env_rustup_toolchain(context: &Context) -> Option<String> {\n-    let val = context.get_env(\"RUSTUP_TOOLCHAIN\")?;\n-    Some(val.trim().to_owned())\n-}\n-\n-fn execute_rustup_override_list(context: &Context) -> Option<String> {\n-    extract_toolchain_from_rustup_override_list(\n-        &context.exec_cmd(\"rustup\", &[\"override\", \"list\"])?.stdout,\n-        &context.current_dir,\n-    )\n-}\n-\n-fn execute_rustup_default(context: &Context) -> Option<String> {\n-    // `rustup default` output is:\n-    //    stable-x86_64-apple-darwin (default)\n-    context\n-        .exec_cmd(\"rustup\", &[\"default\"])?\n-        .stdout\n-        .split_whitespace()\n-        .next()\n-        .map(str::to_owned)\n-}\n-\n-fn extract_toolchain_from_rustup_override_list(stdout: &str, cwd: &Path) -> Option<String> {\n-    if stdout == \"no overrides\\n\" {\n-        return None;\n-    }\n-\n-    #[cfg(windows)]\n-    let cwd = {\n-        // use display version of path, also allows stripping \\\\?\\\n-        let cwd = cwd.to_string_lossy();\n-        // rustup strips \\\\?\\ prefix,\n-        // so we do the same and convert back to a `Path`\n-        PathBuf::from(cwd.strip_prefix(r\"\\\\?\\\").unwrap_or(&cwd))\n-    };\n-\n-    stdout\n-        .lines()\n-        .filter_map(|line| {\n-            let (dir, toolchain) = line.split_once('\\t')?;\n-            Some((dir.trim(), toolchain.trim()))\n-        })\n-        // find most specific match\n-        .filter(|(dir, _)| cwd.starts_with(dir))\n-        .max_by_key(|(dir, _)| dir.len())\n-        .map(|(_, toolchain)| toolchain.to_owned())\n-}\n-\n-fn find_rust_toolchain_file(context: &Context) -> Option<String> {\n-    // Look for 'rust-toolchain' or 'rust-toolchain.toml' as rustup does.\n-    // for more information:\n-    // https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file\n-    // for the implementation in 'rustup':\n-    // https://github.com/rust-lang/rustup/blob/a45e4cd21748b04472fce51ba29999ee4b62bdec/src/config.rs#L631\n-\n-    #[derive(Deserialize)]\n-    struct OverrideFile {\n-        toolchain: ToolchainSection,\n-    }\n-\n-    #[derive(Deserialize)]\n-    struct ToolchainSection {\n-        channel: Option<String>,\n-    }\n-\n-    fn read_channel(path: &Path, only_toml: bool) -> Option<String> {\n-        let contents = fs::read_to_string(path).ok()?;\n-\n-        match contents.lines().count() {\n-            0 => None,\n-            1 if !only_toml => Some(contents),\n-            _ => {\n-                toml::from_str::<OverrideFile>(&contents)\n-                    .ok()?\n-                    .toolchain\n-                    .channel\n-            }\n-        }\n-        .filter(|c| !c.trim().is_empty())\n-        .map(|c| c.trim().to_owned())\n-    }\n-\n-    if context\n-        .dir_contents()\n-        .map_or(false, |dir| dir.has_file(\"rust-toolchain\"))\n-    {\n-        if let Some(toolchain) = read_channel(Path::new(\"rust-toolchain\"), false) {\n-            return Some(toolchain);\n-        }\n-    }\n-\n-    if context\n-        .dir_contents()\n-        .map_or(false, |dir| dir.has_file(\"rust-toolchain.toml\"))\n-    {\n-        if let Some(toolchain) = read_channel(Path::new(\"rust-toolchain.toml\"), true) {\n-            return Some(toolchain);\n-        }\n-    }\n-\n-    let mut dir = &*context.current_dir;\n-    loop {\n-        if let Some(toolchain) = read_channel(&dir.join(\"rust-toolchain\"), false) {\n-            return Some(toolchain);\n-        }\n-        if let Some(toolchain) = read_channel(&dir.join(\"rust-toolchain.toml\"), true) {\n-            return Some(toolchain);\n-        }\n-        dir = dir.parent()?;\n-    }\n-}\n-\n-fn execute_rustup_run_rustc_version(\n-    context: &Context,\n-    toolchain: &str,\n-) -> RustupRunRustcVersionOutcome {\n-    create_command(\"rustup\")\n-        .and_then(|mut cmd| {\n-            cmd.args(&[\"run\", toolchain, \"rustc\", \"--version\"])\n-                .current_dir(&context.current_dir)\n-                .output()\n-        })\n-        .map(extract_toolchain_from_rustup_run_rustc_version)\n-        .unwrap_or(RustupRunRustcVersionOutcome::RustupNotWorking)\n-}\n-\n-fn extract_toolchain_from_rustup_run_rustc_version(output: Output) -> RustupRunRustcVersionOutcome {\n-    if output.status.success() {\n-        if let Ok(output) = String::from_utf8(output.stdout) {\n-            return RustupRunRustcVersionOutcome::RustcVersion(output);\n-        }\n-    } else if let Ok(stderr) = String::from_utf8(output.stderr) {\n-        if stderr.starts_with(\"error: toolchain '\") && stderr.ends_with(\"' is not installed\\n\") {\n-            let stderr = stderr\n-                [\"error: toolchain '\".len()..stderr.len() - \"' is not installed\\n\".len()]\n-                .to_owned();\n-            return RustupRunRustcVersionOutcome::ToolchainName(stderr);\n-        }\n-    }\n-    RustupRunRustcVersionOutcome::Err\n-}\n-\n-fn execute_rustc_version(context: &Context) -> Option<String> {\n-    context\n-        .exec_cmd(\"rustc\", &[\"--version\"])\n-        .map(|o| o.stdout)\n-        .filter(|s| !s.is_empty())\n-}\n-\n-fn format_rustc_version(rustc_version: &str, version_format: &str) -> Option<String> {\n-    let version = rustc_version\n-        // split into [\"rustc\", \"1.34.0\", ...]\n-        .split_whitespace()\n-        // get down to \"1.34.0\"\n-        .nth(1)?;\n-\n-    match VersionFormatter::format_version(version, version_format) {\n-        Ok(formatted) => Some(formatted),\n-        Err(error) => {\n-            log::warn!(\"Error formatting `rust` version:\\n{}\", error);\n-            Some(format!(\"v{}\", version))\n-        }\n-    }\n-}\n-\n-#[derive(Debug, PartialEq)]\n-enum RustupRunRustcVersionOutcome {\n-    RustcVersion(String),\n-    ToolchainName(String),\n-    RustupNotWorking,\n-    Err,\n-}\n-\n-#[cfg(test)]\n-mod tests {\n-    use crate::context::{Shell, Target};\n-    use once_cell::sync::Lazy;\n-    use std::io;\n-    use std::process::{ExitStatus, Output};\n-\n-    use super::*;\n-\n-    #[test]\n-    fn test_extract_toolchain_from_rustup_override_list() {\n-        static NO_OVERRIDES_INPUT: &str = \"no overrides\\n\";\n-        static NO_OVERRIDES_CWD: &str = \"\";\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(\n-                NO_OVERRIDES_INPUT,\n-                NO_OVERRIDES_CWD.as_ref(),\n-            ),\n-            None,\n-        );\n-\n-        static OVERRIDES_INPUT: &str =\n-            \"/home/user/src/a                \\t                beta-x86_64-unknown-linux-gnu\\n\\\n-             /home/user/src/b                \\t                nightly-x86_64-unknown-linux-gnu\\n\\\n-             /home/user/src/b/d c            \\t                stable-x86_64-pc-windows-msvc\\n\";\n-        static OVERRIDES_CWD_A: &str = \"/home/user/src/a/src\";\n-        static OVERRIDES_CWD_B: &str = \"/home/user/src/b/tests\";\n-        static OVERRIDES_CWD_C: &str = \"/home/user/src/c/examples\";\n-        static OVERRIDES_CWD_D: &str = \"/home/user/src/b/d c/spaces\";\n-        static OVERRIDES_CWD_E: &str = \"/home/user/src/b_and_more\";\n-        static OVERRIDES_CWD_F: &str = \"/home/user/src/b\";\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_A.as_ref()),\n-            Some(\"beta-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_B.as_ref()),\n-            Some(\"nightly-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_C.as_ref()),\n-            None,\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_D.as_ref()),\n-            Some(\"stable-x86_64-pc-windows-msvc\".to_owned()),\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_E.as_ref()),\n-            None,\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_F.as_ref()),\n-            Some(\"nightly-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-    }\n-\n-    #[test]\n-    #[cfg(windows)]\n-    fn test_extract_toolchain_from_rustup_override_list_win() {\n-        static OVERRIDES_INPUT: &str =\n-            \"C:\\\\src                \\t                beta-x86_64-unknown-linux-gnu\\n\";\n-        static OVERRIDES_CWD_A: &str = r\"\\\\?\\C:\\src\";\n-        static OVERRIDES_CWD_B: &str = r\"C:\\src\";\n-\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_A.as_ref()),\n-            Some(\"beta-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_B.as_ref()),\n-            Some(\"beta-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-    }\n-\n-    #[cfg(any(unix, windows))]\n-    #[test]\n-    fn test_extract_toolchain_from_rustup_run_rustc_version() {\n-        #[cfg(unix)]\n-        use std::os::unix::process::ExitStatusExt as _;\n-        #[cfg(windows)]\n-        use std::os::windows::process::ExitStatusExt as _;\n-\n-        static RUSTC_VERSION: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(0),\n-            stdout: b\"rustc 1.34.0\\n\"[..].to_owned(),\n-            stderr: vec![],\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(RUSTC_VERSION.clone()),\n-            RustupRunRustcVersionOutcome::RustcVersion(\"rustc 1.34.0\\n\".to_owned()),\n-        );\n-\n-        static TOOLCHAIN_NAME: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(1),\n-            stdout: vec![],\n-            stderr: b\"error: toolchain 'channel-triple' is not installed\\n\"[..].to_owned(),\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(TOOLCHAIN_NAME.clone()),\n-            RustupRunRustcVersionOutcome::ToolchainName(\"channel-triple\".to_owned()),\n-        );\n-\n-        static INVALID_STDOUT: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(0),\n-            stdout: b\"\\xc3\\x28\"[..].to_owned(),\n-            stderr: vec![],\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(INVALID_STDOUT.clone()),\n-            RustupRunRustcVersionOutcome::Err,\n-        );\n-\n-        static INVALID_STDERR: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(1),\n-            stdout: vec![],\n-            stderr: b\"\\xc3\\x28\"[..].to_owned(),\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(INVALID_STDERR.clone()),\n-            RustupRunRustcVersionOutcome::Err,\n-        );\n-\n-        static UNEXPECTED_FORMAT_OF_ERROR: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(1),\n-            stdout: vec![],\n-            stderr: b\"error:\"[..].to_owned(),\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(UNEXPECTED_FORMAT_OF_ERROR.clone()),\n-            RustupRunRustcVersionOutcome::Err,\n-        );\n-    }\n-\n-    #[test]\n-    fn test_format_rustc_version() {\n-        let config = RustConfig::default();\n-        let rustc_stable = \"rustc 1.34.0 (91856ed52 2019-04-10)\";\n-        let rustc_beta = \"rustc 1.34.0-beta.1 (2bc1d406d 2019-04-10)\";\n-        let rustc_nightly = \"rustc 1.34.0-nightly (b139669f3 2019-04-10)\";\n-        assert_eq!(\n-            format_rustc_version(rustc_nightly, config.version_format),\n-            Some(\"v1.34.0-nightly\".to_string())\n-        );\n-        assert_eq!(\n-            format_rustc_version(rustc_beta, config.version_format),\n-            Some(\"v1.34.0-beta.1\".to_string())\n-        );\n-        assert_eq!(\n-            format_rustc_version(rustc_stable, config.version_format),\n-            Some(\"v1.34.0\".to_string())\n-        );\n-        assert_eq!(\n-            format_rustc_version(\"rustc 1.34.0\", config.version_format),\n-            Some(\"v1.34.0\".to_string())\n-        );\n-    }\n-\n-    #[test]\n-    fn test_find_rust_toolchain_file() -> io::Result<()> {\n-        // `rust-toolchain` with toolchain in one line\n-        let dir = tempfile::tempdir()?;\n-        fs::write(dir.path().join(\"rust-toolchain\"), \"1.34.0\")?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain` in toml format\n-        let dir = tempfile::tempdir()?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain\"),\n-            \"[toolchain]\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain` in toml format with new lines\n-        let dir = tempfile::tempdir()?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain\"),\n-            \"\\n\\n[toolchain]\\n\\n\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain` in parent directory.\n-        let dir = tempfile::tempdir()?;\n-        let child_dir_path = dir.path().join(\"child\");\n-        fs::create_dir(&child_dir_path)?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain\"),\n-            \"\\n\\n[toolchain]\\n\\n\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            child_dir_path.clone(),\n-            child_dir_path,\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain.toml` with toolchain in one line\n-        // This should not work!\n-        // See https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file\n-        let dir = tempfile::tempdir()?;\n-        fs::write(dir.path().join(\"rust-toolchain.toml\"), \"1.34.0\")?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(find_rust_toolchain_file(&context), None);\n-        dir.close()?;\n-\n-        // `rust-toolchain.toml` in toml format\n-        let dir = tempfile::tempdir()?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain.toml\"),\n-            \"[toolchain]\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain.toml` in toml format with new lines\n-        let dir = tempfile::tempdir()?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain.toml\"),\n-            \"\\n\\n[toolchain]\\n\\n\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain.toml` in parent directory.\n-        let dir = tempfile::tempdir()?;\n-        let child_dir_path = dir.path().join(\"child\");\n-        fs::create_dir(&child_dir_path)?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain.toml\"),\n-            \"\\n\\n[toolchain]\\n\\n\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            child_dir_path.clone(),\n-            child_dir_path,\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()\n-    }\n-}\n+use std::fs;\r\n+use std::path::{Path, PathBuf};\r\n+use std::process::Output;\r\n+\r\n+use serde::Deserialize;\r\n+use std::collections::HashMap;\r\n+\r\n+use super::{Context, Module, ModuleConfig};\r\n+\r\n+use crate::configs::rust::RustConfig;\r\n+use crate::formatter::{StringFormatter, VersionFormatter};\r\n+use crate::utils::create_command;\r\n+use home::rustup_home;\r\n+\r\n+use once_cell::sync::OnceCell;\r\n+\r\n+type VersionString = String;\r\n+type ToolchainString = String;\r\n+\r\n+/// A struct to cache the output of any commands that need to be run.\r\n+struct RustToolingEnvironmentInfo {\r\n+    /// Rustup settings parsed from $HOME/.rustup/settings.toml\r\n+    rustup_settings: OnceCell<RustupSettings>,\r\n+    /// Rustc toolchain overrides as contained in the environment or files\r\n+    env_toolchain_override: OnceCell<Option<String>>,\r\n+    /// The output of `rustup rustc --version` with a fixed toolchain\r\n+    rustup_rustc_output: OnceCell<RustupRunRustcVersionOutcome>,\r\n+    /// The output of running rustc -vV. Only called if rustup rustc fails or\r\n+    /// is unavailable.\r\n+    rustc_verbose_output: OnceCell<Option<(VersionString, ToolchainString)>>,\r\n+}\r\n+\r\n+impl RustToolingEnvironmentInfo {\r\n+    fn new() -> Self {\r\n+        Self {\r\n+            rustup_settings: OnceCell::new(),\r\n+            env_toolchain_override: OnceCell::new(),\r\n+            rustup_rustc_output: OnceCell::new(),\r\n+            rustc_verbose_output: OnceCell::new(),\r\n+        }\r\n+    }\r\n+\r\n+    fn get_rustup_settings(&self, context: &Context) -> &RustupSettings {\r\n+        self.rustup_settings\r\n+            .get_or_init(|| RustupSettings::load(context).unwrap_or_default())\r\n+    }\r\n+\r\n+    /// Gets any environmental toolchain overrides without downloading cargo toolchains\r\n+    fn get_env_toolchain_override(&self, context: &Context) -> Option<&str> {\r\n+        // `$CARGO_HOME/bin/rustc(.exe) --version` may attempt installing a rustup toolchain.\r\n+        // https://github.com/starship/starship/issues/417\r\n+        //\r\n+        // To display appropriate versions preventing `rustc` from downloading toolchains, we have to\r\n+        // check\r\n+        // 1. `$RUSTUP_TOOLCHAIN`\r\n+        // 2. `rustup override list`\r\n+        // 3. `rust-toolchain` or `rust-toolchain.toml` in `.` or parent directories\r\n+        // 4. `rustup default`\r\n+        // as `rustup` does.\r\n+        // https://github.com/rust-lang/rustup.rs/tree/eb694fcada7becc5d9d160bf7c623abe84f8971d#override-precedence\r\n+        //\r\n+        // Probably we have no other way to know whether any toolchain override is specified for the\r\n+        // current directory. The following commands also cause toolchain installations.\r\n+        // - `rustup show`\r\n+        // - `rustup show active-toolchain`\r\n+        // - `rustup which`\r\n+        self.env_toolchain_override\r\n+            .get_or_init(|| {\r\n+                let out = env_rustup_toolchain(context)\r\n+                    .or_else(|| {\r\n+                        self.get_rustup_settings(context)\r\n+                            .lookup_override(context.current_dir.as_path())\r\n+                    })\r\n+                    .or_else(|| find_rust_toolchain_file(context))\r\n+                    .or_else(|| execute_rustup_default(context));\r\n+\r\n+                log::debug!(\"Environmental toolchain override is {:?}\", out);\r\n+                out\r\n+            })\r\n+            .as_deref()\r\n+    }\r\n+\r\n+    /// Gets the output of running `rustup rustc --version` with a toolchain\r\n+    /// specified by self.get_env_toolchain_override()\r\n+    fn get_rustup_rustc_version(&self, context: &Context) -> &RustupRunRustcVersionOutcome {\r\n+        self.rustup_rustc_output.get_or_init(|| {\r\n+            let out = if let Some(toolchain) = self.get_env_toolchain_override(context) {\r\n+                create_command(\"rustup\")\r\n+                    .and_then(|mut cmd| {\r\n+                        cmd.args(&[\"run\", toolchain, \"rustc\", \"--version\"])\r\n+                            .current_dir(&context.current_dir)\r\n+                            .output()\r\n+                    })\r\n+                    .map(extract_toolchain_from_rustup_run_rustc_version)\r\n+                    .unwrap_or(RustupRunRustcVersionOutcome::RustupNotWorking)\r\n+            } else {\r\n+                RustupRunRustcVersionOutcome::ToolchainUnknown\r\n+            };\r\n+\r\n+            log::debug!(\"Rustup rustc version is {:?}\", out);\r\n+            out\r\n+        })\r\n+    }\r\n+\r\n+    /// Gets the (version, toolchain) string as returned by `rustc -vV`\r\n+    fn get_rustc_verbose_version(&self, context: &Context) -> Option<(&str, &str)> {\r\n+        let toolchain = self.get_rustup_settings(context).default_toolchain();\r\n+\r\n+        self.rustc_verbose_output\r\n+            .get_or_init(|| {\r\n+                let Output { status, stdout, .. } = create_command(\"rustc\")\r\n+                    .and_then(|mut cmd| {\r\n+                        cmd.args(&[\"-Vv\"])\r\n+                            .current_dir(&context.current_dir)\r\n+                            .output()\r\n+                    })\r\n+                    .ok()?;\r\n+                if !status.success() {\r\n+                    return None;\r\n+                }\r\n+                let out =\r\n+                    format_rustc_version_verbose(std::str::from_utf8(&stdout).ok()?, toolchain);\r\n+\r\n+                log::debug!(\"Rustup verbose version is {:?}\", out);\r\n+                out\r\n+            })\r\n+            .as_ref()\r\n+            .map(|(x, y)| (&x[..], &y[..]))\r\n+    }\r\n+}\r\n+\r\n+/// Creates a module with the current Rust version\r\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\r\n+    let mut module = context.new_module(\"rust\");\r\n+    let config = RustConfig::try_load(module.config);\r\n+\r\n+    let is_rs_project = context\r\n+        .try_begin_scan()?\r\n+        .set_files(&config.detect_files)\r\n+        .set_extensions(&config.detect_extensions)\r\n+        .set_folders(&config.detect_folders)\r\n+        .is_match();\r\n+\r\n+    if !is_rs_project {\r\n+        return None;\r\n+    }\r\n+\r\n+    let rust_env_info = RustToolingEnvironmentInfo::new();\r\n+\r\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\r\n+        formatter\r\n+            .map_meta(|var, _| match var {\r\n+                \"symbol\" => Some(config.symbol),\r\n+                _ => None,\r\n+            })\r\n+            .map_style(|variable| match variable {\r\n+                \"style\" => Some(Ok(config.style)),\r\n+                _ => None,\r\n+            })\r\n+            .map(|variable| match variable {\r\n+                \"version\" => get_module_version(context, &config, &rust_env_info).map(Ok),\r\n+                \"numver\" => get_module_numeric_version(context, &config, &rust_env_info).map(Ok),\r\n+                \"toolchain\" => get_toolchain_version(context, &config, &rust_env_info).map(Ok),\r\n+                _ => None,\r\n+            })\r\n+            .parse(None, Some(context))\r\n+    });\r\n+\r\n+    module.set_segments(match parsed {\r\n+        Ok(segments) => segments,\r\n+        Err(error) => {\r\n+            log::warn!(\"Error in module `rust`:\\n{}\", error);\r\n+            return None;\r\n+        }\r\n+    });\r\n+\r\n+    Some(module)\r\n+}\r\n+\r\n+fn get_module_version(\r\n+    context: &Context,\r\n+    config: &RustConfig,\r\n+    rust_env_info: &RustToolingEnvironmentInfo,\r\n+) -> Option<String> {\r\n+    type Outcome = RustupRunRustcVersionOutcome;\r\n+\r\n+    match rust_env_info.get_rustup_rustc_version(context) {\r\n+        Outcome::RustcVersion(rustc_version) => {\r\n+            format_rustc_version(rustc_version, config.version_format)\r\n+        }\r\n+        Outcome::RustupNotWorking | Outcome::ToolchainUnknown => {\r\n+            // If `rustup` can't be executed, or there is no environmental toolchain, we can\r\n+            // execute `rustc --version` without triggering a toolchain download\r\n+            format_rustc_version(&execute_rustc_version(context)?, config.version_format)\r\n+        }\r\n+        Outcome::ToolchainNotInstalled(name) => Some(name.to_string()),\r\n+        Outcome::Err => None,\r\n+    }\r\n+}\r\n+\r\n+fn get_module_numeric_version(\r\n+    context: &Context,\r\n+    _config: &RustConfig,\r\n+    rust_env_info: &RustToolingEnvironmentInfo,\r\n+) -> Option<String> {\r\n+    type Outcome = RustupRunRustcVersionOutcome;\r\n+\r\n+    match rust_env_info.get_rustup_rustc_version(context) {\r\n+        Outcome::RustcVersion(version) => {\r\n+            let release = version.split_whitespace().nth(1).unwrap_or(version);\r\n+            Some(format_semver(release))\r\n+        }\r\n+        Outcome::RustupNotWorking | Outcome::ToolchainUnknown => {\r\n+            let (numver, _toolchain) = rust_env_info.get_rustc_verbose_version(context)?;\r\n+            Some(numver.to_string())\r\n+        }\r\n+        Outcome::ToolchainNotInstalled(_) | RustupRunRustcVersionOutcome::Err => None,\r\n+    }\r\n+}\r\n+\r\n+fn get_toolchain_version(\r\n+    context: &Context,\r\n+    _config: &RustConfig,\r\n+    rust_env_info: &RustToolingEnvironmentInfo,\r\n+) -> Option<String> {\r\n+    type Outcome = RustupRunRustcVersionOutcome;\r\n+\r\n+    match rust_env_info.get_rustup_rustc_version(context) {\r\n+        Outcome::RustcVersion(_) | Outcome::ToolchainNotInstalled(_) => {\r\n+            let toolchain_override = rust_env_info\r\n+                .get_env_toolchain_override(context)\r\n+                // This match arm should only trigger if the toolchain override\r\n+                // is not None because of how get_rustup_rustc_version works\r\n+                .expect(\"Toolchain override was None: programming error.\");\r\n+            Some(toolchain_override.to_string())\r\n+        }\r\n+        Outcome::RustupNotWorking | Outcome::ToolchainUnknown => {\r\n+            let default_host_triple = rust_env_info\r\n+                .get_rustup_settings(context)\r\n+                .default_host_triple();\r\n+            let (_numver, toolchain) = rust_env_info.get_rustc_verbose_version(context)?;\r\n+            Some(format_toolchain(toolchain, default_host_triple))\r\n+        }\r\n+        Outcome::Err => None,\r\n+    }\r\n+}\r\n+\r\n+fn env_rustup_toolchain(context: &Context) -> Option<String> {\r\n+    log::trace!(\"Searching for rustup toolchain in environment.\");\r\n+    let val = context.get_env(\"RUSTUP_TOOLCHAIN\")?;\r\n+    Some(val.trim().to_owned())\r\n+}\r\n+\r\n+fn execute_rustup_default(context: &Context) -> Option<String> {\r",
+    "path": "src/modules/rust.rs",
+    "commit_id": "87802e469e800479fec51d56c574cdefccd05e5b",
+    "original_commit_id": "efef72885fe78059b039fa5c107b66fafa70bb14",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think overall, I'd like to clean up a lot of these and figure out a sane naming/organization scheme. For instance, right now, the method `get_env_toolchain_override` sounds like it's retrieving an override from environmental variables, but really it's attempting to follow `rustup`'s procedure, which involves reading from the environment, checking toolchain and local override files, etc.\r\n\r\nWith the way things are currently organized and named, I find it difficult to think about what's necessary and what's not.",
+    "created_at": "2022-05-04T19:43:45Z",
+    "updated_at": "2022-05-04T19:43:45Z",
+    "html_url": "https://github.com/starship/starship/pull/3414#discussion_r865244524",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3414",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/865244524"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3414#discussion_r865244524"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3414"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/865244524/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 262,
+    "original_line": 262,
+    "side": "RIGHT",
+    "in_reply_to_id": 864618654,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 855,
+    "position": 863,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/865317031",
+    "pull_request_review_id": 962545179,
+    "id": 865317031,
+    "node_id": "PRRC_kwDOCqswNs4zk7Cn",
+    "diff_hunk": "@@ -1,601 +1,923 @@\n-use std::fs;\n-use std::path::Path;\n-#[cfg(windows)]\n-use std::path::PathBuf;\n-use std::process::Output;\n-\n-use serde::Deserialize;\n-\n-use super::{Context, Module, ModuleConfig};\n-\n-use crate::configs::rust::RustConfig;\n-use crate::formatter::{StringFormatter, VersionFormatter};\n-use crate::utils::create_command;\n-\n-/// Creates a module with the current Rust version\n-pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n-    let mut module = context.new_module(\"rust\");\n-    let config = RustConfig::try_load(module.config);\n-\n-    let is_rs_project = context\n-        .try_begin_scan()?\n-        .set_files(&config.detect_files)\n-        .set_extensions(&config.detect_extensions)\n-        .set_folders(&config.detect_folders)\n-        .is_match();\n-\n-    if !is_rs_project {\n-        return None;\n-    }\n-\n-    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n-        formatter\n-            .map_meta(|var, _| match var {\n-                \"symbol\" => Some(config.symbol),\n-                _ => None,\n-            })\n-            .map_style(|variable| match variable {\n-                \"style\" => Some(Ok(config.style)),\n-                _ => None,\n-            })\n-            .map(|variable| match variable {\n-                // This may result in multiple calls to `get_module_version` when a user have\n-                // multiple `$version` variables defined in `format`.\n-                \"version\" => get_module_version(context, &config).map(Ok),\n-                _ => None,\n-            })\n-            .parse(None, Some(context))\n-    });\n-\n-    module.set_segments(match parsed {\n-        Ok(segments) => segments,\n-        Err(error) => {\n-            log::warn!(\"Error in module `rust`:\\n{}\", error);\n-            return None;\n-        }\n-    });\n-\n-    Some(module)\n-}\n-\n-fn get_module_version(context: &Context, config: &RustConfig) -> Option<String> {\n-    // `$CARGO_HOME/bin/rustc(.exe) --version` may attempt installing a rustup toolchain.\n-    // https://github.com/starship/starship/issues/417\n-    //\n-    // To display appropriate versions preventing `rustc` from downloading toolchains, we have to\n-    // check\n-    // 1. `$RUSTUP_TOOLCHAIN`\n-    // 2. `rustup override list`\n-    // 3. `rust-toolchain` or `rust-toolchain.toml` in `.` or parent directories\n-    // 4. `rustup default`\n-    // as `rustup` does.\n-    // https://github.com/rust-lang/rustup.rs/tree/eb694fcada7becc5d9d160bf7c623abe84f8971d#override-precedence\n-    //\n-    // Probably we have no other way to know whether any toolchain override is specified for the\n-    // current directory. The following commands also cause toolchain installations.\n-    // - `rustup show`\n-    // - `rustup show active-toolchain`\n-    // - `rustup which`\n-    if let Some(toolchain) = env_rustup_toolchain(context)\n-        .or_else(|| execute_rustup_override_list(context))\n-        .or_else(|| find_rust_toolchain_file(context))\n-        .or_else(|| execute_rustup_default(context))\n-    {\n-        match execute_rustup_run_rustc_version(context, &toolchain) {\n-            RustupRunRustcVersionOutcome::RustcVersion(rustc_version) => {\n-                format_rustc_version(&rustc_version, config.version_format)\n-            }\n-            RustupRunRustcVersionOutcome::ToolchainName(toolchain) => Some(toolchain),\n-            RustupRunRustcVersionOutcome::RustupNotWorking => {\n-                // If `rustup` is not in `$PATH` or cannot be executed for other reasons, we can\n-                // safely execute `rustc --version`.\n-                format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n-            }\n-            RustupRunRustcVersionOutcome::Err => None,\n-        }\n-    } else {\n-        format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n-    }\n-}\n-\n-fn env_rustup_toolchain(context: &Context) -> Option<String> {\n-    let val = context.get_env(\"RUSTUP_TOOLCHAIN\")?;\n-    Some(val.trim().to_owned())\n-}\n-\n-fn execute_rustup_override_list(context: &Context) -> Option<String> {\n-    extract_toolchain_from_rustup_override_list(\n-        &context.exec_cmd(\"rustup\", &[\"override\", \"list\"])?.stdout,\n-        &context.current_dir,\n-    )\n-}\n-\n-fn execute_rustup_default(context: &Context) -> Option<String> {\n-    // `rustup default` output is:\n-    //    stable-x86_64-apple-darwin (default)\n-    context\n-        .exec_cmd(\"rustup\", &[\"default\"])?\n-        .stdout\n-        .split_whitespace()\n-        .next()\n-        .map(str::to_owned)\n-}\n-\n-fn extract_toolchain_from_rustup_override_list(stdout: &str, cwd: &Path) -> Option<String> {\n-    if stdout == \"no overrides\\n\" {\n-        return None;\n-    }\n-\n-    #[cfg(windows)]\n-    let cwd = {\n-        // use display version of path, also allows stripping \\\\?\\\n-        let cwd = cwd.to_string_lossy();\n-        // rustup strips \\\\?\\ prefix,\n-        // so we do the same and convert back to a `Path`\n-        PathBuf::from(cwd.strip_prefix(r\"\\\\?\\\").unwrap_or(&cwd))\n-    };\n-\n-    stdout\n-        .lines()\n-        .filter_map(|line| {\n-            let (dir, toolchain) = line.split_once('\\t')?;\n-            Some((dir.trim(), toolchain.trim()))\n-        })\n-        // find most specific match\n-        .filter(|(dir, _)| cwd.starts_with(dir))\n-        .max_by_key(|(dir, _)| dir.len())\n-        .map(|(_, toolchain)| toolchain.to_owned())\n-}\n-\n-fn find_rust_toolchain_file(context: &Context) -> Option<String> {\n-    // Look for 'rust-toolchain' or 'rust-toolchain.toml' as rustup does.\n-    // for more information:\n-    // https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file\n-    // for the implementation in 'rustup':\n-    // https://github.com/rust-lang/rustup/blob/a45e4cd21748b04472fce51ba29999ee4b62bdec/src/config.rs#L631\n-\n-    #[derive(Deserialize)]\n-    struct OverrideFile {\n-        toolchain: ToolchainSection,\n-    }\n-\n-    #[derive(Deserialize)]\n-    struct ToolchainSection {\n-        channel: Option<String>,\n-    }\n-\n-    fn read_channel(path: &Path, only_toml: bool) -> Option<String> {\n-        let contents = fs::read_to_string(path).ok()?;\n-\n-        match contents.lines().count() {\n-            0 => None,\n-            1 if !only_toml => Some(contents),\n-            _ => {\n-                toml::from_str::<OverrideFile>(&contents)\n-                    .ok()?\n-                    .toolchain\n-                    .channel\n-            }\n-        }\n-        .filter(|c| !c.trim().is_empty())\n-        .map(|c| c.trim().to_owned())\n-    }\n-\n-    if context\n-        .dir_contents()\n-        .map_or(false, |dir| dir.has_file(\"rust-toolchain\"))\n-    {\n-        if let Some(toolchain) = read_channel(Path::new(\"rust-toolchain\"), false) {\n-            return Some(toolchain);\n-        }\n-    }\n-\n-    if context\n-        .dir_contents()\n-        .map_or(false, |dir| dir.has_file(\"rust-toolchain.toml\"))\n-    {\n-        if let Some(toolchain) = read_channel(Path::new(\"rust-toolchain.toml\"), true) {\n-            return Some(toolchain);\n-        }\n-    }\n-\n-    let mut dir = &*context.current_dir;\n-    loop {\n-        if let Some(toolchain) = read_channel(&dir.join(\"rust-toolchain\"), false) {\n-            return Some(toolchain);\n-        }\n-        if let Some(toolchain) = read_channel(&dir.join(\"rust-toolchain.toml\"), true) {\n-            return Some(toolchain);\n-        }\n-        dir = dir.parent()?;\n-    }\n-}\n-\n-fn execute_rustup_run_rustc_version(\n-    context: &Context,\n-    toolchain: &str,\n-) -> RustupRunRustcVersionOutcome {\n-    create_command(\"rustup\")\n-        .and_then(|mut cmd| {\n-            cmd.args(&[\"run\", toolchain, \"rustc\", \"--version\"])\n-                .current_dir(&context.current_dir)\n-                .output()\n-        })\n-        .map(extract_toolchain_from_rustup_run_rustc_version)\n-        .unwrap_or(RustupRunRustcVersionOutcome::RustupNotWorking)\n-}\n-\n-fn extract_toolchain_from_rustup_run_rustc_version(output: Output) -> RustupRunRustcVersionOutcome {\n-    if output.status.success() {\n-        if let Ok(output) = String::from_utf8(output.stdout) {\n-            return RustupRunRustcVersionOutcome::RustcVersion(output);\n-        }\n-    } else if let Ok(stderr) = String::from_utf8(output.stderr) {\n-        if stderr.starts_with(\"error: toolchain '\") && stderr.ends_with(\"' is not installed\\n\") {\n-            let stderr = stderr\n-                [\"error: toolchain '\".len()..stderr.len() - \"' is not installed\\n\".len()]\n-                .to_owned();\n-            return RustupRunRustcVersionOutcome::ToolchainName(stderr);\n-        }\n-    }\n-    RustupRunRustcVersionOutcome::Err\n-}\n-\n-fn execute_rustc_version(context: &Context) -> Option<String> {\n-    context\n-        .exec_cmd(\"rustc\", &[\"--version\"])\n-        .map(|o| o.stdout)\n-        .filter(|s| !s.is_empty())\n-}\n-\n-fn format_rustc_version(rustc_version: &str, version_format: &str) -> Option<String> {\n-    let version = rustc_version\n-        // split into [\"rustc\", \"1.34.0\", ...]\n-        .split_whitespace()\n-        // get down to \"1.34.0\"\n-        .nth(1)?;\n-\n-    match VersionFormatter::format_version(version, version_format) {\n-        Ok(formatted) => Some(formatted),\n-        Err(error) => {\n-            log::warn!(\"Error formatting `rust` version:\\n{}\", error);\n-            Some(format!(\"v{}\", version))\n-        }\n-    }\n-}\n-\n-#[derive(Debug, PartialEq)]\n-enum RustupRunRustcVersionOutcome {\n-    RustcVersion(String),\n-    ToolchainName(String),\n-    RustupNotWorking,\n-    Err,\n-}\n-\n-#[cfg(test)]\n-mod tests {\n-    use crate::context::{Shell, Target};\n-    use once_cell::sync::Lazy;\n-    use std::io;\n-    use std::process::{ExitStatus, Output};\n-\n-    use super::*;\n-\n-    #[test]\n-    fn test_extract_toolchain_from_rustup_override_list() {\n-        static NO_OVERRIDES_INPUT: &str = \"no overrides\\n\";\n-        static NO_OVERRIDES_CWD: &str = \"\";\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(\n-                NO_OVERRIDES_INPUT,\n-                NO_OVERRIDES_CWD.as_ref(),\n-            ),\n-            None,\n-        );\n-\n-        static OVERRIDES_INPUT: &str =\n-            \"/home/user/src/a                \\t                beta-x86_64-unknown-linux-gnu\\n\\\n-             /home/user/src/b                \\t                nightly-x86_64-unknown-linux-gnu\\n\\\n-             /home/user/src/b/d c            \\t                stable-x86_64-pc-windows-msvc\\n\";\n-        static OVERRIDES_CWD_A: &str = \"/home/user/src/a/src\";\n-        static OVERRIDES_CWD_B: &str = \"/home/user/src/b/tests\";\n-        static OVERRIDES_CWD_C: &str = \"/home/user/src/c/examples\";\n-        static OVERRIDES_CWD_D: &str = \"/home/user/src/b/d c/spaces\";\n-        static OVERRIDES_CWD_E: &str = \"/home/user/src/b_and_more\";\n-        static OVERRIDES_CWD_F: &str = \"/home/user/src/b\";\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_A.as_ref()),\n-            Some(\"beta-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_B.as_ref()),\n-            Some(\"nightly-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_C.as_ref()),\n-            None,\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_D.as_ref()),\n-            Some(\"stable-x86_64-pc-windows-msvc\".to_owned()),\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_E.as_ref()),\n-            None,\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_F.as_ref()),\n-            Some(\"nightly-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-    }\n-\n-    #[test]\n-    #[cfg(windows)]\n-    fn test_extract_toolchain_from_rustup_override_list_win() {\n-        static OVERRIDES_INPUT: &str =\n-            \"C:\\\\src                \\t                beta-x86_64-unknown-linux-gnu\\n\";\n-        static OVERRIDES_CWD_A: &str = r\"\\\\?\\C:\\src\";\n-        static OVERRIDES_CWD_B: &str = r\"C:\\src\";\n-\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_A.as_ref()),\n-            Some(\"beta-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_B.as_ref()),\n-            Some(\"beta-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-    }\n-\n-    #[cfg(any(unix, windows))]\n-    #[test]\n-    fn test_extract_toolchain_from_rustup_run_rustc_version() {\n-        #[cfg(unix)]\n-        use std::os::unix::process::ExitStatusExt as _;\n-        #[cfg(windows)]\n-        use std::os::windows::process::ExitStatusExt as _;\n-\n-        static RUSTC_VERSION: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(0),\n-            stdout: b\"rustc 1.34.0\\n\"[..].to_owned(),\n-            stderr: vec![],\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(RUSTC_VERSION.clone()),\n-            RustupRunRustcVersionOutcome::RustcVersion(\"rustc 1.34.0\\n\".to_owned()),\n-        );\n-\n-        static TOOLCHAIN_NAME: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(1),\n-            stdout: vec![],\n-            stderr: b\"error: toolchain 'channel-triple' is not installed\\n\"[..].to_owned(),\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(TOOLCHAIN_NAME.clone()),\n-            RustupRunRustcVersionOutcome::ToolchainName(\"channel-triple\".to_owned()),\n-        );\n-\n-        static INVALID_STDOUT: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(0),\n-            stdout: b\"\\xc3\\x28\"[..].to_owned(),\n-            stderr: vec![],\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(INVALID_STDOUT.clone()),\n-            RustupRunRustcVersionOutcome::Err,\n-        );\n-\n-        static INVALID_STDERR: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(1),\n-            stdout: vec![],\n-            stderr: b\"\\xc3\\x28\"[..].to_owned(),\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(INVALID_STDERR.clone()),\n-            RustupRunRustcVersionOutcome::Err,\n-        );\n-\n-        static UNEXPECTED_FORMAT_OF_ERROR: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(1),\n-            stdout: vec![],\n-            stderr: b\"error:\"[..].to_owned(),\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(UNEXPECTED_FORMAT_OF_ERROR.clone()),\n-            RustupRunRustcVersionOutcome::Err,\n-        );\n-    }\n-\n-    #[test]\n-    fn test_format_rustc_version() {\n-        let config = RustConfig::default();\n-        let rustc_stable = \"rustc 1.34.0 (91856ed52 2019-04-10)\";\n-        let rustc_beta = \"rustc 1.34.0-beta.1 (2bc1d406d 2019-04-10)\";\n-        let rustc_nightly = \"rustc 1.34.0-nightly (b139669f3 2019-04-10)\";\n-        assert_eq!(\n-            format_rustc_version(rustc_nightly, config.version_format),\n-            Some(\"v1.34.0-nightly\".to_string())\n-        );\n-        assert_eq!(\n-            format_rustc_version(rustc_beta, config.version_format),\n-            Some(\"v1.34.0-beta.1\".to_string())\n-        );\n-        assert_eq!(\n-            format_rustc_version(rustc_stable, config.version_format),\n-            Some(\"v1.34.0\".to_string())\n-        );\n-        assert_eq!(\n-            format_rustc_version(\"rustc 1.34.0\", config.version_format),\n-            Some(\"v1.34.0\".to_string())\n-        );\n-    }\n-\n-    #[test]\n-    fn test_find_rust_toolchain_file() -> io::Result<()> {\n-        // `rust-toolchain` with toolchain in one line\n-        let dir = tempfile::tempdir()?;\n-        fs::write(dir.path().join(\"rust-toolchain\"), \"1.34.0\")?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain` in toml format\n-        let dir = tempfile::tempdir()?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain\"),\n-            \"[toolchain]\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain` in toml format with new lines\n-        let dir = tempfile::tempdir()?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain\"),\n-            \"\\n\\n[toolchain]\\n\\n\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain` in parent directory.\n-        let dir = tempfile::tempdir()?;\n-        let child_dir_path = dir.path().join(\"child\");\n-        fs::create_dir(&child_dir_path)?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain\"),\n-            \"\\n\\n[toolchain]\\n\\n\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            child_dir_path.clone(),\n-            child_dir_path,\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain.toml` with toolchain in one line\n-        // This should not work!\n-        // See https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file\n-        let dir = tempfile::tempdir()?;\n-        fs::write(dir.path().join(\"rust-toolchain.toml\"), \"1.34.0\")?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(find_rust_toolchain_file(&context), None);\n-        dir.close()?;\n-\n-        // `rust-toolchain.toml` in toml format\n-        let dir = tempfile::tempdir()?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain.toml\"),\n-            \"[toolchain]\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain.toml` in toml format with new lines\n-        let dir = tempfile::tempdir()?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain.toml\"),\n-            \"\\n\\n[toolchain]\\n\\n\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain.toml` in parent directory.\n-        let dir = tempfile::tempdir()?;\n-        let child_dir_path = dir.path().join(\"child\");\n-        fs::create_dir(&child_dir_path)?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain.toml\"),\n-            \"\\n\\n[toolchain]\\n\\n\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            child_dir_path.clone(),\n-            child_dir_path,\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()\n-    }\n-}\n+use std::fs;\r\n+use std::path::{Path, PathBuf};\r\n+use std::process::Output;\r\n+\r\n+use serde::Deserialize;\r\n+use std::collections::HashMap;\r\n+\r\n+use super::{Context, Module, ModuleConfig};\r\n+\r\n+use crate::configs::rust::RustConfig;\r\n+use crate::formatter::{StringFormatter, VersionFormatter};\r\n+use crate::utils::create_command;\r\n+use home::rustup_home;\r\n+\r\n+use once_cell::sync::OnceCell;\r\n+\r\n+use guess_host_triple::guess_host_triple;\r\n+\r\n+type VersionString = String;\r\n+type ToolchainString = String;\r\n+\r\n+/// A struct to cache the output of any commands that need to be run.\r\n+struct RustToolingEnvironmentInfo {\r\n+    /// Rustup settings parsed from $HOME/.rustup/settings.toml\r\n+    rustup_settings: OnceCell<RustupSettings>,\r\n+    /// Rustc toolchain overrides as contained in the environment or files\r\n+    env_toolchain_override: OnceCell<Option<String>>,\r\n+    /// The output of `rustup rustc --version` with a fixed toolchain\r\n+    rustup_rustc_output: OnceCell<RustupRunRustcVersionOutcome>,\r\n+    /// The output of running rustc -vV. Only called if rustup rustc fails or\r\n+    /// is unavailable.\r\n+    rustc_verbose_output: OnceCell<Option<(VersionString, ToolchainString)>>,\r\n+}\r\n+\r\n+impl RustToolingEnvironmentInfo {\r\n+    fn new() -> Self {\r\n+        Self {\r\n+            rustup_settings: OnceCell::new(),\r\n+            env_toolchain_override: OnceCell::new(),\r\n+            rustup_rustc_output: OnceCell::new(),\r\n+            rustc_verbose_output: OnceCell::new(),\r\n+        }\r\n+    }\r\n+\r\n+    fn get_rustup_settings(&self, context: &Context) -> &RustupSettings {\r\n+        self.rustup_settings\r\n+            .get_or_init(|| RustupSettings::load(context).unwrap_or_default())\r\n+    }\r\n+\r\n+    /// Gets any environmental toolchain overrides without downloading cargo toolchains\r\n+    fn get_env_toolchain_override(&self, context: &Context) -> Option<&str> {\r\n+        // `$CARGO_HOME/bin/rustc(.exe) --version` may attempt installing a rustup toolchain.\r\n+        // https://github.com/starship/starship/issues/417\r\n+        //\r\n+        // To display appropriate versions preventing `rustc` from downloading toolchains, we have to\r\n+        // check\r\n+        // 1. `$RUSTUP_TOOLCHAIN`\r\n+        // 2. `rustup override list`\r\n+        // 3. `rust-toolchain` or `rust-toolchain.toml` in `.` or parent directories\r\n+        // 4. `rustup default`\r\n+        // as `rustup` does.\r\n+        // https://github.com/rust-lang/rustup.rs/tree/eb694fcada7becc5d9d160bf7c623abe84f8971d#override-precedence\r\n+        //\r\n+        // Probably we have no other way to know whether any toolchain override is specified for the\r\n+        // current directory. The following commands also cause toolchain installations.\r\n+        // - `rustup show`\r\n+        // - `rustup show active-toolchain`\r\n+        // - `rustup which`\r\n+        self.env_toolchain_override\r\n+            .get_or_init(|| {\r\n+                let out = env_rustup_toolchain(context)\r\n+                    .or_else(|| {\r\n+                        self.get_rustup_settings(context)\r\n+                            .lookup_override(context.current_dir.as_path())\r\n+                    })\r\n+                    .or_else(|| find_rust_toolchain_file(context))\r\n+                    .or_else(|| execute_rustup_default(context));\r\n+\r\n+                log::debug!(\"Environmental toolchain override is {:?}\", out);\r\n+                out\r\n+            })\r\n+            .as_deref()\r\n+    }\r\n+\r\n+    /// Gets the output of running `rustup rustc --version` with a toolchain\r\n+    /// specified by self.get_env_toolchain_override()\r\n+    fn get_rustup_rustc_version(&self, context: &Context) -> &RustupRunRustcVersionOutcome {\r\n+        self.rustup_rustc_output.get_or_init(|| {\r\n+            let out = if let Some(toolchain) = self.get_env_toolchain_override(context) {\r\n+                create_command(\"rustup\")\r\n+                    .and_then(|mut cmd| {\r\n+                        cmd.args(&[\"run\", toolchain, \"rustc\", \"--version\"])\r\n+                            .current_dir(&context.current_dir)\r\n+                            .output()\r\n+                    })\r\n+                    .map(extract_toolchain_from_rustup_run_rustc_version)\r\n+                    .unwrap_or(RustupRunRustcVersionOutcome::RustupNotWorking)\r\n+            } else {\r\n+                RustupRunRustcVersionOutcome::ToolchainUnknown\r\n+            };\r\n+\r\n+            log::debug!(\"Rustup rustc version is {:?}\", out);\r\n+            out\r\n+        })\r\n+    }\r\n+\r\n+    /// Gets the (version, toolchain) string as returned by `rustc -vV`\r\n+    fn get_rustc_verbose_version(&self, context: &Context) -> Option<(&str, &str)> {\r\n+        let toolchain = self.get_rustup_settings(context).default_toolchain();\r\n+\r\n+        self.rustc_verbose_output\r\n+            .get_or_init(|| {\r\n+                let Output { status, stdout, .. } = create_command(\"rustc\")\r\n+                    .and_then(|mut cmd| {\r\n+                        cmd.args(&[\"-Vv\"])\r\n+                            .current_dir(&context.current_dir)\r\n+                            .output()\r\n+                    })\r\n+                    .ok()?;\r\n+                if !status.success() {\r\n+                    return None;\r\n+                }\r\n+                let out =\r\n+                    format_rustc_version_verbose(std::str::from_utf8(&stdout).ok()?, toolchain);\r\n+\r\n+                log::debug!(\"Rustup verbose version is {:?}\", out);\r\n+                out\r\n+            })\r\n+            .as_ref()\r\n+            .map(|(x, y)| (&x[..], &y[..]))\r\n+    }\r\n+}\r\n+\r\n+/// Creates a module with the current Rust version\r\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\r\n+    let mut module = context.new_module(\"rust\");\r\n+    let config = RustConfig::try_load(module.config);\r\n+\r\n+    let is_rs_project = context\r\n+        .try_begin_scan()?\r\n+        .set_files(&config.detect_files)\r\n+        .set_extensions(&config.detect_extensions)\r\n+        .set_folders(&config.detect_folders)\r\n+        .is_match();\r\n+\r\n+    if !is_rs_project {\r\n+        return None;\r\n+    }\r\n+\r\n+    let rust_env_info = RustToolingEnvironmentInfo::new();\r\n+\r\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\r\n+        formatter\r\n+            .map_meta(|var, _| match var {\r\n+                \"symbol\" => Some(config.symbol),\r\n+                _ => None,\r\n+            })\r\n+            .map_style(|variable| match variable {\r\n+                \"style\" => Some(Ok(config.style)),\r\n+                _ => None,\r\n+            })\r\n+            .map(|variable| match variable {\r\n+                \"version\" => get_module_version(context, &config, &rust_env_info).map(Ok),\r\n+                \"numver\" => get_module_numeric_version(context, &config, &rust_env_info).map(Ok),\r\n+                \"toolchain\" => get_toolchain_version(context, &config, &rust_env_info).map(Ok),\r\n+                _ => None,\r\n+            })\r\n+            .parse(None, Some(context))\r\n+    });\r\n+\r\n+    module.set_segments(match parsed {\r\n+        Ok(segments) => segments,\r\n+        Err(error) => {\r\n+            log::warn!(\"Error in module `rust`:\\n{}\", error);\r\n+            return None;\r\n+        }\r\n+    });\r\n+\r\n+    Some(module)\r\n+}\r\n+\r\n+fn get_module_version(\r\n+    context: &Context,\r\n+    config: &RustConfig,\r\n+    rust_env_info: &RustToolingEnvironmentInfo,\r\n+) -> Option<String> {\r\n+    type Outcome = RustupRunRustcVersionOutcome;\r\n+\r\n+    match rust_env_info.get_rustup_rustc_version(context) {\r\n+        Outcome::RustcVersion(rustc_version) => {\r\n+            format_rustc_version(rustc_version, config.version_format)\r\n+        }\r\n+        Outcome::RustupNotWorking | Outcome::ToolchainUnknown => {\r\n+            // If `rustup` can't be executed, or there is no environmental toolchain, we can\r\n+            // execute `rustc --version` without triggering a toolchain download\r\n+            format_rustc_version(&execute_rustc_version(context)?, config.version_format)\r\n+        }\r\n+        Outcome::ToolchainNotInstalled(name) => Some(name.to_string()),\r\n+        Outcome::Err => None,\r\n+    }\r\n+}\r\n+\r\n+fn get_module_numeric_version(\r\n+    context: &Context,\r\n+    _config: &RustConfig,\r\n+    rust_env_info: &RustToolingEnvironmentInfo,\r\n+) -> Option<String> {\r\n+    type Outcome = RustupRunRustcVersionOutcome;\r\n+\r\n+    match rust_env_info.get_rustup_rustc_version(context) {\r\n+        Outcome::RustcVersion(version) => {\r\n+            let release = version.split_whitespace().nth(1).unwrap_or(version);\r\n+            Some(format_semver(release))\r\n+        }\r\n+        Outcome::RustupNotWorking | Outcome::ToolchainUnknown => {\r\n+            let (numver, _toolchain) = rust_env_info.get_rustc_verbose_version(context)?;\r\n+            Some(numver.to_string())\r\n+        }\r\n+        Outcome::ToolchainNotInstalled(_) | RustupRunRustcVersionOutcome::Err => None,\r\n+    }\r\n+}\r\n+\r\n+fn get_toolchain_version(\r\n+    context: &Context,\r\n+    _config: &RustConfig,\r\n+    rust_env_info: &RustToolingEnvironmentInfo,\r\n+) -> Option<String> {\r\n+    type Outcome = RustupRunRustcVersionOutcome;\r\n+\r\n+    let default_host_triple = rust_env_info\r\n+        .get_rustup_settings(context)\r\n+        .default_host_triple()\r\n+        .or_else(|| guess_host_triple());\r",
+    "path": "src/modules/rust.rs",
+    "commit_id": "87802e469e800479fec51d56c574cdefccd05e5b",
+    "original_commit_id": "5162e4dca2eca5540f47aaedacd278d4d437ae45",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n        .or_else(guess_host_triple);\r\n```",
+    "created_at": "2022-05-04T20:19:04Z",
+    "updated_at": "2022-05-04T20:19:04Z",
+    "html_url": "https://github.com/starship/starship/pull/3414#discussion_r865317031",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3414",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/865317031"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3414#discussion_r865317031"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3414"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/865317031/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 233,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 834,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/865337399",
+    "pull_request_review_id": 962572395,
+    "id": 865337399,
+    "node_id": "PRRC_kwDOCqswNs4zlAA3",
+    "diff_hunk": "@@ -1,601 +1,923 @@\n-use std::fs;\n-use std::path::Path;\n-#[cfg(windows)]\n-use std::path::PathBuf;\n-use std::process::Output;\n-\n-use serde::Deserialize;\n-\n-use super::{Context, Module, ModuleConfig};\n-\n-use crate::configs::rust::RustConfig;\n-use crate::formatter::{StringFormatter, VersionFormatter};\n-use crate::utils::create_command;\n-\n-/// Creates a module with the current Rust version\n-pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n-    let mut module = context.new_module(\"rust\");\n-    let config = RustConfig::try_load(module.config);\n-\n-    let is_rs_project = context\n-        .try_begin_scan()?\n-        .set_files(&config.detect_files)\n-        .set_extensions(&config.detect_extensions)\n-        .set_folders(&config.detect_folders)\n-        .is_match();\n-\n-    if !is_rs_project {\n-        return None;\n-    }\n-\n-    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n-        formatter\n-            .map_meta(|var, _| match var {\n-                \"symbol\" => Some(config.symbol),\n-                _ => None,\n-            })\n-            .map_style(|variable| match variable {\n-                \"style\" => Some(Ok(config.style)),\n-                _ => None,\n-            })\n-            .map(|variable| match variable {\n-                // This may result in multiple calls to `get_module_version` when a user have\n-                // multiple `$version` variables defined in `format`.\n-                \"version\" => get_module_version(context, &config).map(Ok),\n-                _ => None,\n-            })\n-            .parse(None, Some(context))\n-    });\n-\n-    module.set_segments(match parsed {\n-        Ok(segments) => segments,\n-        Err(error) => {\n-            log::warn!(\"Error in module `rust`:\\n{}\", error);\n-            return None;\n-        }\n-    });\n-\n-    Some(module)\n-}\n-\n-fn get_module_version(context: &Context, config: &RustConfig) -> Option<String> {\n-    // `$CARGO_HOME/bin/rustc(.exe) --version` may attempt installing a rustup toolchain.\n-    // https://github.com/starship/starship/issues/417\n-    //\n-    // To display appropriate versions preventing `rustc` from downloading toolchains, we have to\n-    // check\n-    // 1. `$RUSTUP_TOOLCHAIN`\n-    // 2. `rustup override list`\n-    // 3. `rust-toolchain` or `rust-toolchain.toml` in `.` or parent directories\n-    // 4. `rustup default`\n-    // as `rustup` does.\n-    // https://github.com/rust-lang/rustup.rs/tree/eb694fcada7becc5d9d160bf7c623abe84f8971d#override-precedence\n-    //\n-    // Probably we have no other way to know whether any toolchain override is specified for the\n-    // current directory. The following commands also cause toolchain installations.\n-    // - `rustup show`\n-    // - `rustup show active-toolchain`\n-    // - `rustup which`\n-    if let Some(toolchain) = env_rustup_toolchain(context)\n-        .or_else(|| execute_rustup_override_list(context))\n-        .or_else(|| find_rust_toolchain_file(context))\n-        .or_else(|| execute_rustup_default(context))\n-    {\n-        match execute_rustup_run_rustc_version(context, &toolchain) {\n-            RustupRunRustcVersionOutcome::RustcVersion(rustc_version) => {\n-                format_rustc_version(&rustc_version, config.version_format)\n-            }\n-            RustupRunRustcVersionOutcome::ToolchainName(toolchain) => Some(toolchain),\n-            RustupRunRustcVersionOutcome::RustupNotWorking => {\n-                // If `rustup` is not in `$PATH` or cannot be executed for other reasons, we can\n-                // safely execute `rustc --version`.\n-                format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n-            }\n-            RustupRunRustcVersionOutcome::Err => None,\n-        }\n-    } else {\n-        format_rustc_version(&execute_rustc_version(context)?, config.version_format)\n-    }\n-}\n-\n-fn env_rustup_toolchain(context: &Context) -> Option<String> {\n-    let val = context.get_env(\"RUSTUP_TOOLCHAIN\")?;\n-    Some(val.trim().to_owned())\n-}\n-\n-fn execute_rustup_override_list(context: &Context) -> Option<String> {\n-    extract_toolchain_from_rustup_override_list(\n-        &context.exec_cmd(\"rustup\", &[\"override\", \"list\"])?.stdout,\n-        &context.current_dir,\n-    )\n-}\n-\n-fn execute_rustup_default(context: &Context) -> Option<String> {\n-    // `rustup default` output is:\n-    //    stable-x86_64-apple-darwin (default)\n-    context\n-        .exec_cmd(\"rustup\", &[\"default\"])?\n-        .stdout\n-        .split_whitespace()\n-        .next()\n-        .map(str::to_owned)\n-}\n-\n-fn extract_toolchain_from_rustup_override_list(stdout: &str, cwd: &Path) -> Option<String> {\n-    if stdout == \"no overrides\\n\" {\n-        return None;\n-    }\n-\n-    #[cfg(windows)]\n-    let cwd = {\n-        // use display version of path, also allows stripping \\\\?\\\n-        let cwd = cwd.to_string_lossy();\n-        // rustup strips \\\\?\\ prefix,\n-        // so we do the same and convert back to a `Path`\n-        PathBuf::from(cwd.strip_prefix(r\"\\\\?\\\").unwrap_or(&cwd))\n-    };\n-\n-    stdout\n-        .lines()\n-        .filter_map(|line| {\n-            let (dir, toolchain) = line.split_once('\\t')?;\n-            Some((dir.trim(), toolchain.trim()))\n-        })\n-        // find most specific match\n-        .filter(|(dir, _)| cwd.starts_with(dir))\n-        .max_by_key(|(dir, _)| dir.len())\n-        .map(|(_, toolchain)| toolchain.to_owned())\n-}\n-\n-fn find_rust_toolchain_file(context: &Context) -> Option<String> {\n-    // Look for 'rust-toolchain' or 'rust-toolchain.toml' as rustup does.\n-    // for more information:\n-    // https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file\n-    // for the implementation in 'rustup':\n-    // https://github.com/rust-lang/rustup/blob/a45e4cd21748b04472fce51ba29999ee4b62bdec/src/config.rs#L631\n-\n-    #[derive(Deserialize)]\n-    struct OverrideFile {\n-        toolchain: ToolchainSection,\n-    }\n-\n-    #[derive(Deserialize)]\n-    struct ToolchainSection {\n-        channel: Option<String>,\n-    }\n-\n-    fn read_channel(path: &Path, only_toml: bool) -> Option<String> {\n-        let contents = fs::read_to_string(path).ok()?;\n-\n-        match contents.lines().count() {\n-            0 => None,\n-            1 if !only_toml => Some(contents),\n-            _ => {\n-                toml::from_str::<OverrideFile>(&contents)\n-                    .ok()?\n-                    .toolchain\n-                    .channel\n-            }\n-        }\n-        .filter(|c| !c.trim().is_empty())\n-        .map(|c| c.trim().to_owned())\n-    }\n-\n-    if context\n-        .dir_contents()\n-        .map_or(false, |dir| dir.has_file(\"rust-toolchain\"))\n-    {\n-        if let Some(toolchain) = read_channel(Path::new(\"rust-toolchain\"), false) {\n-            return Some(toolchain);\n-        }\n-    }\n-\n-    if context\n-        .dir_contents()\n-        .map_or(false, |dir| dir.has_file(\"rust-toolchain.toml\"))\n-    {\n-        if let Some(toolchain) = read_channel(Path::new(\"rust-toolchain.toml\"), true) {\n-            return Some(toolchain);\n-        }\n-    }\n-\n-    let mut dir = &*context.current_dir;\n-    loop {\n-        if let Some(toolchain) = read_channel(&dir.join(\"rust-toolchain\"), false) {\n-            return Some(toolchain);\n-        }\n-        if let Some(toolchain) = read_channel(&dir.join(\"rust-toolchain.toml\"), true) {\n-            return Some(toolchain);\n-        }\n-        dir = dir.parent()?;\n-    }\n-}\n-\n-fn execute_rustup_run_rustc_version(\n-    context: &Context,\n-    toolchain: &str,\n-) -> RustupRunRustcVersionOutcome {\n-    create_command(\"rustup\")\n-        .and_then(|mut cmd| {\n-            cmd.args(&[\"run\", toolchain, \"rustc\", \"--version\"])\n-                .current_dir(&context.current_dir)\n-                .output()\n-        })\n-        .map(extract_toolchain_from_rustup_run_rustc_version)\n-        .unwrap_or(RustupRunRustcVersionOutcome::RustupNotWorking)\n-}\n-\n-fn extract_toolchain_from_rustup_run_rustc_version(output: Output) -> RustupRunRustcVersionOutcome {\n-    if output.status.success() {\n-        if let Ok(output) = String::from_utf8(output.stdout) {\n-            return RustupRunRustcVersionOutcome::RustcVersion(output);\n-        }\n-    } else if let Ok(stderr) = String::from_utf8(output.stderr) {\n-        if stderr.starts_with(\"error: toolchain '\") && stderr.ends_with(\"' is not installed\\n\") {\n-            let stderr = stderr\n-                [\"error: toolchain '\".len()..stderr.len() - \"' is not installed\\n\".len()]\n-                .to_owned();\n-            return RustupRunRustcVersionOutcome::ToolchainName(stderr);\n-        }\n-    }\n-    RustupRunRustcVersionOutcome::Err\n-}\n-\n-fn execute_rustc_version(context: &Context) -> Option<String> {\n-    context\n-        .exec_cmd(\"rustc\", &[\"--version\"])\n-        .map(|o| o.stdout)\n-        .filter(|s| !s.is_empty())\n-}\n-\n-fn format_rustc_version(rustc_version: &str, version_format: &str) -> Option<String> {\n-    let version = rustc_version\n-        // split into [\"rustc\", \"1.34.0\", ...]\n-        .split_whitespace()\n-        // get down to \"1.34.0\"\n-        .nth(1)?;\n-\n-    match VersionFormatter::format_version(version, version_format) {\n-        Ok(formatted) => Some(formatted),\n-        Err(error) => {\n-            log::warn!(\"Error formatting `rust` version:\\n{}\", error);\n-            Some(format!(\"v{}\", version))\n-        }\n-    }\n-}\n-\n-#[derive(Debug, PartialEq)]\n-enum RustupRunRustcVersionOutcome {\n-    RustcVersion(String),\n-    ToolchainName(String),\n-    RustupNotWorking,\n-    Err,\n-}\n-\n-#[cfg(test)]\n-mod tests {\n-    use crate::context::{Shell, Target};\n-    use once_cell::sync::Lazy;\n-    use std::io;\n-    use std::process::{ExitStatus, Output};\n-\n-    use super::*;\n-\n-    #[test]\n-    fn test_extract_toolchain_from_rustup_override_list() {\n-        static NO_OVERRIDES_INPUT: &str = \"no overrides\\n\";\n-        static NO_OVERRIDES_CWD: &str = \"\";\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(\n-                NO_OVERRIDES_INPUT,\n-                NO_OVERRIDES_CWD.as_ref(),\n-            ),\n-            None,\n-        );\n-\n-        static OVERRIDES_INPUT: &str =\n-            \"/home/user/src/a                \\t                beta-x86_64-unknown-linux-gnu\\n\\\n-             /home/user/src/b                \\t                nightly-x86_64-unknown-linux-gnu\\n\\\n-             /home/user/src/b/d c            \\t                stable-x86_64-pc-windows-msvc\\n\";\n-        static OVERRIDES_CWD_A: &str = \"/home/user/src/a/src\";\n-        static OVERRIDES_CWD_B: &str = \"/home/user/src/b/tests\";\n-        static OVERRIDES_CWD_C: &str = \"/home/user/src/c/examples\";\n-        static OVERRIDES_CWD_D: &str = \"/home/user/src/b/d c/spaces\";\n-        static OVERRIDES_CWD_E: &str = \"/home/user/src/b_and_more\";\n-        static OVERRIDES_CWD_F: &str = \"/home/user/src/b\";\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_A.as_ref()),\n-            Some(\"beta-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_B.as_ref()),\n-            Some(\"nightly-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_C.as_ref()),\n-            None,\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_D.as_ref()),\n-            Some(\"stable-x86_64-pc-windows-msvc\".to_owned()),\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_E.as_ref()),\n-            None,\n-        );\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_F.as_ref()),\n-            Some(\"nightly-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-    }\n-\n-    #[test]\n-    #[cfg(windows)]\n-    fn test_extract_toolchain_from_rustup_override_list_win() {\n-        static OVERRIDES_INPUT: &str =\n-            \"C:\\\\src                \\t                beta-x86_64-unknown-linux-gnu\\n\";\n-        static OVERRIDES_CWD_A: &str = r\"\\\\?\\C:\\src\";\n-        static OVERRIDES_CWD_B: &str = r\"C:\\src\";\n-\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_A.as_ref()),\n-            Some(\"beta-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-\n-        assert_eq!(\n-            extract_toolchain_from_rustup_override_list(OVERRIDES_INPUT, OVERRIDES_CWD_B.as_ref()),\n-            Some(\"beta-x86_64-unknown-linux-gnu\".to_owned()),\n-        );\n-    }\n-\n-    #[cfg(any(unix, windows))]\n-    #[test]\n-    fn test_extract_toolchain_from_rustup_run_rustc_version() {\n-        #[cfg(unix)]\n-        use std::os::unix::process::ExitStatusExt as _;\n-        #[cfg(windows)]\n-        use std::os::windows::process::ExitStatusExt as _;\n-\n-        static RUSTC_VERSION: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(0),\n-            stdout: b\"rustc 1.34.0\\n\"[..].to_owned(),\n-            stderr: vec![],\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(RUSTC_VERSION.clone()),\n-            RustupRunRustcVersionOutcome::RustcVersion(\"rustc 1.34.0\\n\".to_owned()),\n-        );\n-\n-        static TOOLCHAIN_NAME: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(1),\n-            stdout: vec![],\n-            stderr: b\"error: toolchain 'channel-triple' is not installed\\n\"[..].to_owned(),\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(TOOLCHAIN_NAME.clone()),\n-            RustupRunRustcVersionOutcome::ToolchainName(\"channel-triple\".to_owned()),\n-        );\n-\n-        static INVALID_STDOUT: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(0),\n-            stdout: b\"\\xc3\\x28\"[..].to_owned(),\n-            stderr: vec![],\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(INVALID_STDOUT.clone()),\n-            RustupRunRustcVersionOutcome::Err,\n-        );\n-\n-        static INVALID_STDERR: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(1),\n-            stdout: vec![],\n-            stderr: b\"\\xc3\\x28\"[..].to_owned(),\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(INVALID_STDERR.clone()),\n-            RustupRunRustcVersionOutcome::Err,\n-        );\n-\n-        static UNEXPECTED_FORMAT_OF_ERROR: Lazy<Output> = Lazy::new(|| Output {\n-            status: ExitStatus::from_raw(1),\n-            stdout: vec![],\n-            stderr: b\"error:\"[..].to_owned(),\n-        });\n-        assert_eq!(\n-            extract_toolchain_from_rustup_run_rustc_version(UNEXPECTED_FORMAT_OF_ERROR.clone()),\n-            RustupRunRustcVersionOutcome::Err,\n-        );\n-    }\n-\n-    #[test]\n-    fn test_format_rustc_version() {\n-        let config = RustConfig::default();\n-        let rustc_stable = \"rustc 1.34.0 (91856ed52 2019-04-10)\";\n-        let rustc_beta = \"rustc 1.34.0-beta.1 (2bc1d406d 2019-04-10)\";\n-        let rustc_nightly = \"rustc 1.34.0-nightly (b139669f3 2019-04-10)\";\n-        assert_eq!(\n-            format_rustc_version(rustc_nightly, config.version_format),\n-            Some(\"v1.34.0-nightly\".to_string())\n-        );\n-        assert_eq!(\n-            format_rustc_version(rustc_beta, config.version_format),\n-            Some(\"v1.34.0-beta.1\".to_string())\n-        );\n-        assert_eq!(\n-            format_rustc_version(rustc_stable, config.version_format),\n-            Some(\"v1.34.0\".to_string())\n-        );\n-        assert_eq!(\n-            format_rustc_version(\"rustc 1.34.0\", config.version_format),\n-            Some(\"v1.34.0\".to_string())\n-        );\n-    }\n-\n-    #[test]\n-    fn test_find_rust_toolchain_file() -> io::Result<()> {\n-        // `rust-toolchain` with toolchain in one line\n-        let dir = tempfile::tempdir()?;\n-        fs::write(dir.path().join(\"rust-toolchain\"), \"1.34.0\")?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain` in toml format\n-        let dir = tempfile::tempdir()?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain\"),\n-            \"[toolchain]\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain` in toml format with new lines\n-        let dir = tempfile::tempdir()?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain\"),\n-            \"\\n\\n[toolchain]\\n\\n\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain` in parent directory.\n-        let dir = tempfile::tempdir()?;\n-        let child_dir_path = dir.path().join(\"child\");\n-        fs::create_dir(&child_dir_path)?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain\"),\n-            \"\\n\\n[toolchain]\\n\\n\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            child_dir_path.clone(),\n-            child_dir_path,\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain.toml` with toolchain in one line\n-        // This should not work!\n-        // See https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file\n-        let dir = tempfile::tempdir()?;\n-        fs::write(dir.path().join(\"rust-toolchain.toml\"), \"1.34.0\")?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(find_rust_toolchain_file(&context), None);\n-        dir.close()?;\n-\n-        // `rust-toolchain.toml` in toml format\n-        let dir = tempfile::tempdir()?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain.toml\"),\n-            \"[toolchain]\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain.toml` in toml format with new lines\n-        let dir = tempfile::tempdir()?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain.toml\"),\n-            \"\\n\\n[toolchain]\\n\\n\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            dir.path().into(),\n-            dir.path().into(),\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()?;\n-\n-        // `rust-toolchain.toml` in parent directory.\n-        let dir = tempfile::tempdir()?;\n-        let child_dir_path = dir.path().join(\"child\");\n-        fs::create_dir(&child_dir_path)?;\n-        fs::write(\n-            dir.path().join(\"rust-toolchain.toml\"),\n-            \"\\n\\n[toolchain]\\n\\n\\nchannel = \\\"1.34.0\\\"\",\n-        )?;\n-\n-        let context = Context::new_with_shell_and_path(\n-            Default::default(),\n-            Shell::Unknown,\n-            Target::Main,\n-            child_dir_path.clone(),\n-            child_dir_path,\n-        );\n-\n-        assert_eq!(\n-            find_rust_toolchain_file(&context),\n-            Some(\"1.34.0\".to_owned())\n-        );\n-        dir.close()\n-    }\n-}\n+use std::fs;\r\n+use std::path::{Path, PathBuf};\r\n+use std::process::Output;\r\n+\r\n+use serde::Deserialize;\r\n+use std::collections::HashMap;\r\n+\r\n+use super::{Context, Module, ModuleConfig};\r\n+\r\n+use crate::configs::rust::RustConfig;\r\n+use crate::formatter::{StringFormatter, VersionFormatter};\r\n+use crate::utils::create_command;\r\n+use home::rustup_home;\r\n+\r\n+use once_cell::sync::OnceCell;\r\n+\r\n+use guess_host_triple::guess_host_triple;\r\n+\r\n+type VersionString = String;\r\n+type ToolchainString = String;\r\n+\r\n+/// A struct to cache the output of any commands that need to be run.\r\n+struct RustToolingEnvironmentInfo {\r\n+    /// Rustup settings parsed from $HOME/.rustup/settings.toml\r\n+    rustup_settings: OnceCell<RustupSettings>,\r\n+    /// Rustc toolchain overrides as contained in the environment or files\r\n+    env_toolchain_override: OnceCell<Option<String>>,\r\n+    /// The output of `rustup rustc --version` with a fixed toolchain\r\n+    rustup_rustc_output: OnceCell<RustupRunRustcVersionOutcome>,\r\n+    /// The output of running rustc -vV. Only called if rustup rustc fails or\r\n+    /// is unavailable.\r\n+    rustc_verbose_output: OnceCell<Option<(VersionString, ToolchainString)>>,\r\n+}\r\n+\r\n+impl RustToolingEnvironmentInfo {\r\n+    fn new() -> Self {\r\n+        Self {\r\n+            rustup_settings: OnceCell::new(),\r\n+            env_toolchain_override: OnceCell::new(),\r\n+            rustup_rustc_output: OnceCell::new(),\r\n+            rustc_verbose_output: OnceCell::new(),\r\n+        }\r\n+    }\r\n+\r\n+    fn get_rustup_settings(&self, context: &Context) -> &RustupSettings {\r\n+        self.rustup_settings\r\n+            .get_or_init(|| RustupSettings::load(context).unwrap_or_default())\r\n+    }\r\n+\r\n+    /// Gets any environmental toolchain overrides without downloading cargo toolchains\r\n+    fn get_env_toolchain_override(&self, context: &Context) -> Option<&str> {\r\n+        // `$CARGO_HOME/bin/rustc(.exe) --version` may attempt installing a rustup toolchain.\r\n+        // https://github.com/starship/starship/issues/417\r\n+        //\r\n+        // To display appropriate versions preventing `rustc` from downloading toolchains, we have to\r\n+        // check\r\n+        // 1. `$RUSTUP_TOOLCHAIN`\r\n+        // 2. `rustup override list`\r\n+        // 3. `rust-toolchain` or `rust-toolchain.toml` in `.` or parent directories\r\n+        // 4. `rustup default`\r\n+        // as `rustup` does.\r\n+        // https://github.com/rust-lang/rustup.rs/tree/eb694fcada7becc5d9d160bf7c623abe84f8971d#override-precedence\r\n+        //\r\n+        // Probably we have no other way to know whether any toolchain override is specified for the\r\n+        // current directory. The following commands also cause toolchain installations.\r\n+        // - `rustup show`\r\n+        // - `rustup show active-toolchain`\r\n+        // - `rustup which`\r\n+        self.env_toolchain_override\r\n+            .get_or_init(|| {\r\n+                let out = env_rustup_toolchain(context)\r\n+                    .or_else(|| {\r\n+                        self.get_rustup_settings(context)\r\n+                            .lookup_override(context.current_dir.as_path())\r\n+                    })\r\n+                    .or_else(|| find_rust_toolchain_file(context))\r\n+                    .or_else(|| execute_rustup_default(context));\r\n+\r\n+                log::debug!(\"Environmental toolchain override is {:?}\", out);\r\n+                out\r\n+            })\r\n+            .as_deref()\r\n+    }\r\n+\r\n+    /// Gets the output of running `rustup rustc --version` with a toolchain\r\n+    /// specified by self.get_env_toolchain_override()\r\n+    fn get_rustup_rustc_version(&self, context: &Context) -> &RustupRunRustcVersionOutcome {\r\n+        self.rustup_rustc_output.get_or_init(|| {\r\n+            let out = if let Some(toolchain) = self.get_env_toolchain_override(context) {\r\n+                create_command(\"rustup\")\r\n+                    .and_then(|mut cmd| {\r\n+                        cmd.args(&[\"run\", toolchain, \"rustc\", \"--version\"])\r\n+                            .current_dir(&context.current_dir)\r\n+                            .output()\r\n+                    })\r\n+                    .map(extract_toolchain_from_rustup_run_rustc_version)\r\n+                    .unwrap_or(RustupRunRustcVersionOutcome::RustupNotWorking)\r\n+            } else {\r\n+                RustupRunRustcVersionOutcome::ToolchainUnknown\r\n+            };\r\n+\r\n+            log::debug!(\"Rustup rustc version is {:?}\", out);\r\n+            out\r\n+        })\r\n+    }\r\n+\r\n+    /// Gets the (version, toolchain) string as returned by `rustc -vV`\r\n+    fn get_rustc_verbose_version(&self, context: &Context) -> Option<(&str, &str)> {\r\n+        let toolchain = self.get_rustup_settings(context).default_toolchain();\r\n+\r\n+        self.rustc_verbose_output\r\n+            .get_or_init(|| {\r\n+                let Output { status, stdout, .. } = create_command(\"rustc\")\r\n+                    .and_then(|mut cmd| {\r\n+                        cmd.args(&[\"-Vv\"])\r\n+                            .current_dir(&context.current_dir)\r\n+                            .output()\r\n+                    })\r\n+                    .ok()?;\r\n+                if !status.success() {\r\n+                    return None;\r\n+                }\r\n+                let out =\r\n+                    format_rustc_version_verbose(std::str::from_utf8(&stdout).ok()?, toolchain);\r\n+\r\n+                log::debug!(\"Rustup verbose version is {:?}\", out);\r\n+                out\r\n+            })\r\n+            .as_ref()\r\n+            .map(|(x, y)| (&x[..], &y[..]))\r\n+    }\r\n+}\r\n+\r\n+/// Creates a module with the current Rust version\r\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\r\n+    let mut module = context.new_module(\"rust\");\r\n+    let config = RustConfig::try_load(module.config);\r\n+\r\n+    let is_rs_project = context\r\n+        .try_begin_scan()?\r\n+        .set_files(&config.detect_files)\r\n+        .set_extensions(&config.detect_extensions)\r\n+        .set_folders(&config.detect_folders)\r\n+        .is_match();\r\n+\r\n+    if !is_rs_project {\r\n+        return None;\r\n+    }\r\n+\r\n+    let rust_env_info = RustToolingEnvironmentInfo::new();\r\n+\r\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\r\n+        formatter\r\n+            .map_meta(|var, _| match var {\r\n+                \"symbol\" => Some(config.symbol),\r\n+                _ => None,\r\n+            })\r\n+            .map_style(|variable| match variable {\r\n+                \"style\" => Some(Ok(config.style)),\r\n+                _ => None,\r\n+            })\r\n+            .map(|variable| match variable {\r\n+                \"version\" => get_module_version(context, &config, &rust_env_info).map(Ok),\r\n+                \"numver\" => get_module_numeric_version(context, &config, &rust_env_info).map(Ok),\r\n+                \"toolchain\" => get_toolchain_version(context, &config, &rust_env_info).map(Ok),\r\n+                _ => None,\r\n+            })\r\n+            .parse(None, Some(context))\r\n+    });\r\n+\r\n+    module.set_segments(match parsed {\r\n+        Ok(segments) => segments,\r\n+        Err(error) => {\r\n+            log::warn!(\"Error in module `rust`:\\n{}\", error);\r\n+            return None;\r\n+        }\r\n+    });\r\n+\r\n+    Some(module)\r\n+}\r\n+\r\n+fn get_module_version(\r\n+    context: &Context,\r\n+    config: &RustConfig,\r\n+    rust_env_info: &RustToolingEnvironmentInfo,\r\n+) -> Option<String> {\r\n+    type Outcome = RustupRunRustcVersionOutcome;\r\n+\r\n+    match rust_env_info.get_rustup_rustc_version(context) {\r\n+        Outcome::RustcVersion(rustc_version) => {\r\n+            format_rustc_version(rustc_version, config.version_format)\r\n+        }\r\n+        Outcome::RustupNotWorking | Outcome::ToolchainUnknown => {\r\n+            // If `rustup` can't be executed, or there is no environmental toolchain, we can\r\n+            // execute `rustc --version` without triggering a toolchain download\r\n+            format_rustc_version(&execute_rustc_version(context)?, config.version_format)\r\n+        }\r\n+        Outcome::ToolchainNotInstalled(name) => Some(name.to_string()),\r\n+        Outcome::Err => None,\r\n+    }\r\n+}\r\n+\r\n+fn get_module_numeric_version(\r\n+    context: &Context,\r\n+    _config: &RustConfig,\r\n+    rust_env_info: &RustToolingEnvironmentInfo,\r\n+) -> Option<String> {\r\n+    type Outcome = RustupRunRustcVersionOutcome;\r\n+\r\n+    match rust_env_info.get_rustup_rustc_version(context) {\r\n+        Outcome::RustcVersion(version) => {\r\n+            let release = version.split_whitespace().nth(1).unwrap_or(version);\r\n+            Some(format_semver(release))\r\n+        }\r\n+        Outcome::RustupNotWorking | Outcome::ToolchainUnknown => {\r\n+            let (numver, _toolchain) = rust_env_info.get_rustc_verbose_version(context)?;\r\n+            Some(numver.to_string())\r\n+        }\r\n+        Outcome::ToolchainNotInstalled(_) | RustupRunRustcVersionOutcome::Err => None,\r\n+    }\r\n+}\r\n+\r\n+fn get_toolchain_version(\r\n+    context: &Context,\r\n+    _config: &RustConfig,\r\n+    rust_env_info: &RustToolingEnvironmentInfo,\r\n+) -> Option<String> {\r\n+    type Outcome = RustupRunRustcVersionOutcome;\r\n+\r\n+    let default_host_triple = rust_env_info\r\n+        .get_rustup_settings(context)\r\n+        .default_host_triple()\r\n+        .or_else(|| guess_host_triple());\r",
+    "path": "src/modules/rust.rs",
+    "commit_id": "87802e469e800479fec51d56c574cdefccd05e5b",
+    "original_commit_id": "5162e4dca2eca5540f47aaedacd278d4d437ae45",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Somehow, there's a lifetime error that happens when you do that. I don't have the motivation to debug lifetime issues on chained methods at the moment, which is why I have this [weird set of assignments](https://github.com/starship/starship/pull/3414/files#diff-9916a3a9c5b9f49331e4569e3ef2d228d451eb39a98d44fcc37df570534b730fR233) in the current commit, but that's definitely something to tackle later.",
+    "created_at": "2022-05-04T20:28:44Z",
+    "updated_at": "2022-05-04T20:28:44Z",
+    "html_url": "https://github.com/starship/starship/pull/3414#discussion_r865337399",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3414",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/865337399"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3414#discussion_r865337399"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3414"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/865337399/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 233,
+    "side": "RIGHT",
+    "in_reply_to_id": 865317031,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 834,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

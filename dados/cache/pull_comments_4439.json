@@ -1,0 +1,349 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1995689261",
+    "pull_request_review_id": 2685761455,
+    "id": 1995689261,
+    "node_id": "PRRC_kwDOCqswNs52880t",
+    "diff_hunk": "@@ -44,6 +44,29 @@ Or for Cmd (Windows) would be adding this line to your `starship.lua`:\n os.setenv('STARSHIP_CONFIG', 'C:\\\\Users\\\\user\\\\example\\\\non\\\\default\\\\path\\\\starship.toml')\n ```\n \n+### Loading additional configuration from the environment\n+\n+In addition to the configuration file, starship also allows you to set configuration values by using environment variables. The variables should be formatted like this: `STARSHIP_CONFIG__SECTION_NAME__KEY=value`. The configuration keys in the environment need to start with `STARSHIP_CONFIG__` and table keys need to be separated with `__`.\n+\n+In most POSIX-like shells, you can set the `disabled` key of the `status` module to `false` with the following:\n+\n+```sh\n+export STARSHIP_CONFIG__STATUS__DISABLED=false\n+```\n+\n+Equivalently in PowerShell (Windows) would be adding this line:\n+\n+```powershell\n+$ENV:STARSHIP_CONFIG__STATUS__DISABLED = \"false\"\n+```\n+\n+Other shells may use a different syntax to set environment variables.\n+Any values set in the environment will be parsed as TOML-values, not as full documents. If the environment values cannot be directly parsed as TOML-values, they are treated as strings.\n+\n+This means that `true` is parsed as a boolean when it's not quoted, but is parsed as a string when it is quoted. In contrast, when a value that cannot be parsed as a TOML value, such as `starship` is found, it is treated as a string (`\"starship\"`).\n+\n+Because the values are TOML-values the `[table]` syntax will not work, but inline tables `{ a = 1 }` or arrays `[ 0, 1 ]`.",
+    "path": "docs/config/README.md",
+    "commit_id": "1a2fb00054067b42d052b3617e424fcd8bc2bbc0",
+    "original_commit_id": "11210bf0ad80c447d41036ef1160f3fd0b7d6568",
+    "user": {
+      "login": "vergenzt",
+      "id": 1725615,
+      "node_id": "MDQ6VXNlcjE3MjU2MTU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1725615?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vergenzt",
+      "html_url": "https://github.com/vergenzt",
+      "followers_url": "https://api.github.com/users/vergenzt/followers",
+      "following_url": "https://api.github.com/users/vergenzt/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vergenzt/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vergenzt/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vergenzt/subscriptions",
+      "organizations_url": "https://api.github.com/users/vergenzt/orgs",
+      "repos_url": "https://api.github.com/users/vergenzt/repos",
+      "events_url": "https://api.github.com/users/vergenzt/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vergenzt/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Could this eager parsing logic (and the expansiveness of the environment configurability) be a security risk?\r\n\r\nIf this PR were merged then an attacker with write access to environment variables would be able to escalate that access into remote code execution (RCE) by setting `STARSHIP_CONFIG__CUSTOM__MY_RCE_MODULE__WHEN=<...open_rce_shell_command>`.\r\n\r\nHaving write access to environment variables seems like pretty high privilege to me already so being able to escalate that into RCE may not be an issue, but I'm not sure. 🤷 ",
+    "created_at": "2025-03-14T14:30:01Z",
+    "updated_at": "2025-03-14T14:30:01Z",
+    "html_url": "https://github.com/starship/starship/pull/4439#discussion_r1995689261",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4439",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1995689261"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4439#discussion_r1995689261"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4439"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1995689261/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 64,
+    "original_start_line": 64,
+    "start_side": "RIGHT",
+    "line": 68,
+    "original_line": 68,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 25,
+    "position": 25,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1995693299",
+    "pull_request_review_id": 2685768507,
+    "id": 1995693299,
+    "node_id": "PRRC_kwDOCqswNs5289zz",
+    "diff_hunk": "@@ -44,6 +44,29 @@ Or for Cmd (Windows) would be adding this line to your `starship.lua`:\n os.setenv('STARSHIP_CONFIG', 'C:\\\\Users\\\\user\\\\example\\\\non\\\\default\\\\path\\\\starship.toml')\n ```\n \n+### Loading additional configuration from the environment\n+\n+In addition to the configuration file, starship also allows you to set configuration values by using environment variables. The variables should be formatted like this: `STARSHIP_CONFIG__SECTION_NAME__KEY=value`. The configuration keys in the environment need to start with `STARSHIP_CONFIG__` and table keys need to be separated with `__`.\n+\n+In most POSIX-like shells, you can set the `disabled` key of the `status` module to `false` with the following:\n+\n+```sh\n+export STARSHIP_CONFIG__STATUS__DISABLED=false\n+```\n+\n+Equivalently in PowerShell (Windows) would be adding this line:\n+\n+```powershell\n+$ENV:STARSHIP_CONFIG__STATUS__DISABLED = \"false\"\n+```\n+\n+Other shells may use a different syntax to set environment variables.\n+Any values set in the environment will be parsed as TOML-values, not as full documents. If the environment values cannot be directly parsed as TOML-values, they are treated as strings.\n+\n+This means that `true` is parsed as a boolean when it's not quoted, but is parsed as a string when it is quoted. In contrast, when a value that cannot be parsed as a TOML value, such as `starship` is found, it is treated as a string (`\"starship\"`).\n+\n+Because the values are TOML-values the `[table]` syntax will not work, but inline tables `{ a = 1 }` or arrays `[ 0, 1 ]`.",
+    "path": "docs/config/README.md",
+    "commit_id": "1a2fb00054067b42d052b3617e424fcd8bc2bbc0",
+    "original_commit_id": "11210bf0ad80c447d41036ef1160f3fd0b7d6568",
+    "user": {
+      "login": "vergenzt",
+      "id": 1725615,
+      "node_id": "MDQ6VXNlcjE3MjU2MTU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1725615?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vergenzt",
+      "html_url": "https://github.com/vergenzt",
+      "followers_url": "https://api.github.com/users/vergenzt/followers",
+      "following_url": "https://api.github.com/users/vergenzt/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vergenzt/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vergenzt/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vergenzt/subscriptions",
+      "organizations_url": "https://api.github.com/users/vergenzt/orgs",
+      "repos_url": "https://api.github.com/users/vergenzt/repos",
+      "events_url": "https://api.github.com/users/vergenzt/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vergenzt/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Some food for thought: https://www.oreilly.com/library/view/secure-programming-cookbook/0596003943/ch01s01.html\r\n\r\n> _Attackers can often control the value of important environment variables, sometimes even remotely—for example, in CGI scripts, where invocation data is passed through environment variables._\r\n\r\nAgain, not sure how realistic/applicable of a case this is for us. Just trying to think through it.",
+    "created_at": "2025-03-14T14:32:33Z",
+    "updated_at": "2025-03-14T14:33:15Z",
+    "html_url": "https://github.com/starship/starship/pull/4439#discussion_r1995693299",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4439",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1995693299"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4439#discussion_r1995693299"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4439"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1995693299/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 64,
+    "original_start_line": 64,
+    "start_side": "RIGHT",
+    "line": 68,
+    "original_line": 68,
+    "side": "RIGHT",
+    "in_reply_to_id": 1995689261,
+    "author_association": "NONE",
+    "original_position": 25,
+    "position": 25,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1995704718",
+    "pull_request_review_id": 2685789498,
+    "id": 1995704718,
+    "node_id": "PRRC_kwDOCqswNs529AmO",
+    "diff_hunk": "@@ -44,6 +44,29 @@ Or for Cmd (Windows) would be adding this line to your `starship.lua`:\n os.setenv('STARSHIP_CONFIG', 'C:\\\\Users\\\\user\\\\example\\\\non\\\\default\\\\path\\\\starship.toml')\n ```\n \n+### Loading additional configuration from the environment\n+\n+In addition to the configuration file, starship also allows you to set configuration values by using environment variables. The variables should be formatted like this: `STARSHIP_CONFIG__SECTION_NAME__KEY=value`. The configuration keys in the environment need to start with `STARSHIP_CONFIG__` and table keys need to be separated with `__`.\n+\n+In most POSIX-like shells, you can set the `disabled` key of the `status` module to `false` with the following:\n+\n+```sh\n+export STARSHIP_CONFIG__STATUS__DISABLED=false\n+```\n+\n+Equivalently in PowerShell (Windows) would be adding this line:\n+\n+```powershell\n+$ENV:STARSHIP_CONFIG__STATUS__DISABLED = \"false\"\n+```\n+\n+Other shells may use a different syntax to set environment variables.\n+Any values set in the environment will be parsed as TOML-values, not as full documents. If the environment values cannot be directly parsed as TOML-values, they are treated as strings.\n+\n+This means that `true` is parsed as a boolean when it's not quoted, but is parsed as a string when it is quoted. In contrast, when a value that cannot be parsed as a TOML value, such as `starship` is found, it is treated as a string (`\"starship\"`).\n+\n+Because the values are TOML-values the `[table]` syntax will not work, but inline tables `{ a = 1 }` or arrays `[ 0, 1 ]`.",
+    "path": "docs/config/README.md",
+    "commit_id": "1a2fb00054067b42d052b3617e424fcd8bc2bbc0",
+    "original_commit_id": "11210bf0ad80c447d41036ef1160f3fd0b7d6568",
+    "user": {
+      "login": "vergenzt",
+      "id": 1725615,
+      "node_id": "MDQ6VXNlcjE3MjU2MTU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1725615?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vergenzt",
+      "html_url": "https://github.com/vergenzt",
+      "followers_url": "https://api.github.com/users/vergenzt/followers",
+      "following_url": "https://api.github.com/users/vergenzt/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vergenzt/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vergenzt/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vergenzt/subscriptions",
+      "organizations_url": "https://api.github.com/users/vergenzt/orgs",
+      "repos_url": "https://api.github.com/users/vergenzt/repos",
+      "events_url": "https://api.github.com/users/vergenzt/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vergenzt/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Hmm you know I think I'm actually changing my mind on this -- `git` has almost identical functionality, allowing arbitrary config values to be set solely through environment variables via their `GIT_CONFIG_COUNT / GIT_CONFIG_KEY_<n> / GIT_CONFIG_VALUE_<n>` scheme: https://git-scm.com/docs/git-config#ENVIRONMENT\r\n\r\nIf git's comfortable trusting environment variable values which could make their way into shell commands then I think we can be too. 🙂 (Unless... could this an avenue for achieving RCE _through git_?!? 🤔 🤨)",
+    "created_at": "2025-03-14T14:39:42Z",
+    "updated_at": "2025-03-14T15:30:17Z",
+    "html_url": "https://github.com/starship/starship/pull/4439#discussion_r1995704718",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4439",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1995704718"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4439#discussion_r1995704718"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4439"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1995704718/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 64,
+    "original_start_line": 64,
+    "start_side": "RIGHT",
+    "line": 68,
+    "original_line": 68,
+    "side": "RIGHT",
+    "in_reply_to_id": 1995689261,
+    "author_association": "NONE",
+    "original_position": 25,
+    "position": 25,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1995708624",
+    "pull_request_review_id": 2685796853,
+    "id": 1995708624,
+    "node_id": "PRRC_kwDOCqswNs529BjQ",
+    "diff_hunk": "@@ -173,6 +180,68 @@ impl StarshipConfig {\n         }\n     }\n \n+    /// Load additional config values from the environment\n+    /// Variables are prefixed with `STARSHIP_` and delimited with `__`\n+    /// e.g. `STARSHIP_CONFIG__JAVA__DISABLED`\n+    pub fn load_from_env(&mut self) {\n+        for (key, value) in std::env::vars() {\n+            if let Some(name) = key.strip_prefix(\"STARSHIP_CONFIG__\") {\n+                log::debug!(\"Loading config from environment: {name}={value}\");",
+    "path": "src/config.rs",
+    "commit_id": "1a2fb00054067b42d052b3617e424fcd8bc2bbc0",
+    "original_commit_id": "11210bf0ad80c447d41036ef1160f3fd0b7d6568",
+    "user": {
+      "login": "vergenzt",
+      "id": 1725615,
+      "node_id": "MDQ6VXNlcjE3MjU2MTU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1725615?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vergenzt",
+      "html_url": "https://github.com/vergenzt",
+      "followers_url": "https://api.github.com/users/vergenzt/followers",
+      "following_url": "https://api.github.com/users/vergenzt/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vergenzt/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vergenzt/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vergenzt/subscriptions",
+      "organizations_url": "https://api.github.com/users/vergenzt/orgs",
+      "repos_url": "https://api.github.com/users/vergenzt/repos",
+      "events_url": "https://api.github.com/users/vergenzt/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vergenzt/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I would suggest logging with the full environment variable name, for clarity:\r\n\r\n```suggestion\r\n                log::debug!(\"Loading config from environment: {key}={value}\");\r\n```",
+    "created_at": "2025-03-14T14:42:05Z",
+    "updated_at": "2025-03-14T14:42:06Z",
+    "html_url": "https://github.com/starship/starship/pull/4439#discussion_r1995708624",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4439",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1995708624"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4439#discussion_r1995708624"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4439"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1995708624/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 190,
+    "original_line": 189,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 31,
+    "position": 31,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1995824123",
+    "pull_request_review_id": 2686002720,
+    "id": 1995824123,
+    "node_id": "PRRC_kwDOCqswNs529dv7",
+    "diff_hunk": "@@ -173,6 +180,68 @@ impl StarshipConfig {\n         }\n     }\n \n+    /// Load additional config values from the environment\n+    /// Variables are prefixed with `STARSHIP_` and delimited with `__`",
+    "path": "src/config.rs",
+    "commit_id": "1a2fb00054067b42d052b3617e424fcd8bc2bbc0",
+    "original_commit_id": "11210bf0ad80c447d41036ef1160f3fd0b7d6568",
+    "user": {
+      "login": "vergenzt",
+      "id": 1725615,
+      "node_id": "MDQ6VXNlcjE3MjU2MTU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1725615?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vergenzt",
+      "html_url": "https://github.com/vergenzt",
+      "followers_url": "https://api.github.com/users/vergenzt/followers",
+      "following_url": "https://api.github.com/users/vergenzt/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vergenzt/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vergenzt/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vergenzt/subscriptions",
+      "organizations_url": "https://api.github.com/users/vergenzt/orgs",
+      "repos_url": "https://api.github.com/users/vergenzt/repos",
+      "events_url": "https://api.github.com/users/vergenzt/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vergenzt/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n    /// Variables are prefixed with `STARSHIP_CONFIG__` and delimited with `__`\r\n```",
+    "created_at": "2025-03-14T15:53:42Z",
+    "updated_at": "2025-03-14T15:53:42Z",
+    "html_url": "https://github.com/starship/starship/pull/4439#discussion_r1995824123",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4439",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1995824123"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4439#discussion_r1995824123"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4439"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1995824123/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 185,
+    "original_line": 184,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 26,
+    "position": 26,
+    "subject_type": "line"
+  }
+]

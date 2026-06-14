@@ -1,0 +1,140 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/421888678",
+    "pull_request_review_id": 407943532,
+    "id": 421888678,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyMTg4ODY3OA==",
+    "diff_hunk": "@@ -1,26 +1,21 @@\n use crate::config::{ModuleConfig, RootModuleConfig};\n \n-use ansi_term::{Color, Style};\n use starship_module_config_derive::ModuleConfig;\n \n #[derive(Clone, ModuleConfig)]\n pub struct HostnameConfig<'a> {\n     pub ssh_only: bool,\n-    pub prefix: &'a str,\n-    pub suffix: &'a str,\n     pub trim_at: &'a str,\n-    pub style: Style,\n+    pub format: &'a str,",
+    "path": "src/configs/hostname.rs",
+    "commit_id": "33bdcb475f432fc89bc59dc1e23caffdacb5b740",
+    "original_commit_id": "7d2f7a390977144bccc001f2be9369edae27a51e",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Same as #1066",
+    "created_at": "2020-05-08T01:40:17Z",
+    "updated_at": "2020-06-20T09:43:23Z",
+    "html_url": "https://github.com/starship/starship/pull/1071#discussion_r421888678",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1071",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/421888678"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1071#discussion_r421888678"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1071"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/421888678/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 9,
+    "original_line": 9,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 13,
+    "position": 13,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/421888730",
+    "pull_request_review_id": 407943532,
+    "id": 421888730,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyMTg4ODczMA==",
+    "diff_hunk": "@@ -42,10 +43,20 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         host.as_ref()\n     };\n \n-    module.set_style(config.style);\n-    let hostname_stacked = format!(\"{}{}{}\", config.prefix, host, config.suffix);\n-    module.create_segment(\"hostname\", &SegmentConfig::new(&hostname_stacked));\n-    module.get_prefix().set_value(\"on \");\n+    let formatter = if let Ok(formatter) = StringFormatter::new(config.format) {\n+        formatter.map(|variable| match variable {\n+            \"hostname\" => Some(host.to_string()),\n+            _ => None,\n+        })\n+    } else {\n+        log::warn!(\"Error parsing format string in `hostname.format`\");\n+        return None;\n+    };",
+    "path": "src/modules/hostname.rs",
+    "commit_id": "33bdcb475f432fc89bc59dc1e23caffdacb5b740",
+    "original_commit_id": "7d2f7a390977144bccc001f2be9369edae27a51e",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ditto",
+    "created_at": "2020-05-08T01:40:31Z",
+    "updated_at": "2020-06-20T09:43:23Z",
+    "html_url": "https://github.com/starship/starship/pull/1071#discussion_r421888730",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1071",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/421888730"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1071#discussion_r421888730"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1071"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/421888730/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 46,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 54,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 29,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

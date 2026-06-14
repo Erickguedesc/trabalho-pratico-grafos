@@ -1,0 +1,209 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/645994802",
+    "pull_request_review_id": 676782931,
+    "id": 645994802,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY0NTk5NDgwMg==",
+    "diff_hunk": "@@ -35,50 +42,57 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     )\n     .join(\"config.json\");\n \n-    if !docker_config.exists() {\n-        return None;\n-    }\n+    let docker_context_env = context\n+        .get_env_os(\"DOCKER_HOST\")\n+        .or_else(|| context.get_env_os(\"DOCKER_CONTEXT\"));\n \n-    let json = utils::read_file(docker_config).ok()?;\n-    let parsed_json = serde_json::from_str(&json).ok()?;\n-\n-    match parsed_json {\n-        serde_json::Value::Object(root) => {\n-            let current_context = root.get(\"currentContext\")?;\n-            match current_context {\n-                serde_json::Value::String(ctx) => {\n-                    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n-                        formatter\n-                            .map_meta(|variable, _| match variable {\n-                                \"symbol\" => Some(config.symbol),\n-                                _ => None,\n-                            })\n-                            .map_style(|variable| match variable {\n-                                \"style\" => Some(Ok(config.style)),\n-                                _ => None,\n-                            })\n-                            .map(|variable| match variable {\n-                                \"context\" => Some(Ok(ctx)),\n-                                _ => None,\n-                            })\n-                            .parse(None)\n-                    });\n-\n-                    module.set_segments(match parsed {\n-                        Ok(segments) => segments,\n-                        Err(error) => {\n-                            log::warn!(\"Error in module `docker_context`:\\n{}\", error);\n-                            return None;\n-                        }\n-                    });\n-\n-                    Some(module)\n+    let ctx = match docker_context_env {\n+        Some(data) => data,\n+        _ => {\n+            if !docker_config.exists() {\n+                return None;\n+            }\n+            let json = utils::read_file(docker_config).ok()?;\n+            let parsed_json = serde_json::from_str(&json).ok()?;\n+\n+            match parsed_json {\n+                serde_json::Value::Object(root) => {\n+                    let current_context = root.get(\"currentContext\")?;\n+                    match current_context {\n+                        serde_json::Value::String(ctx_json) => OsString::from(ctx_json),\n+                        _ => return None,\n+                    }\n                 }",
+    "path": "src/modules/docker_context.rs",
+    "commit_id": "7b7b7a52aa1ee771d2869233bd00a8f5f2a6984e",
+    "original_commit_id": "fac5c8f5f4773b216df5f3159dbf750649c59616",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think putting this into an `OsString` should be avoided.\r\nI think it would be better to just use the non-`_os` version for getting the env var above or just call `.to_string_lossy()` and `.into_owned()` directly above.\r\n\r\nAnd since you're touching this: You can simplify these lines here to `parsed_json.get(\"currentContext\")?.as_str().map(str::to_owned)`",
+    "created_at": "2021-06-05T14:02:26Z",
+    "updated_at": "2021-06-05T14:09:24Z",
+    "html_url": "https://github.com/starship/starship/pull/2782#discussion_r645994802",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2782",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/645994802"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2782#discussion_r645994802"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2782"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/645994802/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 58,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 65,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 84,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/645995175",
+    "pull_request_review_id": 676782931,
+    "id": 645995175,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY0NTk5NTE3NQ==",
+    "diff_hunk": "@@ -35,50 +42,57 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     )\n     .join(\"config.json\");\n \n-    if !docker_config.exists() {\n-        return None;\n-    }\n+    let docker_context_env = context\n+        .get_env_os(\"DOCKER_HOST\")\n+        .or_else(|| context.get_env_os(\"DOCKER_CONTEXT\"));",
+    "path": "src/modules/docker_context.rs",
+    "commit_id": "7b7b7a52aa1ee771d2869233bd00a8f5f2a6984e",
+    "original_commit_id": "fac5c8f5f4773b216df5f3159dbf750649c59616",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think something like this would work better here\r\n```rust\r\nstd::array::IntoIter::new([\"DOCKER_HOST\", \"DOCKER_CONTEXT\"]).find_map(context.get_env_os)\r\n```",
+    "created_at": "2021-06-05T14:06:45Z",
+    "updated_at": "2021-06-05T14:09:24Z",
+    "html_url": "https://github.com/starship/starship/pull/2782#discussion_r645995175",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2782",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/645995175"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2782#discussion_r645995175"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2782"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/645995175/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 45,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 47,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 32,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/663383025",
+    "pull_request_review_id": 698604783,
+    "id": 663383025,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY2MzM4MzAyNQ==",
+    "diff_hunk": "@@ -791,7 +791,8 @@ truncation_symbol = \"…/\"\n \n The `docker_context` module shows the currently active\n [Docker context](https://docs.docker.com/engine/context/working-with-contexts/) if it's not set to\n-`default`.\n+`default` or if the `DOCKER_HOST` or `DOCKER_CONTEXT` environment variables are set (as they are meant\n+to override the context in use according to the docker documentation).",
+    "path": "docs/config/README.md",
+    "commit_id": "7b7b7a52aa1ee771d2869233bd00a8f5f2a6984e",
+    "original_commit_id": "acf811c0421e81bfacc3bbf71c7dbfd1f73b4f6e",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n`default` or if the `DOCKER_HOST` or `DOCKER_CONTEXT` environment variables are set (as they are meant\r\nto override the context in use).\r\n```",
+    "created_at": "2021-07-03T16:24:56Z",
+    "updated_at": "2021-07-03T16:26:01Z",
+    "html_url": "https://github.com/starship/starship/pull/2782#discussion_r663383025",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2782",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/663383025"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2782#discussion_r663383025"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2782"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/663383025/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 794,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 795,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 6,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

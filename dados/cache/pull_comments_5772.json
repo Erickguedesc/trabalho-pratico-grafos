@@ -1,0 +1,1878 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509980749",
+    "pull_request_review_id": 1912671588,
+    "id": 1509980749,
+    "node_id": "PRRC_kwDOCqswNs5aAHpN",
+    "diff_hunk": "@@ -0,0 +1,288 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::jj::JJConfig;\n+use crate::formatter::string_formatter::StringFormatterError;\n+use crate::formatter::StringFormatter;\n+use std::borrow::Cow;\n+\n+/// Creates a module with the jj status in the current directory\n+///\n+/// Will display the current branch, commit and change id of the jj repository in the current directory\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jj_status\");\n+    let config = JJConfig::try_load(module.config);\n+    // check if the current directory is a jj repo\n+    context.exec_cmd(\"jj\", &[\"root\", \"--ignore-working-copy\"])?;\n+\n+    let template = jj_template(config.truncation_length);\n+    let output = context.exec_cmd(\n+        \"jj\",\n+        &[\n+            \"log\",\n+            \"-r\",\n+            \"@\",\n+            \"-T\",\n+            template.as_str(),\n+            \"--no-graph\",\n+            \"--ignore-working-copy\",\n+        ],\n+    )?;",
+    "path": "src/modules/jj.rs",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "poliorcetics",
+      "id": 7951708,
+      "node_id": "MDQ6VXNlcjc5NTE3MDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7951708?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/poliorcetics",
+      "html_url": "https://github.com/poliorcetics",
+      "followers_url": "https://api.github.com/users/poliorcetics/followers",
+      "following_url": "https://api.github.com/users/poliorcetics/following{/other_user}",
+      "gists_url": "https://api.github.com/users/poliorcetics/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/poliorcetics/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/poliorcetics/subscriptions",
+      "organizations_url": "https://api.github.com/users/poliorcetics/orgs",
+      "repos_url": "https://api.github.com/users/poliorcetics/repos",
+      "events_url": "https://api.github.com/users/poliorcetics/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/poliorcetics/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "probably needs a `--color never` too, I've seen badly configured terminals be confused by that",
+    "created_at": "2024-03-02T14:28:26Z",
+    "updated_at": "2024-03-02T14:28:26Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1509980749",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1509980749"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1509980749"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509980749/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 17,
+    "original_start_line": 17,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 28,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509981152",
+    "pull_request_review_id": 1912671685,
+    "id": 1509981152,
+    "node_id": "PRRC_kwDOCqswNs5aAHvg",
+    "diff_hunk": "@@ -0,0 +1,288 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::jj::JJConfig;\n+use crate::formatter::string_formatter::StringFormatterError;\n+use crate::formatter::StringFormatter;\n+use std::borrow::Cow;\n+\n+/// Creates a module with the jj status in the current directory\n+///\n+/// Will display the current branch, commit and change id of the jj repository in the current directory\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jj_status\");\n+    let config = JJConfig::try_load(module.config);\n+    // check if the current directory is a jj repo\n+    context.exec_cmd(\"jj\", &[\"root\", \"--ignore-working-copy\"])?;\n+\n+    let template = jj_template(config.truncation_length);\n+    let output = context.exec_cmd(\n+        \"jj\",\n+        &[\n+            \"log\",\n+            \"-r\",\n+            \"@\",\n+            \"-T\",\n+            template.as_str(),\n+            \"--no-graph\",\n+            \"--ignore-working-copy\",\n+        ],\n+    )?;\n+    let parsed = JJStatus::new(&output.stdout)?;\n+    let formatter = match StringFormatter::new(config.format) {\n+        Ok(formatter) => formatter,\n+        Err(e) => {\n+            log::error!(\"Error in parsing format string for jj module {}\", e);\n+            return None;\n+        }\n+    };\n+    let formatted = formatter\n+        .map_meta(|s, _| match s {\n+            \"symbol\" => Some(config.symbol),\n+            \"divergent_symbol\" => {\n+                if parsed.divergent == \"true\" {\n+                    Some(config.divergent_symbol)\n+                } else {\n+                    None\n+                }\n+            }\n+            \"no_description_symbol\" => {\n+                if parsed.description.is_empty() {\n+                    Some(config.no_description_symbol)\n+                } else {\n+                    None\n+                }\n+            }",
+    "path": "src/modules/jj.rs",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "poliorcetics",
+      "id": 7951708,
+      "node_id": "MDQ6VXNlcjc5NTE3MDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7951708?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/poliorcetics",
+      "html_url": "https://github.com/poliorcetics",
+      "followers_url": "https://api.github.com/users/poliorcetics/followers",
+      "following_url": "https://api.github.com/users/poliorcetics/following{/other_user}",
+      "gists_url": "https://api.github.com/users/poliorcetics/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/poliorcetics/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/poliorcetics/subscriptions",
+      "organizations_url": "https://api.github.com/users/poliorcetics/orgs",
+      "repos_url": "https://api.github.com/users/poliorcetics/repos",
+      "events_url": "https://api.github.com/users/poliorcetics/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/poliorcetics/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n                parsed.description.is_empty().then_some(config.no_description_symbol)\r\n            }\r\n```",
+    "created_at": "2024-03-02T14:29:13Z",
+    "updated_at": "2024-03-02T14:29:13Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1509981152",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1509981152"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1509981152"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509981152/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 48,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 53,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 53,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509982815",
+    "pull_request_review_id": 1912672003,
+    "id": 1509982815,
+    "node_id": "PRRC_kwDOCqswNs5aAIJf",
+    "diff_hunk": "@@ -0,0 +1,288 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::jj::JJConfig;\n+use crate::formatter::string_formatter::StringFormatterError;\n+use crate::formatter::StringFormatter;\n+use std::borrow::Cow;\n+\n+/// Creates a module with the jj status in the current directory\n+///\n+/// Will display the current branch, commit and change id of the jj repository in the current directory\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jj_status\");\n+    let config = JJConfig::try_load(module.config);\n+    // check if the current directory is a jj repo\n+    context.exec_cmd(\"jj\", &[\"root\", \"--ignore-working-copy\"])?;\n+\n+    let template = jj_template(config.truncation_length);\n+    let output = context.exec_cmd(\n+        \"jj\",\n+        &[\n+            \"log\",\n+            \"-r\",\n+            \"@\",\n+            \"-T\",\n+            template.as_str(),\n+            \"--no-graph\",\n+            \"--ignore-working-copy\",\n+        ],\n+    )?;\n+    let parsed = JJStatus::new(&output.stdout)?;\n+    let formatter = match StringFormatter::new(config.format) {\n+        Ok(formatter) => formatter,\n+        Err(e) => {\n+            log::error!(\"Error in parsing format string for jj module {}\", e);\n+            return None;\n+        }\n+    };\n+    let formatted = formatter\n+        .map_meta(|s, _| match s {\n+            \"symbol\" => Some(config.symbol),\n+            \"divergent_symbol\" => {\n+                if parsed.divergent == \"true\" {\n+                    Some(config.divergent_symbol)\n+                } else {\n+                    None\n+                }\n+            }\n+            \"no_description_symbol\" => {\n+                if parsed.description.is_empty() {\n+                    Some(config.no_description_symbol)\n+                } else {\n+                    None\n+                }\n+            }\n+            _ => None,\n+        })\n+        .map_style(|s| {\n+            Some(Ok(match s {\n+                \"change_id_prefix_style\" => config.change_id_prefix_style,\n+                \"change_id_suffix_style\" => config.change_id_suffix_style,\n+                \"commit_id_prefix_style\" => config.commit_id_prefix_style,\n+                \"commit_id_suffix_style\" => config.commit_id_suffix_style,\n+                \"branch_style\" => config.branch_style,\n+                _ => return None,\n+            }))\n+        })\n+        .map(|v| parsed.format(v))\n+        .parse(None, Some(context));\n+    let formatted = match formatted {\n+        Ok(formatted) => formatted,\n+        Err(e) => {\n+            log::error!(\"Error in parsing format string for jj module {}\", e);\n+            return None;\n+        }\n+    };\n+    module.set_segments(formatted);\n+\n+    Some(module)\n+}\n+\n+fn jj_template(len: u8) -> String {\n+    let template = format!(\n+        r##\"change_id.shortest({len}).prefix() ++ \"#,\" ++ change_id.shortest({len}).rest() ++ \"#,\" ++ commit_id.shortest({len}).prefix() ++ \"#,\" ++ commit_id.shortest({len}).rest() ++ \"#,\" ++ divergent ++ \"#,\" ++ description ++ \"#,\" ++ branches.join(\",\")\"##,\n+    );\n+    template\n+}\n+\n+#[derive(Clone, Copy, Debug, Eq, PartialEq)]\n+struct JJStatus<'s> {\n+    change_id_prefix: &'s str,\n+    change_id_suffix: &'s str,\n+    commit_id_prefix: &'s str,\n+    commit_id_suffix: &'s str,\n+    divergent: &'s str,\n+    description: &'s str,\n+    branches: &'s str,\n+}\n+\n+impl<'s> JJStatus<'s> {\n+    fn new(input: &'s str) -> Option<JJStatus<'s>> {\n+        let parsed: Vec<&str> = input.split(\"#,\").collect();\n+        if parsed.len() != 7 {\n+            log::error!(\"expected at least 5 parts, got {}\", parsed.len());",
+    "path": "src/modules/jj.rs",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "poliorcetics",
+      "id": 7951708,
+      "node_id": "MDQ6VXNlcjc5NTE3MDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7951708?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/poliorcetics",
+      "html_url": "https://github.com/poliorcetics",
+      "followers_url": "https://api.github.com/users/poliorcetics/followers",
+      "following_url": "https://api.github.com/users/poliorcetics/following{/other_user}",
+      "gists_url": "https://api.github.com/users/poliorcetics/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/poliorcetics/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/poliorcetics/subscriptions",
+      "organizations_url": "https://api.github.com/users/poliorcetics/orgs",
+      "repos_url": "https://api.github.com/users/poliorcetics/repos",
+      "events_url": "https://api.github.com/users/poliorcetics/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/poliorcetics/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think the log should say 7 ?",
+    "created_at": "2024-03-02T14:32:09Z",
+    "updated_at": "2024-03-02T14:32:09Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1509982815",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1509982815"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1509982815"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509982815/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 101,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 102,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 102,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509984227",
+    "pull_request_review_id": 1912672278,
+    "id": 1509984227,
+    "node_id": "PRRC_kwDOCqswNs5aAIfj",
+    "diff_hunk": "@@ -0,0 +1,288 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::jj::JJConfig;\n+use crate::formatter::string_formatter::StringFormatterError;\n+use crate::formatter::StringFormatter;\n+use std::borrow::Cow;\n+\n+/// Creates a module with the jj status in the current directory\n+///\n+/// Will display the current branch, commit and change id of the jj repository in the current directory\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jj_status\");\n+    let config = JJConfig::try_load(module.config);\n+    // check if the current directory is a jj repo\n+    context.exec_cmd(\"jj\", &[\"root\", \"--ignore-working-copy\"])?;\n+\n+    let template = jj_template(config.truncation_length);\n+    let output = context.exec_cmd(\n+        \"jj\",\n+        &[\n+            \"log\",\n+            \"-r\",\n+            \"@\",\n+            \"-T\",\n+            template.as_str(),\n+            \"--no-graph\",\n+            \"--ignore-working-copy\",\n+        ],\n+    )?;\n+    let parsed = JJStatus::new(&output.stdout)?;\n+    let formatter = match StringFormatter::new(config.format) {\n+        Ok(formatter) => formatter,\n+        Err(e) => {\n+            log::error!(\"Error in parsing format string for jj module {}\", e);\n+            return None;\n+        }\n+    };\n+    let formatted = formatter\n+        .map_meta(|s, _| match s {\n+            \"symbol\" => Some(config.symbol),\n+            \"divergent_symbol\" => {\n+                if parsed.divergent == \"true\" {\n+                    Some(config.divergent_symbol)\n+                } else {\n+                    None\n+                }\n+            }\n+            \"no_description_symbol\" => {\n+                if parsed.description.is_empty() {\n+                    Some(config.no_description_symbol)\n+                } else {\n+                    None\n+                }\n+            }\n+            _ => None,\n+        })\n+        .map_style(|s| {\n+            Some(Ok(match s {\n+                \"change_id_prefix_style\" => config.change_id_prefix_style,\n+                \"change_id_suffix_style\" => config.change_id_suffix_style,\n+                \"commit_id_prefix_style\" => config.commit_id_prefix_style,\n+                \"commit_id_suffix_style\" => config.commit_id_suffix_style,\n+                \"branch_style\" => config.branch_style,\n+                _ => return None,\n+            }))\n+        })\n+        .map(|v| parsed.format(v))\n+        .parse(None, Some(context));\n+    let formatted = match formatted {\n+        Ok(formatted) => formatted,\n+        Err(e) => {\n+            log::error!(\"Error in parsing format string for jj module {}\", e);\n+            return None;\n+        }\n+    };\n+    module.set_segments(formatted);\n+\n+    Some(module)\n+}\n+\n+fn jj_template(len: u8) -> String {\n+    let template = format!(\n+        r##\"change_id.shortest({len}).prefix() ++ \"#,\" ++ change_id.shortest({len}).rest() ++ \"#,\" ++ commit_id.shortest({len}).prefix() ++ \"#,\" ++ commit_id.shortest({len}).rest() ++ \"#,\" ++ divergent ++ \"#,\" ++ description ++ \"#,\" ++ branches.join(\",\")\"##,\n+    );\n+    template\n+}\n+\n+#[derive(Clone, Copy, Debug, Eq, PartialEq)]\n+struct JJStatus<'s> {\n+    change_id_prefix: &'s str,\n+    change_id_suffix: &'s str,\n+    commit_id_prefix: &'s str,\n+    commit_id_suffix: &'s str,\n+    divergent: &'s str,\n+    description: &'s str,\n+    branches: &'s str,\n+}\n+\n+impl<'s> JJStatus<'s> {\n+    fn new(input: &'s str) -> Option<JJStatus<'s>> {\n+        let parsed: Vec<&str> = input.split(\"#,\").collect();\n+        if parsed.len() != 7 {\n+            log::error!(\"expected at least 5 parts, got {}\", parsed.len());\n+            return None;\n+        }\n+        let (\n+            change_id_prefix,\n+            change_id_suffix,\n+            commit_id_prefix,\n+            commit_id_suffix,\n+            divergent,\n+            description,\n+            branches,\n+        ) = (\n+            parsed[0], parsed[1], parsed[2], parsed[3], parsed[4], parsed[5], parsed[6],\n+        );",
+    "path": "src/modules/jj.rs",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "poliorcetics",
+      "id": 7951708,
+      "node_id": "MDQ6VXNlcjc5NTE3MDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7951708?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/poliorcetics",
+      "html_url": "https://github.com/poliorcetics",
+      "followers_url": "https://api.github.com/users/poliorcetics/followers",
+      "following_url": "https://api.github.com/users/poliorcetics/following{/other_user}",
+      "gists_url": "https://api.github.com/users/poliorcetics/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/poliorcetics/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/poliorcetics/subscriptions",
+      "organizations_url": "https://api.github.com/users/poliorcetics/orgs",
+      "repos_url": "https://api.github.com/users/poliorcetics/repos",
+      "events_url": "https://api.github.com/users/poliorcetics/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/poliorcetics/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "the whole check here could be done using `let else`:\r\n\r\n```rust\r\nlet [var1, var2] = parsed else {\r\n    // log error\r\n    return None;\r\n};\r\n```\r\n\r\nor even `match`:\r\n\r\n```rust\r\nmatch parsed {\r\n    [var1, var2] => Some(S { var1, var2 }),\r\n    _ => {\r\n        // log error\r\n        None\r\n    }\r\n}\r\n```",
+    "created_at": "2024-03-02T14:34:28Z",
+    "updated_at": "2024-03-02T14:34:28Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1509984227",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1509984227"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1509984227"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509984227/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 115,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 115,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509986153",
+    "pull_request_review_id": 1912672869,
+    "id": 1509986153,
+    "node_id": "PRRC_kwDOCqswNs5aAI9p",
+    "diff_hunk": "@@ -0,0 +1,288 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::jj::JJConfig;\n+use crate::formatter::string_formatter::StringFormatterError;\n+use crate::formatter::StringFormatter;\n+use std::borrow::Cow;\n+\n+/// Creates a module with the jj status in the current directory\n+///\n+/// Will display the current branch, commit and change id of the jj repository in the current directory\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jj_status\");\n+    let config = JJConfig::try_load(module.config);\n+    // check if the current directory is a jj repo\n+    context.exec_cmd(\"jj\", &[\"root\", \"--ignore-working-copy\"])?;\n+\n+    let template = jj_template(config.truncation_length);\n+    let output = context.exec_cmd(\n+        \"jj\",\n+        &[\n+            \"log\",\n+            \"-r\",\n+            \"@\",\n+            \"-T\",\n+            template.as_str(),\n+            \"--no-graph\",\n+            \"--ignore-working-copy\",\n+        ],\n+    )?;",
+    "path": "src/modules/jj.rs",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "poliorcetics",
+      "id": 7951708,
+      "node_id": "MDQ6VXNlcjc5NTE3MDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7951708?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/poliorcetics",
+      "html_url": "https://github.com/poliorcetics",
+      "followers_url": "https://api.github.com/users/poliorcetics/followers",
+      "following_url": "https://api.github.com/users/poliorcetics/following{/other_user}",
+      "gists_url": "https://api.github.com/users/poliorcetics/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/poliorcetics/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/poliorcetics/subscriptions",
+      "organizations_url": "https://api.github.com/users/poliorcetics/orgs",
+      "repos_url": "https://api.github.com/users/poliorcetics/repos",
+      "events_url": "https://api.github.com/users/poliorcetics/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/poliorcetics/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "On my machine, when a little deep in a repo (not at the root), directly passing the root is faster by ~10ms.\r\n\r\nSince it has already been computed in the `jj root` above, it could be passed in the command below:\r\n\r\n```rust\r\nlet out = context.exec_cmd(\"jj\", &[\"root\", \"--ignore-working-copy\"])?.stdout;\r\nlet root = out.lines().next()?;\r\n\r\n// and then\r\n&[\"-R\", &root, \"log\", ...]\r\n```",
+    "created_at": "2024-03-02T14:39:12Z",
+    "updated_at": "2024-03-02T14:39:12Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1509986153",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1509986153"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1509986153"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509986153/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 14,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 28,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509986233",
+    "pull_request_review_id": 1912672935,
+    "id": 1509986233,
+    "node_id": "PRRC_kwDOCqswNs5aAI-5",
+    "diff_hunk": "@@ -0,0 +1,288 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::jj::JJConfig;\n+use crate::formatter::string_formatter::StringFormatterError;\n+use crate::formatter::StringFormatter;\n+use std::borrow::Cow;\n+\n+/// Creates a module with the jj status in the current directory\n+///\n+/// Will display the current branch, commit and change id of the jj repository in the current directory\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jj_status\");\n+    let config = JJConfig::try_load(module.config);\n+    // check if the current directory is a jj repo\n+    context.exec_cmd(\"jj\", &[\"root\", \"--ignore-working-copy\"])?;\n+\n+    let template = jj_template(config.truncation_length);\n+    let output = context.exec_cmd(\n+        \"jj\",\n+        &[\n+            \"log\",\n+            \"-r\",\n+            \"@\",\n+            \"-T\",\n+            template.as_str(),\n+            \"--no-graph\",\n+            \"--ignore-working-copy\",\n+        ],\n+    )?;",
+    "path": "src/modules/jj.rs",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "poliorcetics",
+      "id": 7951708,
+      "node_id": "MDQ6VXNlcjc5NTE3MDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7951708?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/poliorcetics",
+      "html_url": "https://github.com/poliorcetics",
+      "followers_url": "https://api.github.com/users/poliorcetics/followers",
+      "following_url": "https://api.github.com/users/poliorcetics/following{/other_user}",
+      "gists_url": "https://api.github.com/users/poliorcetics/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/poliorcetics/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/poliorcetics/subscriptions",
+      "organizations_url": "https://api.github.com/users/poliorcetics/orgs",
+      "repos_url": "https://api.github.com/users/poliorcetics/repos",
+      "events_url": "https://api.github.com/users/poliorcetics/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/poliorcetics/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "the issue is that it's annoying to mock the command for tests then",
+    "created_at": "2024-03-02T14:39:47Z",
+    "updated_at": "2024-03-02T14:39:47Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1509986233",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1509986233"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1509986233"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509986233/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 14,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 1509986153,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 28,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509986369",
+    "pull_request_review_id": 1912673038,
+    "id": 1509986369,
+    "node_id": "PRRC_kwDOCqswNs5aAJBB",
+    "diff_hunk": "@@ -0,0 +1,288 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::jj::JJConfig;\n+use crate::formatter::string_formatter::StringFormatterError;\n+use crate::formatter::StringFormatter;\n+use std::borrow::Cow;\n+\n+/// Creates a module with the jj status in the current directory\n+///\n+/// Will display the current branch, commit and change id of the jj repository in the current directory\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jj_status\");\n+    let config = JJConfig::try_load(module.config);\n+    // check if the current directory is a jj repo\n+    context.exec_cmd(\"jj\", &[\"root\", \"--ignore-working-copy\"])?;\n+\n+    let template = jj_template(config.truncation_length);\n+    let output = context.exec_cmd(\n+        \"jj\",\n+        &[\n+            \"log\",\n+            \"-r\",\n+            \"@\",\n+            \"-T\",\n+            template.as_str(),\n+            \"--no-graph\",\n+            \"--ignore-working-copy\",\n+        ],\n+    )?;\n+    let parsed = JJStatus::new(&output.stdout)?;\n+    let formatter = match StringFormatter::new(config.format) {\n+        Ok(formatter) => formatter,\n+        Err(e) => {\n+            log::error!(\"Error in parsing format string for jj module {}\", e);\n+            return None;\n+        }\n+    };\n+    let formatted = formatter\n+        .map_meta(|s, _| match s {\n+            \"symbol\" => Some(config.symbol),\n+            \"divergent_symbol\" => {\n+                if parsed.divergent == \"true\" {\n+                    Some(config.divergent_symbol)\n+                } else {\n+                    None\n+                }\n+            }\n+            \"no_description_symbol\" => {\n+                if parsed.description.is_empty() {\n+                    Some(config.no_description_symbol)\n+                } else {\n+                    None\n+                }\n+            }\n+            _ => None,\n+        })\n+        .map_style(|s| {\n+            Some(Ok(match s {\n+                \"change_id_prefix_style\" => config.change_id_prefix_style,\n+                \"change_id_suffix_style\" => config.change_id_suffix_style,\n+                \"commit_id_prefix_style\" => config.commit_id_prefix_style,\n+                \"commit_id_suffix_style\" => config.commit_id_suffix_style,\n+                \"branch_style\" => config.branch_style,\n+                _ => return None,\n+            }))\n+        })\n+        .map(|v| parsed.format(v))\n+        .parse(None, Some(context));\n+    let formatted = match formatted {\n+        Ok(formatted) => formatted,\n+        Err(e) => {\n+            log::error!(\"Error in parsing format string for jj module {}\", e);\n+            return None;\n+        }\n+    };\n+    module.set_segments(formatted);\n+\n+    Some(module)\n+}\n+\n+fn jj_template(len: u8) -> String {\n+    let template = format!(\n+        r##\"change_id.shortest({len}).prefix() ++ \"#,\" ++ change_id.shortest({len}).rest() ++ \"#,\" ++ commit_id.shortest({len}).prefix() ++ \"#,\" ++ commit_id.shortest({len}).rest() ++ \"#,\" ++ divergent ++ \"#,\" ++ description ++ \"#,\" ++ branches.join(\",\")\"##,\n+    );\n+    template",
+    "path": "src/modules/jj.rs",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "poliorcetics",
+      "id": 7951708,
+      "node_id": "MDQ6VXNlcjc5NTE3MDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7951708?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/poliorcetics",
+      "html_url": "https://github.com/poliorcetics",
+      "followers_url": "https://api.github.com/users/poliorcetics/followers",
+      "following_url": "https://api.github.com/users/poliorcetics/following{/other_user}",
+      "gists_url": "https://api.github.com/users/poliorcetics/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/poliorcetics/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/poliorcetics/subscriptions",
+      "organizations_url": "https://api.github.com/users/poliorcetics/orgs",
+      "repos_url": "https://api.github.com/users/poliorcetics/repos",
+      "events_url": "https://api.github.com/users/poliorcetics/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/poliorcetics/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n    format!(\r\n        r##\"change_id.shortest({len}).prefix() ++ \"#,\" ++ change_id.shortest({len}).rest() ++ \"#,\" ++ commit_id.shortest({len}).prefix() ++ \"#,\" ++ commit_id.shortest({len}).rest() ++ \"#,\" ++ divergent ++ \"#,\" ++ description ++ \"#,\" ++ branches.join(\",\")\"##,\r\n    )\r\n```",
+    "created_at": "2024-03-02T14:40:23Z",
+    "updated_at": "2024-03-02T14:40:24Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1509986369",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1509986369"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1509986369"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509986369/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 81,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 84,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 84,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509986584",
+    "pull_request_review_id": 1912673202,
+    "id": 1509986584,
+    "node_id": "PRRC_kwDOCqswNs5aAJEY",
+    "diff_hunk": "@@ -0,0 +1,288 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::jj::JJConfig;\n+use crate::formatter::string_formatter::StringFormatterError;\n+use crate::formatter::StringFormatter;\n+use std::borrow::Cow;\n+\n+/// Creates a module with the jj status in the current directory\n+///\n+/// Will display the current branch, commit and change id of the jj repository in the current directory\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jj_status\");\n+    let config = JJConfig::try_load(module.config);\n+    // check if the current directory is a jj repo\n+    context.exec_cmd(\"jj\", &[\"root\", \"--ignore-working-copy\"])?;\n+\n+    let template = jj_template(config.truncation_length);\n+    let output = context.exec_cmd(\n+        \"jj\",\n+        &[\n+            \"log\",\n+            \"-r\",\n+            \"@\",\n+            \"-T\",\n+            template.as_str(),\n+            \"--no-graph\",\n+            \"--ignore-working-copy\",\n+        ],\n+    )?;\n+    let parsed = JJStatus::new(&output.stdout)?;\n+    let formatter = match StringFormatter::new(config.format) {\n+        Ok(formatter) => formatter,\n+        Err(e) => {\n+            log::error!(\"Error in parsing format string for jj module {}\", e);\n+            return None;\n+        }\n+    };\n+    let formatted = formatter\n+        .map_meta(|s, _| match s {\n+            \"symbol\" => Some(config.symbol),\n+            \"divergent_symbol\" => {\n+                if parsed.divergent == \"true\" {\n+                    Some(config.divergent_symbol)\n+                } else {\n+                    None\n+                }",
+    "path": "src/modules/jj.rs",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "poliorcetics",
+      "id": 7951708,
+      "node_id": "MDQ6VXNlcjc5NTE3MDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7951708?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/poliorcetics",
+      "html_url": "https://github.com/poliorcetics",
+      "followers_url": "https://api.github.com/users/poliorcetics/followers",
+      "following_url": "https://api.github.com/users/poliorcetics/following{/other_user}",
+      "gists_url": "https://api.github.com/users/poliorcetics/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/poliorcetics/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/poliorcetics/subscriptions",
+      "organizations_url": "https://api.github.com/users/poliorcetics/orgs",
+      "repos_url": "https://api.github.com/users/poliorcetics/repos",
+      "events_url": "https://api.github.com/users/poliorcetics/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/poliorcetics/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n                (parsed.divergent == \"true\").then_some(config.divergent_symbol)\r\n```",
+    "created_at": "2024-03-02T14:41:18Z",
+    "updated_at": "2024-03-02T14:41:18Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1509986584",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1509986584"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1509986584"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509986584/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 41,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 52,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 45,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509987211",
+    "pull_request_review_id": 1912673744,
+    "id": 1509987211,
+    "node_id": "PRRC_kwDOCqswNs5aAJOL",
+    "diff_hunk": "@@ -2445,6 +2445,78 @@ number_threshold = 4\n symbol_threshold = 0\n ```\n \n+## JJ\n+\n+The `jj` module reflects the current status of your Jujutsu repository. It shows\n+different symbols and formats depending on the state of your work in progress,\n+including changes, commits, branch, and more.\n+\n+The `jj` module is only shown when you're in a directory that is part of a\n+Jujutsu repository.\n+\n+The default functionality includes displaying:\n+\n+- current change id\n+- current commit id\n+\n+::: warning\n+\n+This module requires the Jujutsu command line tool to be installed and\n+accessible in your system's PATH for it to function correctly.\n+\n+:::\n+\n+### Options\n+\n+| Option                   | Default                                                                                                                                                                                                                                                             | Description                                                                                  |\n+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |\n+| `symbol`                 | `'🍐 '`                                                                                                                                                                                                                                                             | The string used before displaying the repository status.                                     |\n+| `no_description_symbol`  | `' 📝'`                                                                                                                                                                                                                                                             | Is displayed when change description is empty.                                               |\n+| `divergent_symbol`       | `' 💥'`                                                                                                                                                                                                                                                             | Is displayed when commit in divergent state.                                                 |",
+    "path": "docs/config/README.md",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "poliorcetics",
+      "id": 7951708,
+      "node_id": "MDQ6VXNlcjc5NTE3MDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7951708?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/poliorcetics",
+      "html_url": "https://github.com/poliorcetics",
+      "followers_url": "https://api.github.com/users/poliorcetics/followers",
+      "following_url": "https://api.github.com/users/poliorcetics/following{/other_user}",
+      "gists_url": "https://api.github.com/users/poliorcetics/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/poliorcetics/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/poliorcetics/subscriptions",
+      "organizations_url": "https://api.github.com/users/poliorcetics/orgs",
+      "repos_url": "https://api.github.com/users/poliorcetics/repos",
+      "events_url": "https://api.github.com/users/poliorcetics/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/poliorcetics/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n| `divergent_symbol`       | `' 💥'`                                                                                                                                                                                                                                                             | Is displayed when commit is in divergent state.                                                 |\r\n```\r\n\r\nwhat's \"divergent\" here ? conflicted ?",
+    "created_at": "2024-03-02T14:46:21Z",
+    "updated_at": "2024-03-02T14:46:21Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1509987211",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1509987211"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1509987211"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509987211/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 2475,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 31,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509987539",
+    "pull_request_review_id": 1912674006,
+    "id": 1509987539,
+    "node_id": "PRRC_kwDOCqswNs5aAJTT",
+    "diff_hunk": "@@ -2445,6 +2445,78 @@ number_threshold = 4\n symbol_threshold = 0\n ```\n \n+## JJ\n+\n+The `jj` module reflects the current status of your Jujutsu repository. It shows\n+different symbols and formats depending on the state of your work in progress,\n+including changes, commits, branch, and more.\n+\n+The `jj` module is only shown when you're in a directory that is part of a\n+Jujutsu repository.\n+\n+The default functionality includes displaying:\n+\n+- current change id\n+- current commit id\n+\n+::: warning\n+\n+This module requires the Jujutsu command line tool to be installed and\n+accessible in your system's PATH for it to function correctly.\n+\n+:::\n+\n+### Options\n+\n+| Option                   | Default                                                                                                                                                                                                                                                             | Description                                                                                  |\n+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |\n+| `symbol`                 | `'🍐 '`                                                                                                                                                                                                                                                             | The string used before displaying the repository status.                                     |\n+| `no_description_symbol`  | `' 📝'`                                                                                                                                                                                                                                                             | Is displayed when change description is empty.                                               |\n+| `divergent_symbol`       | `' 💥'`                                                                                                                                                                                                                                                             | Is displayed when commit in divergent state.                                                 |\n+| `format`                 | `'\\[$symbol[$change_id_prefix]($change_id_prefix_style)[$change_id_suffix]($change_id_suffix_style) [$commit_id_prefix]($commit_id_prefix_style)[$commit_id_suffix]($commit_id_suffix_style) on [$branch]($branch_style)$no_description_symbol$divergent_symbol\\]'` | The format for rendering the module. `symbol`, `style`, and other variables can be included. |",
+    "path": "docs/config/README.md",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "poliorcetics",
+      "id": 7951708,
+      "node_id": "MDQ6VXNlcjc5NTE3MDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7951708?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/poliorcetics",
+      "html_url": "https://github.com/poliorcetics",
+      "followers_url": "https://api.github.com/users/poliorcetics/followers",
+      "following_url": "https://api.github.com/users/poliorcetics/following{/other_user}",
+      "gists_url": "https://api.github.com/users/poliorcetics/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/poliorcetics/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/poliorcetics/subscriptions",
+      "organizations_url": "https://api.github.com/users/poliorcetics/orgs",
+      "repos_url": "https://api.github.com/users/poliorcetics/repos",
+      "events_url": "https://api.github.com/users/poliorcetics/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/poliorcetics/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The issue here is that some parts will be displayed even if there are no associated data. For example, on a change with no branch, a description and no divergence, this prompt will end with ` on `, which is not wanted",
+    "created_at": "2024-03-02T14:48:30Z",
+    "updated_at": "2024-03-02T14:48:31Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1509987539",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1509987539"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1509987539"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509987539/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 2549,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 32,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509987901",
+    "pull_request_review_id": 1912674357,
+    "id": 1509987901,
+    "node_id": "PRRC_kwDOCqswNs5aAJY9",
+    "diff_hunk": "@@ -2445,6 +2445,78 @@ number_threshold = 4\n symbol_threshold = 0\n ```\n \n+## JJ\n+\n+The `jj` module reflects the current status of your Jujutsu repository. It shows\n+different symbols and formats depending on the state of your work in progress,\n+including changes, commits, branch, and more.\n+\n+The `jj` module is only shown when you're in a directory that is part of a\n+Jujutsu repository.\n+\n+The default functionality includes displaying:\n+\n+- current change id\n+- current commit id\n+\n+::: warning\n+\n+This module requires the Jujutsu command line tool to be installed and\n+accessible in your system's PATH for it to function correctly.\n+\n+:::\n+\n+### Options\n+\n+| Option                   | Default                                                                                                                                                                                                                                                             | Description                                                                                  |\n+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |\n+| `symbol`                 | `'🍐 '`                                                                                                                                                                                                                                                             | The string used before displaying the repository status.                                     |\n+| `no_description_symbol`  | `' 📝'`                                                                                                                                                                                                                                                             | Is displayed when change description is empty.                                               |\n+| `divergent_symbol`       | `' 💥'`                                                                                                                                                                                                                                                             | Is displayed when commit in divergent state.                                                 |\n+| `format`                 | `'\\[$symbol[$change_id_prefix]($change_id_prefix_style)[$change_id_suffix]($change_id_suffix_style) [$commit_id_prefix]($commit_id_prefix_style)[$commit_id_suffix]($commit_id_suffix_style) on [$branch]($branch_style)$no_description_symbol$divergent_symbol\\]'` | The format for rendering the module. `symbol`, `style`, and other variables can be included. |",
+    "path": "docs/config/README.md",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "poliorcetics",
+      "id": 7951708,
+      "node_id": "MDQ6VXNlcjc5NTE3MDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7951708?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/poliorcetics",
+      "html_url": "https://github.com/poliorcetics",
+      "followers_url": "https://api.github.com/users/poliorcetics/followers",
+      "following_url": "https://api.github.com/users/poliorcetics/following{/other_user}",
+      "gists_url": "https://api.github.com/users/poliorcetics/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/poliorcetics/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/poliorcetics/subscriptions",
+      "organizations_url": "https://api.github.com/users/poliorcetics/orgs",
+      "repos_url": "https://api.github.com/users/poliorcetics/repos",
+      "events_url": "https://api.github.com/users/poliorcetics/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/poliorcetics/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ah I see you worked around it with `<no branch>` but given that's the default state in JJ, I don't think adding 14 characters (`on <no-branch>`) for this case is worth it. If there is no branch, this whole part should probably no be displayed",
+    "created_at": "2024-03-02T14:50:58Z",
+    "updated_at": "2024-03-02T14:50:58Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1509987901",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1509987901"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1509987901"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1509987901/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 2549,
+    "side": "RIGHT",
+    "in_reply_to_id": 1509987539,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 32,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510353166",
+    "pull_request_review_id": 1913063157,
+    "id": 1510353166,
+    "node_id": "PRRC_kwDOCqswNs5aBikO",
+    "diff_hunk": "@@ -0,0 +1,288 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::jj::JJConfig;\n+use crate::formatter::string_formatter::StringFormatterError;\n+use crate::formatter::StringFormatter;\n+use std::borrow::Cow;\n+\n+/// Creates a module with the jj status in the current directory\n+///\n+/// Will display the current branch, commit and change id of the jj repository in the current directory\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jj_status\");\n+    let config = JJConfig::try_load(module.config);\n+    // check if the current directory is a jj repo\n+    context.exec_cmd(\"jj\", &[\"root\", \"--ignore-working-copy\"])?;\n+\n+    let template = jj_template(config.truncation_length);\n+    let output = context.exec_cmd(\n+        \"jj\",\n+        &[\n+            \"log\",\n+            \"-r\",\n+            \"@\",\n+            \"-T\",\n+            template.as_str(),\n+            \"--no-graph\",\n+            \"--ignore-working-copy\",\n+        ],\n+    )?;",
+    "path": "src/modules/jj.rs",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "0xdeafbeef",
+      "id": 32823131,
+      "node_id": "MDQ6VXNlcjMyODIzMTMx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32823131?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/0xdeafbeef",
+      "html_url": "https://github.com/0xdeafbeef",
+      "followers_url": "https://api.github.com/users/0xdeafbeef/followers",
+      "following_url": "https://api.github.com/users/0xdeafbeef/following{/other_user}",
+      "gists_url": "https://api.github.com/users/0xdeafbeef/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/0xdeafbeef/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/0xdeafbeef/subscriptions",
+      "organizations_url": "https://api.github.com/users/0xdeafbeef/orgs",
+      "repos_url": "https://api.github.com/users/0xdeafbeef/repos",
+      "events_url": "https://api.github.com/users/0xdeafbeef/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/0xdeafbeef/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "done",
+    "created_at": "2024-03-03T18:57:55Z",
+    "updated_at": "2024-03-03T18:57:55Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1510353166",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1510353166"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1510353166"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510353166/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 17,
+    "original_start_line": 17,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 1509980749,
+    "author_association": "NONE",
+    "original_position": 28,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510353207",
+    "pull_request_review_id": 1913063168,
+    "id": 1510353207,
+    "node_id": "PRRC_kwDOCqswNs5aBik3",
+    "diff_hunk": "@@ -0,0 +1,288 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::jj::JJConfig;\n+use crate::formatter::string_formatter::StringFormatterError;\n+use crate::formatter::StringFormatter;\n+use std::borrow::Cow;\n+\n+/// Creates a module with the jj status in the current directory\n+///\n+/// Will display the current branch, commit and change id of the jj repository in the current directory\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jj_status\");\n+    let config = JJConfig::try_load(module.config);\n+    // check if the current directory is a jj repo\n+    context.exec_cmd(\"jj\", &[\"root\", \"--ignore-working-copy\"])?;\n+\n+    let template = jj_template(config.truncation_length);\n+    let output = context.exec_cmd(\n+        \"jj\",\n+        &[\n+            \"log\",\n+            \"-r\",\n+            \"@\",\n+            \"-T\",\n+            template.as_str(),\n+            \"--no-graph\",\n+            \"--ignore-working-copy\",\n+        ],\n+    )?;\n+    let parsed = JJStatus::new(&output.stdout)?;\n+    let formatter = match StringFormatter::new(config.format) {\n+        Ok(formatter) => formatter,\n+        Err(e) => {\n+            log::error!(\"Error in parsing format string for jj module {}\", e);\n+            return None;\n+        }\n+    };\n+    let formatted = formatter\n+        .map_meta(|s, _| match s {\n+            \"symbol\" => Some(config.symbol),\n+            \"divergent_symbol\" => {\n+                if parsed.divergent == \"true\" {\n+                    Some(config.divergent_symbol)\n+                } else {\n+                    None\n+                }\n+            }\n+            \"no_description_symbol\" => {\n+                if parsed.description.is_empty() {\n+                    Some(config.no_description_symbol)\n+                } else {\n+                    None\n+                }\n+            }",
+    "path": "src/modules/jj.rs",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "0xdeafbeef",
+      "id": 32823131,
+      "node_id": "MDQ6VXNlcjMyODIzMTMx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32823131?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/0xdeafbeef",
+      "html_url": "https://github.com/0xdeafbeef",
+      "followers_url": "https://api.github.com/users/0xdeafbeef/followers",
+      "following_url": "https://api.github.com/users/0xdeafbeef/following{/other_user}",
+      "gists_url": "https://api.github.com/users/0xdeafbeef/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/0xdeafbeef/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/0xdeafbeef/subscriptions",
+      "organizations_url": "https://api.github.com/users/0xdeafbeef/orgs",
+      "repos_url": "https://api.github.com/users/0xdeafbeef/repos",
+      "events_url": "https://api.github.com/users/0xdeafbeef/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/0xdeafbeef/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "done",
+    "created_at": "2024-03-03T18:58:01Z",
+    "updated_at": "2024-03-03T18:58:02Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1510353207",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1510353207"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1510353207"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510353207/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 48,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 53,
+    "side": "RIGHT",
+    "in_reply_to_id": 1509981152,
+    "author_association": "NONE",
+    "original_position": 53,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510353221",
+    "pull_request_review_id": 1913063196,
+    "id": 1510353221,
+    "node_id": "PRRC_kwDOCqswNs5aBilF",
+    "diff_hunk": "@@ -0,0 +1,288 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::jj::JJConfig;\n+use crate::formatter::string_formatter::StringFormatterError;\n+use crate::formatter::StringFormatter;\n+use std::borrow::Cow;\n+\n+/// Creates a module with the jj status in the current directory\n+///\n+/// Will display the current branch, commit and change id of the jj repository in the current directory\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jj_status\");\n+    let config = JJConfig::try_load(module.config);\n+    // check if the current directory is a jj repo\n+    context.exec_cmd(\"jj\", &[\"root\", \"--ignore-working-copy\"])?;\n+\n+    let template = jj_template(config.truncation_length);\n+    let output = context.exec_cmd(\n+        \"jj\",\n+        &[\n+            \"log\",\n+            \"-r\",\n+            \"@\",\n+            \"-T\",\n+            template.as_str(),\n+            \"--no-graph\",\n+            \"--ignore-working-copy\",\n+        ],\n+    )?;\n+    let parsed = JJStatus::new(&output.stdout)?;\n+    let formatter = match StringFormatter::new(config.format) {\n+        Ok(formatter) => formatter,\n+        Err(e) => {\n+            log::error!(\"Error in parsing format string for jj module {}\", e);\n+            return None;\n+        }\n+    };\n+    let formatted = formatter\n+        .map_meta(|s, _| match s {\n+            \"symbol\" => Some(config.symbol),\n+            \"divergent_symbol\" => {\n+                if parsed.divergent == \"true\" {\n+                    Some(config.divergent_symbol)\n+                } else {\n+                    None\n+                }\n+            }\n+            \"no_description_symbol\" => {\n+                if parsed.description.is_empty() {\n+                    Some(config.no_description_symbol)\n+                } else {\n+                    None\n+                }\n+            }\n+            _ => None,\n+        })\n+        .map_style(|s| {\n+            Some(Ok(match s {\n+                \"change_id_prefix_style\" => config.change_id_prefix_style,\n+                \"change_id_suffix_style\" => config.change_id_suffix_style,\n+                \"commit_id_prefix_style\" => config.commit_id_prefix_style,\n+                \"commit_id_suffix_style\" => config.commit_id_suffix_style,\n+                \"branch_style\" => config.branch_style,\n+                _ => return None,\n+            }))\n+        })\n+        .map(|v| parsed.format(v))\n+        .parse(None, Some(context));\n+    let formatted = match formatted {\n+        Ok(formatted) => formatted,\n+        Err(e) => {\n+            log::error!(\"Error in parsing format string for jj module {}\", e);\n+            return None;\n+        }\n+    };\n+    module.set_segments(formatted);\n+\n+    Some(module)\n+}\n+\n+fn jj_template(len: u8) -> String {\n+    let template = format!(\n+        r##\"change_id.shortest({len}).prefix() ++ \"#,\" ++ change_id.shortest({len}).rest() ++ \"#,\" ++ commit_id.shortest({len}).prefix() ++ \"#,\" ++ commit_id.shortest({len}).rest() ++ \"#,\" ++ divergent ++ \"#,\" ++ description ++ \"#,\" ++ branches.join(\",\")\"##,\n+    );\n+    template\n+}\n+\n+#[derive(Clone, Copy, Debug, Eq, PartialEq)]\n+struct JJStatus<'s> {\n+    change_id_prefix: &'s str,\n+    change_id_suffix: &'s str,\n+    commit_id_prefix: &'s str,\n+    commit_id_suffix: &'s str,\n+    divergent: &'s str,\n+    description: &'s str,\n+    branches: &'s str,\n+}\n+\n+impl<'s> JJStatus<'s> {\n+    fn new(input: &'s str) -> Option<JJStatus<'s>> {\n+        let parsed: Vec<&str> = input.split(\"#,\").collect();\n+        if parsed.len() != 7 {\n+            log::error!(\"expected at least 5 parts, got {}\", parsed.len());",
+    "path": "src/modules/jj.rs",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "0xdeafbeef",
+      "id": 32823131,
+      "node_id": "MDQ6VXNlcjMyODIzMTMx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32823131?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/0xdeafbeef",
+      "html_url": "https://github.com/0xdeafbeef",
+      "followers_url": "https://api.github.com/users/0xdeafbeef/followers",
+      "following_url": "https://api.github.com/users/0xdeafbeef/following{/other_user}",
+      "gists_url": "https://api.github.com/users/0xdeafbeef/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/0xdeafbeef/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/0xdeafbeef/subscriptions",
+      "organizations_url": "https://api.github.com/users/0xdeafbeef/orgs",
+      "repos_url": "https://api.github.com/users/0xdeafbeef/repos",
+      "events_url": "https://api.github.com/users/0xdeafbeef/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/0xdeafbeef/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "nice catch!",
+    "created_at": "2024-03-03T18:58:14Z",
+    "updated_at": "2024-03-03T18:58:14Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1510353221",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1510353221"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1510353221"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510353221/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 101,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 102,
+    "side": "RIGHT",
+    "in_reply_to_id": 1509982815,
+    "author_association": "NONE",
+    "original_position": 102,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510353249",
+    "pull_request_review_id": 1913063211,
+    "id": 1510353249,
+    "node_id": "PRRC_kwDOCqswNs5aBilh",
+    "diff_hunk": "@@ -0,0 +1,288 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::jj::JJConfig;\n+use crate::formatter::string_formatter::StringFormatterError;\n+use crate::formatter::StringFormatter;\n+use std::borrow::Cow;\n+\n+/// Creates a module with the jj status in the current directory\n+///\n+/// Will display the current branch, commit and change id of the jj repository in the current directory\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jj_status\");\n+    let config = JJConfig::try_load(module.config);\n+    // check if the current directory is a jj repo\n+    context.exec_cmd(\"jj\", &[\"root\", \"--ignore-working-copy\"])?;\n+\n+    let template = jj_template(config.truncation_length);\n+    let output = context.exec_cmd(\n+        \"jj\",\n+        &[\n+            \"log\",\n+            \"-r\",\n+            \"@\",\n+            \"-T\",\n+            template.as_str(),\n+            \"--no-graph\",\n+            \"--ignore-working-copy\",\n+        ],\n+    )?;\n+    let parsed = JJStatus::new(&output.stdout)?;\n+    let formatter = match StringFormatter::new(config.format) {\n+        Ok(formatter) => formatter,\n+        Err(e) => {\n+            log::error!(\"Error in parsing format string for jj module {}\", e);\n+            return None;\n+        }\n+    };\n+    let formatted = formatter\n+        .map_meta(|s, _| match s {\n+            \"symbol\" => Some(config.symbol),\n+            \"divergent_symbol\" => {\n+                if parsed.divergent == \"true\" {\n+                    Some(config.divergent_symbol)\n+                } else {\n+                    None\n+                }\n+            }\n+            \"no_description_symbol\" => {\n+                if parsed.description.is_empty() {\n+                    Some(config.no_description_symbol)\n+                } else {\n+                    None\n+                }\n+            }\n+            _ => None,\n+        })\n+        .map_style(|s| {\n+            Some(Ok(match s {\n+                \"change_id_prefix_style\" => config.change_id_prefix_style,\n+                \"change_id_suffix_style\" => config.change_id_suffix_style,\n+                \"commit_id_prefix_style\" => config.commit_id_prefix_style,\n+                \"commit_id_suffix_style\" => config.commit_id_suffix_style,\n+                \"branch_style\" => config.branch_style,\n+                _ => return None,\n+            }))\n+        })\n+        .map(|v| parsed.format(v))\n+        .parse(None, Some(context));\n+    let formatted = match formatted {\n+        Ok(formatted) => formatted,\n+        Err(e) => {\n+            log::error!(\"Error in parsing format string for jj module {}\", e);\n+            return None;\n+        }\n+    };\n+    module.set_segments(formatted);\n+\n+    Some(module)\n+}\n+\n+fn jj_template(len: u8) -> String {\n+    let template = format!(\n+        r##\"change_id.shortest({len}).prefix() ++ \"#,\" ++ change_id.shortest({len}).rest() ++ \"#,\" ++ commit_id.shortest({len}).prefix() ++ \"#,\" ++ commit_id.shortest({len}).rest() ++ \"#,\" ++ divergent ++ \"#,\" ++ description ++ \"#,\" ++ branches.join(\",\")\"##,\n+    );\n+    template\n+}\n+\n+#[derive(Clone, Copy, Debug, Eq, PartialEq)]\n+struct JJStatus<'s> {\n+    change_id_prefix: &'s str,\n+    change_id_suffix: &'s str,\n+    commit_id_prefix: &'s str,\n+    commit_id_suffix: &'s str,\n+    divergent: &'s str,\n+    description: &'s str,\n+    branches: &'s str,\n+}\n+\n+impl<'s> JJStatus<'s> {\n+    fn new(input: &'s str) -> Option<JJStatus<'s>> {\n+        let parsed: Vec<&str> = input.split(\"#,\").collect();\n+        if parsed.len() != 7 {\n+            log::error!(\"expected at least 5 parts, got {}\", parsed.len());\n+            return None;\n+        }\n+        let (\n+            change_id_prefix,\n+            change_id_suffix,\n+            commit_id_prefix,\n+            commit_id_suffix,\n+            divergent,\n+            description,\n+            branches,\n+        ) = (\n+            parsed[0], parsed[1], parsed[2], parsed[3], parsed[4], parsed[5], parsed[6],\n+        );",
+    "path": "src/modules/jj.rs",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "0xdeafbeef",
+      "id": 32823131,
+      "node_id": "MDQ6VXNlcjMyODIzMTMx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32823131?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/0xdeafbeef",
+      "html_url": "https://github.com/0xdeafbeef",
+      "followers_url": "https://api.github.com/users/0xdeafbeef/followers",
+      "following_url": "https://api.github.com/users/0xdeafbeef/following{/other_user}",
+      "gists_url": "https://api.github.com/users/0xdeafbeef/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/0xdeafbeef/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/0xdeafbeef/subscriptions",
+      "organizations_url": "https://api.github.com/users/0xdeafbeef/orgs",
+      "repos_url": "https://api.github.com/users/0xdeafbeef/repos",
+      "events_url": "https://api.github.com/users/0xdeafbeef/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/0xdeafbeef/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "done",
+    "created_at": "2024-03-03T18:58:21Z",
+    "updated_at": "2024-03-03T18:58:21Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1510353249",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1510353249"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1510353249"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510353249/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 115,
+    "side": "RIGHT",
+    "in_reply_to_id": 1509984227,
+    "author_association": "NONE",
+    "original_position": 115,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510353276",
+    "pull_request_review_id": 1913063229,
+    "id": 1510353276,
+    "node_id": "PRRC_kwDOCqswNs5aBil8",
+    "diff_hunk": "@@ -0,0 +1,288 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::jj::JJConfig;\n+use crate::formatter::string_formatter::StringFormatterError;\n+use crate::formatter::StringFormatter;\n+use std::borrow::Cow;\n+\n+/// Creates a module with the jj status in the current directory\n+///\n+/// Will display the current branch, commit and change id of the jj repository in the current directory\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jj_status\");\n+    let config = JJConfig::try_load(module.config);\n+    // check if the current directory is a jj repo\n+    context.exec_cmd(\"jj\", &[\"root\", \"--ignore-working-copy\"])?;\n+\n+    let template = jj_template(config.truncation_length);\n+    let output = context.exec_cmd(\n+        \"jj\",\n+        &[\n+            \"log\",\n+            \"-r\",\n+            \"@\",\n+            \"-T\",\n+            template.as_str(),\n+            \"--no-graph\",\n+            \"--ignore-working-copy\",\n+        ],\n+    )?;",
+    "path": "src/modules/jj.rs",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "0xdeafbeef",
+      "id": 32823131,
+      "node_id": "MDQ6VXNlcjMyODIzMTMx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32823131?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/0xdeafbeef",
+      "html_url": "https://github.com/0xdeafbeef",
+      "followers_url": "https://api.github.com/users/0xdeafbeef/followers",
+      "following_url": "https://api.github.com/users/0xdeafbeef/following{/other_user}",
+      "gists_url": "https://api.github.com/users/0xdeafbeef/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/0xdeafbeef/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/0xdeafbeef/subscriptions",
+      "organizations_url": "https://api.github.com/users/0xdeafbeef/orgs",
+      "repos_url": "https://api.github.com/users/0xdeafbeef/repos",
+      "events_url": "https://api.github.com/users/0xdeafbeef/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/0xdeafbeef/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "done",
+    "created_at": "2024-03-03T18:58:27Z",
+    "updated_at": "2024-03-03T18:58:27Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1510353276",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1510353276"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1510353276"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510353276/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 14,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 1509986153,
+    "author_association": "NONE",
+    "original_position": 28,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510353279",
+    "pull_request_review_id": 1913063238,
+    "id": 1510353279,
+    "node_id": "PRRC_kwDOCqswNs5aBil_",
+    "diff_hunk": "@@ -0,0 +1,288 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::jj::JJConfig;\n+use crate::formatter::string_formatter::StringFormatterError;\n+use crate::formatter::StringFormatter;\n+use std::borrow::Cow;\n+\n+/// Creates a module with the jj status in the current directory\n+///\n+/// Will display the current branch, commit and change id of the jj repository in the current directory\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jj_status\");\n+    let config = JJConfig::try_load(module.config);\n+    // check if the current directory is a jj repo\n+    context.exec_cmd(\"jj\", &[\"root\", \"--ignore-working-copy\"])?;\n+\n+    let template = jj_template(config.truncation_length);\n+    let output = context.exec_cmd(\n+        \"jj\",\n+        &[\n+            \"log\",\n+            \"-r\",\n+            \"@\",\n+            \"-T\",\n+            template.as_str(),\n+            \"--no-graph\",\n+            \"--ignore-working-copy\",\n+        ],\n+    )?;\n+    let parsed = JJStatus::new(&output.stdout)?;\n+    let formatter = match StringFormatter::new(config.format) {\n+        Ok(formatter) => formatter,\n+        Err(e) => {\n+            log::error!(\"Error in parsing format string for jj module {}\", e);\n+            return None;\n+        }\n+    };\n+    let formatted = formatter\n+        .map_meta(|s, _| match s {\n+            \"symbol\" => Some(config.symbol),\n+            \"divergent_symbol\" => {\n+                if parsed.divergent == \"true\" {\n+                    Some(config.divergent_symbol)\n+                } else {\n+                    None\n+                }\n+            }\n+            \"no_description_symbol\" => {\n+                if parsed.description.is_empty() {\n+                    Some(config.no_description_symbol)\n+                } else {\n+                    None\n+                }\n+            }\n+            _ => None,\n+        })\n+        .map_style(|s| {\n+            Some(Ok(match s {\n+                \"change_id_prefix_style\" => config.change_id_prefix_style,\n+                \"change_id_suffix_style\" => config.change_id_suffix_style,\n+                \"commit_id_prefix_style\" => config.commit_id_prefix_style,\n+                \"commit_id_suffix_style\" => config.commit_id_suffix_style,\n+                \"branch_style\" => config.branch_style,\n+                _ => return None,\n+            }))\n+        })\n+        .map(|v| parsed.format(v))\n+        .parse(None, Some(context));\n+    let formatted = match formatted {\n+        Ok(formatted) => formatted,\n+        Err(e) => {\n+            log::error!(\"Error in parsing format string for jj module {}\", e);\n+            return None;\n+        }\n+    };\n+    module.set_segments(formatted);\n+\n+    Some(module)\n+}\n+\n+fn jj_template(len: u8) -> String {\n+    let template = format!(\n+        r##\"change_id.shortest({len}).prefix() ++ \"#,\" ++ change_id.shortest({len}).rest() ++ \"#,\" ++ commit_id.shortest({len}).prefix() ++ \"#,\" ++ commit_id.shortest({len}).rest() ++ \"#,\" ++ divergent ++ \"#,\" ++ description ++ \"#,\" ++ branches.join(\",\")\"##,\n+    );\n+    template",
+    "path": "src/modules/jj.rs",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "0xdeafbeef",
+      "id": 32823131,
+      "node_id": "MDQ6VXNlcjMyODIzMTMx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32823131?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/0xdeafbeef",
+      "html_url": "https://github.com/0xdeafbeef",
+      "followers_url": "https://api.github.com/users/0xdeafbeef/followers",
+      "following_url": "https://api.github.com/users/0xdeafbeef/following{/other_user}",
+      "gists_url": "https://api.github.com/users/0xdeafbeef/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/0xdeafbeef/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/0xdeafbeef/subscriptions",
+      "organizations_url": "https://api.github.com/users/0xdeafbeef/orgs",
+      "repos_url": "https://api.github.com/users/0xdeafbeef/repos",
+      "events_url": "https://api.github.com/users/0xdeafbeef/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/0xdeafbeef/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "done",
+    "created_at": "2024-03-03T18:58:31Z",
+    "updated_at": "2024-03-03T18:58:31Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1510353279",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1510353279"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1510353279"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510353279/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 81,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 84,
+    "side": "RIGHT",
+    "in_reply_to_id": 1509986369,
+    "author_association": "NONE",
+    "original_position": 84,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510353290",
+    "pull_request_review_id": 1913063248,
+    "id": 1510353290,
+    "node_id": "PRRC_kwDOCqswNs5aBimK",
+    "diff_hunk": "@@ -0,0 +1,288 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::jj::JJConfig;\n+use crate::formatter::string_formatter::StringFormatterError;\n+use crate::formatter::StringFormatter;\n+use std::borrow::Cow;\n+\n+/// Creates a module with the jj status in the current directory\n+///\n+/// Will display the current branch, commit and change id of the jj repository in the current directory\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jj_status\");\n+    let config = JJConfig::try_load(module.config);\n+    // check if the current directory is a jj repo\n+    context.exec_cmd(\"jj\", &[\"root\", \"--ignore-working-copy\"])?;\n+\n+    let template = jj_template(config.truncation_length);\n+    let output = context.exec_cmd(\n+        \"jj\",\n+        &[\n+            \"log\",\n+            \"-r\",\n+            \"@\",\n+            \"-T\",\n+            template.as_str(),\n+            \"--no-graph\",\n+            \"--ignore-working-copy\",\n+        ],\n+    )?;\n+    let parsed = JJStatus::new(&output.stdout)?;\n+    let formatter = match StringFormatter::new(config.format) {\n+        Ok(formatter) => formatter,\n+        Err(e) => {\n+            log::error!(\"Error in parsing format string for jj module {}\", e);\n+            return None;\n+        }\n+    };\n+    let formatted = formatter\n+        .map_meta(|s, _| match s {\n+            \"symbol\" => Some(config.symbol),\n+            \"divergent_symbol\" => {\n+                if parsed.divergent == \"true\" {\n+                    Some(config.divergent_symbol)\n+                } else {\n+                    None\n+                }",
+    "path": "src/modules/jj.rs",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "0xdeafbeef",
+      "id": 32823131,
+      "node_id": "MDQ6VXNlcjMyODIzMTMx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32823131?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/0xdeafbeef",
+      "html_url": "https://github.com/0xdeafbeef",
+      "followers_url": "https://api.github.com/users/0xdeafbeef/followers",
+      "following_url": "https://api.github.com/users/0xdeafbeef/following{/other_user}",
+      "gists_url": "https://api.github.com/users/0xdeafbeef/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/0xdeafbeef/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/0xdeafbeef/subscriptions",
+      "organizations_url": "https://api.github.com/users/0xdeafbeef/orgs",
+      "repos_url": "https://api.github.com/users/0xdeafbeef/repos",
+      "events_url": "https://api.github.com/users/0xdeafbeef/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/0xdeafbeef/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "done",
+    "created_at": "2024-03-03T18:58:36Z",
+    "updated_at": "2024-03-03T18:58:36Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1510353290",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1510353290"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1510353290"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510353290/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 41,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 52,
+    "side": "RIGHT",
+    "in_reply_to_id": 1509986584,
+    "author_association": "NONE",
+    "original_position": 45,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510353457",
+    "pull_request_review_id": 1913063439,
+    "id": 1510353457,
+    "node_id": "PRRC_kwDOCqswNs5aBiox",
+    "diff_hunk": "@@ -2445,6 +2445,78 @@ number_threshold = 4\n symbol_threshold = 0\n ```\n \n+## JJ\n+\n+The `jj` module reflects the current status of your Jujutsu repository. It shows\n+different symbols and formats depending on the state of your work in progress,\n+including changes, commits, branch, and more.\n+\n+The `jj` module is only shown when you're in a directory that is part of a\n+Jujutsu repository.\n+\n+The default functionality includes displaying:\n+\n+- current change id\n+- current commit id\n+\n+::: warning\n+\n+This module requires the Jujutsu command line tool to be installed and\n+accessible in your system's PATH for it to function correctly.\n+\n+:::\n+\n+### Options\n+\n+| Option                   | Default                                                                                                                                                                                                                                                             | Description                                                                                  |\n+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |\n+| `symbol`                 | `'🍐 '`                                                                                                                                                                                                                                                             | The string used before displaying the repository status.                                     |\n+| `no_description_symbol`  | `' 📝'`                                                                                                                                                                                                                                                             | Is displayed when change description is empty.                                               |\n+| `divergent_symbol`       | `' 💥'`                                                                                                                                                                                                                                                             | Is displayed when commit in divergent state.                                                 |",
+    "path": "docs/config/README.md",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "0xdeafbeef",
+      "id": 32823131,
+      "node_id": "MDQ6VXNlcjMyODIzMTMx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32823131?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/0xdeafbeef",
+      "html_url": "https://github.com/0xdeafbeef",
+      "followers_url": "https://api.github.com/users/0xdeafbeef/followers",
+      "following_url": "https://api.github.com/users/0xdeafbeef/following{/other_user}",
+      "gists_url": "https://api.github.com/users/0xdeafbeef/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/0xdeafbeef/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/0xdeafbeef/subscriptions",
+      "organizations_url": "https://api.github.com/users/0xdeafbeef/orgs",
+      "repos_url": "https://api.github.com/users/0xdeafbeef/repos",
+      "events_url": "https://api.github.com/users/0xdeafbeef/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/0xdeafbeef/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "https://github.com/martinvonz/jj/blob/dce99cf1f83bfc54a4130c4fe2b1c1d0a81a980c/docs/glossary.md#divergent-change",
+    "created_at": "2024-03-03T19:00:17Z",
+    "updated_at": "2024-03-03T19:00:17Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1510353457",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1510353457"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1510353457"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510353457/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 2475,
+    "side": "RIGHT",
+    "in_reply_to_id": 1509987211,
+    "author_association": "NONE",
+    "original_position": 31,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510354307",
+    "pull_request_review_id": 1913064130,
+    "id": 1510354307,
+    "node_id": "PRRC_kwDOCqswNs5aBi2D",
+    "diff_hunk": "@@ -2445,6 +2445,78 @@ number_threshold = 4\n symbol_threshold = 0\n ```\n \n+## JJ\n+\n+The `jj` module reflects the current status of your Jujutsu repository. It shows\n+different symbols and formats depending on the state of your work in progress,\n+including changes, commits, branch, and more.\n+\n+The `jj` module is only shown when you're in a directory that is part of a\n+Jujutsu repository.\n+\n+The default functionality includes displaying:\n+\n+- current change id\n+- current commit id\n+\n+::: warning\n+\n+This module requires the Jujutsu command line tool to be installed and\n+accessible in your system's PATH for it to function correctly.\n+\n+:::\n+\n+### Options\n+\n+| Option                   | Default                                                                                                                                                                                                                                                             | Description                                                                                  |\n+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |\n+| `symbol`                 | `'🍐 '`                                                                                                                                                                                                                                                             | The string used before displaying the repository status.                                     |\n+| `no_description_symbol`  | `' 📝'`                                                                                                                                                                                                                                                             | Is displayed when change description is empty.                                               |\n+| `divergent_symbol`       | `' 💥'`                                                                                                                                                                                                                                                             | Is displayed when commit in divergent state.                                                 |\n+| `format`                 | `'\\[$symbol[$change_id_prefix]($change_id_prefix_style)[$change_id_suffix]($change_id_suffix_style) [$commit_id_prefix]($commit_id_prefix_style)[$commit_id_suffix]($commit_id_suffix_style) on [$branch]($branch_style)$no_description_symbol$divergent_symbol\\]'` | The format for rendering the module. `symbol`, `style`, and other variables can be included. |",
+    "path": "docs/config/README.md",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "0xdeafbeef",
+      "id": 32823131,
+      "node_id": "MDQ6VXNlcjMyODIzMTMx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32823131?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/0xdeafbeef",
+      "html_url": "https://github.com/0xdeafbeef",
+      "followers_url": "https://api.github.com/users/0xdeafbeef/followers",
+      "following_url": "https://api.github.com/users/0xdeafbeef/following{/other_user}",
+      "gists_url": "https://api.github.com/users/0xdeafbeef/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/0xdeafbeef/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/0xdeafbeef/subscriptions",
+      "organizations_url": "https://api.github.com/users/0xdeafbeef/orgs",
+      "repos_url": "https://api.github.com/users/0xdeafbeef/repos",
+      "events_url": "https://api.github.com/users/0xdeafbeef/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/0xdeafbeef/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The issue is that you need to apply styling to both `on` and the branch name, showing `on` conditional based on the presence of the branch name.\r\n",
+    "created_at": "2024-03-03T19:05:46Z",
+    "updated_at": "2024-03-03T19:05:47Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1510354307",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1510354307"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1510354307"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510354307/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 2549,
+    "side": "RIGHT",
+    "in_reply_to_id": 1509987539,
+    "author_association": "NONE",
+    "original_position": 32,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1512787581",
+    "pull_request_review_id": 1916831616,
+    "id": 1512787581,
+    "node_id": "PRRC_kwDOCqswNs5aK059",
+    "diff_hunk": "@@ -2445,6 +2445,78 @@ number_threshold = 4\n symbol_threshold = 0\n ```\n \n+## JJ\n+\n+The `jj` module reflects the current status of your Jujutsu repository. It shows\n+different symbols and formats depending on the state of your work in progress,\n+including changes, commits, branch, and more.\n+\n+The `jj` module is only shown when you're in a directory that is part of a\n+Jujutsu repository.\n+\n+The default functionality includes displaying:\n+\n+- current change id\n+- current commit id\n+\n+::: warning\n+\n+This module requires the Jujutsu command line tool to be installed and\n+accessible in your system's PATH for it to function correctly.\n+\n+:::\n+\n+### Options\n+\n+| Option                   | Default                                                                                                                                                                                                                                                             | Description                                                                                  |\n+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |\n+| `symbol`                 | `'🍐 '`                                                                                                                                                                                                                                                             | The string used before displaying the repository status.                                     |\n+| `no_description_symbol`  | `' 📝'`                                                                                                                                                                                                                                                             | Is displayed when change description is empty.                                               |\n+| `divergent_symbol`       | `' 💥'`                                                                                                                                                                                                                                                             | Is displayed when commit in divergent state.                                                 |",
+    "path": "docs/config/README.md",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "e90721aa6ebcbd1d9296d346e45bd31bb7399e16",
+    "user": {
+      "login": "poliorcetics",
+      "id": 7951708,
+      "node_id": "MDQ6VXNlcjc5NTE3MDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7951708?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/poliorcetics",
+      "html_url": "https://github.com/poliorcetics",
+      "followers_url": "https://api.github.com/users/poliorcetics/followers",
+      "following_url": "https://api.github.com/users/poliorcetics/following{/other_user}",
+      "gists_url": "https://api.github.com/users/poliorcetics/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/poliorcetics/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/poliorcetics/subscriptions",
+      "organizations_url": "https://api.github.com/users/poliorcetics/orgs",
+      "repos_url": "https://api.github.com/users/poliorcetics/repos",
+      "events_url": "https://api.github.com/users/poliorcetics/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/poliorcetics/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "probably need a link then, I don't think many users will encounter this so documenting it would be useful :)",
+    "created_at": "2024-03-05T12:58:54Z",
+    "updated_at": "2024-03-05T12:58:54Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1512787581",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1512787581"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1512787581"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1512787581/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 2475,
+    "side": "RIGHT",
+    "in_reply_to_id": 1509987211,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 31,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1516153195",
+    "pull_request_review_id": 1922435673,
+    "id": 1516153195,
+    "node_id": "PRRC_kwDOCqswNs5aXqlr",
+    "diff_hunk": "",
+    "path": "docs/config/README.md",
+    "commit_id": "611c9b4f512e83eb05a4744a4b414682bbba7055",
+    "original_commit_id": "611c9b4f512e83eb05a4744a4b414682bbba7055",
+    "user": {
+      "login": "timcki",
+      "id": 36666822,
+      "node_id": "MDQ6VXNlcjM2NjY2ODIy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36666822?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/timcki",
+      "html_url": "https://github.com/timcki",
+      "followers_url": "https://api.github.com/users/timcki/followers",
+      "following_url": "https://api.github.com/users/timcki/following{/other_user}",
+      "gists_url": "https://api.github.com/users/timcki/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/timcki/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/timcki/subscriptions",
+      "organizations_url": "https://api.github.com/users/timcki/orgs",
+      "repos_url": "https://api.github.com/users/timcki/repos",
+      "events_url": "https://api.github.com/users/timcki/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/timcki/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I suggest disabling the formatter here to avoid cluttering the PR.",
+    "created_at": "2024-03-07T13:28:38Z",
+    "updated_at": "2024-03-07T13:41:31Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1516153195",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1516153195"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1516153195"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1516153195/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1,
+    "original_line": 1,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 1,
+    "position": 1,
+    "subject_type": "file"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1516156683",
+    "pull_request_review_id": 1922435673,
+    "id": 1516156683,
+    "node_id": "PRRC_kwDOCqswNs5aXrcL",
+    "diff_hunk": "@@ -0,0 +1,41 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize, Debug)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct JJConfig<'a> {\n+    pub symbol: &'a str,\n+    pub format: &'a str,\n+    pub disabled: bool,\n+    pub change_id_prefix_style: &'a str,\n+    pub change_id_suffix_style: &'a str,\n+    pub commit_id_prefix_style: &'a str,\n+    pub commit_id_suffix_style: &'a str,\n+    pub truncation_length: u8,\n+    pub no_description_symbol: &'a str,\n+    pub divergent_symbol: &'a str,\n+    pub branch_style: &'a str,\n+}\n+\n+impl<'a> Default for JJConfig<'a> {\n+    fn default() -> Self {\n+        JJConfig {\n+            symbol: \"🍐 \",\n+            // format: \"[[$change_id_prefix]($change_id_prefix_style)[$change_id_suffix]($change_id_suffix_style) [$commit_id_prefix]($commit_id_prefix_style)[$commit_id_suffix]($commit_id_suffix_style)$branch]($style)\",",
+    "path": "src/configs/jj.rs",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "611c9b4f512e83eb05a4744a4b414682bbba7055",
+    "user": {
+      "login": "timcki",
+      "id": 36666822,
+      "node_id": "MDQ6VXNlcjM2NjY2ODIy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36666822?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/timcki",
+      "html_url": "https://github.com/timcki",
+      "followers_url": "https://api.github.com/users/timcki/followers",
+      "following_url": "https://api.github.com/users/timcki/following{/other_user}",
+      "gists_url": "https://api.github.com/users/timcki/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/timcki/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/timcki/subscriptions",
+      "organizations_url": "https://api.github.com/users/timcki/orgs",
+      "repos_url": "https://api.github.com/users/timcki/repos",
+      "events_url": "https://api.github.com/users/timcki/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/timcki/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "is the comment here left intentionally?",
+    "created_at": "2024-03-07T13:29:40Z",
+    "updated_at": "2024-03-07T13:41:31Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1516156683",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1516156683"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1516156683"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1516156683/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 28,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 28,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1516157843",
+    "pull_request_review_id": 1922435673,
+    "id": 1516157843,
+    "node_id": "PRRC_kwDOCqswNs5aXruT",
+    "diff_hunk": "",
+    "path": "src/formatter/model.rs",
+    "commit_id": "611c9b4f512e83eb05a4744a4b414682bbba7055",
+    "original_commit_id": "611c9b4f512e83eb05a4744a4b414682bbba7055",
+    "user": {
+      "login": "timcki",
+      "id": 36666822,
+      "node_id": "MDQ6VXNlcjM2NjY2ODIy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36666822?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/timcki",
+      "html_url": "https://github.com/timcki",
+      "followers_url": "https://api.github.com/users/timcki/followers",
+      "following_url": "https://api.github.com/users/timcki/following{/other_user}",
+      "gists_url": "https://api.github.com/users/timcki/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/timcki/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/timcki/subscriptions",
+      "organizations_url": "https://api.github.com/users/timcki/orgs",
+      "repos_url": "https://api.github.com/users/timcki/repos",
+      "events_url": "https://api.github.com/users/timcki/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/timcki/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I don't think these structs need to derive `Debug`",
+    "created_at": "2024-03-07T13:30:31Z",
+    "updated_at": "2024-03-07T13:41:31Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1516157843",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1516157843"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1516157843"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1516157843/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1,
+    "original_line": 1,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 1,
+    "position": 1,
+    "subject_type": "file"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1516172983",
+    "pull_request_review_id": 1922435673,
+    "id": 1516172983,
+    "node_id": "PRRC_kwDOCqswNs5aXva3",
+    "diff_hunk": "@@ -0,0 +1,290 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::jj::JJConfig;\n+use crate::formatter::string_formatter::StringFormatterError;\n+use crate::formatter::StringFormatter;\n+use std::borrow::Cow;\n+\n+/// Creates a module with the jj status in the current directory\n+///\n+/// Will display the current branch, commit and change id of the jj repository in the current directory\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jj_status\");\n+    let config = JJConfig::try_load(module.config);\n+    // check if the current directory is a jj repo\n+    let repo_root = context\n+        .exec_cmd(\"jj\", &[\"root\", \"--ignore-working-copy\"])?\n+        .stdout;\n+\n+    let template = jj_template(config.truncation_length);\n+    let output = context.exec_cmd(\n+        \"jj\",\n+        &[\n+            \"log\",\n+            \"-r\",\n+            \"@\",\n+            \"-T\",\n+            template.as_str(),\n+            \"--no-graph\",\n+            \"--ignore-working-copy\",\n+            \"--no-pager\",\n+            \"--color\",\n+            \"never\",\n+            \"-R\",\n+            repo_root.trim(),\n+        ],\n+    )?;\n+    let parsed = JJStatus::new(&output.stdout)?;\n+    let formatter = match StringFormatter::new(config.format) {\n+        Ok(formatter) => formatter,\n+        Err(e) => {\n+            log::error!(\"Error in parsing format string for jj module {}\", e);\n+            return None;\n+        }\n+    };\n+    let formatted = formatter\n+        .map_meta(|s, _| match s {\n+            \"symbol\" => Some(config.symbol),\n+            \"divergent_symbol\" => {\n+                if parsed.divergent == \"true\" {\n+                    Some(config.divergent_symbol)\n+                } else {\n+                    None\n+                }\n+            }",
+    "path": "src/modules/jj.rs",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "611c9b4f512e83eb05a4744a4b414682bbba7055",
+    "user": {
+      "login": "timcki",
+      "id": 36666822,
+      "node_id": "MDQ6VXNlcjM2NjY2ODIy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36666822?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/timcki",
+      "html_url": "https://github.com/timcki",
+      "followers_url": "https://api.github.com/users/timcki/followers",
+      "following_url": "https://api.github.com/users/timcki/following{/other_user}",
+      "gists_url": "https://api.github.com/users/timcki/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/timcki/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/timcki/subscriptions",
+      "organizations_url": "https://api.github.com/users/timcki/orgs",
+      "repos_url": "https://api.github.com/users/timcki/repos",
+      "events_url": "https://api.github.com/users/timcki/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/timcki/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I suggest to replace this block with\r\n```suggestion\r\n           \"divergent_symbol\" => parsed\r\n                .divergent\r\n                .eq(\"true\")\r\n                .then_some(config.divergent_symbol),\r\n```\r\nto keep it more consistent with the comparison below",
+    "created_at": "2024-03-07T13:40:16Z",
+    "updated_at": "2024-03-07T13:41:31Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1516172983",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1516172983"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1516172983"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1516172983/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 47,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 53,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 53,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1518571131",
+    "pull_request_review_id": 1926193100,
+    "id": 1518571131,
+    "node_id": "PRRC_kwDOCqswNs5ag457",
+    "diff_hunk": "@@ -0,0 +1,41 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize, Debug)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct JJConfig<'a> {\n+    pub symbol: &'a str,\n+    pub format: &'a str,\n+    pub disabled: bool,\n+    pub change_id_prefix_style: &'a str,\n+    pub change_id_suffix_style: &'a str,\n+    pub commit_id_prefix_style: &'a str,\n+    pub commit_id_suffix_style: &'a str,\n+    pub truncation_length: u8,\n+    pub no_description_symbol: &'a str,\n+    pub divergent_symbol: &'a str,\n+    pub branch_style: &'a str,\n+}\n+\n+impl<'a> Default for JJConfig<'a> {\n+    fn default() -> Self {\n+        JJConfig {\n+            symbol: \"🍐 \",\n+            // format: \"[[$change_id_prefix]($change_id_prefix_style)[$change_id_suffix]($change_id_suffix_style) [$commit_id_prefix]($commit_id_prefix_style)[$commit_id_suffix]($commit_id_suffix_style)$branch]($style)\",",
+    "path": "src/configs/jj.rs",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "611c9b4f512e83eb05a4744a4b414682bbba7055",
+    "user": {
+      "login": "0xdeafbeef",
+      "id": 32823131,
+      "node_id": "MDQ6VXNlcjMyODIzMTMx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32823131?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/0xdeafbeef",
+      "html_url": "https://github.com/0xdeafbeef",
+      "followers_url": "https://api.github.com/users/0xdeafbeef/followers",
+      "following_url": "https://api.github.com/users/0xdeafbeef/following{/other_user}",
+      "gists_url": "https://api.github.com/users/0xdeafbeef/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/0xdeafbeef/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/0xdeafbeef/subscriptions",
+      "organizations_url": "https://api.github.com/users/0xdeafbeef/orgs",
+      "repos_url": "https://api.github.com/users/0xdeafbeef/repos",
+      "events_url": "https://api.github.com/users/0xdeafbeef/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/0xdeafbeef/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Removed this",
+    "created_at": "2024-03-09T13:10:27Z",
+    "updated_at": "2024-03-09T13:10:27Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1518571131",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1518571131"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1518571131"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1518571131/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 28,
+    "side": "RIGHT",
+    "in_reply_to_id": 1516156683,
+    "author_association": "NONE",
+    "original_position": 28,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1588360584",
+    "pull_request_review_id": 2036889145,
+    "id": 1588360584,
+    "node_id": "PRRC_kwDOCqswNs5erHWI",
+    "diff_hunk": "@@ -2445,6 +2446,78 @@ number_threshold = 4\n symbol_threshold = 0\n ```\n \n+## JJ\n+\n+The `jj` module reflects the current status of your Jujutsu repository. It shows\n+different symbols and formats depending on the state of your work in progress,\n+including changes, commits, branch, and more.\n+\n+The `jj` module is only shown when you're in a directory that is part of a\n+Jujutsu repository.\n+\n+The default functionality includes displaying:\n+\n+- current change id\n+- current commit id\n+\n+::: warning\n+\n+This module requires the Jujutsu command line tool to be installed and\n+accessible in your system's PATH for it to function correctly.\n+\n+:::\n+\n+### Options\n+\n+| Option                   | Default                                                                                                                                                                                                                                                             | Description                                                                                                                     |\n+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |\n+| `symbol`                 | `'🍐 '`                                                                                                                                                                                                                                                             | The string used before displaying the repository status.                                                                        |\n+| `no_description_symbol`  | `' 📝'`                                                                                                                                                                                                                                                             | Is displayed when change description is empty.                                                                                  |\n+| `divergent_symbol`       | `' 💥'`                                                                                                                                                                                                                                                             | Is displayed when commit is in [divergent](https://github.com/martinvonz/jj/blob/main/docs/glossary.md#divergent-change) state. |\n+| `format`                 | `'\\[$symbol[$change_id_prefix]($change_id_prefix_style)[$change_id_suffix]($change_id_suffix_style) [$commit_id_prefix]($commit_id_prefix_style)[$commit_id_suffix]($commit_id_suffix_style) on [$branch]($branch_style)$no_description_symbol$divergent_symbol\\]'` | The format for rendering the module. `symbol`, `style`, and other variables can be included.                                    |\n+| `disabled`               | `false`                                                                                                                                                                                                                                                             | Disables the `jj` module.                                                                                                       |\n+| `change_id_prefix_style` | `'purple'`                                                                                                                                                                                                                                                          | The style for uniq part of change id.                                                                                           |\n+| `change_id_suffix_style` | `'bright-black'`                                                                                                                                                                                                                                                    | The style for the rest of change id.                                                                                            |\n+| `commit_id_prefix_style` | `'blue'`                                                                                                                                                                                                                                                            | The style for unique part of commit hash.                                                                                       |\n+| `commit_id_suffix_style` | `'bright-black'`                                                                                                                                                                                                                                                    | The style for the rest of commit hash.                                                                                          |\n+| `truncation_length`      | `8`                                                                                                                                                                                                                                                                 | Truncates the commit and change id to `truncation_length` characters.                                                           |\n+| `branch_style`           | `'purple'`                                                                                                                                                                                                                                                          | The style for the branch name.                                                                                                  |\n+\n+### Variables\n+\n+```\n+[🍐 rnyynlop 811ca1a4 on push-rnyynlopprno*]\n+```\n+\n+| Variable           | Example   | Description                                                       |\n+| ------------------ | --------- | ----------------------------------------------------------------- |\n+| `symbol`           | `🍐`      | Mirrors the value of option `symbol`.                             |\n+| `change_id_prefix` | `r`       | Unique part of the change id, styled by `change_id_prefix_style`. |\n+| `change_id_suffix` | `nyynlop` | The rest of the change id, styled by `change_id_suffix_style`.    |\n+| `commit_id_prefix` | `811`     | Unique part of the commit id, styled by `commit_id_prefix_style`. |\n+| `commit_id_suffix` | `ca1a4`   | The rest of the commit id, styled by `commit_id_suffix_style`.    |\n+| `branch`           | `master`  | The current branch name.                                          |\n+\n+### Example\n+\n+```toml\n+# ~/.config/starship.toml\n+\n+[jj]",
+    "path": "docs/config/README.md",
+    "commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "original_commit_id": "d9acbbcb9321db668624dbf2dfca23ee5a5d94e7",
+    "user": {
+      "login": "Nemo157",
+      "id": 81079,
+      "node_id": "MDQ6VXNlcjgxMDc5",
+      "avatar_url": "https://avatars.githubusercontent.com/u/81079?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Nemo157",
+      "html_url": "https://github.com/Nemo157",
+      "followers_url": "https://api.github.com/users/Nemo157/followers",
+      "following_url": "https://api.github.com/users/Nemo157/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Nemo157/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Nemo157/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Nemo157/subscriptions",
+      "organizations_url": "https://api.github.com/users/Nemo157/orgs",
+      "repos_url": "https://api.github.com/users/Nemo157/repos",
+      "events_url": "https://api.github.com/users/Nemo157/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Nemo157/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n[jj_status]\r\n```\r\n\r\nThe docs here are out of sync with the code. Also needs changing in the initial prose.",
+    "created_at": "2024-05-02T20:58:16Z",
+    "updated_at": "2024-05-02T20:58:16Z",
+    "html_url": "https://github.com/starship/starship/pull/5772#discussion_r1588360584",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5772",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1588360584"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5772#discussion_r1588360584"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5772"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1588360584/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 2506,
+    "original_line": 2506,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 69,
+    "position": 69,
+    "subject_type": "line"
+  }
+]

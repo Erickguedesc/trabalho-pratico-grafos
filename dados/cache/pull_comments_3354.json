@@ -1,0 +1,349 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/775520392",
+    "pull_request_review_id": 840400108,
+    "id": 775520392,
+    "node_id": "PRRC_kwDOCqswNs4uOYCI",
+    "diff_hunk": "@@ -109,6 +111,17 @@ fn execute_rustup_override_list(cwd: &Path) -> Option<String> {\n     extract_toolchain_from_rustup_override_list(&stdout, cwd)\n }\n \n+fn execute_rustup_default() -> Option<String> {\n+    let Output { stdout, .. } = create_command(\"rustup\")\n+        .ok()?\n+        .args(&[\"default\"])\n+        .output()\n+        .ok()?;\n+    let stdout = String::from_utf8(stdout).ok()?;\n+\n+    stdout.split_whitespace().next().map(str::to_owned)\n+}",
+    "path": "src/modules/rust.rs",
+    "commit_id": "392a524da6627477579062581c8880cfeb4a5fb7",
+    "original_commit_id": "24c3186004e345f7a39708a587c2269854fbb1a6",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Not a blocker but if possible can you use the `exec_cmd` here since it will also provide some additional logging and automatically kill the command if it takes too long e.g\r\n\r\n```suggestion\r\nfn execute_rustup_default(context: &Context) -> Option<String> {\r\n    context\r\n        .exec_cmd(\"rustup\", &[\"default\"])?\r\n        .stdout\r\n        .split_whitespace()\r\n        .next()\r\n        .map(str::to_owned)\r\n}\r\n```",
+    "created_at": "2021-12-27T14:27:46Z",
+    "updated_at": "2021-12-27T14:48:13Z",
+    "html_url": "https://github.com/starship/starship/pull/3354#discussion_r775520392",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3354",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/775520392"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3354#discussion_r775520392"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3354"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/775520392/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 114,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 123,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 29,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/775520646",
+    "pull_request_review_id": 840400108,
+    "id": 775520646,
+    "node_id": "PRRC_kwDOCqswNs4uOYGG",
+    "diff_hunk": "@@ -76,6 +77,7 @@ fn get_module_version(context: &Context, config: &RustConfig) -> Option<String>\n     if let Some(toolchain) = env_rustup_toolchain(context)\n         .or_else(|| execute_rustup_override_list(&context.current_dir))\n         .or_else(|| find_rust_toolchain_file(context))\n+        .or_else(execute_rustup_default)",
+    "path": "src/modules/rust.rs",
+    "commit_id": "392a524da6627477579062581c8880cfeb4a5fb7",
+    "original_commit_id": "24c3186004e345f7a39708a587c2269854fbb1a6",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Related to the below suggestion\r\n```suggestion\r\n        .or_else(|| execute_rustup_default(context))\r\n```",
+    "created_at": "2021-12-27T14:28:24Z",
+    "updated_at": "2021-12-27T14:48:13Z",
+    "html_url": "https://github.com/starship/starship/pull/3354#discussion_r775520646",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3354",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/775520646"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3354#discussion_r775520646"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3354"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/775520646/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 80,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 12,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/775639029",
+    "pull_request_review_id": 840553647,
+    "id": 775639029,
+    "node_id": "PRRC_kwDOCqswNs4uO0_1",
+    "diff_hunk": "@@ -99,14 +101,22 @@ fn env_rustup_toolchain(context: &Context) -> Option<String> {\n     Some(val.trim().to_owned())\n }\n \n-fn execute_rustup_override_list(cwd: &Path) -> Option<String> {\n-    let Output { stdout, .. } = create_command(\"rustup\")\n-        .ok()?\n-        .args(&[\"override\", \"list\"])\n-        .output()\n-        .ok()?;\n-    let stdout = String::from_utf8(stdout).ok()?;\n-    extract_toolchain_from_rustup_override_list(&stdout, cwd)\n+fn execute_rustup_override_list(context: &Context) -> Option<String> {\n+    extract_toolchain_from_rustup_override_list(\n+        &context.exec_cmd(\"rustup\", &[\"default\"])?.stdout,",
+    "path": "src/modules/rust.rs",
+    "commit_id": "392a524da6627477579062581c8880cfeb4a5fb7",
+    "original_commit_id": "6b4d1a184b9302cd21f6004a9891f086612c9d1e",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Should this not be\n\n```suggestion\n        &context.exec_cmd(\"rustup\", &[\"override\", \"list\"])?.stdout,\n```\n",
+    "created_at": "2021-12-27T20:37:42Z",
+    "updated_at": "2021-12-27T20:40:46Z",
+    "html_url": "https://github.com/starship/starship/pull/3354#discussion_r775639029",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3354",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/775639029"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3354#discussion_r775639029"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3354"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/775639029/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 106,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 33,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/775645495",
+    "pull_request_review_id": 840561043,
+    "id": 775645495,
+    "node_id": "PRRC_kwDOCqswNs4uO2k3",
+    "diff_hunk": "@@ -99,14 +101,22 @@ fn env_rustup_toolchain(context: &Context) -> Option<String> {\n     Some(val.trim().to_owned())\n }\n \n-fn execute_rustup_override_list(cwd: &Path) -> Option<String> {\n-    let Output { stdout, .. } = create_command(\"rustup\")\n-        .ok()?\n-        .args(&[\"override\", \"list\"])\n-        .output()\n-        .ok()?;\n-    let stdout = String::from_utf8(stdout).ok()?;\n-    extract_toolchain_from_rustup_override_list(&stdout, cwd)\n+fn execute_rustup_override_list(context: &Context) -> Option<String> {\n+    extract_toolchain_from_rustup_override_list(\n+        &context.exec_cmd(\"rustup\", &[\"default\"])?.stdout,",
+    "path": "src/modules/rust.rs",
+    "commit_id": "392a524da6627477579062581c8880cfeb4a5fb7",
+    "original_commit_id": "6b4d1a184b9302cd21f6004a9891f086612c9d1e",
+    "user": {
+      "login": "syphar",
+      "id": 540890,
+      "node_id": "MDQ6VXNlcjU0MDg5MA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/540890?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/syphar",
+      "html_url": "https://github.com/syphar",
+      "followers_url": "https://api.github.com/users/syphar/followers",
+      "following_url": "https://api.github.com/users/syphar/following{/other_user}",
+      "gists_url": "https://api.github.com/users/syphar/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/syphar/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/syphar/subscriptions",
+      "organizations_url": "https://api.github.com/users/syphar/orgs",
+      "repos_url": "https://api.github.com/users/syphar/repos",
+      "events_url": "https://api.github.com/users/syphar/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/syphar/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "thanks for the reminder, copy/paste errors still happen, no matter the experience :) \r\n\r\n",
+    "created_at": "2021-12-27T21:05:25Z",
+    "updated_at": "2021-12-27T21:05:25Z",
+    "html_url": "https://github.com/starship/starship/pull/3354#discussion_r775645495",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3354",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/775645495"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3354#discussion_r775645495"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3354"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/775645495/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 106,
+    "side": "RIGHT",
+    "in_reply_to_id": 775639029,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 33,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/775645628",
+    "pull_request_review_id": 840561272,
+    "id": 775645628,
+    "node_id": "PRRC_kwDOCqswNs4uO2m8",
+    "diff_hunk": "@@ -99,14 +101,22 @@ fn env_rustup_toolchain(context: &Context) -> Option<String> {\n     Some(val.trim().to_owned())\n }\n \n-fn execute_rustup_override_list(cwd: &Path) -> Option<String> {\n-    let Output { stdout, .. } = create_command(\"rustup\")\n-        .ok()?\n-        .args(&[\"override\", \"list\"])\n-        .output()\n-        .ok()?;\n-    let stdout = String::from_utf8(stdout).ok()?;\n-    extract_toolchain_from_rustup_override_list(&stdout, cwd)\n+fn execute_rustup_override_list(context: &Context) -> Option<String> {\n+    extract_toolchain_from_rustup_override_list(\n+        &context.exec_cmd(\"rustup\", &[\"default\"])?.stdout,",
+    "path": "src/modules/rust.rs",
+    "commit_id": "392a524da6627477579062581c8880cfeb4a5fb7",
+    "original_commit_id": "6b4d1a184b9302cd21f6004a9891f086612c9d1e",
+    "user": {
+      "login": "syphar",
+      "id": 540890,
+      "node_id": "MDQ6VXNlcjU0MDg5MA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/540890?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/syphar",
+      "html_url": "https://github.com/syphar",
+      "followers_url": "https://api.github.com/users/syphar/followers",
+      "following_url": "https://api.github.com/users/syphar/following{/other_user}",
+      "gists_url": "https://api.github.com/users/syphar/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/syphar/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/syphar/subscriptions",
+      "organizations_url": "https://api.github.com/users/syphar/orgs",
+      "repos_url": "https://api.github.com/users/syphar/repos",
+      "events_url": "https://api.github.com/users/syphar/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/syphar/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "fixed it, in the same commit. \r\n\r\nOr should I squash? ",
+    "created_at": "2021-12-27T21:06:09Z",
+    "updated_at": "2021-12-27T21:06:10Z",
+    "html_url": "https://github.com/starship/starship/pull/3354#discussion_r775645628",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3354",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/775645628"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3354#discussion_r775645628"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3354"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/775645628/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 106,
+    "side": "RIGHT",
+    "in_reply_to_id": 775639029,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 33,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

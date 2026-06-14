@@ -1,0 +1,350 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1097419698",
+    "pull_request_review_id": 1285253878,
+    "id": 1097419698,
+    "node_id": "PRRC_kwDOCqswNs5BaUuy",
+    "diff_hunk": "@@ -0,0 +1,267 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::fossil_metrics::FossilMetricsConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with currently added/deleted lines in the Fossil check-out in the current\n+/// directory.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"fossil_metrics\");\n+    let config = FossilMetricsConfig::try_load(module.config);\n+\n+    // As we default to disabled=true, we have to check here after loading our config module,\n+    // before it was only checking against whatever is in the config starship.toml\n+    if config.disabled {\n+        return None;\n+    };\n+\n+    let is_checkout = context\n+        .try_begin_scan()?\n+        .set_files(&[\".fslckout\"])\n+        .is_match();\n+\n+    if !is_checkout {\n+        return None;\n+    }\n+\n+    // Read the total number of added and deleted lines from \"fossil diff --numstat\"\n+    let output = context.exec_cmd(\"fossil\", &[\"diff\", \"--numstat\"])?.stdout;\n+    let stats = FossilDiff::try_parse(&output, config.only_nonzero_diffs)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_style(|variable| match variable {\n+                \"added_style\" => Some(Ok(config.added_style)),\n+                \"deleted_style\" => Some(Ok(config.deleted_style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"added\" => Some(Ok(stats.added)),\n+                \"deleted\" => Some(Ok(stats.deleted)),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `fossil_metrics`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+/// Represents the parsed output from a Fossil diff with the --numstat option enabled.\n+#[derive(Debug, PartialEq)]\n+struct FossilDiff<'a> {\n+    added: &'a str,\n+    deleted: &'a str,\n+}\n+\n+impl<'a> FossilDiff<'a> {\n+    fn try_parse(diff_numstat: &'a str, only_nonzero_diffs: bool) -> Option<Self> {\n+        let mut split = match diff_numstat.lines().last() {\n+            Some(line) => line.split_whitespace(),\n+            None => {\n+                log::warn!(\"Error in module `fossil_metrics`:\\nLast line of numstat diff missing.\");\n+                return None;",
+    "path": "src/modules/fossil_metrics.rs",
+    "commit_id": "3e7f5b440bec1989da4ba09137d31d258f6729d7",
+    "original_commit_id": "0bfcff0566d01d8e62627ad13d3839b870f68c77",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "``Error in module `fossil_metrics`:\\n`` is a bit redundant, and the duplicate log message detector may have trouble with this. I would prefer having `try_parse` return a `Result<Self, &str>` instead. Please also add tests for some of the different error conditions.",
+    "created_at": "2023-02-06T14:06:02Z",
+    "updated_at": "2023-02-06T14:16:20Z",
+    "html_url": "https://github.com/starship/starship/pull/4874#discussion_r1097419698",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4874",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1097419698"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4874#discussion_r1097419698"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4874"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1097419698/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 69,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 70,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 70,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1099903454",
+    "pull_request_review_id": 1288831394,
+    "id": 1099903454,
+    "node_id": "PRRC_kwDOCqswNs5BjzHe",
+    "diff_hunk": "@@ -0,0 +1,267 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::fossil_metrics::FossilMetricsConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with currently added/deleted lines in the Fossil check-out in the current\n+/// directory.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"fossil_metrics\");\n+    let config = FossilMetricsConfig::try_load(module.config);\n+\n+    // As we default to disabled=true, we have to check here after loading our config module,\n+    // before it was only checking against whatever is in the config starship.toml\n+    if config.disabled {\n+        return None;\n+    };\n+\n+    let is_checkout = context\n+        .try_begin_scan()?\n+        .set_files(&[\".fslckout\"])\n+        .is_match();\n+\n+    if !is_checkout {\n+        return None;\n+    }\n+\n+    // Read the total number of added and deleted lines from \"fossil diff --numstat\"\n+    let output = context.exec_cmd(\"fossil\", &[\"diff\", \"--numstat\"])?.stdout;\n+    let stats = FossilDiff::try_parse(&output, config.only_nonzero_diffs)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_style(|variable| match variable {\n+                \"added_style\" => Some(Ok(config.added_style)),\n+                \"deleted_style\" => Some(Ok(config.deleted_style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"added\" => Some(Ok(stats.added)),\n+                \"deleted\" => Some(Ok(stats.deleted)),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `fossil_metrics`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+/// Represents the parsed output from a Fossil diff with the --numstat option enabled.\n+#[derive(Debug, PartialEq)]\n+struct FossilDiff<'a> {\n+    added: &'a str,\n+    deleted: &'a str,\n+}\n+\n+impl<'a> FossilDiff<'a> {\n+    fn try_parse(diff_numstat: &'a str, only_nonzero_diffs: bool) -> Option<Self> {\n+        let mut split = match diff_numstat.lines().last() {\n+            Some(line) => line.split_whitespace(),\n+            None => {\n+                log::warn!(\"Error in module `fossil_metrics`:\\nLast line of numstat diff missing.\");\n+                return None;",
+    "path": "src/modules/fossil_metrics.rs",
+    "commit_id": "3e7f5b440bec1989da4ba09137d31d258f6729d7",
+    "original_commit_id": "0bfcff0566d01d8e62627ad13d3839b870f68c77",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I didn't mean to say that you should be removing all error handling in the module, I think that is nice to have. The ``Error in module `fossil_metrics`:\\n``-prefix was redundant, because the log message will already contain `WARN` and the module name. \r\n",
+    "created_at": "2023-02-08T09:56:40Z",
+    "updated_at": "2023-02-08T09:56:40Z",
+    "html_url": "https://github.com/starship/starship/pull/4874#discussion_r1099903454",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4874",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1099903454"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4874#discussion_r1099903454"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4874"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1099903454/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 69,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 70,
+    "side": "RIGHT",
+    "in_reply_to_id": 1097419698,
+    "author_association": "MEMBER",
+    "original_position": 70,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1100297068",
+    "pull_request_review_id": 1289418889,
+    "id": 1100297068,
+    "node_id": "PRRC_kwDOCqswNs5BlTNs",
+    "diff_hunk": "@@ -0,0 +1,267 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::fossil_metrics::FossilMetricsConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with currently added/deleted lines in the Fossil check-out in the current\n+/// directory.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"fossil_metrics\");\n+    let config = FossilMetricsConfig::try_load(module.config);\n+\n+    // As we default to disabled=true, we have to check here after loading our config module,\n+    // before it was only checking against whatever is in the config starship.toml\n+    if config.disabled {\n+        return None;\n+    };\n+\n+    let is_checkout = context\n+        .try_begin_scan()?\n+        .set_files(&[\".fslckout\"])\n+        .is_match();\n+\n+    if !is_checkout {\n+        return None;\n+    }\n+\n+    // Read the total number of added and deleted lines from \"fossil diff --numstat\"\n+    let output = context.exec_cmd(\"fossil\", &[\"diff\", \"--numstat\"])?.stdout;\n+    let stats = FossilDiff::try_parse(&output, config.only_nonzero_diffs)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_style(|variable| match variable {\n+                \"added_style\" => Some(Ok(config.added_style)),\n+                \"deleted_style\" => Some(Ok(config.deleted_style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"added\" => Some(Ok(stats.added)),\n+                \"deleted\" => Some(Ok(stats.deleted)),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `fossil_metrics`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+/// Represents the parsed output from a Fossil diff with the --numstat option enabled.\n+#[derive(Debug, PartialEq)]\n+struct FossilDiff<'a> {\n+    added: &'a str,\n+    deleted: &'a str,\n+}\n+\n+impl<'a> FossilDiff<'a> {\n+    fn try_parse(diff_numstat: &'a str, only_nonzero_diffs: bool) -> Option<Self> {\n+        let mut split = match diff_numstat.lines().last() {\n+            Some(line) => line.split_whitespace(),\n+            None => {\n+                log::warn!(\"Error in module `fossil_metrics`:\\nLast line of numstat diff missing.\");\n+                return None;",
+    "path": "src/modules/fossil_metrics.rs",
+    "commit_id": "3e7f5b440bec1989da4ba09137d31d258f6729d7",
+    "original_commit_id": "0bfcff0566d01d8e62627ad13d3839b870f68c77",
+    "user": {
+      "login": "VegardSkui",
+      "id": 3822906,
+      "node_id": "MDQ6VXNlcjM4MjI5MDY=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3822906?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/VegardSkui",
+      "html_url": "https://github.com/VegardSkui",
+      "followers_url": "https://api.github.com/users/VegardSkui/followers",
+      "following_url": "https://api.github.com/users/VegardSkui/following{/other_user}",
+      "gists_url": "https://api.github.com/users/VegardSkui/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/VegardSkui/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/VegardSkui/subscriptions",
+      "organizations_url": "https://api.github.com/users/VegardSkui/orgs",
+      "repos_url": "https://api.github.com/users/VegardSkui/repos",
+      "events_url": "https://api.github.com/users/VegardSkui/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/VegardSkui/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Okay, I see. I tried to move closer to the implementation of `git_metrics` where an unexpected output leads to 0 changes reported, e.g. if the format of the command output changes in an update or the `git` binary is not actually Git. The different error conditions explicitly checked for previously should not be able to occur if a Fossil version later than v2.3 (2017-07-21) is installed (which introduced the `--numstat` option). I can revert the latest commit and fix the log messages if preferable, but I'm uncertain about what other input to test when it cannot be produced by Fossil.",
+    "created_at": "2023-02-08T15:26:54Z",
+    "updated_at": "2023-02-08T15:26:55Z",
+    "html_url": "https://github.com/starship/starship/pull/4874#discussion_r1100297068",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4874",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1100297068"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4874#discussion_r1100297068"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4874"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1100297068/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 69,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 70,
+    "side": "RIGHT",
+    "in_reply_to_id": 1097419698,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 70,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1103625746",
+    "pull_request_review_id": 1294530320,
+    "id": 1103625746,
+    "node_id": "PRRC_kwDOCqswNs5Bx_4S",
+    "diff_hunk": "@@ -0,0 +1,275 @@\n+use super::utils::path::PathExt;\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::fossil_metrics::FossilMetricsConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with currently added/deleted lines in the Fossil check-out in the current\n+/// directory.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"fossil_metrics\");\n+    let config = FossilMetricsConfig::try_load(module.config);\n+\n+    // As we default to disabled=true, we have to check here after loading our config module,\n+    // before it was only checking against whatever is in the config starship.toml\n+    if config.disabled {\n+        return None;\n+    };\n+\n+    if !is_checkout(context) {\n+        return None;\n+    }\n+\n+    // Read the total number of added and deleted lines from \"fossil diff --numstat\"\n+    let output = context.exec_cmd(\"fossil\", &[\"diff\", \"--numstat\"])?.stdout;\n+    let stats = FossilDiff::parse(&output, config.only_nonzero_diffs);\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_style(|variable| match variable {\n+                \"added_style\" => Some(Ok(config.added_style)),\n+                \"deleted_style\" => Some(Ok(config.deleted_style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"added\" => Some(Ok(stats.added)),\n+                \"deleted\" => Some(Ok(stats.deleted)),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `fossil_metrics`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn is_checkout(ctx: &Context) -> bool {\n+    let dev_id = ctx.current_dir.device_id();\n+    for dir in ctx.current_dir.as_path().ancestors() {\n+        if dev_id != dir.device_id() {\n+            break;\n+        }\n+        if dir.join(\".fslckout\").is_file() {\n+            return true;\n+        }\n+    }\n+    false\n+}\n+\n+/// Represents the parsed output from a Fossil diff with the --numstat option enabled.\n+#[derive(Debug, PartialEq)]\n+struct FossilDiff<'a> {\n+    added: &'a str,\n+    deleted: &'a str,\n+}\n+\n+impl<'a> FossilDiff<'a> {\n+    /// Parses the output of `fossil diff --numstat` as a `FossilDiff` struct.\n+    pub fn parse(diff_numstat: &'a str, only_nonzero_diffs: bool) -> Self {\n+        // Fossil formats the last line of the output as \"%10d %10d TOTAL over %d changed files\\n\"\n+        // where the 1st and 2nd placeholders are the number of added and deleted lines respectively\n+        let total_line = diff_numstat.lines().last().unwrap_or(\"\");\n+        let mut split = total_line.split_whitespace();\n+\n+        let zero = if only_nonzero_diffs { \"\" } else { \"0\" };\n+\n+        let added = match split.next() {\n+            Some(\"0\") | None => zero,\n+            Some(s) => s,\n+        };\n+\n+        let deleted = match split.next() {\n+            Some(\"0\") | None => zero,\n+            Some(s) => s,\n+        };",
+    "path": "src/modules/fossil_metrics.rs",
+    "commit_id": "3e7f5b440bec1989da4ba09137d31d258f6729d7",
+    "original_commit_id": "073d85adee7a40937c969d6cf5ee5aed8c44d449",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Since this operation isn't supported on some versions, perhaps try sanity-checking the returned values.",
+    "created_at": "2023-02-11T13:18:41Z",
+    "updated_at": "2023-02-11T13:18:50Z",
+    "html_url": "https://github.com/starship/starship/pull/4874#discussion_r1103625746",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4874",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1103625746"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4874#discussion_r1103625746"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4874"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1103625746/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 83,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 91,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 91,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1108790934",
+    "pull_request_review_id": 1301935716,
+    "id": 1108790934,
+    "node_id": "PRRC_kwDOCqswNs5CFs6W",
+    "diff_hunk": "@@ -0,0 +1,275 @@\n+use super::utils::path::PathExt;\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::fossil_metrics::FossilMetricsConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with currently added/deleted lines in the Fossil check-out in the current\n+/// directory.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"fossil_metrics\");\n+    let config = FossilMetricsConfig::try_load(module.config);\n+\n+    // As we default to disabled=true, we have to check here after loading our config module,\n+    // before it was only checking against whatever is in the config starship.toml\n+    if config.disabled {\n+        return None;\n+    };\n+\n+    if !is_checkout(context) {\n+        return None;\n+    }\n+\n+    // Read the total number of added and deleted lines from \"fossil diff --numstat\"\n+    let output = context.exec_cmd(\"fossil\", &[\"diff\", \"--numstat\"])?.stdout;\n+    let stats = FossilDiff::parse(&output, config.only_nonzero_diffs);\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_style(|variable| match variable {\n+                \"added_style\" => Some(Ok(config.added_style)),\n+                \"deleted_style\" => Some(Ok(config.deleted_style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"added\" => Some(Ok(stats.added)),\n+                \"deleted\" => Some(Ok(stats.deleted)),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `fossil_metrics`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn is_checkout(ctx: &Context) -> bool {\n+    let dev_id = ctx.current_dir.device_id();\n+    for dir in ctx.current_dir.as_path().ancestors() {\n+        if dev_id != dir.device_id() {\n+            break;\n+        }\n+        if dir.join(\".fslckout\").is_file() {\n+            return true;\n+        }\n+    }\n+    false\n+}\n+\n+/// Represents the parsed output from a Fossil diff with the --numstat option enabled.\n+#[derive(Debug, PartialEq)]\n+struct FossilDiff<'a> {\n+    added: &'a str,\n+    deleted: &'a str,\n+}\n+\n+impl<'a> FossilDiff<'a> {\n+    /// Parses the output of `fossil diff --numstat` as a `FossilDiff` struct.\n+    pub fn parse(diff_numstat: &'a str, only_nonzero_diffs: bool) -> Self {\n+        // Fossil formats the last line of the output as \"%10d %10d TOTAL over %d changed files\\n\"\n+        // where the 1st and 2nd placeholders are the number of added and deleted lines respectively\n+        let total_line = diff_numstat.lines().last().unwrap_or(\"\");\n+        let mut split = total_line.split_whitespace();\n+\n+        let zero = if only_nonzero_diffs { \"\" } else { \"0\" };\n+\n+        let added = match split.next() {\n+            Some(\"0\") | None => zero,\n+            Some(s) => s,\n+        };\n+\n+        let deleted = match split.next() {\n+            Some(\"0\") | None => zero,\n+            Some(s) => s,\n+        };",
+    "path": "src/modules/fossil_metrics.rs",
+    "commit_id": "3e7f5b440bec1989da4ba09137d31d258f6729d7",
+    "original_commit_id": "073d85adee7a40937c969d6cf5ee5aed8c44d449",
+    "user": {
+      "login": "VegardSkui",
+      "id": 3822906,
+      "node_id": "MDQ6VXNlcjM4MjI5MDY=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3822906?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/VegardSkui",
+      "html_url": "https://github.com/VegardSkui",
+      "followers_url": "https://api.github.com/users/VegardSkui/followers",
+      "following_url": "https://api.github.com/users/VegardSkui/following{/other_user}",
+      "gists_url": "https://api.github.com/users/VegardSkui/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/VegardSkui/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/VegardSkui/subscriptions",
+      "organizations_url": "https://api.github.com/users/VegardSkui/orgs",
+      "repos_url": "https://api.github.com/users/VegardSkui/repos",
+      "events_url": "https://api.github.com/users/VegardSkui/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/VegardSkui/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Solved by using a regex to only match on the expected format.",
+    "created_at": "2023-02-16T17:15:13Z",
+    "updated_at": "2023-02-16T17:15:13Z",
+    "html_url": "https://github.com/starship/starship/pull/4874#discussion_r1108790934",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4874",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1108790934"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4874#discussion_r1108790934"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4874"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1108790934/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 83,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 91,
+    "side": "RIGHT",
+    "in_reply_to_id": 1103625746,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 91,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

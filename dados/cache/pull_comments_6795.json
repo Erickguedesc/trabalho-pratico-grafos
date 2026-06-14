@@ -1,0 +1,141 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2164286494",
+    "pull_request_review_id": 2954295781,
+    "id": 2164286494,
+    "node_id": "PRRC_kwDOCqswNs6BAGQe",
+    "diff_hunk": "@@ -2,22 +2,23 @@ use super::{Context, Module, ModuleConfig};\n \n use crate::configs::haskell::HaskellConfig;\n use crate::formatter::StringFormatter;\n+use crate::utils::read_file;\n+use std::path::PathBuf;\n+\n+struct HaskellResult {\n+    compiler_name: Option<String>,\n+    compiler_version: Option<String>,\n+    snapshot: Option<String>,\n+}\n \n /// Creates a module with the current Haskell version\n pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let mut module = context.new_module(\"haskell\");\n     let config = HaskellConfig::try_load(module.config);\n \n-    let is_hs_project = context\n-        .try_begin_scan()?\n-        .set_files(&config.detect_files)\n-        .set_extensions(&config.detect_extensions)\n-        .set_folders(&config.detect_folders)\n-        .is_match();\n-\n-    if !is_hs_project {\n-        return None;\n-    }\n+    let haskell_result: HaskellResult = stack_result(context, &config)\n+        .or(cabal_result(context, &config))\n+        .or(plain_haskell_result(context, &config))?;",
+    "path": "src/modules/haskell.rs",
+    "commit_id": "d808d79234eb47d129430ef1f5a5ef0669847123",
+    "original_commit_id": "f23b8fbc064695965b7eb18297ea70a0bde4dfc8",
+    "user": {
+      "login": "ksqsf",
+      "id": 23358293,
+      "node_id": "MDQ6VXNlcjIzMzU4Mjkz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23358293?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ksqsf",
+      "html_url": "https://github.com/ksqsf",
+      "followers_url": "https://api.github.com/users/ksqsf/followers",
+      "following_url": "https://api.github.com/users/ksqsf/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ksqsf/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ksqsf/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ksqsf/subscriptions",
+      "organizations_url": "https://api.github.com/users/ksqsf/orgs",
+      "repos_url": "https://api.github.com/users/ksqsf/repos",
+      "events_url": "https://api.github.com/users/ksqsf/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ksqsf/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think you meant to use `or_else`. Rust has no lazy evaluation :)",
+    "created_at": "2025-06-24T15:10:09Z",
+    "updated_at": "2025-06-24T15:10:09Z",
+    "html_url": "https://github.com/starship/starship/pull/6795#discussion_r2164286494",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6795",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2164286494"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6795#discussion_r2164286494"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6795"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2164286494/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 19,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 21,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 30,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2177968636",
+    "pull_request_review_id": 2976049910,
+    "id": 2177968636,
+    "node_id": "PRRC_kwDOCqswNs6B0Sn8",
+    "diff_hunk": "@@ -2,22 +2,23 @@ use super::{Context, Module, ModuleConfig};\n \n use crate::configs::haskell::HaskellConfig;\n use crate::formatter::StringFormatter;\n+use crate::utils::read_file;\n+use std::path::PathBuf;\n+\n+struct HaskellResult {\n+    compiler_name: Option<String>,\n+    compiler_version: Option<String>,\n+    snapshot: Option<String>,\n+}\n \n /// Creates a module with the current Haskell version\n pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let mut module = context.new_module(\"haskell\");\n     let config = HaskellConfig::try_load(module.config);\n \n-    let is_hs_project = context\n-        .try_begin_scan()?\n-        .set_files(&config.detect_files)\n-        .set_extensions(&config.detect_extensions)\n-        .set_folders(&config.detect_folders)\n-        .is_match();\n-\n-    if !is_hs_project {\n-        return None;\n-    }\n+    let haskell_result: HaskellResult = stack_result(context, &config)\n+        .or(cabal_result(context, &config))\n+        .or(plain_haskell_result(context, &config))?;",
+    "path": "src/modules/haskell.rs",
+    "commit_id": "d808d79234eb47d129430ef1f5a5ef0669847123",
+    "original_commit_id": "f23b8fbc064695965b7eb18297ea70a0bde4dfc8",
+    "user": {
+      "login": "mmhat",
+      "id": 5009522,
+      "node_id": "MDQ6VXNlcjUwMDk1MjI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5009522?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mmhat",
+      "html_url": "https://github.com/mmhat",
+      "followers_url": "https://api.github.com/users/mmhat/followers",
+      "following_url": "https://api.github.com/users/mmhat/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mmhat/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mmhat/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mmhat/subscriptions",
+      "organizations_url": "https://api.github.com/users/mmhat/orgs",
+      "repos_url": "https://api.github.com/users/mmhat/repos",
+      "events_url": "https://api.github.com/users/mmhat/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mmhat/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Done.",
+    "created_at": "2025-07-01T15:54:23Z",
+    "updated_at": "2025-07-01T15:54:23Z",
+    "html_url": "https://github.com/starship/starship/pull/6795#discussion_r2177968636",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6795",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2177968636"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6795#discussion_r2177968636"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6795"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2177968636/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 19,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 21,
+    "side": "RIGHT",
+    "in_reply_to_id": 2164286494,
+    "author_association": "NONE",
+    "original_position": 30,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

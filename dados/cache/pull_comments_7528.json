@@ -1,0 +1,71 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3309368196",
+    "pull_request_review_id": 4370537268,
+    "id": 3309368196,
+    "node_id": "PRRC_kwDOCqswNs7FQPOE",
+    "diff_hunk": "@@ -69,10 +69,30 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     Some(module)\n }\n \n-fn get_elixir_version(context: &Context) -> Option<(String, String)> {\n+fn get_elixir_version(context: &Context) -> Option<(Option<String>, String)> {\n+    // Try --short-version first (Elixir 1.13+): handled by the shell wrapper,\n+    // so it never starts the BEAM VM and returns in ~9 ms instead of ~370 ms.\n+    if let Some(output) = context.exec_cmd(\"elixir\", &[\"--short-version\"]) {\n+        if let Some(version) = parse_elixir_short_version(&output.stdout) {\n+            return Some((None, version));\n+        }\n+    }\n+\n+    // Fall back to --version for older Elixir or when --short-version is absent.\n     let output = context.exec_cmd(\"elixir\", &[\"--version\"])?.stdout;\n+    parse_elixir_version(&output).map(|(otp, ver)| (Some(otp), ver))\n+}\n \n-    parse_elixir_version(&output)\n+fn parse_elixir_short_version(output: &str) -> Option<String> {\n+    let version = output.trim();\n+    // Guard: must start with a digit to be a bare version string like \"1.14.0\".\n+    // An unrecognised flag on pre-1.13 Elixir starts the VM and prints the full\n+    // --version banner instead, which begins with \"Erlang\".\n+    if version.starts_with(|c: char| c.is_ascii_digit()) {\n+        Some(version.to_string())\n+    } else {\n+        None\n+    }\n }",
+    "path": "src/modules/elixir.rs",
+    "commit_id": "a4df47c5da6907080bcb47d2a304fe234606c5b8",
+    "original_commit_id": "a4df47c5da6907080bcb47d2a304fe234606c5b8",
+    "user": {
+      "login": "Copilot",
+      "id": 175728472,
+      "node_id": "BOT_kgDOCnlnWA",
+      "avatar_url": "https://avatars.githubusercontent.com/in/946600?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Copilot",
+      "html_url": "https://github.com/apps/copilot-pull-request-reviewer",
+      "followers_url": "https://api.github.com/users/Copilot/followers",
+      "following_url": "https://api.github.com/users/Copilot/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Copilot/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Copilot/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Copilot/subscriptions",
+      "organizations_url": "https://api.github.com/users/Copilot/orgs",
+      "repos_url": "https://api.github.com/users/Copilot/repos",
+      "events_url": "https://api.github.com/users/Copilot/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Copilot/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`output.trim()` can still contain embedded newlines if stdout includes additional lines (e.g., warnings/logging), and the current check only validates the first character. That would incorrectly accept a multi-line string and propagate newlines into the rendered prompt version. Consider parsing only the first non-empty line (or first token) and validating that single-line value (e.g., no whitespace) before returning it; also add a unit test covering a multi-line stdout starting with a digit to prevent regressions.",
+    "created_at": "2026-05-27T08:03:06Z",
+    "updated_at": "2026-05-27T08:03:07Z",
+    "html_url": "https://github.com/starship/starship/pull/7528#discussion_r3309368196",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7528",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3309368196"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7528#discussion_r3309368196"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7528"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3309368196/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 86,
+    "original_start_line": 86,
+    "start_side": "RIGHT",
+    "line": 96,
+    "original_line": 96,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 41,
+    "position": 41,
+    "subject_type": "line"
+  }
+]

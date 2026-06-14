@@ -1,0 +1,615 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/438998777",
+    "pull_request_review_id": 429193168,
+    "id": 438998777,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzODk5ODc3Nw==",
+    "diff_hunk": "@@ -150,3 +151,31 @@ pub fn description(module: &str) -> &'static str {\n         _ => \"<no description>\",\n     }\n }\n+\n+fn undistract_me<'a>(context: &'a Context, module: Option<Module<'a>>) -> Option<Module<'a>> {\n+    use ansi_term::{unstyle, ANSIStrings};\n+    use notify_rust::{Notification, Timeout};\n+\n+    if let Some(module) = module.as_ref() {\n+        let config: CmdDurationConfig = CmdDurationConfig::try_load(module.config);\n+        if config.show_notifications && config.min_time_to_notify as u128 <= context.elapsed()? {\n+            let body = format!(\n+                \"Command execution {}\",\n+                unstyle(&ANSIStrings(&module.ansi_strings()))\n+            );\n+\n+            let mut notification = Notification::new();\n+            notification\n+                .summary(\"Command finished\")\n+                .body(&body)\n+                .icon(\"bash\")",
+    "path": "src/modules/mod.rs",
+    "commit_id": "92ad23f395e1e7f5d0c9a684c94200480f858822",
+    "original_commit_id": "4974c15727fac47a1fb7d8fd4822a85d73a5d485",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "According to the notify_rust docs `.icon()` needs to be freedesktop.org compliant. Would [\"utilities-terminal\"](https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html#names) be a more standard choice here?\r\n\r\nMore importantly, does \"utilities-terminal\" even work, or does it throw up a generic \"no icon\" icon?",
+    "created_at": "2020-06-11T18:47:56Z",
+    "updated_at": "2020-08-11T10:48:57Z",
+    "html_url": "https://github.com/starship/starship/pull/1019#discussion_r438998777",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1019",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/438998777"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1019#discussion_r438998777"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1019"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/438998777/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 171,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 38,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/438999435",
+    "pull_request_review_id": 429193168,
+    "id": 438999435,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzODk5OTQzNQ==",
+    "diff_hunk": "@@ -150,3 +151,31 @@ pub fn description(module: &str) -> &'static str {\n         _ => \"<no description>\",\n     }\n }\n+\n+fn undistract_me<'a>(context: &'a Context, module: Option<Module<'a>>) -> Option<Module<'a>> {",
+    "path": "src/modules/mod.rs",
+    "commit_id": "92ad23f395e1e7f5d0c9a684c94200480f858822",
+    "original_commit_id": "4974c15727fac47a1fb7d8fd4822a85d73a5d485",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It's not clear to me why this has to be a separate module-creating function instead of just a modification to `cmd_duration`, but if we're going this route, this function should be placed in cmd_duration, not in `mod.rs`.\r\n\r\nIf at all possible, I would prefer that this PR just modify the behaviour of the cmd_duration module so that we don't have to deal with the cognitive overhead of this wrapping when reading code in the future.",
+    "created_at": "2020-06-11T18:49:10Z",
+    "updated_at": "2020-08-11T10:48:57Z",
+    "html_url": "https://github.com/starship/starship/pull/1019#discussion_r438999435",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1019",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/438999435"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1019#discussion_r438999435"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1019"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/438999435/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 155,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 22,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/439001626",
+    "pull_request_review_id": 429193168,
+    "id": 439001626,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzOTAwMTYyNg==",
+    "diff_hunk": "@@ -171,6 +171,10 @@ impl<'a> Context<'a> {\n             _ => Shell::Unknown,\n         }\n     }\n+\n+    pub fn elapsed(&self) -> Option<u128> {",
+    "path": "src/context.rs",
+    "commit_id": "92ad23f395e1e7f5d0c9a684c94200480f858822",
+    "original_commit_id": "4974c15727fac47a1fb7d8fd4822a85d73a5d485",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Can we call this something like `get_cmd_duration`?\r\n\r\nAs a local variable, it was fine for it to have a more ambiguous name since that would only be used within the function. As a method on a struct that's touched by almost every single other module, I'd like something a little more specific.",
+    "created_at": "2020-06-11T18:53:16Z",
+    "updated_at": "2020-08-11T10:48:57Z",
+    "html_url": "https://github.com/starship/starship/pull/1019#discussion_r439001626",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1019",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/439001626"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1019#discussion_r439001626"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1019"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/439001626/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 175,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 5,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/439837215",
+    "pull_request_review_id": 430225666,
+    "id": 439837215,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzOTgzNzIxNQ==",
+    "diff_hunk": "@@ -150,3 +151,31 @@ pub fn description(module: &str) -> &'static str {\n         _ => \"<no description>\",\n     }\n }\n+\n+fn undistract_me<'a>(context: &'a Context, module: Option<Module<'a>>) -> Option<Module<'a>> {\n+    use ansi_term::{unstyle, ANSIStrings};\n+    use notify_rust::{Notification, Timeout};\n+\n+    if let Some(module) = module.as_ref() {\n+        let config: CmdDurationConfig = CmdDurationConfig::try_load(module.config);\n+        if config.show_notifications && config.min_time_to_notify as u128 <= context.elapsed()? {\n+            let body = format!(\n+                \"Command execution {}\",\n+                unstyle(&ANSIStrings(&module.ansi_strings()))\n+            );\n+\n+            let mut notification = Notification::new();\n+            notification\n+                .summary(\"Command finished\")\n+                .body(&body)\n+                .icon(\"bash\")",
+    "path": "src/modules/mod.rs",
+    "commit_id": "92ad23f395e1e7f5d0c9a684c94200480f858822",
+    "original_commit_id": "4974c15727fac47a1fb7d8fd4822a85d73a5d485",
+    "user": {
+      "login": "schrieveslaach",
+      "id": 16558417,
+      "node_id": "MDQ6VXNlcjE2NTU4NDE3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16558417?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/schrieveslaach",
+      "html_url": "https://github.com/schrieveslaach",
+      "followers_url": "https://api.github.com/users/schrieveslaach/followers",
+      "following_url": "https://api.github.com/users/schrieveslaach/following{/other_user}",
+      "gists_url": "https://api.github.com/users/schrieveslaach/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/schrieveslaach/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/schrieveslaach/subscriptions",
+      "organizations_url": "https://api.github.com/users/schrieveslaach/orgs",
+      "repos_url": "https://api.github.com/users/schrieveslaach/repos",
+      "events_url": "https://api.github.com/users/schrieveslaach/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/schrieveslaach/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Yes, utilities-terminal is a better choice. ",
+    "created_at": "2020-06-14T14:47:05Z",
+    "updated_at": "2020-08-11T10:48:57Z",
+    "html_url": "https://github.com/starship/starship/pull/1019#discussion_r439837215",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1019",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/439837215"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1019#discussion_r439837215"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1019"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/439837215/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 171,
+    "side": "RIGHT",
+    "in_reply_to_id": 438998777,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 38,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/439837298",
+    "pull_request_review_id": 430225727,
+    "id": 439837298,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzOTgzNzI5OA==",
+    "diff_hunk": "@@ -150,3 +151,31 @@ pub fn description(module: &str) -> &'static str {\n         _ => \"<no description>\",\n     }\n }\n+\n+fn undistract_me<'a>(context: &'a Context, module: Option<Module<'a>>) -> Option<Module<'a>> {",
+    "path": "src/modules/mod.rs",
+    "commit_id": "92ad23f395e1e7f5d0c9a684c94200480f858822",
+    "original_commit_id": "4974c15727fac47a1fb7d8fd4822a85d73a5d485",
+    "user": {
+      "login": "schrieveslaach",
+      "id": 16558417,
+      "node_id": "MDQ6VXNlcjE2NTU4NDE3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16558417?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/schrieveslaach",
+      "html_url": "https://github.com/schrieveslaach",
+      "followers_url": "https://api.github.com/users/schrieveslaach/followers",
+      "following_url": "https://api.github.com/users/schrieveslaach/following{/other_user}",
+      "gists_url": "https://api.github.com/users/schrieveslaach/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/schrieveslaach/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/schrieveslaach/subscriptions",
+      "organizations_url": "https://api.github.com/users/schrieveslaach/orgs",
+      "repos_url": "https://api.github.com/users/schrieveslaach/repos",
+      "events_url": "https://api.github.com/users/schrieveslaach/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/schrieveslaach/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "At the beginning I wasn't sure where to put it. I moved it to `cmd_duration`. ",
+    "created_at": "2020-06-14T14:47:57Z",
+    "updated_at": "2020-08-11T10:48:57Z",
+    "html_url": "https://github.com/starship/starship/pull/1019#discussion_r439837298",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1019",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/439837298"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1019#discussion_r439837298"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1019"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/439837298/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 155,
+    "side": "RIGHT",
+    "in_reply_to_id": 438999435,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 22,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/439837319",
+    "pull_request_review_id": 430225742,
+    "id": 439837319,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzOTgzNzMxOQ==",
+    "diff_hunk": "@@ -171,6 +171,10 @@ impl<'a> Context<'a> {\n             _ => Shell::Unknown,\n         }\n     }\n+\n+    pub fn elapsed(&self) -> Option<u128> {",
+    "path": "src/context.rs",
+    "commit_id": "92ad23f395e1e7f5d0c9a684c94200480f858822",
+    "original_commit_id": "4974c15727fac47a1fb7d8fd4822a85d73a5d485",
+    "user": {
+      "login": "schrieveslaach",
+      "id": 16558417,
+      "node_id": "MDQ6VXNlcjE2NTU4NDE3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16558417?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/schrieveslaach",
+      "html_url": "https://github.com/schrieveslaach",
+      "followers_url": "https://api.github.com/users/schrieveslaach/followers",
+      "following_url": "https://api.github.com/users/schrieveslaach/following{/other_user}",
+      "gists_url": "https://api.github.com/users/schrieveslaach/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/schrieveslaach/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/schrieveslaach/subscriptions",
+      "organizations_url": "https://api.github.com/users/schrieveslaach/orgs",
+      "repos_url": "https://api.github.com/users/schrieveslaach/repos",
+      "events_url": "https://api.github.com/users/schrieveslaach/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/schrieveslaach/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "done.",
+    "created_at": "2020-06-14T14:48:08Z",
+    "updated_at": "2020-08-11T10:48:57Z",
+    "html_url": "https://github.com/starship/starship/pull/1019#discussion_r439837319",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1019",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/439837319"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1019#discussion_r439837319"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1019"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/439837319/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 175,
+    "side": "RIGHT",
+    "in_reply_to_id": 439001626,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 5,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/458822087",
+    "pull_request_review_id": 453356590,
+    "id": 458822087,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1ODgyMjA4Nw==",
+    "diff_hunk": "@@ -79,6 +82,9 @@ jobs:\n             target\n           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}\n \n+      - name: Install libdbus (ubuntu)\n+        run: sudo apt-get install dbus libdbus-1-3 libdbus-glib-1-dev\n+",
+    "path": ".github/workflows/workflow.yml",
+    "commit_id": "92ad23f395e1e7f5d0c9a684c94200480f858822",
+    "original_commit_id": "a5ede64a99b360c5223fa361229aedeb287dacc0",
+    "user": null,
+    "body": "`cargo check` only compiles and does not link to the needed native libraries.\r\n\r\n```suggestion\r\n```",
+    "created_at": "2020-07-22T14:11:07Z",
+    "updated_at": "2020-08-11T10:48:57Z",
+    "html_url": "https://github.com/starship/starship/pull/1019#discussion_r458822087",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1019",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/458822087"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1019#discussion_r458822087"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1019"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/458822087/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 85,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 87,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 16,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/458822259",
+    "pull_request_review_id": 453356590,
+    "id": 458822259,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1ODgyMjI1OQ==",
+    "diff_hunk": "@@ -47,6 +47,9 @@ jobs:\n             target\n           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}\n \n+      - name: Install libdbus (ubuntu)\n+        run: sudo apt-get install dbus libdbus-1-3 libdbus-glib-1-dev\n+",
+    "path": ".github/workflows/workflow.yml",
+    "commit_id": "92ad23f395e1e7f5d0c9a684c94200480f858822",
+    "original_commit_id": "a5ede64a99b360c5223fa361229aedeb287dacc0",
+    "user": null,
+    "body": "`cargo clippy` only compiles and does not link to the needed native libraries.\r\n\r\n```suggestion\r\n```",
+    "created_at": "2020-07-22T14:11:22Z",
+    "updated_at": "2020-08-11T10:48:57Z",
+    "html_url": "https://github.com/starship/starship/pull/1019#discussion_r458822259",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1019",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/458822259"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1019#discussion_r458822259"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1019"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/458822259/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 50,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 60,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 6,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/458822776",
+    "pull_request_review_id": 453356590,
+    "id": 458822776,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1ODgyMjc3Ng==",
+    "diff_hunk": "@@ -104,8 +110,13 @@ jobs:\n       - name: Setup | Checkout\n         uses: actions/checkout@v2\n \n-      - name: Setup | Cache Cargo\n-        uses: actions/cache@v2\n+      - name: Install libdbus (ubuntu)\n+        if: matrix.os == 'ubuntu-latest'\n+        run: sudo apt-get install dbus libdbus-1-3 libdbus-glib-1-dev\n+\n+      # Cache files between builds\n+      - name: Cache cargo registry\n+        uses: actions/cache@v1",
+    "path": ".github/workflows/workflow.yml",
+    "commit_id": "92ad23f395e1e7f5d0c9a684c94200480f858822",
+    "original_commit_id": "a5ede64a99b360c5223fa361229aedeb287dacc0",
+    "user": null,
+    "body": "We only need `libdbus-1-dev` because `dbus` and `libdbus-1-3` is preinstalled and `libdbus-glib-1-dev` is not needed.\r\n\r\n```suggestion\r\n      - name: Setup | libdbus (ubuntu)\r\n        if: matrix.os == 'ubuntu-latest'\r\n        run: sudo apt-get install libdbus-1-dev\r\n\r\n      # Cache files between builds\r\n      - name: Setup | Cache Cargo\r\n        uses: actions/cache@v2\r\n```",
+    "created_at": "2020-07-22T14:12:07Z",
+    "updated_at": "2020-08-11T10:48:57Z",
+    "html_url": "https://github.com/starship/starship/pull/1019#discussion_r458822776",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1019",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/458822776"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1019#discussion_r458822776"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1019"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/458822776/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 113,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 119,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 32,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/458825246",
+    "pull_request_review_id": 453356590,
+    "id": 458825246,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1ODgyNTI0Ng==",
+    "diff_hunk": "@@ -86,6 +82,43 @@ fn render_time_component((component, suffix): (&u128, &&str)) -> String {\n     }\n }\n \n+#[cfg(not(feature = \"notify-rust\"))]\n+fn undistract_me(module: Module, _elapsed: u128) -> Module {\n+    let config: CmdDurationConfig = CmdDurationConfig::try_load(module.config);\n+    if config.show_notifications {\n+        log::debug!(\"This version of starship was built without notification support.\");\n+    }\n+\n+    module\n+}\n+\n+#[cfg(feature = \"notify-rust\")]\n+fn undistract_me(module: Module, elapsed: u128) -> Module {\n+    use ansi_term::{unstyle, ANSIStrings};\n+    use notify_rust::{Notification, Timeout};\n+\n+    let config: CmdDurationConfig = CmdDurationConfig::try_load(module.config);",
+    "path": "src/modules/cmd_duration.rs",
+    "commit_id": "92ad23f395e1e7f5d0c9a684c94200480f858822",
+    "original_commit_id": "a5ede64a99b360c5223fa361229aedeb287dacc0",
+    "user": null,
+    "body": "I think passing the config into this function would be better since we wouldn't have to load it twice.",
+    "created_at": "2020-07-22T14:15:37Z",
+    "updated_at": "2020-08-11T10:48:57Z",
+    "html_url": "https://github.com/starship/starship/pull/1019#discussion_r458825246",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1019",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/458825246"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1019#discussion_r458825246"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1019"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/458825246/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 96,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 100,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 54,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

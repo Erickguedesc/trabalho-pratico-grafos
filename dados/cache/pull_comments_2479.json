@@ -1,0 +1,559 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/598209904",
+    "pull_request_review_id": 616977275,
+    "id": 598209904,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU5ODIwOTkwNA==",
+    "diff_hunk": "@@ -29,6 +30,18 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n                 _ => None,\n             })\n             .map(|variable| match variable {\n+                \"switch\" => {\n+                    let stdout = context.exec_cmd(\"opam\", &[\"switch\", \"-s\", \"show\"])?.stdout;\n+                    let switch_raw = stdout.trim();",
+    "path": "src/modules/ocaml.rs",
+    "commit_id": "9c541afdee3a77631e41764461014b2af124800f",
+    "original_commit_id": "0533484a6a21f9d549de80c1873ce61538ece4b1",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Just invoke trim on stdout directly. There is no need to introduce an additional variable.",
+    "created_at": "2021-03-21T02:33:58Z",
+    "updated_at": "2021-03-21T19:37:14Z",
+    "html_url": "https://github.com/starship/starship/pull/2479#discussion_r598209904",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2479",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/598209904"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2479#discussion_r598209904"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2479"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/598209904/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 34,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 12,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/598210075",
+    "pull_request_review_id": 616977275,
+    "id": 598210075,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU5ODIxMDA3NQ==",
+    "diff_hunk": "@@ -29,6 +30,18 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n                 _ => None,\n             })\n             .map(|variable| match variable {\n+                \"switch\" => {\n+                    let stdout = context.exec_cmd(\"opam\", &[\"switch\", \"-s\", \"show\"])?.stdout;\n+                    let switch_raw = stdout.trim();\n+                    let path = Path::new(switch_raw);\n+                    let normalized = if path.has_root() {\n+                        // use named local switch, oft prefixed with full path by opam\n+                        path.file_name()?.to_str()?\n+                    } else {\n+                        switch_raw\n+                    };",
+    "path": "src/modules/ocaml.rs",
+    "commit_id": "9c541afdee3a77631e41764461014b2af124800f",
+    "original_commit_id": "0533484a6a21f9d549de80c1873ce61538ece4b1",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I may be wrong about this but couldn't you just take the filename portion unconditionally? 🤔",
+    "created_at": "2021-03-21T02:35:53Z",
+    "updated_at": "2021-03-21T19:37:14Z",
+    "html_url": "https://github.com/starship/starship/pull/2479#discussion_r598210075",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2479",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/598210075"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2479#discussion_r598210075"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2479"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/598210075/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 37,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 42,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 19,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/598210174",
+    "pull_request_review_id": 616977275,
+    "id": 598210174,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU5ODIxMDE3NA==",
+    "diff_hunk": "@@ -29,6 +30,18 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n                 _ => None,\n             })\n             .map(|variable| match variable {\n+                \"switch\" => {\n+                    let stdout = context.exec_cmd(\"opam\", &[\"switch\", \"-s\", \"show\"])?.stdout;\n+                    let switch_raw = stdout.trim();\n+                    let path = Path::new(switch_raw);\n+                    let normalized = if path.has_root() {\n+                        // use named local switch, oft prefixed with full path by opam",
+    "path": "src/modules/ocaml.rs",
+    "commit_id": "9c541afdee3a77631e41764461014b2af124800f",
+    "original_commit_id": "0533484a6a21f9d549de80c1873ce61538ece4b1",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Don't abbreviate comments 🙃\n```suggestion\n                        // use named local switch, often prefixed with full path by opam\n```\n",
+    "created_at": "2021-03-21T02:37:08Z",
+    "updated_at": "2021-03-21T19:37:14Z",
+    "html_url": "https://github.com/starship/starship/pull/2479#discussion_r598210174",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2479",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/598210174"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2479#discussion_r598210174"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2479"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/598210174/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 38,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/598220934",
+    "pull_request_review_id": 616982836,
+    "id": 598220934,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU5ODIyMDkzNA==",
+    "diff_hunk": "@@ -29,6 +30,18 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n                 _ => None,\n             })\n             .map(|variable| match variable {\n+                \"switch\" => {\n+                    let stdout = context.exec_cmd(\"opam\", &[\"switch\", \"-s\", \"show\"])?.stdout;\n+                    let switch_raw = stdout.trim();",
+    "path": "src/modules/ocaml.rs",
+    "commit_id": "9c541afdee3a77631e41764461014b2af124800f",
+    "original_commit_id": "0533484a6a21f9d549de80c1873ce61538ece4b1",
+    "user": {
+      "login": "cdaringe",
+      "id": 1003261,
+      "node_id": "MDQ6VXNlcjEwMDMyNjE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1003261?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cdaringe",
+      "html_url": "https://github.com/cdaringe",
+      "followers_url": "https://api.github.com/users/cdaringe/followers",
+      "following_url": "https://api.github.com/users/cdaringe/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cdaringe/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cdaringe/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cdaringe/subscriptions",
+      "organizations_url": "https://api.github.com/users/cdaringe/orgs",
+      "repos_url": "https://api.github.com/users/cdaringe/repos",
+      "events_url": "https://api.github.com/users/cdaringe/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cdaringe/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "i did this originally, but:\r\n\r\n```\r\ntemporary value dropped while borrowed\r\nconsider using a `let` binding to create a longer lived value (rustc E0716)\r\n```\r\n\r\nthe extra var is consistent w/ the other impls as well",
+    "created_at": "2021-03-21T04:52:37Z",
+    "updated_at": "2021-03-21T19:37:14Z",
+    "html_url": "https://github.com/starship/starship/pull/2479#discussion_r598220934",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2479",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/598220934"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2479#discussion_r598220934"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2479"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/598220934/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 34,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 598209904,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 12,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/598222421",
+    "pull_request_review_id": 616983508,
+    "id": 598222421,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU5ODIyMjQyMQ==",
+    "diff_hunk": "@@ -29,6 +30,18 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n                 _ => None,\n             })\n             .map(|variable| match variable {\n+                \"switch\" => {\n+                    let stdout = context.exec_cmd(\"opam\", &[\"switch\", \"-s\", \"show\"])?.stdout;\n+                    let switch_raw = stdout.trim();\n+                    let path = Path::new(switch_raw);\n+                    let normalized = if path.has_root() {\n+                        // use named local switch, oft prefixed with full path by opam\n+                        path.file_name()?.to_str()?\n+                    } else {\n+                        switch_raw\n+                    };",
+    "path": "src/modules/ocaml.rs",
+    "commit_id": "9c541afdee3a77631e41764461014b2af124800f",
+    "original_commit_id": "0533484a6a21f9d549de80c1873ce61538ece4b1",
+    "user": {
+      "login": "cdaringe",
+      "id": 1003261,
+      "node_id": "MDQ6VXNlcjEwMDMyNjE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1003261?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cdaringe",
+      "html_url": "https://github.com/cdaringe",
+      "followers_url": "https://api.github.com/users/cdaringe/followers",
+      "following_url": "https://api.github.com/users/cdaringe/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cdaringe/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cdaringe/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cdaringe/subscriptions",
+      "organizations_url": "https://api.github.com/users/cdaringe/orgs",
+      "repos_url": "https://api.github.com/users/cdaringe/repos",
+      "events_url": "https://api.github.com/users/cdaringe/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cdaringe/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "switches are absolute paths, or not path based. this check protects against mangling a non-path based switch name",
+    "created_at": "2021-03-21T05:10:27Z",
+    "updated_at": "2021-03-21T19:37:14Z",
+    "html_url": "https://github.com/starship/starship/pull/2479#discussion_r598222421",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2479",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/598222421"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2479#discussion_r598222421"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2479"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/598222421/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 37,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 42,
+    "side": "RIGHT",
+    "in_reply_to_id": 598210075,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 19,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/598222460",
+    "pull_request_review_id": 616983536,
+    "id": 598222460,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU5ODIyMjQ2MA==",
+    "diff_hunk": "@@ -29,6 +30,18 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n                 _ => None,\n             })\n             .map(|variable| match variable {\n+                \"switch\" => {\n+                    let stdout = context.exec_cmd(\"opam\", &[\"switch\", \"-s\", \"show\"])?.stdout;\n+                    let switch_raw = stdout.trim();\n+                    let path = Path::new(switch_raw);\n+                    let normalized = if path.has_root() {\n+                        // use named local switch, oft prefixed with full path by opam",
+    "path": "src/modules/ocaml.rs",
+    "commit_id": "9c541afdee3a77631e41764461014b2af124800f",
+    "original_commit_id": "0533484a6a21f9d549de80c1873ce61538ece4b1",
+    "user": {
+      "login": "cdaringe",
+      "id": 1003261,
+      "node_id": "MDQ6VXNlcjEwMDMyNjE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1003261?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cdaringe",
+      "html_url": "https://github.com/cdaringe",
+      "followers_url": "https://api.github.com/users/cdaringe/followers",
+      "following_url": "https://api.github.com/users/cdaringe/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cdaringe/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cdaringe/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cdaringe/subscriptions",
+      "organizations_url": "https://api.github.com/users/cdaringe/orgs",
+      "repos_url": "https://api.github.com/users/cdaringe/repos",
+      "events_url": "https://api.github.com/users/cdaringe/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cdaringe/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "oh, oft is a word :) uncommon, but not abbreviated :)",
+    "created_at": "2021-03-21T05:11:06Z",
+    "updated_at": "2021-03-21T19:37:14Z",
+    "html_url": "https://github.com/starship/starship/pull/2479#discussion_r598222460",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2479",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/598222460"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2479#discussion_r598222460"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2479"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/598222460/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 38,
+    "side": "RIGHT",
+    "in_reply_to_id": 598210174,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/598254395",
+    "pull_request_review_id": 617002716,
+    "id": 598254395,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU5ODI1NDM5NQ==",
+    "diff_hunk": "@@ -29,6 +30,18 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n                 _ => None,\n             })\n             .map(|variable| match variable {\n+                \"switch\" => {\n+                    let stdout = context.exec_cmd(\"opam\", &[\"switch\", \"-s\", \"show\"])?.stdout;\n+                    let switch_raw = stdout.trim();\n+                    let path = Path::new(switch_raw);\n+                    let normalized = if path.has_root() {\n+                        // use named local switch, oft prefixed with full path by opam\n+                        path.file_name()?.to_str()?\n+                    } else {\n+                        switch_raw\n+                    };",
+    "path": "src/modules/ocaml.rs",
+    "commit_id": "9c541afdee3a77631e41764461014b2af124800f",
+    "original_commit_id": "0533484a6a21f9d549de80c1873ce61538ece4b1",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I understand your motivation but I don't think there is a way to mangle named switch by extracting filename from it. It seems that OPAM authors agree with me: https://github.com/ocaml/opam/blob/9f9e9297/doc/pages/Tricks.md#display-the-current-opam-switch-in-the-prompt-",
+    "created_at": "2021-03-21T10:10:18Z",
+    "updated_at": "2021-03-21T19:37:14Z",
+    "html_url": "https://github.com/starship/starship/pull/2479#discussion_r598254395",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2479",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/598254395"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2479#discussion_r598254395"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2479"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/598254395/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 37,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 42,
+    "side": "RIGHT",
+    "in_reply_to_id": 598210075,
+    "author_association": "MEMBER",
+    "original_position": 19,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/598322798",
+    "pull_request_review_id": 617051062,
+    "id": 598322798,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU5ODMyMjc5OA==",
+    "diff_hunk": "@@ -29,6 +30,18 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n                 _ => None,\n             })\n             .map(|variable| match variable {\n+                \"switch\" => {\n+                    let stdout = context.exec_cmd(\"opam\", &[\"switch\", \"-s\", \"show\"])?.stdout;\n+                    let switch_raw = stdout.trim();\n+                    let path = Path::new(switch_raw);\n+                    let normalized = if path.has_root() {\n+                        // use named local switch, oft prefixed with full path by opam\n+                        path.file_name()?.to_str()?\n+                    } else {\n+                        switch_raw\n+                    };",
+    "path": "src/modules/ocaml.rs",
+    "commit_id": "9c541afdee3a77631e41764461014b2af124800f",
+    "original_commit_id": "0533484a6a21f9d549de80c1873ce61538ece4b1",
+    "user": {
+      "login": "cdaringe",
+      "id": 1003261,
+      "node_id": "MDQ6VXNlcjEwMDMyNjE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1003261?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cdaringe",
+      "html_url": "https://github.com/cdaringe",
+      "followers_url": "https://api.github.com/users/cdaringe/followers",
+      "following_url": "https://api.github.com/users/cdaringe/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cdaringe/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cdaringe/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cdaringe/subscriptions",
+      "organizations_url": "https://api.github.com/users/cdaringe/orgs",
+      "repos_url": "https://api.github.com/users/cdaringe/repos",
+      "events_url": "https://api.github.com/users/cdaringe/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cdaringe/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "ya, you're right. i did some tests locally, and i think it's all zen. updated in 279adb6",
+    "created_at": "2021-03-21T19:02:12Z",
+    "updated_at": "2021-03-21T19:37:14Z",
+    "html_url": "https://github.com/starship/starship/pull/2479#discussion_r598322798",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2479",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/598322798"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2479#discussion_r598322798"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2479"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/598322798/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 37,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 42,
+    "side": "RIGHT",
+    "in_reply_to_id": 598210075,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 19,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

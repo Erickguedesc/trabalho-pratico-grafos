@@ -1,0 +1,418 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/540953475",
+    "pull_request_review_id": 550105014,
+    "id": 540953475,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU0MDk1MzQ3NQ==",
+    "diff_hunk": "@@ -49,11 +49,12 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     }\n \n     // Truncate fields if need be\n-    for e in vec![\n+    for e in &mut [",
+    "path": "src/modules/git_branch.rs",
+    "commit_id": "b392dd5a0af2b44cba362c12f6e8c2d2a64d8cd1",
+    "original_commit_id": "29ba80746908553340dcbafbc0ad39e00182d682",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "How about just removing the `vec!` and adding an `iter_mut()`?",
+    "created_at": "2020-12-11T13:40:07Z",
+    "updated_at": "2020-12-12T13:27:25Z",
+    "html_url": "https://github.com/starship/starship/pull/1992#discussion_r540953475",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1992",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/540953475"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1992#discussion_r540953475"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1992"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/540953475/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 52,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 5,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/540954208",
+    "pull_request_review_id": 550105014,
+    "id": 540954208,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU0MDk1NDIwOA==",
+    "diff_hunk": "@@ -9,23 +9,32 @@ use crate::utils;\n type Cloud = String;\n type Project = String;\n \n-fn get_osp_project_from_config(context: &Context, osp_cloud: Option<&str>) -> Option<Project> {\n+fn get_osp_project_from_config(context: &Context, osp_cloud: &str) -> Option<Project> {\n     // Attempt to follow OpenStack standards for clouds.yaml location:\n     // 1st = $PWD/clouds.yaml, 2nd = $HOME/.config/openstack/clouds.yaml, 3rd = /etc/openstack/clouds.yaml\n-    let config = vec![\n-        utils::read_file(context.get_env(\"PWD\").unwrap() + \"/clouds.yaml\"),\n-        utils::read_file(dirs_next::home_dir()?.join(\".config/openstack/clouds.yaml\")),\n-        utils::read_file(\"/etc/openstack/clouds.yaml\"),\n+    let files: &[Box<dyn Fn(&Context) -> Option<String>>] = &[",
+    "path": "src/modules/openstack.rs",
+    "commit_id": "b392dd5a0af2b44cba362c12f6e8c2d2a64d8cd1",
+    "original_commit_id": "29ba80746908553340dcbafbc0ad39e00182d682",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'd prefer something simpler, more similiar to the old solution like this here. I am not sure how zero-cost closures are:\r\n```rust\r\n    let config = [\r\n        utils::read_file(context.get_env(\"PWD\").unwrap() + \"/clouds.yaml\"),\r\n        utils::read_file(dirs_next::home_dir()?.join(\".config/openstack/clouds.yaml\")),\r\n        utils::read_file(\"/etc/openstack/clouds.yaml\"),\r\n    ];\r\n    let clouds =\r\n        YamlLoader::load_from_str(&config.iter().find_map(|i| i.as_ref().ok()).unwrap()).ok()?;\r\n```\r\nIf you want to avoid reading all the files maybe just put the filenames into the array instead of closures. I feel like closures would overcomplicate this function:\r\n```rust\r\n    let config = [\r\n        context.get_env(\"PWD\").unwrap() + \"/clouds.yaml\",\r\n        dirs_next::home_dir()?.join(\".config/openstack/clouds.yaml\"),\r\n        \"/etc/openstack/clouds.yaml\",\r\n    ];\r\n````\r\nBut I like the way you simplified the function futher down.",
+    "created_at": "2020-12-11T13:41:18Z",
+    "updated_at": "2020-12-12T13:27:25Z",
+    "html_url": "https://github.com/starship/starship/pull/1992#discussion_r540954208",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1992",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/540954208"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1992#discussion_r540954208"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1992"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/540954208/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 15,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 12,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/540955296",
+    "pull_request_review_id": 550105014,
+    "id": 540955296,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU0MDk1NTI5Ng==",
+    "diff_hunk": "@@ -56,10 +56,8 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n }\n \n fn is_ssh_connection(context: &Context) -> bool {\n-    let ssh_env: Vec<&str> = vec![\"SSH_CONNECTION\", \"SSH_CLIENT\", \"SSH_TTY\"];\n-    ssh_env\n-        .into_iter()\n-        .any(|env| context.get_env(env).is_some())\n+    static SSH_ENV: &[&str] = &[\"SSH_CONNECTION\", \"SSH_CLIENT\", \"SSH_TTY\"];\n+    SSH_ENV.iter().any(|env| context.get_env(env).is_some())",
+    "path": "src/modules/username.rs",
+    "commit_id": "b392dd5a0af2b44cba362c12f6e8c2d2a64d8cd1",
+    "original_commit_id": "29ba80746908553340dcbafbc0ad39e00182d682",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I somewhat prefer this, but your solution is good too.\r\n```suggestion\r\n    let ssh_env = [\"SSH_CONNECTION\", \"SSH_CLIENT\", \"SSH_TTY\"];\r\n    ssh_env\r\n        .iter()\r\n        .any(|env| context.get_env(env).is_some())\r\n```",
+    "created_at": "2020-12-11T13:42:59Z",
+    "updated_at": "2020-12-12T13:27:25Z",
+    "html_url": "https://github.com/starship/starship/pull/1992#discussion_r540955296",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1992",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/540955296"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1992#discussion_r540955296"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1992"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/540955296/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 59,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 60,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 9,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/541219765",
+    "pull_request_review_id": 550532971,
+    "id": 541219765,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU0MTIxOTc2NQ==",
+    "diff_hunk": "@@ -9,23 +9,32 @@ use crate::utils;\n type Cloud = String;\n type Project = String;\n \n-fn get_osp_project_from_config(context: &Context, osp_cloud: Option<&str>) -> Option<Project> {\n+fn get_osp_project_from_config(context: &Context, osp_cloud: &str) -> Option<Project> {\n     // Attempt to follow OpenStack standards for clouds.yaml location:\n     // 1st = $PWD/clouds.yaml, 2nd = $HOME/.config/openstack/clouds.yaml, 3rd = /etc/openstack/clouds.yaml\n-    let config = vec![\n-        utils::read_file(context.get_env(\"PWD\").unwrap() + \"/clouds.yaml\"),\n-        utils::read_file(dirs_next::home_dir()?.join(\".config/openstack/clouds.yaml\")),\n-        utils::read_file(\"/etc/openstack/clouds.yaml\"),\n+    let files: &[Box<dyn Fn(&Context) -> Option<String>>] = &[",
+    "path": "src/modules/openstack.rs",
+    "commit_id": "b392dd5a0af2b44cba362c12f6e8c2d2a64d8cd1",
+    "original_commit_id": "29ba80746908553340dcbafbc0ad39e00182d682",
+    "user": {
+      "login": "alexmaco",
+      "id": 24556329,
+      "node_id": "MDQ6VXNlcjI0NTU2MzI5",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24556329?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/alexmaco",
+      "html_url": "https://github.com/alexmaco",
+      "followers_url": "https://api.github.com/users/alexmaco/followers",
+      "following_url": "https://api.github.com/users/alexmaco/following{/other_user}",
+      "gists_url": "https://api.github.com/users/alexmaco/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/alexmaco/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/alexmaco/subscriptions",
+      "organizations_url": "https://api.github.com/users/alexmaco/orgs",
+      "repos_url": "https://api.github.com/users/alexmaco/repos",
+      "events_url": "https://api.github.com/users/alexmaco/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/alexmaco/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Indeed, I could avoid the closures and just use plain function pointers instead, which avoids one more indirection.\r\nHowever, I think the strings shouldn't be constructed up front, since some of the operations can fail, like `home_dir` returning `None`. In this case the function should not return, but instead try the other files it can, in order.",
+    "created_at": "2020-12-11T19:53:02Z",
+    "updated_at": "2020-12-12T13:27:25Z",
+    "html_url": "https://github.com/starship/starship/pull/1992#discussion_r541219765",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1992",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/541219765"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1992#discussion_r541219765"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1992"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/541219765/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 15,
+    "side": "RIGHT",
+    "in_reply_to_id": 540954208,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 12,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/541534208",
+    "pull_request_review_id": 550702738,
+    "id": 541534208,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU0MTUzNDIwOA==",
+    "diff_hunk": "@@ -9,23 +9,32 @@ use crate::utils;\n type Cloud = String;\n type Project = String;\n \n-fn get_osp_project_from_config(context: &Context, osp_cloud: Option<&str>) -> Option<Project> {\n+fn get_osp_project_from_config(context: &Context, osp_cloud: &str) -> Option<Project> {\n     // Attempt to follow OpenStack standards for clouds.yaml location:\n     // 1st = $PWD/clouds.yaml, 2nd = $HOME/.config/openstack/clouds.yaml, 3rd = /etc/openstack/clouds.yaml\n-    let config = vec![\n-        utils::read_file(context.get_env(\"PWD\").unwrap() + \"/clouds.yaml\"),\n-        utils::read_file(dirs_next::home_dir()?.join(\".config/openstack/clouds.yaml\")),\n-        utils::read_file(\"/etc/openstack/clouds.yaml\"),\n+    let files: &[fn(&Context) -> Option<String>] = &[\n+        |ctx| Some(ctx.get_env(\"PWD\")? + \"/clouds.yaml\"),",
+    "path": "src/modules/openstack.rs",
+    "commit_id": "b392dd5a0af2b44cba362c12f6e8c2d2a64d8cd1",
+    "original_commit_id": "f59275c5ad37e2992d2742af949653f87647b76c",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Not a blocker but you could use `context.current_dir` to get the current directory which might be a bit more reliable.",
+    "created_at": "2020-12-12T08:43:17Z",
+    "updated_at": "2020-12-13T15:21:19Z",
+    "html_url": "https://github.com/starship/starship/pull/1992#discussion_r541534208",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1992",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/541534208"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1992#discussion_r541534208"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1992"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/541534208/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 16,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/541552292",
+    "pull_request_review_id": 550709974,
+    "id": 541552292,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU0MTU1MjI5Mg==",
+    "diff_hunk": "@@ -9,23 +9,32 @@ use crate::utils;\n type Cloud = String;\n type Project = String;\n \n-fn get_osp_project_from_config(context: &Context, osp_cloud: Option<&str>) -> Option<Project> {\n+fn get_osp_project_from_config(context: &Context, osp_cloud: &str) -> Option<Project> {\n     // Attempt to follow OpenStack standards for clouds.yaml location:\n     // 1st = $PWD/clouds.yaml, 2nd = $HOME/.config/openstack/clouds.yaml, 3rd = /etc/openstack/clouds.yaml\n-    let config = vec![\n-        utils::read_file(context.get_env(\"PWD\").unwrap() + \"/clouds.yaml\"),\n-        utils::read_file(dirs_next::home_dir()?.join(\".config/openstack/clouds.yaml\")),\n-        utils::read_file(\"/etc/openstack/clouds.yaml\"),\n+    let files: &[Box<dyn Fn(&Context) -> Option<String>>] = &[",
+    "path": "src/modules/openstack.rs",
+    "commit_id": "b392dd5a0af2b44cba362c12f6e8c2d2a64d8cd1",
+    "original_commit_id": "29ba80746908553340dcbafbc0ad39e00182d682",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "If you want to avoid early exits you could just use `Option`, although none of these are very likely to fail:\r\n```rust\r\n    let config = [\r\n        context.get_env(\"PWD\").map(|pwd| pwd + \"/clouds.yaml\"),\r\n        dirs_next::home_dir().map(|home| home.join(\".config/openstack/clouds.yaml\")),\r\n        Some(\"/etc/openstack/clouds.yaml\"),\r\n    ];\r\n```\r\n\r\nBut your solution is decent too I suppose.",
+    "created_at": "2020-12-12T10:47:06Z",
+    "updated_at": "2020-12-12T13:27:25Z",
+    "html_url": "https://github.com/starship/starship/pull/1992#discussion_r541552292",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1992",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/541552292"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1992#discussion_r541552292"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1992"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/541552292/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 15,
+    "side": "RIGHT",
+    "in_reply_to_id": 540954208,
+    "author_association": "MEMBER",
+    "original_position": 12,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

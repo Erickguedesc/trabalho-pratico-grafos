@@ -1,0 +1,141 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3163638346",
+    "pull_request_review_id": 4200096982,
+    "id": 3163638346,
+    "node_id": "PRRC_kwDOCqswNs68kUpK",
+    "diff_hunk": "@@ -605,24 +595,28 @@ pub fn wrap_seq_for_shell(\n         _ => return ansi,\n     };\n \n-    // ANSI escape codes cannot be nested, so we can keep track of whether we're\n-    // in an escape or not with a single boolean variable\n-    let mut escaped = false;\n-    let final_string: String = ansi\n-        .chars()\n-        .map(|x| {\n-            if x == escape_begin && !escaped {\n-                escaped = true;\n-                format!(\"{beg}{escape_begin}\")\n-            } else if x == escape_end && escaped {\n-                escaped = false;\n-                format!(\"{escape_end}{end}\")\n-            } else {\n-                x.to_string()\n+    // ANSI escape codes cannot be nested, so when we hit \\x1b we can just\n+    // consume characters until the sequence ends.\n+    let mut result = String::new();\n+    let mut chars = ansi.chars().peekable();\n+    while let Some(c) = chars.next() {\n+        if c == '\\x1b' {\n+            result.push_str(beg);\n+            result.push('\\x1b');\n+            while let Some(&next) = chars.peek() {\n+                chars.next();\n+                result.push(next);\n+                // '[' is the CSI introducer, not a final byte\n+                if next != '[' && ('@'..='~').contains(&next) {",
+    "path": "src/utils/mod.rs",
+    "commit_id": "1d43d67597adf3d112974adb6fe4c986076c06ef",
+    "original_commit_id": "1d43d67597adf3d112974adb6fe4c986076c06ef",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "If you're going this far maybe also handle OSC sequences.\nI would also consider moving to a proper state machine to avoid the nested loops.",
+    "created_at": "2026-04-29T19:29:32Z",
+    "updated_at": "2026-04-29T19:29:32Z",
+    "html_url": "https://github.com/starship/starship/pull/7436#discussion_r3163638346",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7436",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3163638346"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7436#discussion_r3163638346"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7436"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3163638346/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 610,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 58,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3163663612",
+    "pull_request_review_id": 4200126114,
+    "id": 3163663612,
+    "node_id": "PRRC_kwDOCqswNs68kaz8",
+    "diff_hunk": "@@ -605,24 +595,28 @@ pub fn wrap_seq_for_shell(\n         _ => return ansi,\n     };\n \n-    // ANSI escape codes cannot be nested, so we can keep track of whether we're\n-    // in an escape or not with a single boolean variable\n-    let mut escaped = false;\n-    let final_string: String = ansi\n-        .chars()\n-        .map(|x| {\n-            if x == escape_begin && !escaped {\n-                escaped = true;\n-                format!(\"{beg}{escape_begin}\")\n-            } else if x == escape_end && escaped {\n-                escaped = false;\n-                format!(\"{escape_end}{end}\")\n-            } else {\n-                x.to_string()\n+    // ANSI escape codes cannot be nested, so when we hit \\x1b we can just\n+    // consume characters until the sequence ends.\n+    let mut result = String::new();\n+    let mut chars = ansi.chars().peekable();\n+    while let Some(c) = chars.next() {\n+        if c == '\\x1b' {\n+            result.push_str(beg);\n+            result.push('\\x1b');\n+            while let Some(&next) = chars.peek() {\n+                chars.next();\n+                result.push(next);\n+                // '[' is the CSI introducer, not a final byte\n+                if next != '[' && ('@'..='~').contains(&next) {",
+    "path": "src/utils/mod.rs",
+    "commit_id": "1d43d67597adf3d112974adb6fe4c986076c06ef",
+    "original_commit_id": "1d43d67597adf3d112974adb6fe4c986076c06ef",
+    "user": {
+      "login": "zmberber",
+      "id": 29400525,
+      "node_id": "MDQ6VXNlcjI5NDAwNTI1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/29400525?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/zmberber",
+      "html_url": "https://github.com/zmberber",
+      "followers_url": "https://api.github.com/users/zmberber/followers",
+      "following_url": "https://api.github.com/users/zmberber/following{/other_user}",
+      "gists_url": "https://api.github.com/users/zmberber/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/zmberber/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/zmberber/subscriptions",
+      "organizations_url": "https://api.github.com/users/zmberber/orgs",
+      "repos_url": "https://api.github.com/users/zmberber/repos",
+      "events_url": "https://api.github.com/users/zmberber/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/zmberber/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "ah i actually first wrote a state machine, i should have chosen that.\r\n\r\nany way, yeah we could also handle OSC sequences.  should i do a PR that includes this?  it might take a while though, i am not experienced with this stuff (let alone rust).",
+    "created_at": "2026-04-29T19:34:12Z",
+    "updated_at": "2026-04-29T19:34:12Z",
+    "html_url": "https://github.com/starship/starship/pull/7436#discussion_r3163663612",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7436",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3163663612"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7436#discussion_r3163663612"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7436"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3163663612/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 610,
+    "side": "RIGHT",
+    "in_reply_to_id": 3163638346,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 58,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

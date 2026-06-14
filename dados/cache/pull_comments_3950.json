@@ -1,0 +1,280 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/862437968",
+    "pull_request_review_id": 958556035,
+    "id": 862437968,
+    "node_id": "PRRC_kwDOCqswNs4zZ8JQ",
+    "diff_hunk": "@@ -78,6 +78,19 @@ fn get_poetry_version(context: &Context, config: &PackageConfig) -> Option<Strin\n     format_version(raw_version, config.version_format)\n }\n \n+fn get_pep621_version(context: &Context, config: &PackageConfig) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(\"pyproject.toml\")?;\n+    let pep621_toml: toml::Value = toml::from_str(&file_contents).ok()?;\n+    let version = pep621_toml.get(\"project\")?.get(\"version\")?;\n+\n+    if version.is_table() {\n+        None\n+    } else {\n+        let raw_version = version.as_str()?;\n+        format_version(raw_version, config.version_format)\n+    }\n+}\n+",
+    "path": "src/modules/package.rs",
+    "commit_id": "ced2c68d0ccbd6018780a423bbe8c9d24260b781",
+    "original_commit_id": "a945b7c487d88bfc3eca07a81c5e6577267dde19",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Can you combine this with the poetry version function to avoid reading and parsing the file twice? By the way, if both versions are present, which is expected to take precedence?",
+    "created_at": "2022-05-01T07:54:10Z",
+    "updated_at": "2022-05-01T07:54:10Z",
+    "html_url": "https://github.com/starship/starship/pull/3950#discussion_r862437968",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3950",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/862437968"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3950#discussion_r862437968"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3950"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/862437968/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 81,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 93,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 16,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/862447185",
+    "pull_request_review_id": 958564265,
+    "id": 862447185,
+    "node_id": "PRRC_kwDOCqswNs4zZ-ZR",
+    "diff_hunk": "@@ -78,6 +78,19 @@ fn get_poetry_version(context: &Context, config: &PackageConfig) -> Option<Strin\n     format_version(raw_version, config.version_format)\n }\n \n+fn get_pep621_version(context: &Context, config: &PackageConfig) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(\"pyproject.toml\")?;\n+    let pep621_toml: toml::Value = toml::from_str(&file_contents).ok()?;\n+    let version = pep621_toml.get(\"project\")?.get(\"version\")?;\n+\n+    if version.is_table() {\n+        None\n+    } else {\n+        let raw_version = version.as_str()?;\n+        format_version(raw_version, config.version_format)\n+    }\n+}\n+",
+    "path": "src/modules/package.rs",
+    "commit_id": "ced2c68d0ccbd6018780a423bbe8c9d24260b781",
+    "original_commit_id": "a945b7c487d88bfc3eca07a81c5e6577267dde19",
+    "user": {
+      "login": "FollowTheProcess",
+      "id": 62767721,
+      "node_id": "MDQ6VXNlcjYyNzY3NzIx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/62767721?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/FollowTheProcess",
+      "html_url": "https://github.com/FollowTheProcess",
+      "followers_url": "https://api.github.com/users/FollowTheProcess/followers",
+      "following_url": "https://api.github.com/users/FollowTheProcess/following{/other_user}",
+      "gists_url": "https://api.github.com/users/FollowTheProcess/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/FollowTheProcess/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/FollowTheProcess/subscriptions",
+      "organizations_url": "https://api.github.com/users/FollowTheProcess/orgs",
+      "repos_url": "https://api.github.com/users/FollowTheProcess/repos",
+      "events_url": "https://api.github.com/users/FollowTheProcess/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/FollowTheProcess/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Yeah sure that makes perfect sense. AFAIK if both a `[tool.poetry]` and a `[project]` table are present then it's an invalid `pyproject.toml` so I think in that case it's fine for starship not to show either?\r\n\r\nI think poetry is the last modern python build backend that does not support PEP 621 so there should be no reason for a user to combine the two formats, and if/when poetry starts to support PEP 621 then the `[tool.poetry]` section will disappear in favour of `[project]` anyway",
+    "created_at": "2022-05-01T09:20:25Z",
+    "updated_at": "2022-05-01T11:57:39Z",
+    "html_url": "https://github.com/starship/starship/pull/3950#discussion_r862447185",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3950",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/862447185"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3950#discussion_r862447185"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3950"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/862447185/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 81,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 93,
+    "side": "RIGHT",
+    "in_reply_to_id": 862437968,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 16,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/862473837",
+    "pull_request_review_id": 958589036,
+    "id": 862473837,
+    "node_id": "PRRC_kwDOCqswNs4zaE5t",
+    "diff_hunk": "@@ -78,6 +76,19 @@ fn get_poetry_version(context: &Context, config: &PackageConfig) -> Option<Strin\n     format_version(raw_version, config.version_format)\n }\n \n+fn get_pep621_version(pyproject: &toml::Value, config: &PackageConfig) -> Option<String> {\n+    let raw_version = pyproject.get(\"project\")?.get(\"version\")?.as_str()?;\n+    format_version(raw_version, config.version_format)\n+}\n+\n+fn get_pyproject_version(context: &Context, config: &PackageConfig) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(\"pyproject.toml\")?;\n+    let pyproject_toml: toml::Value = toml::from_str(&file_contents).ok()?;\n+\n+    get_pep621_version(&pyproject_toml, config)\n+        .or_else(|| get_poetry_version(&pyproject_toml, config))\n+}",
+    "path": "src/modules/package.rs",
+    "commit_id": "ced2c68d0ccbd6018780a423bbe8c9d24260b781",
+    "original_commit_id": "d4691352a45fff1a46c47547710d501bf439b457",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This looks good, but I would prefer handling `format_version` in `get_pyproject_version`:\r\n```rust\r\nfn get_poetry_version<'a>(pyproject: &'a toml::Value) -> Option<&'a str> {\r\n    pyproject\r\n        .get(\"tool\")?\r\n        .get(\"poetry\")?\r\n        .get(\"version\")?\r\n        .as_str()\r\n}\r\n\r\nfn get_pep621_version<'a>(pyproject: &'a toml::Value) -> Option<&'a str> {\r\n    pyproject.get(\"project\")?.get(\"version\")?.as_str()\r\n}\r\n\r\nfn get_pyproject_version(context: &Context, config: &PackageConfig) -> Option<String> {\r\n    let file_contents = context.read_file_from_pwd(\"pyproject.toml\")?;\r\n    let pyproject_toml: toml::Value = toml::from_str(&file_contents).ok()?;\r\n\r\n    get_pep621_version(&pyproject_toml)\r\n        .or_else(|| get_poetry_version(&pyproject_toml))\r\n        .and_then(|raw_version| format_version(raw_version, config.version_format))\r\n}\r\n```",
+    "created_at": "2022-05-01T13:13:28Z",
+    "updated_at": "2022-05-01T13:14:07Z",
+    "html_url": "https://github.com/starship/starship/pull/3950#discussion_r862473837",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3950",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/862473837"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3950#discussion_r862473837"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3950"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/862473837/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 79,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 90,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 28,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/862475299",
+    "pull_request_review_id": 958590406,
+    "id": 862475299,
+    "node_id": "PRRC_kwDOCqswNs4zaFQj",
+    "diff_hunk": "@@ -78,6 +76,19 @@ fn get_poetry_version(context: &Context, config: &PackageConfig) -> Option<Strin\n     format_version(raw_version, config.version_format)\n }\n \n+fn get_pep621_version(pyproject: &toml::Value, config: &PackageConfig) -> Option<String> {\n+    let raw_version = pyproject.get(\"project\")?.get(\"version\")?.as_str()?;\n+    format_version(raw_version, config.version_format)\n+}\n+\n+fn get_pyproject_version(context: &Context, config: &PackageConfig) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(\"pyproject.toml\")?;\n+    let pyproject_toml: toml::Value = toml::from_str(&file_contents).ok()?;\n+\n+    get_pep621_version(&pyproject_toml, config)\n+        .or_else(|| get_poetry_version(&pyproject_toml, config))\n+}",
+    "path": "src/modules/package.rs",
+    "commit_id": "ced2c68d0ccbd6018780a423bbe8c9d24260b781",
+    "original_commit_id": "d4691352a45fff1a46c47547710d501bf439b457",
+    "user": {
+      "login": "FollowTheProcess",
+      "id": 62767721,
+      "node_id": "MDQ6VXNlcjYyNzY3NzIx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/62767721?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/FollowTheProcess",
+      "html_url": "https://github.com/FollowTheProcess",
+      "followers_url": "https://api.github.com/users/FollowTheProcess/followers",
+      "following_url": "https://api.github.com/users/FollowTheProcess/following{/other_user}",
+      "gists_url": "https://api.github.com/users/FollowTheProcess/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/FollowTheProcess/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/FollowTheProcess/subscriptions",
+      "organizations_url": "https://api.github.com/users/FollowTheProcess/orgs",
+      "repos_url": "https://api.github.com/users/FollowTheProcess/repos",
+      "events_url": "https://api.github.com/users/FollowTheProcess/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/FollowTheProcess/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Done 👍🏻 When I implemented your snippet with the explicit lifetime annotations I got a clippy warning saying that they could be elided so I just did it without them",
+    "created_at": "2022-05-01T13:26:40Z",
+    "updated_at": "2022-05-01T13:27:02Z",
+    "html_url": "https://github.com/starship/starship/pull/3950#discussion_r862475299",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3950",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/862475299"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3950#discussion_r862475299"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3950"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/862475299/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 79,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 90,
+    "side": "RIGHT",
+    "in_reply_to_id": 862473837,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 28,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

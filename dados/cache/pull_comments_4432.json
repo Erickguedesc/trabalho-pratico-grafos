@@ -1,0 +1,767 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/985616389",
+    "pull_request_review_id": 1128125494,
+    "id": 985616389,
+    "node_id": "PRRC_kwDOCqswNs46v1AF",
+    "diff_hunk": "@@ -102,9 +102,24 @@ fn get_setup_cfg_version(context: &Context, config: &PackageConfig) -> Option<St\n }\n \n fn get_gradle_version(context: &Context, config: &PackageConfig) -> Option<String> {\n-    let file_contents = context.read_file_from_pwd(\"build.gradle\")?;\n-    let re = Regex::new(r#\"(?m)^version ['\"](?P<version>[^'\"]+)['\"]$\"#).unwrap();\n-    let caps = re.captures(&file_contents)?;\n+    let build_file_contents = match context.read_file_from_pwd(\"build.gradle\") {\n+        Some(contents) => contents,\n+        None => \"none\".to_string(),",
+    "path": "src/modules/package.rs",
+    "commit_id": "d65e2d737914e67c39312c8fa1554faee28a9ce8",
+    "original_commit_id": "3c3a5cad7acd590df5f9d07b5e7c6ef0cc6189fc",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Is `\"none\"` used in `build.gradle`? If not, please stick with `Option<String>`, and if it does use `\"none\"` please filter `Some(\"none\")` into `None` instead and add a test that uses `version \"none\"`.",
+    "created_at": "2022-10-03T10:12:23Z",
+    "updated_at": "2022-10-03T10:18:49Z",
+    "html_url": "https://github.com/starship/starship/pull/4432#discussion_r985616389",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4432",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/985616389"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4432#discussion_r985616389"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4432"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/985616389/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 107,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 9,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/985618621",
+    "pull_request_review_id": 1128125494,
+    "id": 985618621,
+    "node_id": "PRRC_kwDOCqswNs46v1i9",
+    "diff_hunk": "@@ -102,9 +102,24 @@ fn get_setup_cfg_version(context: &Context, config: &PackageConfig) -> Option<St\n }\n \n fn get_gradle_version(context: &Context, config: &PackageConfig) -> Option<String> {\n-    let file_contents = context.read_file_from_pwd(\"build.gradle\")?;\n-    let re = Regex::new(r#\"(?m)^version ['\"](?P<version>[^'\"]+)['\"]$\"#).unwrap();\n-    let caps = re.captures(&file_contents)?;\n+    let build_file_contents = match context.read_file_from_pwd(\"build.gradle\") {\n+        Some(contents) => contents,\n+        None => \"none\".to_string(),\n+    };\n+\n+    //check version from gradle.properties file\n+    if build_file_contents == \"none\" {\n+        let properties_file_contents = context.read_file_from_pwd(\"gradle.properties\")?;\n+        let re = Regex::new(r\"/version=.*/gm\").unwrap();\n+        let caps = re.captures(&properties_file_contents)?;\n+        return format_version(\n+            &caps[\"version\"].strip_prefix(\"version=\").unwrap(),",
+    "path": "src/modules/package.rs",
+    "commit_id": "d65e2d737914e67c39312c8fa1554faee28a9ce8",
+    "original_commit_id": "3c3a5cad7acd590df5f9d07b5e7c6ef0cc6189fc",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please either use proper capture groups in the regex or just iterate over the lines and check if `strip_prefix` returns `Some(version)`. Please also add handling for whitespace if necessary.",
+    "created_at": "2022-10-03T10:15:03Z",
+    "updated_at": "2022-10-03T10:18:49Z",
+    "html_url": "https://github.com/starship/starship/pull/4432#discussion_r985618621",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4432",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/985618621"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4432#discussion_r985618621"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4432"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/985618621/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 113,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 116,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 18,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/985619942",
+    "pull_request_review_id": 1128125494,
+    "id": 985619942,
+    "node_id": "PRRC_kwDOCqswNs46v13m",
+    "diff_hunk": "@@ -960,6 +975,17 @@ java {\n         expect_output(&project_dir, None, None);\n         project_dir.close()\n     }\n+    #[test]\n+    fn test_extract_grade_version_from_properties() -> io::Result<()> {\n+        let config_name = \"gradle.properties\";\n+        let config_content = \"\n+            version=1.2.3\n+            \";\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(config_content))?;\n+        expect_output(&project_dir, None, None);",
+    "path": "src/modules/package.rs",
+    "commit_id": "d65e2d737914e67c39312c8fa1554faee28a9ce8",
+    "original_commit_id": "3c3a5cad7acd590df5f9d07b5e7c6ef0cc6189fc",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The test should show that the version number can be extracted:\r\n```suggestion\r\n        expect_output(&project_dir, Some(\"v1.2.3\"), None);\r\n```",
+    "created_at": "2022-10-03T10:16:35Z",
+    "updated_at": "2022-10-03T10:18:49Z",
+    "html_url": "https://github.com/starship/starship/pull/4432#discussion_r985619942",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4432",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/985619942"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4432#discussion_r985619942"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4432"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/985619942/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 986,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 40,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/985623609",
+    "pull_request_review_id": 1128135985,
+    "id": 985623609,
+    "node_id": "PRRC_kwDOCqswNs46v2w5",
+    "diff_hunk": "@@ -102,9 +102,24 @@ fn get_setup_cfg_version(context: &Context, config: &PackageConfig) -> Option<St\n }\n \n fn get_gradle_version(context: &Context, config: &PackageConfig) -> Option<String> {\n-    let file_contents = context.read_file_from_pwd(\"build.gradle\")?;\n-    let re = Regex::new(r#\"(?m)^version ['\"](?P<version>[^'\"]+)['\"]$\"#).unwrap();\n-    let caps = re.captures(&file_contents)?;\n+    let build_file_contents = match context.read_file_from_pwd(\"build.gradle\") {\n+        Some(contents) => contents,\n+        None => \"none\".to_string(),",
+    "path": "src/modules/package.rs",
+    "commit_id": "d65e2d737914e67c39312c8fa1554faee28a9ce8",
+    "original_commit_id": "3c3a5cad7acd590df5f9d07b5e7c6ef0cc6189fc",
+    "user": {
+      "login": "BattleCh1cken",
+      "id": 75806385,
+      "node_id": "MDQ6VXNlcjc1ODA2Mzg1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/75806385?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/BattleCh1cken",
+      "html_url": "https://github.com/BattleCh1cken",
+      "followers_url": "https://api.github.com/users/BattleCh1cken/followers",
+      "following_url": "https://api.github.com/users/BattleCh1cken/following{/other_user}",
+      "gists_url": "https://api.github.com/users/BattleCh1cken/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/BattleCh1cken/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/BattleCh1cken/subscriptions",
+      "organizations_url": "https://api.github.com/users/BattleCh1cken/orgs",
+      "repos_url": "https://api.github.com/users/BattleCh1cken/repos",
+      "events_url": "https://api.github.com/users/BattleCh1cken/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/BattleCh1cken/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I feel like I should probably stick with Option anyway, since that seems to be the intended Rust way.",
+    "created_at": "2022-10-03T10:21:13Z",
+    "updated_at": "2022-10-03T10:21:13Z",
+    "html_url": "https://github.com/starship/starship/pull/4432#discussion_r985623609",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4432",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/985623609"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4432#discussion_r985623609"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4432"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/985623609/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 107,
+    "side": "RIGHT",
+    "in_reply_to_id": 985616389,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 9,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/985687790",
+    "pull_request_review_id": 1128229048,
+    "id": 985687790,
+    "node_id": "PRRC_kwDOCqswNs46wGbu",
+    "diff_hunk": "@@ -102,9 +102,24 @@ fn get_setup_cfg_version(context: &Context, config: &PackageConfig) -> Option<St\n }\n \n fn get_gradle_version(context: &Context, config: &PackageConfig) -> Option<String> {\n-    let file_contents = context.read_file_from_pwd(\"build.gradle\")?;\n-    let re = Regex::new(r#\"(?m)^version ['\"](?P<version>[^'\"]+)['\"]$\"#).unwrap();\n-    let caps = re.captures(&file_contents)?;\n+    let build_file_contents = match context.read_file_from_pwd(\"build.gradle\") {\n+        Some(contents) => contents,\n+        None => \"none\".to_string(),\n+    };\n+\n+    //check version from gradle.properties file\n+    if build_file_contents == \"none\" {\n+        let properties_file_contents = context.read_file_from_pwd(\"gradle.properties\")?;\n+        let re = Regex::new(r\"/version=.*/gm\").unwrap();\n+        let caps = re.captures(&properties_file_contents)?;\n+        return format_version(\n+            &caps[\"version\"].strip_prefix(\"version=\").unwrap(),",
+    "path": "src/modules/package.rs",
+    "commit_id": "d65e2d737914e67c39312c8fa1554faee28a9ce8",
+    "original_commit_id": "3c3a5cad7acd590df5f9d07b5e7c6ef0cc6189fc",
+    "user": {
+      "login": "BattleCh1cken",
+      "id": 75806385,
+      "node_id": "MDQ6VXNlcjc1ODA2Mzg1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/75806385?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/BattleCh1cken",
+      "html_url": "https://github.com/BattleCh1cken",
+      "followers_url": "https://api.github.com/users/BattleCh1cken/followers",
+      "following_url": "https://api.github.com/users/BattleCh1cken/following{/other_user}",
+      "gists_url": "https://api.github.com/users/BattleCh1cken/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/BattleCh1cken/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/BattleCh1cken/subscriptions",
+      "organizations_url": "https://api.github.com/users/BattleCh1cken/orgs",
+      "repos_url": "https://api.github.com/users/BattleCh1cken/repos",
+      "events_url": "https://api.github.com/users/BattleCh1cken/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/BattleCh1cken/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Capture groups was easier.",
+    "created_at": "2022-10-03T11:42:23Z",
+    "updated_at": "2022-10-03T11:42:23Z",
+    "html_url": "https://github.com/starship/starship/pull/4432#discussion_r985687790",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4432",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/985687790"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4432#discussion_r985687790"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4432"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/985687790/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 113,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 116,
+    "side": "RIGHT",
+    "in_reply_to_id": 985618621,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 18,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1008828134",
+    "pull_request_review_id": 1161093821,
+    "id": 1008828134,
+    "node_id": "PRRC_kwDOCqswNs48IX7m",
+    "diff_hunk": "@@ -102,11 +102,19 @@ fn get_setup_cfg_version(context: &Context, config: &PackageConfig) -> Option<St\n }\n \n fn get_gradle_version(context: &Context, config: &PackageConfig) -> Option<String> {\n-    let file_contents = context.read_file_from_pwd(\"build.gradle\")?;\n-    let re = Regex::new(r#\"(?m)^version ['\"](?P<version>[^'\"]+)['\"]$\"#).unwrap();\n-    let caps = re.captures(&file_contents)?;\n-\n-    format_version(&caps[\"version\"], config.version_format)\n+    context\n+        .read_file_from_pwd(\"build.gradle\")\n+        .and_then(|contents| {\n+            let re = Regex::new(r#\"(?m)^version ['\"](?P<version>[^'\"]+)['\"]$\"#).unwrap(); /*dark magic*/\n+            let caps = re.captures(&contents)?;\n+            format_version(&caps[\"version\"], config.version_format)\n+        })\n+        .or_else(|| {\n+            let properties_file_contents = context.read_file_from_pwd(\"gradle.properties\")?;\n+            let re = Regex::new(r\"version=(?P<version>.*)\").unwrap();\n+            let caps = re.captures(&properties_file_contents)?;\n+            format_version(&caps[\"version\"], config.version_format)",
+    "path": "src/modules/package.rs",
+    "commit_id": "d65e2d737914e67c39312c8fa1554faee28a9ce8",
+    "original_commit_id": "5be7203022ba3f758ecbe9014450ea293f9d11a5",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Given the comments from [moritzreiter](https://github.com/moritzreiter), please read the properties file first.",
+    "created_at": "2022-10-30T10:24:59Z",
+    "updated_at": "2022-10-30T10:25:35Z",
+    "html_url": "https://github.com/starship/starship/pull/4432#discussion_r1008828134",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4432",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1008828134"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4432#discussion_r1008828134"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4432"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1008828134/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 113,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 116,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 20,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1008828210",
+    "pull_request_review_id": 1161093821,
+    "id": 1008828210,
+    "node_id": "PRRC_kwDOCqswNs48IX8y",
+    "diff_hunk": "@@ -0,0 +1,40 @@\n+{\n+  description = \"Rust flake template\";\n+  inputs = {\n+    nixpkgs.url = \"github:NixOS/nixpkgs/nixpkgs-unstable\";\n+    utils.url = \"github:numtide/flake-utils\";\n+    fenix = {\n+      url = \"github:nix-community/fenix\";\n+      inputs.nixpkgs.follows = \"nixpkgs\";\n+    };\n+  };\n+\n+  outputs = { self, nixpkgs, utils, fenix }:\n+    utils.lib.eachDefaultSystem (system:\n+      let\n+        pkgs = import nixpkgs {\n+          inherit system;\n+          overlays = [\n+            fenix.overlay\n+          ];\n+        };\n+      in\n+      {\n+\n+\n+        devShell = with pkgs; mkShell {\n+          shellHook = ''\n+          '';\n+          buildInputs = with pkgs; [\n+            (pkgs.fenix.complete.withComponents [\n+              \"cargo\"\n+              \"clippy\"\n+              \"rust-src\"\n+              \"rustc\"\n+              \"rustfmt\"\n+              \"rust-analyzer\"\n+            ])\n+          ];\n+        };\n+      });\n+}",
+    "path": "flake.nix",
+    "commit_id": "d65e2d737914e67c39312c8fa1554faee28a9ce8",
+    "original_commit_id": "5be7203022ba3f758ecbe9014450ea293f9d11a5",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please remove this file again.",
+    "created_at": "2022-10-30T10:25:16Z",
+    "updated_at": "2022-10-30T10:25:35Z",
+    "html_url": "https://github.com/starship/starship/pull/4432#discussion_r1008828210",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4432",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1008828210"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4432#discussion_r1008828210"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4432"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1008828210/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 1,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 40,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 40,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1008865018",
+    "pull_request_review_id": 1161134914,
+    "id": 1008865018,
+    "node_id": "PRRC_kwDOCqswNs48Ig76",
+    "diff_hunk": "@@ -0,0 +1,40 @@\n+{\n+  description = \"Rust flake template\";\n+  inputs = {\n+    nixpkgs.url = \"github:NixOS/nixpkgs/nixpkgs-unstable\";\n+    utils.url = \"github:numtide/flake-utils\";\n+    fenix = {\n+      url = \"github:nix-community/fenix\";\n+      inputs.nixpkgs.follows = \"nixpkgs\";\n+    };\n+  };\n+\n+  outputs = { self, nixpkgs, utils, fenix }:\n+    utils.lib.eachDefaultSystem (system:\n+      let\n+        pkgs = import nixpkgs {\n+          inherit system;\n+          overlays = [\n+            fenix.overlay\n+          ];\n+        };\n+      in\n+      {\n+\n+\n+        devShell = with pkgs; mkShell {\n+          shellHook = ''\n+          '';\n+          buildInputs = with pkgs; [\n+            (pkgs.fenix.complete.withComponents [\n+              \"cargo\"\n+              \"clippy\"\n+              \"rust-src\"\n+              \"rustc\"\n+              \"rustfmt\"\n+              \"rust-analyzer\"\n+            ])\n+          ];\n+        };\n+      });\n+}",
+    "path": "flake.nix",
+    "commit_id": "d65e2d737914e67c39312c8fa1554faee28a9ce8",
+    "original_commit_id": "5be7203022ba3f758ecbe9014450ea293f9d11a5",
+    "user": {
+      "login": "BattleCh1cken",
+      "id": 75806385,
+      "node_id": "MDQ6VXNlcjc1ODA2Mzg1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/75806385?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/BattleCh1cken",
+      "html_url": "https://github.com/BattleCh1cken",
+      "followers_url": "https://api.github.com/users/BattleCh1cken/followers",
+      "following_url": "https://api.github.com/users/BattleCh1cken/following{/other_user}",
+      "gists_url": "https://api.github.com/users/BattleCh1cken/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/BattleCh1cken/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/BattleCh1cken/subscriptions",
+      "organizations_url": "https://api.github.com/users/BattleCh1cken/orgs",
+      "repos_url": "https://api.github.com/users/BattleCh1cken/repos",
+      "events_url": "https://api.github.com/users/BattleCh1cken/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/BattleCh1cken/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Arg. I thought I didn't commit that file. Sorry about that.\r\n\r\nEdit: Nix only works when its added by git (I don't know who made that design choice, but it's the way it is) I guess I forgot to unstage it before I committed. I should probably make a pull request that adds nix support, but to be honest I don't know enough about nix to do that.",
+    "created_at": "2022-10-30T13:54:56Z",
+    "updated_at": "2022-10-30T14:01:21Z",
+    "html_url": "https://github.com/starship/starship/pull/4432#discussion_r1008865018",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4432",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1008865018"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4432#discussion_r1008865018"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4432"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1008865018/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 1,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 40,
+    "side": "RIGHT",
+    "in_reply_to_id": 1008828210,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 40,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1008865609",
+    "pull_request_review_id": 1161135748,
+    "id": 1008865609,
+    "node_id": "PRRC_kwDOCqswNs48IhFJ",
+    "diff_hunk": "@@ -0,0 +1,40 @@\n+{\n+  description = \"Rust flake template\";\n+  inputs = {\n+    nixpkgs.url = \"github:NixOS/nixpkgs/nixpkgs-unstable\";\n+    utils.url = \"github:numtide/flake-utils\";\n+    fenix = {\n+      url = \"github:nix-community/fenix\";\n+      inputs.nixpkgs.follows = \"nixpkgs\";\n+    };\n+  };\n+\n+  outputs = { self, nixpkgs, utils, fenix }:\n+    utils.lib.eachDefaultSystem (system:\n+      let\n+        pkgs = import nixpkgs {\n+          inherit system;\n+          overlays = [\n+            fenix.overlay\n+          ];\n+        };\n+      in\n+      {\n+\n+\n+        devShell = with pkgs; mkShell {\n+          shellHook = ''\n+          '';\n+          buildInputs = with pkgs; [\n+            (pkgs.fenix.complete.withComponents [\n+              \"cargo\"\n+              \"clippy\"\n+              \"rust-src\"\n+              \"rustc\"\n+              \"rustfmt\"\n+              \"rust-analyzer\"\n+            ])\n+          ];\n+        };\n+      });\n+}",
+    "path": "flake.nix",
+    "commit_id": "d65e2d737914e67c39312c8fa1554faee28a9ce8",
+    "original_commit_id": "5be7203022ba3f758ecbe9014450ea293f9d11a5",
+    "user": {
+      "login": "BattleCh1cken",
+      "id": 75806385,
+      "node_id": "MDQ6VXNlcjc1ODA2Mzg1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/75806385?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/BattleCh1cken",
+      "html_url": "https://github.com/BattleCh1cken",
+      "followers_url": "https://api.github.com/users/BattleCh1cken/followers",
+      "following_url": "https://api.github.com/users/BattleCh1cken/following{/other_user}",
+      "gists_url": "https://api.github.com/users/BattleCh1cken/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/BattleCh1cken/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/BattleCh1cken/subscriptions",
+      "organizations_url": "https://api.github.com/users/BattleCh1cken/orgs",
+      "repos_url": "https://api.github.com/users/BattleCh1cken/repos",
+      "events_url": "https://api.github.com/users/BattleCh1cken/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/BattleCh1cken/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Do you also want me to squash these commits down into one, so that the commit history looks less messy?",
+    "created_at": "2022-10-30T13:58:00Z",
+    "updated_at": "2022-10-30T13:58:00Z",
+    "html_url": "https://github.com/starship/starship/pull/4432#discussion_r1008865609",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4432",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1008865609"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4432#discussion_r1008865609"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4432"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1008865609/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 1,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 40,
+    "side": "RIGHT",
+    "in_reply_to_id": 1008828210,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 40,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1008871697",
+    "pull_request_review_id": 1161142750,
+    "id": 1008871697,
+    "node_id": "PRRC_kwDOCqswNs48IikR",
+    "diff_hunk": "@@ -0,0 +1,40 @@\n+{\n+  description = \"Rust flake template\";\n+  inputs = {\n+    nixpkgs.url = \"github:NixOS/nixpkgs/nixpkgs-unstable\";\n+    utils.url = \"github:numtide/flake-utils\";\n+    fenix = {\n+      url = \"github:nix-community/fenix\";\n+      inputs.nixpkgs.follows = \"nixpkgs\";\n+    };\n+  };\n+\n+  outputs = { self, nixpkgs, utils, fenix }:\n+    utils.lib.eachDefaultSystem (system:\n+      let\n+        pkgs = import nixpkgs {\n+          inherit system;\n+          overlays = [\n+            fenix.overlay\n+          ];\n+        };\n+      in\n+      {\n+\n+\n+        devShell = with pkgs; mkShell {\n+          shellHook = ''\n+          '';\n+          buildInputs = with pkgs; [\n+            (pkgs.fenix.complete.withComponents [\n+              \"cargo\"\n+              \"clippy\"\n+              \"rust-src\"\n+              \"rustc\"\n+              \"rustfmt\"\n+              \"rust-analyzer\"\n+            ])\n+          ];\n+        };\n+      });\n+}",
+    "path": "flake.nix",
+    "commit_id": "d65e2d737914e67c39312c8fa1554faee28a9ce8",
+    "original_commit_id": "5be7203022ba3f758ecbe9014450ea293f9d11a5",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Not necessarily, PRs are squashed on merge.",
+    "created_at": "2022-10-30T14:13:07Z",
+    "updated_at": "2022-10-30T14:13:07Z",
+    "html_url": "https://github.com/starship/starship/pull/4432#discussion_r1008871697",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4432",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1008871697"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4432#discussion_r1008871697"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4432"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1008871697/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 1,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 40,
+    "side": "RIGHT",
+    "in_reply_to_id": 1008828210,
+    "author_association": "MEMBER",
+    "original_position": 40,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1008872289",
+    "pull_request_review_id": 1161143396,
+    "id": 1008872289,
+    "node_id": "PRRC_kwDOCqswNs48Iith",
+    "diff_hunk": "@@ -0,0 +1,40 @@\n+{\n+  description = \"Rust flake template\";\n+  inputs = {\n+    nixpkgs.url = \"github:NixOS/nixpkgs/nixpkgs-unstable\";\n+    utils.url = \"github:numtide/flake-utils\";\n+    fenix = {\n+      url = \"github:nix-community/fenix\";\n+      inputs.nixpkgs.follows = \"nixpkgs\";\n+    };\n+  };\n+\n+  outputs = { self, nixpkgs, utils, fenix }:\n+    utils.lib.eachDefaultSystem (system:\n+      let\n+        pkgs = import nixpkgs {\n+          inherit system;\n+          overlays = [\n+            fenix.overlay\n+          ];\n+        };\n+      in\n+      {\n+\n+\n+        devShell = with pkgs; mkShell {\n+          shellHook = ''\n+          '';\n+          buildInputs = with pkgs; [\n+            (pkgs.fenix.complete.withComponents [\n+              \"cargo\"\n+              \"clippy\"\n+              \"rust-src\"\n+              \"rustc\"\n+              \"rustfmt\"\n+              \"rust-analyzer\"\n+            ])\n+          ];\n+        };\n+      });\n+}",
+    "path": "flake.nix",
+    "commit_id": "d65e2d737914e67c39312c8fa1554faee28a9ce8",
+    "original_commit_id": "5be7203022ba3f758ecbe9014450ea293f9d11a5",
+    "user": {
+      "login": "BattleCh1cken",
+      "id": 75806385,
+      "node_id": "MDQ6VXNlcjc1ODA2Mzg1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/75806385?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/BattleCh1cken",
+      "html_url": "https://github.com/BattleCh1cken",
+      "followers_url": "https://api.github.com/users/BattleCh1cken/followers",
+      "following_url": "https://api.github.com/users/BattleCh1cken/following{/other_user}",
+      "gists_url": "https://api.github.com/users/BattleCh1cken/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/BattleCh1cken/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/BattleCh1cken/subscriptions",
+      "organizations_url": "https://api.github.com/users/BattleCh1cken/orgs",
+      "repos_url": "https://api.github.com/users/BattleCh1cken/repos",
+      "events_url": "https://api.github.com/users/BattleCh1cken/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/BattleCh1cken/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Alright, perfect.",
+    "created_at": "2022-10-30T14:16:54Z",
+    "updated_at": "2022-10-30T14:16:54Z",
+    "html_url": "https://github.com/starship/starship/pull/4432#discussion_r1008872289",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4432",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1008872289"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4432#discussion_r1008872289"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4432"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1008872289/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 1,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 40,
+    "side": "RIGHT",
+    "in_reply_to_id": 1008828210,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 40,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

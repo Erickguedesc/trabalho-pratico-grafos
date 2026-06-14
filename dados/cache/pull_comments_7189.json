@@ -1,0 +1,418 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2659736678",
+    "pull_request_review_id": 3625054455,
+    "id": 2659736678,
+    "node_id": "PRRC_kwDOCqswNs6eiFxm",
+    "diff_hunk": "@@ -2899,6 +2900,40 @@ By default the module will be shown if any of the following conditions are met:\n format = 'via [🌕 $version](bold blue) '\n ```\n \n+## Maven\n+\n+The `maven` module indicates the presence of a Maven project in the current directory. If the [Maven Wrapper](https://maven.apache.org/wrapper/) is enabled, the Maven version will be parsed from `.mvn/wrapper/maven-wrapper.properties` and shown.\n+\n+By default the module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `pom.xml` file.\n+- The current directory contains a `.mvn/wrapper/maven-wrapper.properties` file.\n+\n+If you use an alternate POM syntax (for example `pom.hocon`), add its filename to `detect_files`.\n+\n+### Options\n+\n+| Option           | Default                              | Description                                                               |\n+| ---------------- | ------------------------------------ | ------------------------------------------------------------------------- |\n+| `format`         | `'via [$symbol($version )]($style)'` | The format for the module.                                                |\n+| `version_format` | `'v${raw}'`                          | The version format. Available vars are `raw`, `major`, `minor`, & `patch` |\n+| `symbol`         | `'🅼 '`                               | A format string representing the symbol of Maven.                         |\n+| `detect_files`   | `['pom.xml']`                        | Which filenames should trigger this module.                               |\n+| `detect_folders` | `['.mvn']`                           | Which folders should trigger this module.                                 |",
+    "path": "docs/config/README.md",
+    "commit_id": "d50701180b5c3bfe6a1493d27d5260003c97693a",
+    "original_commit_id": "d50701180b5c3bfe6a1493d27d5260003c97693a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please also handle `detect_extensions`",
+    "created_at": "2026-01-04T15:21:15Z",
+    "updated_at": "2026-01-04T15:55:41Z",
+    "html_url": "https://github.com/starship/starship/pull/7189#discussion_r2659736678",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7189",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2659736678"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7189#discussion_r2659736678"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7189"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2659736678/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 2922,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 31,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2659737691",
+    "pull_request_review_id": 3625054455,
+    "id": 2659737691,
+    "node_id": "PRRC_kwDOCqswNs6eiGBb",
+    "diff_hunk": "@@ -0,0 +1,227 @@\n+use std::path::Path;\n+\n+use crate::{\n+    config::ModuleConfig,\n+    configs::maven::MavenConfig,\n+    context::Context,\n+    formatter::{StringFormatter, VersionFormatter},\n+    module::Module,\n+    utils,\n+};\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"maven\");\n+    let config = MavenConfig::try_load(module.config);\n+    let wrapper_properties = get_wrapper_properties_file(context, config.recursive);",
+    "path": "src/modules/maven.rs",
+    "commit_id": "d50701180b5c3bfe6a1493d27d5260003c97693a",
+    "original_commit_id": "d50701180b5c3bfe6a1493d27d5260003c97693a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please handle `is_maven_project` first for performance. Running this early also diverges from the `gradle` behaviour. If you are planning to keep it this way please add a `TODO` comment to the gradle module to streamline them in the future.\n\nAnother potential alternative would be to conditionally handle `is_maven_project` with `begin_ancestor_scan` depending on the value of `upwards` (only using the config options), giving users more control.",
+    "created_at": "2026-01-04T15:23:03Z",
+    "updated_at": "2026-01-04T15:55:41Z",
+    "html_url": "https://github.com/starship/starship/pull/7189#discussion_r2659737691",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7189",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2659737691"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7189#discussion_r2659737691"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7189"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2659737691/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 15,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2659741416",
+    "pull_request_review_id": 3625054455,
+    "id": 2659741416,
+    "node_id": "PRRC_kwDOCqswNs6eiG7o",
+    "diff_hunk": "@@ -0,0 +1,227 @@\n+use std::path::Path;\n+\n+use crate::{\n+    config::ModuleConfig,\n+    configs::maven::MavenConfig,\n+    context::Context,\n+    formatter::{StringFormatter, VersionFormatter},\n+    module::Module,\n+    utils,\n+};\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"maven\");\n+    let config = MavenConfig::try_load(module.config);\n+    let wrapper_properties = get_wrapper_properties_file(context, config.recursive);\n+    let is_maven_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_folders(&config.detect_folders)\n+        .is_match()\n+        || wrapper_properties.is_some();\n+\n+    if !is_maven_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let properties = wrapper_properties.as_deref()?;\n+                    let maven_version = parse_maven_version_from_properties(properties)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &maven_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `maven`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_maven_version_from_properties(wrapper_properties: &str) -> Option<String> {\n+    // Example `maven-wrapper.properties` content\n+    /*\n+        wrapperVersion=3.3.4\n+        distributionType=only-script\n+        distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.12/apache-maven-3.9.12-bin.zip\n+    */\n+    let version = wrapper_properties\n+        .lines()\n+        .find(|line| line.starts_with(\"distributionUrl=\"))?\n+        .rsplit_once('/')?\n+        .1\n+        .strip_prefix(\"apache-maven-\")?\n+        .rsplit_once('-')?\n+        .0;",
+    "path": "src/modules/maven.rs",
+    "commit_id": "d20da660676bd7275312bcc5626437f335692e93",
+    "original_commit_id": "d50701180b5c3bfe6a1493d27d5260003c97693a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think it would be more reliable to use the `/3.9.12/` part of the url.",
+    "created_at": "2026-01-04T15:29:14Z",
+    "updated_at": "2026-01-04T15:55:42Z",
+    "html_url": "https://github.com/starship/starship/pull/7189#discussion_r2659741416",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7189",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2659741416"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7189#discussion_r2659741416"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7189"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2659741416/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 71,
+    "original_start_line": 71,
+    "start_side": "RIGHT",
+    "line": 78,
+    "original_line": 78,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 78,
+    "position": 78,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2659750922",
+    "pull_request_review_id": 3625054455,
+    "id": 2659750922,
+    "node_id": "PRRC_kwDOCqswNs6eiJQK",
+    "diff_hunk": "@@ -0,0 +1,227 @@\n+use std::path::Path;\n+\n+use crate::{\n+    config::ModuleConfig,\n+    configs::maven::MavenConfig,\n+    context::Context,\n+    formatter::{StringFormatter, VersionFormatter},\n+    module::Module,\n+    utils,\n+};\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"maven\");\n+    let config = MavenConfig::try_load(module.config);\n+    let wrapper_properties = get_wrapper_properties_file(context, config.recursive);\n+    let is_maven_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_folders(&config.detect_folders)\n+        .is_match()\n+        || wrapper_properties.is_some();\n+\n+    if !is_maven_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let properties = wrapper_properties.as_deref()?;\n+                    let maven_version = parse_maven_version_from_properties(properties)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &maven_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `maven`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_maven_version_from_properties(wrapper_properties: &str) -> Option<String> {\n+    // Example `maven-wrapper.properties` content\n+    /*\n+        wrapperVersion=3.3.4\n+        distributionType=only-script\n+        distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.12/apache-maven-3.9.12-bin.zip\n+    */\n+    let version = wrapper_properties\n+        .lines()\n+        .find(|line| line.starts_with(\"distributionUrl=\"))?\n+        .rsplit_once('/')?\n+        .1\n+        .strip_prefix(\"apache-maven-\")?\n+        .rsplit_once('-')?\n+        .0;\n+    Some(version.to_string())\n+}\n+\n+/// Tries to find the maven-wrapper.properties file.\n+fn get_wrapper_properties_file(context: &Context, recursive: bool) -> Option<String> {\n+    let read_wrapper_properties = |base_dir: &Path| {\n+        utils::read_file(base_dir.join(\".mvn/wrapper/maven-wrapper.properties\")).ok()\n+    };\n+\n+    // Try current directory first\n+    if context.try_begin_scan()?.set_folders(&[\".mvn\"]).is_match()\n+        && let Some(properties) = read_wrapper_properties(&context.current_dir)\n+    {\n+        return Some(properties);\n+    }\n+\n+    // Try parent directories if recursive\n+    if recursive {\n+        for dir in context.current_dir.ancestors().skip(1) {\n+            if let Some(properties) = read_wrapper_properties(dir) {\n+                return Some(properties);\n+            }\n+        }",
+    "path": "src/modules/maven.rs",
+    "commit_id": "d50701180b5c3bfe6a1493d27d5260003c97693a",
+    "original_commit_id": "d50701180b5c3bfe6a1493d27d5260003c97693a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please make use of `context.begin_ancestor_scan()`",
+    "created_at": "2026-01-04T15:44:20Z",
+    "updated_at": "2026-01-04T15:55:42Z",
+    "html_url": "https://github.com/starship/starship/pull/7189#discussion_r2659750922",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7189",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2659750922"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7189#discussion_r2659750922"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7189"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2659750922/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 97,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 101,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 101,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2660139746",
+    "pull_request_review_id": 3625347748,
+    "id": 2660139746,
+    "node_id": "PRRC_kwDOCqswNs6ejoLi",
+    "diff_hunk": "@@ -0,0 +1,227 @@\n+use std::path::Path;\n+\n+use crate::{\n+    config::ModuleConfig,\n+    configs::maven::MavenConfig,\n+    context::Context,\n+    formatter::{StringFormatter, VersionFormatter},\n+    module::Module,\n+    utils,\n+};\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"maven\");\n+    let config = MavenConfig::try_load(module.config);\n+    let wrapper_properties = get_wrapper_properties_file(context, config.recursive);\n+    let is_maven_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_folders(&config.detect_folders)\n+        .is_match()\n+        || wrapper_properties.is_some();\n+\n+    if !is_maven_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let properties = wrapper_properties.as_deref()?;\n+                    let maven_version = parse_maven_version_from_properties(properties)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &maven_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `maven`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_maven_version_from_properties(wrapper_properties: &str) -> Option<String> {\n+    // Example `maven-wrapper.properties` content\n+    /*\n+        wrapperVersion=3.3.4\n+        distributionType=only-script\n+        distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.12/apache-maven-3.9.12-bin.zip\n+    */\n+    let version = wrapper_properties\n+        .lines()\n+        .find(|line| line.starts_with(\"distributionUrl=\"))?\n+        .rsplit_once('/')?\n+        .1\n+        .strip_prefix(\"apache-maven-\")?\n+        .rsplit_once('-')?\n+        .0;\n+    Some(version.to_string())\n+}\n+\n+/// Tries to find the maven-wrapper.properties file.\n+fn get_wrapper_properties_file(context: &Context, recursive: bool) -> Option<String> {\n+    let read_wrapper_properties = |base_dir: &Path| {\n+        utils::read_file(base_dir.join(\".mvn/wrapper/maven-wrapper.properties\")).ok()\n+    };\n+\n+    // Try current directory first\n+    if context.try_begin_scan()?.set_folders(&[\".mvn\"]).is_match()\n+        && let Some(properties) = read_wrapper_properties(&context.current_dir)\n+    {\n+        return Some(properties);\n+    }\n+\n+    // Try parent directories if recursive\n+    if recursive {\n+        for dir in context.current_dir.ancestors().skip(1) {\n+            if let Some(properties) = read_wrapper_properties(dir) {\n+                return Some(properties);\n+            }\n+        }",
+    "path": "src/modules/maven.rs",
+    "commit_id": "d50701180b5c3bfe6a1493d27d5260003c97693a",
+    "original_commit_id": "d50701180b5c3bfe6a1493d27d5260003c97693a",
+    "user": {
+      "login": "rschmitt",
+      "id": 3725049,
+      "node_id": "MDQ6VXNlcjM3MjUwNDk=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3725049?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rschmitt",
+      "html_url": "https://github.com/rschmitt",
+      "followers_url": "https://api.github.com/users/rschmitt/followers",
+      "following_url": "https://api.github.com/users/rschmitt/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rschmitt/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rschmitt/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rschmitt/subscriptions",
+      "organizations_url": "https://api.github.com/users/rschmitt/orgs",
+      "repos_url": "https://api.github.com/users/rschmitt/repos",
+      "events_url": "https://api.github.com/users/rschmitt/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rschmitt/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "OK, but note that this doesn't appear to work:\r\n\r\n```rs\r\n            .begin_ancestor_scan()\r\n            .set_files(&[\".mvn/wrapper/maven-wrapper.properties\"])\r\n            .scan()\r\n```\r\n\r\nI'll just look for the `.mvn` folder instead, but it would be handy if I could scan for a full relative path.",
+    "created_at": "2026-01-05T02:33:34Z",
+    "updated_at": "2026-01-05T02:33:34Z",
+    "html_url": "https://github.com/starship/starship/pull/7189#discussion_r2660139746",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7189",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2660139746"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7189#discussion_r2660139746"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7189"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2660139746/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 97,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 101,
+    "side": "RIGHT",
+    "in_reply_to_id": 2659750922,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 101,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2660142452",
+    "pull_request_review_id": 3625350375,
+    "id": 2660142452,
+    "node_id": "PRRC_kwDOCqswNs6ejo10",
+    "diff_hunk": "@@ -0,0 +1,227 @@\n+use std::path::Path;\n+\n+use crate::{\n+    config::ModuleConfig,\n+    configs::maven::MavenConfig,\n+    context::Context,\n+    formatter::{StringFormatter, VersionFormatter},\n+    module::Module,\n+    utils,\n+};\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"maven\");\n+    let config = MavenConfig::try_load(module.config);\n+    let wrapper_properties = get_wrapper_properties_file(context, config.recursive);\n+    let is_maven_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_folders(&config.detect_folders)\n+        .is_match()\n+        || wrapper_properties.is_some();\n+\n+    if !is_maven_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let properties = wrapper_properties.as_deref()?;\n+                    let maven_version = parse_maven_version_from_properties(properties)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &maven_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `maven`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_maven_version_from_properties(wrapper_properties: &str) -> Option<String> {\n+    // Example `maven-wrapper.properties` content\n+    /*\n+        wrapperVersion=3.3.4\n+        distributionType=only-script\n+        distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.12/apache-maven-3.9.12-bin.zip\n+    */\n+    let version = wrapper_properties\n+        .lines()\n+        .find(|line| line.starts_with(\"distributionUrl=\"))?\n+        .rsplit_once('/')?\n+        .1\n+        .strip_prefix(\"apache-maven-\")?\n+        .rsplit_once('-')?\n+        .0;",
+    "path": "src/modules/maven.rs",
+    "commit_id": "d20da660676bd7275312bcc5626437f335692e93",
+    "original_commit_id": "d50701180b5c3bfe6a1493d27d5260003c97693a",
+    "user": {
+      "login": "rschmitt",
+      "id": 3725049,
+      "node_id": "MDQ6VXNlcjM3MjUwNDk=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3725049?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rschmitt",
+      "html_url": "https://github.com/rschmitt",
+      "followers_url": "https://api.github.com/users/rschmitt/followers",
+      "following_url": "https://api.github.com/users/rschmitt/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rschmitt/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rschmitt/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rschmitt/subscriptions",
+      "organizations_url": "https://api.github.com/users/rschmitt/orgs",
+      "repos_url": "https://api.github.com/users/rschmitt/repos",
+      "events_url": "https://api.github.com/users/rschmitt/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rschmitt/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Any reason? A regex would have to account for various suffixes like `-SNAPSHOT` and whatever else might be possible. On the Gradle side, this approach has worked well for me, including for oddball use cases like custom Gradle distributions with non-standard version numbers.",
+    "created_at": "2026-01-05T02:36:19Z",
+    "updated_at": "2026-01-05T02:36:20Z",
+    "html_url": "https://github.com/starship/starship/pull/7189#discussion_r2660142452",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7189",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2660142452"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7189#discussion_r2660142452"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7189"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2660142452/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 71,
+    "original_start_line": 71,
+    "start_side": "RIGHT",
+    "line": 78,
+    "original_line": 78,
+    "side": "RIGHT",
+    "in_reply_to_id": 2659741416,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 78,
+    "position": 78,
+    "subject_type": "line"
+  }
+]

@@ -1,0 +1,488 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/894863541",
+    "pull_request_review_id": 1003276727,
+    "id": 894863541,
+    "node_id": "PRRC_kwDOCqswNs41Voi1",
+    "diff_hunk": "@@ -397,8 +397,23 @@ impl DirContents {\n                     folders.insert(path);\n                 } else {\n                     if !path.to_string_lossy().starts_with('.') {\n+                        // Extract the file extensions (yes, that's plural) from a filename.\n+                        // Why plural? Consider the case of foo.tar.gz. It's a compressed\n+                        // tarball (tar.gz), and it's a gzipped file (gz). We should be able\n+                        // to match both.\n+\n+                        // find the minimal extension on a file. ie, the gz in foo.tar.gz\n                         path.extension()\n                             .map(|ext| extensions.insert(ext.to_string_lossy().to_string()));\n+\n+                        // find the full extension on a file. ie, the tar.gz in foo.tar.gz\n+                        path.file_name().map(|file_name| {\n+                            file_name\n+                                .to_string_lossy()\n+                                .to_string()",
+    "path": "src/context.rs",
+    "commit_id": "b635d88f89506d6dcb5f1293585a9c1bb6431f78",
+    "original_commit_id": "f1e345df9b15370d113032174f0b88e2330d778b",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this call isn't needed.\r\n```suggestion\r\n```",
+    "created_at": "2022-06-10T20:21:36Z",
+    "updated_at": "2022-06-11T09:18:50Z",
+    "html_url": "https://github.com/starship/starship/pull/4043#discussion_r894863541",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4043",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/894863541"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4043#discussion_r894863541"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4043"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/894863541/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 413,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 17,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/894864834",
+    "pull_request_review_id": 1003276727,
+    "id": 894864834,
+    "node_id": "PRRC_kwDOCqswNs41Vo3C",
+    "diff_hunk": "@@ -448,8 +463,15 @@ impl DirContents {\n         self.extensions.contains(ext)\n     }\n \n-    pub fn has_any_extension(&self, exts: &[&str]) -> bool {\n-        exts.iter().any(|ext| self.has_extension(ext))\n+    pub fn has_any_positive_extension(&self, exts: &[&str]) -> bool {\n+        exts.iter()\n+            .any(|ext| !ext.starts_with('!') && self.has_extension(ext))\n+    }\n+\n+    pub fn has_no_negative_extension(&self, exts: &[&str]) -> bool {",
+    "path": "src/context.rs",
+    "commit_id": "b635d88f89506d6dcb5f1293585a9c1bb6431f78",
+    "original_commit_id": "f1e345df9b15370d113032174f0b88e2330d778b",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please also handle file/directory names.",
+    "created_at": "2022-06-10T20:23:34Z",
+    "updated_at": "2022-06-11T09:18:50Z",
+    "html_url": "https://github.com/starship/starship/pull/4043#discussion_r894864834",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4043",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/894864834"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4043#discussion_r894864834"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4043"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/894864834/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 489,
+    "original_line": 471,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 35,
+    "position": 79,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/894999145",
+    "pull_request_review_id": 1003276727,
+    "id": 894999145,
+    "node_id": "PRRC_kwDOCqswNs41WJpp",
+    "diff_hunk": "@@ -397,8 +397,23 @@ impl DirContents {\n                     folders.insert(path);\n                 } else {\n                     if !path.to_string_lossy().starts_with('.') {\n+                        // Extract the file extensions (yes, that's plural) from a filename.\n+                        // Why plural? Consider the case of foo.tar.gz. It's a compressed\n+                        // tarball (tar.gz), and it's a gzipped file (gz). We should be able\n+                        // to match both.\n+\n+                        // find the minimal extension on a file. ie, the gz in foo.tar.gz\n                         path.extension()\n                             .map(|ext| extensions.insert(ext.to_string_lossy().to_string()));\n+\n+                        // find the full extension on a file. ie, the tar.gz in foo.tar.gz\n+                        path.file_name().map(|file_name| {\n+                            file_name\n+                                .to_string_lossy()\n+                                .to_string()\n+                                .split_once('.')\n+                                .map(|(_, after)| extensions.insert(after.to_string()))\n+                        });",
+    "path": "src/context.rs",
+    "commit_id": "b635d88f89506d6dcb5f1293585a9c1bb6431f78",
+    "original_commit_id": "f1e345df9b15370d113032174f0b88e2330d778b",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "We will need to evaluate if this will have a performance impact when there are a large number of files.",
+    "created_at": "2022-06-11T09:06:36Z",
+    "updated_at": "2022-06-11T09:18:50Z",
+    "html_url": "https://github.com/starship/starship/pull/4043#discussion_r894999145",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4043",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/894999145"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4043#discussion_r894999145"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4043"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/894999145/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 409,
+    "original_start_line": 409,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 416,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 20,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/894999324",
+    "pull_request_review_id": 1003276727,
+    "id": 894999324,
+    "node_id": "PRRC_kwDOCqswNs41WJsc",
+    "diff_hunk": "@@ -152,6 +152,27 @@ format = '''\n \\$'''\n ```\n \n+### File Extensions\n+\n+Many modules have a `detect_extensions` variable, which takes a list of file extensions to match or not match.\n+\"Negative\" extensions, those which should not be matched, are indicated with a leading \"!\" character.\n+\n+Extensions are matched against both the characters after the last dot in a filename, and the characters after\n+the first dot in a filename. For example, consider the filename `foo.bar.tar.gz`. To see if that matches anything\n+mentioned in `detect_extensions` we will consider both the characters after the last dot, \"gz\", and those after\n+the first dot, \"bar.tar.gz\".\n+\n+We first look for any files matching a negative extension. If there are any, the module is not triggered.\n+\n+If there were none, we then look for any files matching a positive extension.\n+\n+To see how this works in practice, and why you might want to use negative extensions, consider how a Node\n+programmer who also works with video might configure the Nodejs module. By default its `detect_extensions`\n+is `[\"js\", \"mjs\", \"cjs\", \"ts\", \"mts\", \"cts\"]`. However, in their video work they also deal with `.video.ts`\n+and `.audio.ts` files containing MPEG Transport Stream encoded data. They don't want a directory full of\n+video data to trigger the Nodejs module! So they add two negative extensions to the list:\n+`[\"js\", \"mjs\", \"cjs\", \"ts\", \"mts\", \"cts\", \"!audio.ts\", \"!video.ts\"]`.",
+    "path": "docs/config/README.md",
+    "commit_id": "b635d88f89506d6dcb5f1293585a9c1bb6431f78",
+    "original_commit_id": "f1e345df9b15370d113032174f0b88e2330d778b",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please shorten this text a bit.",
+    "created_at": "2022-06-11T09:08:44Z",
+    "updated_at": "2022-06-11T09:18:50Z",
+    "html_url": "https://github.com/starship/starship/pull/4043#discussion_r894999324",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4043",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/894999324"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4043#discussion_r894999324"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4043"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/894999324/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 155,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 174,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/896119079",
+    "pull_request_review_id": 1004911831,
+    "id": 896119079,
+    "node_id": "PRRC_kwDOCqswNs41abEn",
+    "diff_hunk": "@@ -397,8 +397,23 @@ impl DirContents {\n                     folders.insert(path);\n                 } else {\n                     if !path.to_string_lossy().starts_with('.') {\n+                        // Extract the file extensions (yes, that's plural) from a filename.\n+                        // Why plural? Consider the case of foo.tar.gz. It's a compressed\n+                        // tarball (tar.gz), and it's a gzipped file (gz). We should be able\n+                        // to match both.\n+\n+                        // find the minimal extension on a file. ie, the gz in foo.tar.gz\n                         path.extension()\n                             .map(|ext| extensions.insert(ext.to_string_lossy().to_string()));\n+\n+                        // find the full extension on a file. ie, the tar.gz in foo.tar.gz\n+                        path.file_name().map(|file_name| {\n+                            file_name\n+                                .to_string_lossy()\n+                                .to_string()",
+    "path": "src/context.rs",
+    "commit_id": "b635d88f89506d6dcb5f1293585a9c1bb6431f78",
+    "original_commit_id": "f1e345df9b15370d113032174f0b88e2330d778b",
+    "user": {
+      "login": "DrHyde",
+      "id": 216826,
+      "node_id": "MDQ6VXNlcjIxNjgyNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/216826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/DrHyde",
+      "html_url": "https://github.com/DrHyde",
+      "followers_url": "https://api.github.com/users/DrHyde/followers",
+      "following_url": "https://api.github.com/users/DrHyde/following{/other_user}",
+      "gists_url": "https://api.github.com/users/DrHyde/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/DrHyde/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/DrHyde/subscriptions",
+      "organizations_url": "https://api.github.com/users/DrHyde/orgs",
+      "repos_url": "https://api.github.com/users/DrHyde/repos",
+      "events_url": "https://api.github.com/users/DrHyde/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/DrHyde/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "That pattern appears a few times in the project, including elsewhere in context.rs. I'll investigate them all and see if there's any others that can be tidied up.",
+    "created_at": "2022-06-13T20:43:22Z",
+    "updated_at": "2022-06-13T20:43:22Z",
+    "html_url": "https://github.com/starship/starship/pull/4043#discussion_r896119079",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4043",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/896119079"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4043#discussion_r896119079"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4043"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/896119079/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 413,
+    "side": "RIGHT",
+    "in_reply_to_id": 894863541,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 17,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/896156037",
+    "pull_request_review_id": 1004978665,
+    "id": 896156037,
+    "node_id": "PRRC_kwDOCqswNs41akGF",
+    "diff_hunk": "@@ -397,8 +397,23 @@ impl DirContents {\n                     folders.insert(path);\n                 } else {\n                     if !path.to_string_lossy().starts_with('.') {\n+                        // Extract the file extensions (yes, that's plural) from a filename.\n+                        // Why plural? Consider the case of foo.tar.gz. It's a compressed\n+                        // tarball (tar.gz), and it's a gzipped file (gz). We should be able\n+                        // to match both.\n+\n+                        // find the minimal extension on a file. ie, the gz in foo.tar.gz\n                         path.extension()\n                             .map(|ext| extensions.insert(ext.to_string_lossy().to_string()));\n+\n+                        // find the full extension on a file. ie, the tar.gz in foo.tar.gz\n+                        path.file_name().map(|file_name| {\n+                            file_name\n+                                .to_string_lossy()\n+                                .to_string()\n+                                .split_once('.')\n+                                .map(|(_, after)| extensions.insert(after.to_string()))\n+                        });",
+    "path": "src/context.rs",
+    "commit_id": "b635d88f89506d6dcb5f1293585a9c1bb6431f78",
+    "original_commit_id": "f1e345df9b15370d113032174f0b88e2330d778b",
+    "user": {
+      "login": "DrHyde",
+      "id": 216826,
+      "node_id": "MDQ6VXNlcjIxNjgyNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/216826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/DrHyde",
+      "html_url": "https://github.com/DrHyde",
+      "followers_url": "https://api.github.com/users/DrHyde/followers",
+      "following_url": "https://api.github.com/users/DrHyde/following{/other_user}",
+      "gists_url": "https://api.github.com/users/DrHyde/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/DrHyde/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/DrHyde/subscriptions",
+      "organizations_url": "https://api.github.com/users/DrHyde/orgs",
+      "repos_url": "https://api.github.com/users/DrHyde/repos",
+      "events_url": "https://api.github.com/users/DrHyde/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/DrHyde/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`hyperfine -w 10 -r 200 \"target/debug/starship prompt\" \"target/debug/starship-without-multi-exts prompt\"` says that there's about a 2% +/- 10% difference in runtime in a directory with 500 files in on this 'ere machine, although from one run to the next it can't tell whether it's faster with or without that `map`. IOW, it's too fast to measure and is lost in the noise.",
+    "created_at": "2022-06-13T21:29:12Z",
+    "updated_at": "2022-06-13T21:29:13Z",
+    "html_url": "https://github.com/starship/starship/pull/4043#discussion_r896156037",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4043",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/896156037"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4043#discussion_r896156037"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4043"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/896156037/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 409,
+    "original_start_line": 409,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 416,
+    "side": "RIGHT",
+    "in_reply_to_id": 894999145,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 20,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/897350925",
+    "pull_request_review_id": 1006620749,
+    "id": 897350925,
+    "node_id": "PRRC_kwDOCqswNs41fH0N",
+    "diff_hunk": "@@ -448,8 +463,15 @@ impl DirContents {\n         self.extensions.contains(ext)\n     }\n \n-    pub fn has_any_extension(&self, exts: &[&str]) -> bool {\n-        exts.iter().any(|ext| self.has_extension(ext))\n+    pub fn has_any_positive_extension(&self, exts: &[&str]) -> bool {\n+        exts.iter()\n+            .any(|ext| !ext.starts_with('!') && self.has_extension(ext))\n+    }\n+\n+    pub fn has_no_negative_extension(&self, exts: &[&str]) -> bool {",
+    "path": "src/context.rs",
+    "commit_id": "b635d88f89506d6dcb5f1293585a9c1bb6431f78",
+    "original_commit_id": "f1e345df9b15370d113032174f0b88e2330d778b",
+    "user": {
+      "login": "DrHyde",
+      "id": 216826,
+      "node_id": "MDQ6VXNlcjIxNjgyNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/216826?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/DrHyde",
+      "html_url": "https://github.com/DrHyde",
+      "followers_url": "https://api.github.com/users/DrHyde/followers",
+      "following_url": "https://api.github.com/users/DrHyde/following{/other_user}",
+      "gists_url": "https://api.github.com/users/DrHyde/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/DrHyde/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/DrHyde/subscriptions",
+      "organizations_url": "https://api.github.com/users/DrHyde/orgs",
+      "repos_url": "https://api.github.com/users/DrHyde/repos",
+      "events_url": "https://api.github.com/users/DrHyde/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/DrHyde/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Good idea",
+    "created_at": "2022-06-14T21:50:07Z",
+    "updated_at": "2022-06-14T21:50:07Z",
+    "html_url": "https://github.com/starship/starship/pull/4043#discussion_r897350925",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4043",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/897350925"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4043#discussion_r897350925"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4043"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/897350925/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 489,
+    "original_line": 471,
+    "side": "RIGHT",
+    "in_reply_to_id": 894864834,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 35,
+    "position": 79,
+    "subject_type": "line"
+  }
+]

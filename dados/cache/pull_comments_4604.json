@@ -1,0 +1,350 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1027256859",
+    "pull_request_review_id": 1187234681,
+    "id": 1027256859,
+    "node_id": "PRRC_kwDOCqswNs49OrIb",
+    "diff_hunk": "@@ -148,13 +148,38 @@ fn alias_name(name: Option<String>, aliases: &HashMap<String, &str>) -> Option<S\n \n fn has_credential_process_or_sso(\n     context: &Context,\n-    aws_profile: &Option<Profile>,\n+    aws_profile: Option<&Profile>,\n     aws_config: &AwsConfigFile,\n+    aws_creds: &AwsCredsFile,\n ) -> Option<bool> {\n     let config = get_config(context, aws_config)?;\n+    let credentials = get_creds(context, aws_creds);\n+\n+    let empty_section = ini::Properties::new();\n+    // We use the aws_profile here because `get_profile_config()` treats None\n+    // as \"special\" and falls back to the \"[default]\"; otherwise this tries\n+    // to look up \"[profile default]\" which doesn't exist\n+    let config_section = get_profile_config(config, aws_profile).or(Some(&empty_section))?;\n+\n+    let default_profile = \"default\".to_string();\n+    let credential_profile = aws_profile.unwrap_or(&default_profile);\n+\n+    // credentials are optional; if we can't find the credential file,\n+    // we work with just the config and treat the credential section as\n+    // empty\n+    let credential_section = match credentials {\n+        Some(credentials) => credentials\n+            .section(Some(credential_profile))\n+            .or(Some(&empty_section))?,\n+        None => &empty_section,\n+    };\n \n-    let section = get_profile_config(config, aws_profile)?;\n-    Some(section.contains_key(\"credential_process\") || section.contains_key(\"sso_start_url\"))\n+    Some(\n+        config_section.contains_key(\"credential_process\")\n+            || config_section.contains_key(\"sso_start_url\")\n+            || credential_section.contains_key(\"credential_process\")\n+            || credential_section.contains_key(\"sso_start_url\"),",
+    "path": "src/modules/aws.rs",
+    "commit_id": "48aac57139a8399e125a80e08ce1d5d7675064f2",
+    "original_commit_id": "e1edd989a9cbb2bb790e4f4f3e8b108ae47b4068",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`has_credential_process_or_sso` has been mostly concerned with the config file and `has_defined_credentials` with the credentials file. Given that, please move the `has_defined_credentials` into `has_defined_credentials` or change this function to first do the check on the config file and either return on success, or follow up with the credentials file check.",
+    "created_at": "2022-11-20T09:37:34Z",
+    "updated_at": "2022-11-20T09:41:50Z",
+    "html_url": "https://github.com/starship/starship/pull/4604#discussion_r1027256859",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4604",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1027256859"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4604#discussion_r1027256859"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4604"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1027256859/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 178,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 181,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 55,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1027257098",
+    "pull_request_review_id": 1187234681,
+    "id": 1027257098,
+    "node_id": "PRRC_kwDOCqswNs49OrMK",
+    "diff_hunk": "@@ -148,13 +148,38 @@ fn alias_name(name: Option<String>, aliases: &HashMap<String, &str>) -> Option<S\n \n fn has_credential_process_or_sso(\n     context: &Context,\n-    aws_profile: &Option<Profile>,\n+    aws_profile: Option<&Profile>,\n     aws_config: &AwsConfigFile,\n+    aws_creds: &AwsCredsFile,\n ) -> Option<bool> {\n     let config = get_config(context, aws_config)?;\n+    let credentials = get_creds(context, aws_creds);\n+\n+    let empty_section = ini::Properties::new();\n+    // We use the aws_profile here because `get_profile_config()` treats None\n+    // as \"special\" and falls back to the \"[default]\"; otherwise this tries\n+    // to look up \"[profile default]\" which doesn't exist\n+    let config_section = get_profile_config(config, aws_profile).or(Some(&empty_section))?;",
+    "path": "src/modules/aws.rs",
+    "commit_id": "48aac57139a8399e125a80e08ce1d5d7675064f2",
+    "original_commit_id": "e1edd989a9cbb2bb790e4f4f3e8b108ae47b4068",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Try using `get_profile_creds` instead. Either way, in the non-success case, I would prefer just working with `None` instead of an empty config section.",
+    "created_at": "2022-11-20T09:39:06Z",
+    "updated_at": "2022-11-20T09:41:50Z",
+    "html_url": "https://github.com/starship/starship/pull/4604#discussion_r1027257098",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4604",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1027257098"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4604#discussion_r1027257098"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4604"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1027257098/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 158,
+    "original_start_line": 158,
+    "start_side": "RIGHT",
+    "line": 162,
+    "original_line": 162,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 34,
+    "position": 57,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1027312287",
+    "pull_request_review_id": 1187287101,
+    "id": 1027312287,
+    "node_id": "PRRC_kwDOCqswNs49O4qf",
+    "diff_hunk": "@@ -148,13 +148,38 @@ fn alias_name(name: Option<String>, aliases: &HashMap<String, &str>) -> Option<S\n \n fn has_credential_process_or_sso(\n     context: &Context,\n-    aws_profile: &Option<Profile>,\n+    aws_profile: Option<&Profile>,\n     aws_config: &AwsConfigFile,\n+    aws_creds: &AwsCredsFile,\n ) -> Option<bool> {\n     let config = get_config(context, aws_config)?;\n+    let credentials = get_creds(context, aws_creds);\n+\n+    let empty_section = ini::Properties::new();\n+    // We use the aws_profile here because `get_profile_config()` treats None\n+    // as \"special\" and falls back to the \"[default]\"; otherwise this tries\n+    // to look up \"[profile default]\" which doesn't exist\n+    let config_section = get_profile_config(config, aws_profile).or(Some(&empty_section))?;\n+\n+    let default_profile = \"default\".to_string();\n+    let credential_profile = aws_profile.unwrap_or(&default_profile);\n+\n+    // credentials are optional; if we can't find the credential file,\n+    // we work with just the config and treat the credential section as\n+    // empty\n+    let credential_section = match credentials {\n+        Some(credentials) => credentials\n+            .section(Some(credential_profile))\n+            .or(Some(&empty_section))?,\n+        None => &empty_section,\n+    };\n \n-    let section = get_profile_config(config, aws_profile)?;\n-    Some(section.contains_key(\"credential_process\") || section.contains_key(\"sso_start_url\"))\n+    Some(\n+        config_section.contains_key(\"credential_process\")\n+            || config_section.contains_key(\"sso_start_url\")\n+            || credential_section.contains_key(\"credential_process\")\n+            || credential_section.contains_key(\"sso_start_url\"),",
+    "path": "src/modules/aws.rs",
+    "commit_id": "48aac57139a8399e125a80e08ce1d5d7675064f2",
+    "original_commit_id": "e1edd989a9cbb2bb790e4f4f3e8b108ae47b4068",
+    "user": {
+      "login": "offbyone",
+      "id": 181693,
+      "node_id": "MDQ6VXNlcjE4MTY5Mw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/181693?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/offbyone",
+      "html_url": "https://github.com/offbyone",
+      "followers_url": "https://api.github.com/users/offbyone/followers",
+      "following_url": "https://api.github.com/users/offbyone/following{/other_user}",
+      "gists_url": "https://api.github.com/users/offbyone/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/offbyone/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/offbyone/subscriptions",
+      "organizations_url": "https://api.github.com/users/offbyone/orgs",
+      "repos_url": "https://api.github.com/users/offbyone/repos",
+      "events_url": "https://api.github.com/users/offbyone/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/offbyone/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": true
+    },
+    "body": "That doesn't quite feel right to me. That checks for an actual active credential, which in this case would require me to _invoke_ the credential process under the hood... _not_ something we want to do in the prompt. This is just looking for the configuration that _enables_ credentials, in the second place where it can be found. The AWS CLI allows for it to be configured in two places (which is a bad idea, for sure!) but right now Starship only looks in one of them.\r\n\r\nIf I'm going to change that, I think the name of those methods should change as well. I'll update the PR with the changes from the below, but I think this method's the right place for the code. If you insist otherwise, I'll move it, but it feels wrong to me.",
+    "created_at": "2022-11-20T15:55:37Z",
+    "updated_at": "2022-11-20T15:55:37Z",
+    "html_url": "https://github.com/starship/starship/pull/4604#discussion_r1027312287",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4604",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1027312287"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4604#discussion_r1027312287"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4604"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1027312287/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 178,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 181,
+    "side": "RIGHT",
+    "in_reply_to_id": 1027256859,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 55,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1027329914",
+    "pull_request_review_id": 1187302055,
+    "id": 1027329914,
+    "node_id": "PRRC_kwDOCqswNs49O896",
+    "diff_hunk": "@@ -148,13 +148,38 @@ fn alias_name(name: Option<String>, aliases: &HashMap<String, &str>) -> Option<S\n \n fn has_credential_process_or_sso(\n     context: &Context,\n-    aws_profile: &Option<Profile>,\n+    aws_profile: Option<&Profile>,\n     aws_config: &AwsConfigFile,\n+    aws_creds: &AwsCredsFile,\n ) -> Option<bool> {\n     let config = get_config(context, aws_config)?;\n+    let credentials = get_creds(context, aws_creds);\n+\n+    let empty_section = ini::Properties::new();\n+    // We use the aws_profile here because `get_profile_config()` treats None\n+    // as \"special\" and falls back to the \"[default]\"; otherwise this tries\n+    // to look up \"[profile default]\" which doesn't exist\n+    let config_section = get_profile_config(config, aws_profile).or(Some(&empty_section))?;\n+\n+    let default_profile = \"default\".to_string();\n+    let credential_profile = aws_profile.unwrap_or(&default_profile);\n+\n+    // credentials are optional; if we can't find the credential file,\n+    // we work with just the config and treat the credential section as\n+    // empty\n+    let credential_section = match credentials {\n+        Some(credentials) => credentials\n+            .section(Some(credential_profile))\n+            .or(Some(&empty_section))?,\n+        None => &empty_section,\n+    };\n \n-    let section = get_profile_config(config, aws_profile)?;\n-    Some(section.contains_key(\"credential_process\") || section.contains_key(\"sso_start_url\"))\n+    Some(\n+        config_section.contains_key(\"credential_process\")\n+            || config_section.contains_key(\"sso_start_url\")\n+            || credential_section.contains_key(\"credential_process\")\n+            || credential_section.contains_key(\"sso_start_url\"),",
+    "path": "src/modules/aws.rs",
+    "commit_id": "48aac57139a8399e125a80e08ce1d5d7675064f2",
+    "original_commit_id": "e1edd989a9cbb2bb790e4f4f3e8b108ae47b4068",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I would still prefer If you changed this code to do the checks sequentially, to only read each file based on necessity. But since it looks like they both will be read in most cases either way, keeping it this way would be fine too.",
+    "created_at": "2022-11-20T18:05:49Z",
+    "updated_at": "2022-11-20T18:05:50Z",
+    "html_url": "https://github.com/starship/starship/pull/4604#discussion_r1027329914",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4604",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1027329914"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4604#discussion_r1027329914"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4604"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1027329914/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 178,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 181,
+    "side": "RIGHT",
+    "in_reply_to_id": 1027256859,
+    "author_association": "MEMBER",
+    "original_position": 55,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1027350755",
+    "pull_request_review_id": 1187319450,
+    "id": 1027350755,
+    "node_id": "PRRC_kwDOCqswNs49PCDj",
+    "diff_hunk": "@@ -148,13 +148,38 @@ fn alias_name(name: Option<String>, aliases: &HashMap<String, &str>) -> Option<S\n \n fn has_credential_process_or_sso(\n     context: &Context,\n-    aws_profile: &Option<Profile>,\n+    aws_profile: Option<&Profile>,\n     aws_config: &AwsConfigFile,\n+    aws_creds: &AwsCredsFile,\n ) -> Option<bool> {\n     let config = get_config(context, aws_config)?;\n+    let credentials = get_creds(context, aws_creds);\n+\n+    let empty_section = ini::Properties::new();\n+    // We use the aws_profile here because `get_profile_config()` treats None\n+    // as \"special\" and falls back to the \"[default]\"; otherwise this tries\n+    // to look up \"[profile default]\" which doesn't exist\n+    let config_section = get_profile_config(config, aws_profile).or(Some(&empty_section))?;\n+\n+    let default_profile = \"default\".to_string();\n+    let credential_profile = aws_profile.unwrap_or(&default_profile);\n+\n+    // credentials are optional; if we can't find the credential file,\n+    // we work with just the config and treat the credential section as\n+    // empty\n+    let credential_section = match credentials {\n+        Some(credentials) => credentials\n+            .section(Some(credential_profile))\n+            .or(Some(&empty_section))?,\n+        None => &empty_section,\n+    };\n \n-    let section = get_profile_config(config, aws_profile)?;\n-    Some(section.contains_key(\"credential_process\") || section.contains_key(\"sso_start_url\"))\n+    Some(\n+        config_section.contains_key(\"credential_process\")\n+            || config_section.contains_key(\"sso_start_url\")\n+            || credential_section.contains_key(\"credential_process\")\n+            || credential_section.contains_key(\"sso_start_url\"),",
+    "path": "src/modules/aws.rs",
+    "commit_id": "48aac57139a8399e125a80e08ce1d5d7675064f2",
+    "original_commit_id": "e1edd989a9cbb2bb790e4f4f3e8b108ae47b4068",
+    "user": {
+      "login": "offbyone",
+      "id": 181693,
+      "node_id": "MDQ6VXNlcjE4MTY5Mw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/181693?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/offbyone",
+      "html_url": "https://github.com/offbyone",
+      "followers_url": "https://api.github.com/users/offbyone/followers",
+      "following_url": "https://api.github.com/users/offbyone/following{/other_user}",
+      "gists_url": "https://api.github.com/users/offbyone/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/offbyone/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/offbyone/subscriptions",
+      "organizations_url": "https://api.github.com/users/offbyone/orgs",
+      "repos_url": "https://api.github.com/users/offbyone/repos",
+      "events_url": "https://api.github.com/users/offbyone/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/offbyone/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": true
+    },
+    "body": "That was my thinking too; the most common configuration will have both files read, so I don't think there's a lot of benefit or optimization in making that more complex. Doubly so because starship caches the read, so it's still pretty safe.",
+    "created_at": "2022-11-20T20:46:34Z",
+    "updated_at": "2022-11-20T20:46:35Z",
+    "html_url": "https://github.com/starship/starship/pull/4604#discussion_r1027350755",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4604",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1027350755"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4604#discussion_r1027350755"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4604"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1027350755/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 178,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 181,
+    "side": "RIGHT",
+    "in_reply_to_id": 1027256859,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 55,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

@@ -1,0 +1,348 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3036929912",
+    "pull_request_review_id": 4059526910,
+    "id": 3036929912,
+    "node_id": "PRRC_kwDOCqswNs61A994",
+    "diff_hunk": "@@ -316,19 +298,127 @@ impl Style {\n         }\n     }\n \n-    fn fg(&self, prev_color: PrevColor) -> Self {\n+    fn fg(&self, prev_color: RefColor) -> Self {\n         Self {\n             fg: Some(prev_color),\n             ..*self\n         }\n     }\n \n-    fn bg(&self, prev_color: PrevColor) -> Self {\n+    fn bg(&self, prev_color: RefColor) -> Self {\n         Self {\n             bg: Some(prev_color),\n             ..*self\n         }\n     }\n+\n+    pub fn resolve(&self, maybe_previous: Option<&Self>, maybe_next: Option<&Self>) -> Self {\n+        if maybe_previous.is_none() && maybe_next.is_none() {\n+            return Self { ..*self };\n+        }\n+\n+        let mut result = Self {\n+            style: nu_ansi_term::Style {\n+                foreground: self.style.foreground,\n+                background: self.style.background,\n+                ..self.style\n+            },\n+            bg: self.bg,\n+            fg: self.fg,\n+        };\n+\n+        if let Some(prev_style) = maybe_previous {\n+            if let Some(ref_color) = self.bg {\n+                match ref_color {\n+                    RefColor::PrevFg => {\n+                        if prev_style.fg.is_some() {\n+                            panic!(\n+                                \"Circular reference: segment background references back to a segment itself referencing forward\"\n+                            )",
+    "path": "src/config.rs",
+    "commit_id": "3b922e5d5a0c2186ca350bf87faef8f8cff42aeb",
+    "original_commit_id": "4b100906cc526a619c188f164ae102b2565c5243",
+    "user": {
+      "login": "christophehenry",
+      "id": 22097904,
+      "node_id": "MDQ6VXNlcjIyMDk3OTA0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22097904?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/christophehenry",
+      "html_url": "https://github.com/christophehenry",
+      "followers_url": "https://api.github.com/users/christophehenry/followers",
+      "following_url": "https://api.github.com/users/christophehenry/following{/other_user}",
+      "gists_url": "https://api.github.com/users/christophehenry/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/christophehenry/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/christophehenry/subscriptions",
+      "organizations_url": "https://api.github.com/users/christophehenry/orgs",
+      "repos_url": "https://api.github.com/users/christophehenry/repos",
+      "events_url": "https://api.github.com/users/christophehenry/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/christophehenry/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Should it `panic!()` or return `Result` or default to `Style::default().background` with a log message? Also, being able to point where in the line this happens would be nice to debug but I don't know hos to do so.",
+    "created_at": "2026-04-05T14:30:42Z",
+    "updated_at": "2026-04-05T14:30:43Z",
+    "html_url": "https://github.com/starship/starship/pull/7381#discussion_r3036929912",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7381",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3036929912"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7381#discussion_r3036929912"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7381"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3036929912/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 335,
+    "original_start_line": 335,
+    "start_side": "RIGHT",
+    "line": 337,
+    "original_line": 337,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 95,
+    "position": 95,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3036935489",
+    "pull_request_review_id": 4059530931,
+    "id": 3036935489,
+    "node_id": "PRRC_kwDOCqswNs61A_VB",
+    "diff_hunk": "@@ -748,23 +749,42 @@ mod tests {\n     fn test_empty_textgroup_propagates_prev_bg() {\n         const FORMAT_STR: &str = \"[](bg:#9A348E)[X](bg:prev_bg)\";\n \n-        let formatter = StringFormatter::new(FORMAT_STR).unwrap();\n-        let result = formatter.parse(None, None).unwrap();\n+        let segments = StringFormatter::new(FORMAT_STR)\n+            .unwrap()\n+            .parse(None, None)\n+            .unwrap();\n+        let result = ansi_line(&mut segments.iter().peekable(), None);\n \n         assert_eq!(result.len(), 2);\n \n-        // First segment: empty with bg:#9A348E\n-        let first_ansi = result[0].ansi_string(None);\n-        let prev_style = first_ansi.style_ref();\n-\n         // Second segment: should inherit bg from first\n-        let second_ansi = result[1].ansi_string(Some(prev_style));\n+        let second_ansi = result.get(1).unwrap();\n         assert_eq!(\n             second_ansi.style_ref().background,\n             Some(nu_ansi_term::Color::Rgb(154, 52, 142))\n         );\n     }\n \n+    #[test]\n+    fn test_empty_textgroup_propagates_next_bg() {\n+        const FORMAT_STR: &str = \"[x](bg:next_bg)[X](bg:#9A348E)\";\n+\n+        let segments = StringFormatter::new(FORMAT_STR)\n+            .unwrap()\n+            .parse(None, None)\n+            .unwrap();\n+        let result = ansi_line(&mut segments.iter().peekable(), None);\n+\n+        assert_eq!(result.len(), 2);\n+\n+        // First segment: should inherit bg from second\n+        let first_ansi = result.get(0).unwrap();\n+        assert_eq!(\n+            first_ansi.style_ref().background,\n+            Some(nu_ansi_term::Color::Rgb(154, 52, 142))\n+        );\n+    }",
+    "path": "src/formatter/string_formatter.rs",
+    "commit_id": "3b922e5d5a0c2186ca350bf87faef8f8cff42aeb",
+    "original_commit_id": "4b100906cc526a619c188f164ae102b2565c5243",
+    "user": {
+      "login": "christophehenry",
+      "id": 22097904,
+      "node_id": "MDQ6VXNlcjIyMDk3OTA0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22097904?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/christophehenry",
+      "html_url": "https://github.com/christophehenry",
+      "followers_url": "https://api.github.com/users/christophehenry/followers",
+      "following_url": "https://api.github.com/users/christophehenry/following{/other_user}",
+      "gists_url": "https://api.github.com/users/christophehenry/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/christophehenry/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/christophehenry/subscriptions",
+      "organizations_url": "https://api.github.com/users/christophehenry/orgs",
+      "repos_url": "https://api.github.com/users/christophehenry/repos",
+      "events_url": "https://api.github.com/users/christophehenry/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/christophehenry/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Shouldn't these tests be moved elsewhere since style resolving is entirely happening in `module.rs` and `config.rs` now? Plus they feel lik they're duplicates of several tests in`config.rs`, for instance `table_get_styles_previous`.",
+    "created_at": "2026-04-05T14:35:48Z",
+    "updated_at": "2026-04-06T12:45:18Z",
+    "html_url": "https://github.com/starship/starship/pull/7381#discussion_r3036935489",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7381",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3036935489"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7381#discussion_r3036935489"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7381"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3036935489/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 786,
+    "original_line": 786,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 68,
+    "position": 53,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3036936762",
+    "pull_request_review_id": 4059531888,
+    "id": 3036936762,
+    "node_id": "PRRC_kwDOCqswNs61A_o6",
+    "diff_hunk": "@@ -928,42 +1035,132 @@ mod tests {\n             .unwrap()\n             .0;\n         assert_eq!(\n-            fg_prev_fg.to_ansi_style(Some(&prev_style)),\n+            fg_prev_fg\n+                .resolve(Some(&prev_style), Some(&next_style))\n+                .to_ansi_style(),\n             AnsiStyle::new().fg(Color::Yellow)\n         );\n \n         let fg_prev_bg = <StyleWrapper>::from_config(&Value::from(\"fg:prev_bg\"))\n             .unwrap()\n             .0;\n         assert_eq!(\n-            fg_prev_bg.to_ansi_style(Some(&prev_style)),\n+            fg_prev_bg\n+                .resolve(Some(&prev_style), Some(&next_style))\n+                .to_ansi_style(),\n             AnsiStyle::new().fg(Color::Red)\n         );\n \n         let bg_prev_fg = <StyleWrapper>::from_config(&Value::from(\"bg:prev_fg\"))\n             .unwrap()\n             .0;\n         assert_eq!(\n-            bg_prev_fg.to_ansi_style(Some(&prev_style)),\n+            bg_prev_fg\n+                .resolve(Some(&prev_style), Some(&next_style))\n+                .to_ansi_style(),\n             AnsiStyle::new().on(Color::Yellow)\n         );\n \n         let bg_prev_bg = <StyleWrapper>::from_config(&Value::from(\"bg:prev_bg\"))\n             .unwrap()\n             .0;\n         assert_eq!(\n-            bg_prev_bg.to_ansi_style(Some(&prev_style)),\n+            bg_prev_bg\n+                .resolve(Some(&prev_style), Some(&next_style))\n+                .to_ansi_style(),\n             AnsiStyle::new().on(Color::Red)\n         );\n     }\n \n+    #[test]\n+    fn table_get_styles_next() {\n+        // Test that next has no effect when there is no next style\n+        let both_prevfg = <StyleWrapper>::from_config(&Value::from(\n+            \"bold fg:black fg:next_bg bg:next_fg underline\",\n+        ))\n+        .unwrap()\n+        .0;\n+\n+        assert_eq!(\n+            both_prevfg.to_ansi_style(),\n+            AnsiStyle::default().fg(Color::Black).bold().underline()\n+        );\n+\n+        // But if there is a style on the previous string, then use that\n+        let next_style = Style {\n+            style: AnsiStyle::new().underline().fg(Color::Blue).on(Color::Cyan),\n+            bg: None,\n+            fg: None,\n+        };\n+        let prev_style = Style {\n+            style: AnsiStyle::new()\n+                .underline()\n+                .fg(Color::Yellow)\n+                .on(Color::Red),\n+            bg: None,\n+            fg: None,\n+        };\n+\n+        assert_eq!(\n+            both_prevfg\n+                .resolve(Some(&prev_style), Some(&next_style))\n+                .to_ansi_style(),\n+            AnsiStyle::new()\n+                .fg(Color::Cyan)\n+                .on(Color::Blue)\n+                .bold()\n+                .underline()\n+        );\n+\n+        // Test that all the combinations of previous colors work\n+        let fg_prev_fg = <StyleWrapper>::from_config(&Value::from(\"fg:next_fg\"))\n+            .unwrap()\n+            .0;\n+        assert_eq!(\n+            fg_prev_fg\n+                .resolve(Some(&prev_style), Some(&next_style))\n+                .to_ansi_style(),\n+            AnsiStyle::new().fg(Color::Blue)\n+        );\n+\n+        let fg_prev_bg = <StyleWrapper>::from_config(&Value::from(\"fg:next_bg\"))\n+            .unwrap()\n+            .0;\n+        assert_eq!(\n+            fg_prev_bg\n+                .resolve(Some(&prev_style), Some(&next_style))\n+                .to_ansi_style(),\n+            AnsiStyle::new().fg(Color::Cyan)\n+        );\n+\n+        let bg_prev_fg = <StyleWrapper>::from_config(&Value::from(\"bg:next_fg\"))\n+            .unwrap()\n+            .0;\n+        assert_eq!(\n+            bg_prev_fg\n+                .resolve(Some(&prev_style), Some(&next_style))\n+                .to_ansi_style(),\n+            AnsiStyle::new().on(Color::Blue)\n+        );\n+\n+        let bg_prev_bg = <StyleWrapper>::from_config(&Value::from(\"bg:next_bg\"))\n+            .unwrap()\n+            .0;\n+        assert_eq!(\n+            bg_prev_bg\n+                .resolve(Some(&prev_style), Some(&next_style))\n+                .to_ansi_style(),\n+            AnsiStyle::new().on(Color::Cyan)\n+        );\n+    }",
+    "path": "src/config.rs",
+    "commit_id": "3b922e5d5a0c2186ca350bf87faef8f8cff42aeb",
+    "original_commit_id": "4b100906cc526a619c188f164ae102b2565c5243",
+    "user": {
+      "login": "christophehenry",
+      "id": 22097904,
+      "node_id": "MDQ6VXNlcjIyMDk3OTA0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22097904?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/christophehenry",
+      "html_url": "https://github.com/christophehenry",
+      "followers_url": "https://api.github.com/users/christophehenry/followers",
+      "following_url": "https://api.github.com/users/christophehenry/following{/other_user}",
+      "gists_url": "https://api.github.com/users/christophehenry/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/christophehenry/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/christophehenry/subscriptions",
+      "organizations_url": "https://api.github.com/users/christophehenry/orgs",
+      "repos_url": "https://api.github.com/users/christophehenry/repos",
+      "events_url": "https://api.github.com/users/christophehenry/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/christophehenry/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Should these tests be more extensive? For instance, I am not sure how styles are transmitted to `Segment::LineTerm` is tested somewhere.",
+    "created_at": "2026-04-05T14:37:04Z",
+    "updated_at": "2026-04-05T14:37:04Z",
+    "html_url": "https://github.com/starship/starship/pull/7381#discussion_r3036936762",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7381",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3036936762"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7381#discussion_r3036936762"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7381"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3036936762/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1155,
+    "original_line": 1155,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 517,
+    "position": 517,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3054203200",
+    "pull_request_review_id": 4078278901,
+    "id": 3054203200,
+    "node_id": "PRRC_kwDOCqswNs62C3FA",
+    "diff_hunk": "@@ -316,19 +298,127 @@ impl Style {\n         }\n     }\n \n-    fn fg(&self, prev_color: PrevColor) -> Self {\n+    fn fg(&self, prev_color: RefColor) -> Self {\n         Self {\n             fg: Some(prev_color),\n             ..*self\n         }\n     }\n \n-    fn bg(&self, prev_color: PrevColor) -> Self {\n+    fn bg(&self, prev_color: RefColor) -> Self {\n         Self {\n             bg: Some(prev_color),\n             ..*self\n         }\n     }\n+\n+    pub fn resolve(&self, maybe_previous: Option<&Self>, maybe_next: Option<&Self>) -> Self {\n+        if maybe_previous.is_none() && maybe_next.is_none() {\n+            return Self { ..*self };\n+        }\n+\n+        let mut result = Self {\n+            style: nu_ansi_term::Style {\n+                foreground: self.style.foreground,\n+                background: self.style.background,\n+                ..self.style\n+            },\n+            bg: self.bg,\n+            fg: self.fg,\n+        };\n+\n+        if let Some(prev_style) = maybe_previous {\n+            if let Some(ref_color) = self.bg {\n+                match ref_color {\n+                    RefColor::PrevFg => {\n+                        if prev_style.fg.is_some() {\n+                            panic!(\n+                                \"Circular reference: segment background references back to a segment itself referencing forward\"\n+                            )\n+                        }\n+                        result.style.background = prev_style.style.foreground\n+                    }\n+                    RefColor::PrevBg => {\n+                        if prev_style.bg.is_some() {\n+                            panic!(\n+                                \"Circular reference: segment background references back to a segment itself referencing forward\"\n+                            )\n+                        }\n+                        result.style.background = prev_style.style.background\n+                    }\n+                    _ => { /* Referencing forward not resolved here */ }\n+                }\n+            }\n+            if let Some(ref_color) = self.fg {\n+                match ref_color {\n+                    RefColor::PrevFg => {\n+                        if prev_style.fg.is_some() {\n+                            panic!(\n+                                \"Circular reference: segment foreground references back to a segment itself referencing forward\"\n+                            )\n+                        }\n+                        result.style.foreground = prev_style.style.foreground\n+                    }\n+                    RefColor::PrevBg => {\n+                        if prev_style.bg.is_some() {\n+                            panic!(\n+                                \"Circular reference: segment foreground references back to a segment itself referencing forward\"\n+                            )\n+                        }\n+                        result.style.foreground = prev_style.style.background\n+                    }\n+                    _ => { /* Referencing forward not resolved here */ }",
+    "path": "src/config.rs",
+    "commit_id": "3b922e5d5a0c2186ca350bf87faef8f8cff42aeb",
+    "original_commit_id": "3b922e5d5a0c2186ca350bf87faef8f8cff42aeb",
+    "user": {
+      "login": "christophehenry",
+      "id": 22097904,
+      "node_id": "MDQ6VXNlcjIyMDk3OTA0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22097904?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/christophehenry",
+      "html_url": "https://github.com/christophehenry",
+      "followers_url": "https://api.github.com/users/christophehenry/followers",
+      "following_url": "https://api.github.com/users/christophehenry/following{/other_user}",
+      "gists_url": "https://api.github.com/users/christophehenry/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/christophehenry/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/christophehenry/subscriptions",
+      "organizations_url": "https://api.github.com/users/christophehenry/orgs",
+      "repos_url": "https://api.github.com/users/christophehenry/repos",
+      "events_url": "https://api.github.com/users/christophehenry/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/christophehenry/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\n                    _ => unreachable!()\n```\n? ",
+    "created_at": "2026-04-08T21:13:14Z",
+    "updated_at": "2026-04-08T21:13:27Z",
+    "html_url": "https://github.com/starship/starship/pull/7381#discussion_r3054203200",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7381",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3054203200"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7381#discussion_r3054203200"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7381"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3054203200/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 370,
+    "original_line": 370,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 128,
+    "position": 128,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3101432543",
+    "pull_request_review_id": 4130068206,
+    "id": 3101432543,
+    "node_id": "PRRC_kwDOCqswNs643Brf",
+    "diff_hunk": "@@ -316,19 +298,127 @@ impl Style {\n         }\n     }\n \n-    fn fg(&self, prev_color: PrevColor) -> Self {\n+    fn fg(&self, prev_color: RefColor) -> Self {\n         Self {\n             fg: Some(prev_color),\n             ..*self\n         }\n     }\n \n-    fn bg(&self, prev_color: PrevColor) -> Self {\n+    fn bg(&self, prev_color: RefColor) -> Self {\n         Self {\n             bg: Some(prev_color),\n             ..*self\n         }\n     }\n+\n+    pub fn resolve(&self, maybe_previous: Option<&Self>, maybe_next: Option<&Self>) -> Self {\n+        if maybe_previous.is_none() && maybe_next.is_none() {\n+            return Self { ..*self };\n+        }\n+\n+        let mut result = Self {\n+            style: nu_ansi_term::Style {\n+                foreground: self.style.foreground,\n+                background: self.style.background,\n+                ..self.style\n+            },\n+            bg: self.bg,\n+            fg: self.fg,\n+        };\n+\n+        if let Some(prev_style) = maybe_previous {\n+            if let Some(ref_color) = self.bg {\n+                match ref_color {\n+                    RefColor::PrevFg => {\n+                        if prev_style.fg.is_some() {\n+                            panic!(\n+                                \"Circular reference: segment background references back to a segment itself referencing forward\"\n+                            )",
+    "path": "src/config.rs",
+    "commit_id": "3b922e5d5a0c2186ca350bf87faef8f8cff42aeb",
+    "original_commit_id": "4b100906cc526a619c188f164ae102b2565c5243",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`panic!()` is not acceptable for a shell prompt.",
+    "created_at": "2026-04-17T15:27:37Z",
+    "updated_at": "2026-04-17T15:30:08Z",
+    "html_url": "https://github.com/starship/starship/pull/7381#discussion_r3101432543",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7381",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3101432543"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7381#discussion_r3101432543"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7381"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3101432543/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 335,
+    "original_start_line": 335,
+    "start_side": "RIGHT",
+    "line": 337,
+    "original_line": 337,
+    "side": "RIGHT",
+    "in_reply_to_id": 3036929912,
+    "author_association": "MEMBER",
+    "original_position": 95,
+    "position": 95,
+    "subject_type": "line"
+  }
+]

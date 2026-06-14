@@ -1,0 +1,141 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/537518439",
+    "pull_request_review_id": 546162085,
+    "id": 537518439,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUzNzUxODQzOQ==",
+    "diff_hunk": "@@ -380,16 +388,21 @@ fn get_current_branch(repository: &Repository) -> Option<String> {\n     shorthand.map(std::string::ToString::to_string)\n }\n \n-fn get_remote_branch(repository: &Repository) -> Option<String> {\n+fn get_remote_repository_info(repository: &Repository) -> Option<Remote> {\n     if let Ok(head) = repository.head() {\n         if let Some(local_branch_ref) = head.name() {\n             let remote_ref = match repository.branch_upstream_name(local_branch_ref) {\n                 Ok(remote_ref) => remote_ref.as_str()?.to_owned(),\n                 Err(_) => return None,\n             };\n \n-            let remote = remote_ref.split('/').last().map(|r| r.to_owned())?;\n-            return Some(remote);\n+            let v = &mut remote_ref.rsplit('/').collect::<Vec<&str>>().into_iter();\n+            let remote_branch = v.next()?.to_owned();\n+            let remote_name = v.next()?.to_owned();",
+    "path": "src/context.rs",
+    "commit_id": "26b775cce0d7b009763204cbe860389e69bbf463",
+    "original_commit_id": "487f7b8cbc15af5a7a2305adfe8dc1bf7eb8aea9",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "What do you think about using [`splitn`](https://doc.rust-lang.org/std/primitive.str.html#method.splitn) here? I think this will avoid issues where the branch name contains a `/`, for example `feat/some_awesome_feature`.\r\n\r\n```suggestion\r\n            let v mut = remote_ref.splitn(2, \"/\");\r\n            let remote_name = v.next()?.to_owned();\r\n            let remote_branch = v.next()?.to_owned();\r\n```",
+    "created_at": "2020-12-07T13:48:02Z",
+    "updated_at": "2020-12-08T00:04:28Z",
+    "html_url": "https://github.com/starship/starship/pull/1972#discussion_r537518439",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1972",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/537518439"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1972#discussion_r537518439"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1972"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/537518439/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 399,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 401,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 45,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/537918263",
+    "pull_request_review_id": 546631794,
+    "id": 537918263,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUzNzkxODI2Mw==",
+    "diff_hunk": "@@ -380,16 +388,21 @@ fn get_current_branch(repository: &Repository) -> Option<String> {\n     shorthand.map(std::string::ToString::to_string)\n }\n \n-fn get_remote_branch(repository: &Repository) -> Option<String> {\n+fn get_remote_repository_info(repository: &Repository) -> Option<Remote> {\n     if let Ok(head) = repository.head() {\n         if let Some(local_branch_ref) = head.name() {\n             let remote_ref = match repository.branch_upstream_name(local_branch_ref) {\n                 Ok(remote_ref) => remote_ref.as_str()?.to_owned(),\n                 Err(_) => return None,\n             };\n \n-            let remote = remote_ref.split('/').last().map(|r| r.to_owned())?;\n-            return Some(remote);\n+            let v = &mut remote_ref.rsplit('/').collect::<Vec<&str>>().into_iter();\n+            let remote_branch = v.next()?.to_owned();\n+            let remote_name = v.next()?.to_owned();",
+    "path": "src/context.rs",
+    "commit_id": "26b775cce0d7b009763204cbe860389e69bbf463",
+    "original_commit_id": "487f7b8cbc15af5a7a2305adfe8dc1bf7eb8aea9",
+    "user": {
+      "login": "sagittarius-a",
+      "id": 8809698,
+      "node_id": "MDQ6VXNlcjg4MDk2OTg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8809698?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/sagittarius-a",
+      "html_url": "https://github.com/sagittarius-a",
+      "followers_url": "https://api.github.com/users/sagittarius-a/followers",
+      "following_url": "https://api.github.com/users/sagittarius-a/following{/other_user}",
+      "gists_url": "https://api.github.com/users/sagittarius-a/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/sagittarius-a/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/sagittarius-a/subscriptions",
+      "organizations_url": "https://api.github.com/users/sagittarius-a/orgs",
+      "repos_url": "https://api.github.com/users/sagittarius-a/repos",
+      "events_url": "https://api.github.com/users/sagittarius-a/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/sagittarius-a/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I've published new code based on your suggestion. It required some changes but your point is totally valid.\r\n\r\nI often use branch name containing / but I did not use one for my tests.\r\n\r\nGood catch !",
+    "created_at": "2020-12-07T23:39:04Z",
+    "updated_at": "2020-12-08T00:04:28Z",
+    "html_url": "https://github.com/starship/starship/pull/1972#discussion_r537918263",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1972",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/537918263"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1972#discussion_r537918263"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1972"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/537918263/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 399,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 401,
+    "side": "RIGHT",
+    "in_reply_to_id": 537518439,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 45,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

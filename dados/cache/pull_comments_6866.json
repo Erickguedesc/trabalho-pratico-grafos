@@ -1,0 +1,209 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2249424601",
+    "pull_request_review_id": 3081290259,
+    "id": 2249424601,
+    "node_id": "PRRC_kwDOCqswNs6GE37Z",
+    "diff_hunk": "@@ -257,21 +257,43 @@ detect_target() {\n   printf '%s' \"${target}\"\n }\n \n-\n confirm() {\n   if [ -z \"${FORCE-}\" ]; then\n+    trap 'echo; error \"Interrupted (please re-run with the '--yes' option)\"; exit 130' INT\n     printf \"%s \" \"${MAGENTA}?${NO_COLOR} $* ${BOLD}[y/N]${NO_COLOR}\"\n     set +e\n     read -r yn </dev/tty\n+    trap - INT\n+    yn=$(echo \"$yn\" | tr '[:upper:]' '[:lower:]')\n     rc=$?\n     set -e\n     if [ $rc -ne 0 ]; then\n       error \"Error reading from prompt (please re-run with the '--yes' option)\"\n       exit 1\n     fi\n     if [ \"$yn\" != \"y\" ] && [ \"$yn\" != \"yes\" ]; then\n-      error 'Aborting (please answer \"yes\" to continue)'\n-      exit 1\n+      if [ \"$yn\" = \"n\" ] || [ \"$yn\" = \"no\" ]; then\n+        trap 'echo; error \"Interrupted (please re-run with the '--yes' option)\"; exit 130' INT\n+        set +e\n+        read -p \"${MAGENTA}?${NO_COLOR} Install Starship ${GREEN}${VERSION}${NO_COLOR} to: \" path\n+        trap - INT\n+        rc=$?\n+        set -e\n+        BIN_DIR=$path\n+        if [ $rc != 0 ] || [ -z \"$path\"]; then\n+          if [ -z \"$path\"]; then",
+    "path": "install/install.sh",
+    "commit_id": "3e6bc971081437f7fd14acaf3e2c178b8c246b53",
+    "original_commit_id": "a73c832809d0ae9954f222251b900da9ce1ce15d",
+    "user": {
+      "login": "cappyzawa",
+      "id": 12455284,
+      "node_id": "MDQ6VXNlcjEyNDU1Mjg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12455284?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cappyzawa",
+      "html_url": "https://github.com/cappyzawa",
+      "followers_url": "https://api.github.com/users/cappyzawa/followers",
+      "following_url": "https://api.github.com/users/cappyzawa/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cappyzawa/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cappyzawa/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cappyzawa/subscriptions",
+      "organizations_url": "https://api.github.com/users/cappyzawa/orgs",
+      "repos_url": "https://api.github.com/users/cappyzawa/repos",
+      "events_url": "https://api.github.com/users/cappyzawa/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cappyzawa/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Missing space before `]` - should be `[ -z \"$path\" ];`",
+    "created_at": "2025-08-02T22:02:11Z",
+    "updated_at": "2025-08-02T22:10:30Z",
+    "html_url": "https://github.com/starship/starship/pull/6866#discussion_r2249424601",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6866",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2249424601"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6866#discussion_r2249424601"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6866"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2249424601/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 283,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 284,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 31,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2249430212",
+    "pull_request_review_id": 3081290259,
+    "id": 2249430212,
+    "node_id": "PRRC_kwDOCqswNs6GE5TE",
+    "diff_hunk": "@@ -257,21 +257,43 @@ detect_target() {\n   printf '%s' \"${target}\"\n }\n \n-\n confirm() {\n   if [ -z \"${FORCE-}\" ]; then\n+    trap 'echo; error \"Interrupted (please re-run with the '--yes' option)\"; exit 130' INT",
+    "path": "install/install.sh",
+    "commit_id": "3e6bc971081437f7fd14acaf3e2c178b8c246b53",
+    "original_commit_id": "a73c832809d0ae9954f222251b900da9ce1ce15d",
+    "user": {
+      "login": "cappyzawa",
+      "id": 12455284,
+      "node_id": "MDQ6VXNlcjEyNDU1Mjg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12455284?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cappyzawa",
+      "html_url": "https://github.com/cappyzawa",
+      "followers_url": "https://api.github.com/users/cappyzawa/followers",
+      "following_url": "https://api.github.com/users/cappyzawa/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cappyzawa/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cappyzawa/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cappyzawa/subscriptions",
+      "organizations_url": "https://api.github.com/users/cappyzawa/orgs",
+      "repos_url": "https://api.github.com/users/cappyzawa/repos",
+      "events_url": "https://api.github.com/users/cappyzawa/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cappyzawa/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "nits: This trap setup is duplicated on L276. Consider using a helper function to avoid repetition.",
+    "created_at": "2025-08-02T22:09:54Z",
+    "updated_at": "2025-08-02T22:10:30Z",
+    "html_url": "https://github.com/starship/starship/pull/6866#discussion_r2249430212",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6866",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2249430212"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6866#discussion_r2249430212"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6866"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2249430212/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 262,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 7,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2251288964",
+    "pull_request_review_id": 3083893382,
+    "id": 2251288964,
+    "node_id": "PRRC_kwDOCqswNs6GL_GE",
+    "diff_hunk": "@@ -257,21 +257,48 @@ detect_target() {\n   printf '%s' \"${target}\"\n }\n \n+set_interrupt_handler() {\n+  trap 'echo; error \"Interrupted (please re-run with the '--yes' option)\"; exit 130' INT\n+}\n \n confirm() {\n   if [ -z \"${FORCE-}\" ]; then\n+    set_interrupt_handler\n     printf \"%s \" \"${MAGENTA}?${NO_COLOR} $* ${BOLD}[y/N]${NO_COLOR}\"\n     set +e\n     read -r yn </dev/tty\n+    trap - INT\n+    yn=$(echo \"$yn\" | tr '[:upper:]' '[:lower:]')\n     rc=$?\n     set -e\n     if [ $rc -ne 0 ]; then\n       error \"Error reading from prompt (please re-run with the '--yes' option)\"\n       exit 1\n     fi\n     if [ \"$yn\" != \"y\" ] && [ \"$yn\" != \"yes\" ]; then\n-      error 'Aborting (please answer \"yes\" to continue)'\n-      exit 1\n+      if [ \"$yn\" = \"n\" ] || [ \"$yn\" = \"no\" ]; then\n+        set_interrupt_handler\n+        set +e\n+        printf \"${MAGENTA}?${NO_COLOR} Where would you like to install Starship? ${GREY}(e.g., /usr/local/bin)${NO_COLOR}\\n\"\n+        read -p \"${MAGENTA}?${NO_COLOR} Install Starship ${GREEN}${VERSION}${NO_COLOR} to: \" path",
+    "path": "install/install.sh",
+    "commit_id": "3e6bc971081437f7fd14acaf3e2c178b8c246b53",
+    "original_commit_id": "a1f1a6aacb9beb467c1168b6b2f28403b69d7a7a",
+    "user": {
+      "login": "cappyzawa",
+      "id": 12455284,
+      "node_id": "MDQ6VXNlcjEyNDU1Mjg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12455284?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cappyzawa",
+      "html_url": "https://github.com/cappyzawa",
+      "followers_url": "https://api.github.com/users/cappyzawa/followers",
+      "following_url": "https://api.github.com/users/cappyzawa/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cappyzawa/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cappyzawa/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cappyzawa/subscriptions",
+      "organizations_url": "https://api.github.com/users/cappyzawa/orgs",
+      "repos_url": "https://api.github.com/users/cappyzawa/repos",
+      "events_url": "https://api.github.com/users/cappyzawa/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cappyzawa/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Sorry for the nitpicking, but two small UX tweaks! \r\nThe first line is more of an explanation than a question, and for input prompts `>` is more natural than `?`:\r\n\r\n```suggestion\r\n        printf \"Where would you like to install Starship? ${GREY}(e.g., /usr/local/bin)${NO_COLOR}\\n\"\r\n        read -p \"> Install Starship ${GREEN}${VERSION}${NO_COLOR} to: \" path\r\n```\r\n\r\nThis creates a cleaner flow:\r\n```\r\n  Where would you like to install Starship? (e.g., /usr/local/bin)\r\n  > Install Starship latest to: |\r\n```",
+    "created_at": "2025-08-04T12:10:41Z",
+    "updated_at": "2025-08-04T12:11:43Z",
+    "html_url": "https://github.com/starship/starship/pull/6866#discussion_r2251288964",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6866",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2251288964"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6866#discussion_r2251288964"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6866"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2251288964/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 282,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 283,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 29,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

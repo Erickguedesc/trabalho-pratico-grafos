@@ -1,0 +1,140 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2968748428",
+    "pull_request_review_id": 3985086404,
+    "id": 2968748428,
+    "node_id": "PRRC_kwDOCqswNs6w84GM",
+    "diff_hunk": "@@ -73,6 +73,19 @@ pub fn prompt(args: Properties, target: Target) {\n     let context = Context::new(args, target);\n     let stdout = io::stdout();\n     let mut handle = stdout.lock();\n+\n+    write!(handle, \"{}\", get_prompt(&context)).unwrap();\n+}\n+\n+pub fn prompt_with_claude_code(args: Properties, target: Target) {\n+    let claude_data = serde_json::from_reader(io::stdin())\n+        .inspect_err(|e| log::error!(\"Failed to read Claude Code JSON from stdin: {e}\"))\n+        .unwrap_or_default();\n+\n+    let context = Context::new(args, target).with_claude_code_data(claude_data);",
+    "path": "src/print.rs",
+    "commit_id": "7c65614ab9f905bc50711c21ecd796ce184c4a18",
+    "original_commit_id": "1f4884189f853d9310b530d683c7173f10d76989",
+    "user": {
+      "login": "cappyzawa",
+      "id": 12455284,
+      "node_id": "MDQ6VXNlcjEyNDU1Mjg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12455284?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cappyzawa",
+      "html_url": "https://github.com/cappyzawa",
+      "followers_url": "https://api.github.com/users/cappyzawa/followers",
+      "following_url": "https://api.github.com/users/cappyzawa/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cappyzawa/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cappyzawa/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cappyzawa/subscriptions",
+      "organizations_url": "https://api.github.com/users/cappyzawa/orgs",
+      "repos_url": "https://api.github.com/users/cappyzawa/repos",
+      "events_url": "https://api.github.com/users/cappyzawa/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cappyzawa/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "When running under zsh (or bash), `starship init zsh` exports `STARSHIP_SHELL=zsh`, which Claude Code inherits as a child process. This causes `wrap_colorseq_for_shell` to wrap ANSI color codes with `%{...%}` (zsh) or `\\[...\\]` (bash).\n\nSince the statusline outputs directly to the terminal — not through a shell prompt — these escapes are unnecessary and break the output. Fish is unaffected because it falls through to `_ => return ansi` in `wrap_seq_for_shell`.\n\nSetting `context.shell = Shell::Unknown` here would fix this:\n\n```rust\nlet mut context = Context::new(args, target).with_claude_code_data(claude_data);\ncontext.shell = Shell::Unknown;\n```",
+    "created_at": "2026-03-21T02:35:59Z",
+    "updated_at": "2026-03-21T02:37:56Z",
+    "html_url": "https://github.com/starship/starship/pull/7234#discussion_r2968748428",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7234",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2968748428"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7234#discussion_r2968748428"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7234"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2968748428/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 85,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2968748618",
+    "pull_request_review_id": 3985086404,
+    "id": 2968748618,
+    "node_id": "PRRC_kwDOCqswNs6w84JK",
+    "diff_hunk": "@@ -0,0 +1,429 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::claude_context::ClaudeContextConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils::humanize_int;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"claude_context\");\n+    let config = ClaudeContextConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    // Read Claude Code data from Context\n+    let claude_data = context.claude_code_data.as_ref()?;\n+\n+    // Calculate context usage percentage\n+    let current_tokens = claude_data.context_window.total_input_tokens\n+        + claude_data.context_window.total_output_tokens;\n+    let total_tokens = claude_data.context_window.context_window_size;\n+\n+    let percentage_float = if total_tokens > 0 {\n+        (current_tokens as f32 / total_tokens as f32) * 100.0\n+    } else {\n+        0.0\n+    };\n+    let percentage = percentage_float.round().clamp(0.0, 100.0) as u8;",
+    "path": "src/modules/claude_context.rs",
+    "commit_id": "1f4884189f853d9310b530d683c7173f10d76989",
+    "original_commit_id": "1f4884189f853d9310b530d683c7173f10d76989",
+    "user": {
+      "login": "cappyzawa",
+      "id": 12455284,
+      "node_id": "MDQ6VXNlcjEyNDU1Mjg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12455284?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cappyzawa",
+      "html_url": "https://github.com/cappyzawa",
+      "followers_url": "https://api.github.com/users/cappyzawa/followers",
+      "following_url": "https://api.github.com/users/cappyzawa/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cappyzawa/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cappyzawa/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cappyzawa/subscriptions",
+      "organizations_url": "https://api.github.com/users/cappyzawa/orgs",
+      "repos_url": "https://api.github.com/users/cappyzawa/repos",
+      "events_url": "https://api.github.com/users/cappyzawa/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cappyzawa/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Claude Code's JSON includes `context_window.used_percentage` with the correct value, but the `ContextWindow` struct doesn't have this field so it's silently ignored due to `#[serde(default)]`.\n\nThis self-calculation using `total_input_tokens + total_output_tokens` double-counts cache-hit tokens. In practice I observed 109k + 117k = 226k > 200k (context_window_size), resulting in 113% clamped to 100% — while `used_percentage` reported the actual usage as 42%.\n\nAdding `used_percentage: f64` to `ContextWindow` and using it directly here would give the correct value.",
+    "created_at": "2026-03-21T02:36:04Z",
+    "updated_at": "2026-03-21T02:37:56Z",
+    "html_url": "https://github.com/starship/starship/pull/7234#discussion_r2968748618",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7234",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2968748618"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7234#discussion_r2968748618"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7234"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2968748618/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 17,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 27,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 27,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

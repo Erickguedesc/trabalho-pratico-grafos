@@ -1,0 +1,975 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/452684329",
+    "pull_request_review_id": 446197336,
+    "id": 452684329,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1MjY4NDMyOQ==",
+    "diff_hunk": "@@ -0,0 +1,119 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::helm::HelmConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+/// Creates a module with the current Helm version\n+///\n+/// Will display the Helm version if any of the following criteria are met:\n+///     - Current directory contains a `helmfile.yaml` file\n+///     - Current directory contains a `Chart.yaml` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+\tlet is_helm_project = context\n+\t\t.try_begin_scan()?\n+\t\t.set_files(&[\"helmfile.yaml\", \"Chart.yaml\"])\n+\t\t.set_folders(&[\"templates\"])",
+    "path": "src/modules/helm.rs",
+    "commit_id": "3d6d751c2d4b674ca0c8db2e6ca7ac694db2ec80",
+    "original_commit_id": "020a41afa714006cf0e7e75831e611c69b946f57",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think having a `templates` directory will trigger too many false positives, as a dumb example I have a few Django project that have `templates` directories.\r\n\r\n```suggestion\r\n```",
+    "created_at": "2020-07-10T07:56:27Z",
+    "updated_at": "2020-07-17T06:05:30Z",
+    "html_url": "https://github.com/starship/starship/pull/1463#discussion_r452684329",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/452684329"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1463#discussion_r452684329"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/452684329/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 16,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 16,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/452686379",
+    "pull_request_review_id": 446197336,
+    "id": 452686379,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1MjY4NjM3OQ==",
+    "diff_hunk": "@@ -0,0 +1,119 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::helm::HelmConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+/// Creates a module with the current Helm version\n+///\n+/// Will display the Helm version if any of the following criteria are met:\n+///     - Current directory contains a `helmfile.yaml` file\n+///     - Current directory contains a `Chart.yaml` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+\tlet is_helm_project = context\n+\t\t.try_begin_scan()?\n+\t\t.set_files(&[\"helmfile.yaml\", \"Chart.yaml\"])\n+\t\t.set_folders(&[\"templates\"])\n+\t\t.is_match();\n+\n+\tif !is_helm_project {\n+\t\treturn None;\n+\t}\n+\n+\tlet mut module = context.new_module(\"helm\");\n+\tlet config = HelmConfig::try_load(module.config);\n+\tlet parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+\t\tformatter\n+\t\t\t.map_meta(|var, _| match var {\n+\t\t\t\t\"symbol\" => Some(config.symbol),\n+\t\t\t\t_ => None,\n+\t\t\t})\n+\t\t\t.map_style(|variable| match variable {\n+\t\t\t\t\"style\" => Some(Ok(config.style)),\n+\t\t\t\t_ => None,\n+\t\t\t})\n+\t\t\t.map(|variable| match variable {\n+\t\t\t\t\"version\" => format_helm_version(\n+\t\t\t\t\t&utils::exec_cmd(\"helm\", &[\"version\", \"--short\", \"--client\"])?\n+\t\t\t\t\t\t.stdout\n+\t\t\t\t\t\t.as_str(),\n+\t\t\t\t)\n+\t\t\t\t\t.map(Ok),\n+\t\t\t\t_ => None,\n+\t\t\t})\n+\t\t\t.parse(None)\n+\t});\n+\n+\tmodule.set_segments(match parsed {\n+\t\tOk(segments) => segments,\n+\t\tErr(error) => {\n+\t\t\tlog::warn!(\"Error in module `helm`:\\n{}\", error);\n+\t\t\treturn None;\n+\t\t}\n+\t});\n+\n+\tSome(module)\n+}\n+\n+fn format_helm_version(helm_stdout: &str) -> Option<String> {\n+\t// `helm version --short --client` output looks like this:\n+\t// v3.1.1+gafe7058\n+\n+\tlet version = helm_stdout\n+\t\t// split into [\"v3.1.1\",\"gafe7058\"]\n+\t\t.splitn(2, '+')\n+\t\t// return \"v3.1.1\"\n+\t\t.next()?;\n+\n+\tSome(version.to_string())\n+}",
+    "path": "src/modules/helm.rs",
+    "commit_id": "3d6d751c2d4b674ca0c8db2e6ca7ac694db2ec80",
+    "original_commit_id": "020a41afa714006cf0e7e75831e611c69b946f57",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Can you update this function to also support helm 2, this should just be a case of removing the prefixed `Client: ` from the version string.\r\n```\r\nhelm version --short --client\r\nClient: v2.16.9+g8ad7037\r\n```",
+    "created_at": "2020-07-10T08:00:24Z",
+    "updated_at": "2020-07-17T06:05:30Z",
+    "html_url": "https://github.com/starship/starship/pull/1463#discussion_r452686379",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/452686379"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1463#discussion_r452686379"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/452686379/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 58,
+    "original_start_line": 58,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 75,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 69,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/452688231",
+    "pull_request_review_id": 446197336,
+    "id": 452688231,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1MjY4ODIzMQ==",
+    "diff_hunk": "@@ -0,0 +1,119 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::helm::HelmConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+/// Creates a module with the current Helm version\n+///\n+/// Will display the Helm version if any of the following criteria are met:\n+///     - Current directory contains a `helmfile.yaml` file\n+///     - Current directory contains a `Chart.yaml` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+\tlet is_helm_project = context\n+\t\t.try_begin_scan()?\n+\t\t.set_files(&[\"helmfile.yaml\", \"Chart.yaml\"])\n+\t\t.set_folders(&[\"templates\"])\n+\t\t.is_match();\n+\n+\tif !is_helm_project {\n+\t\treturn None;\n+\t}\n+\n+\tlet mut module = context.new_module(\"helm\");\n+\tlet config = HelmConfig::try_load(module.config);\n+\tlet parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+\t\tformatter\n+\t\t\t.map_meta(|var, _| match var {\n+\t\t\t\t\"symbol\" => Some(config.symbol),\n+\t\t\t\t_ => None,\n+\t\t\t})\n+\t\t\t.map_style(|variable| match variable {\n+\t\t\t\t\"style\" => Some(Ok(config.style)),\n+\t\t\t\t_ => None,\n+\t\t\t})\n+\t\t\t.map(|variable| match variable {\n+\t\t\t\t\"version\" => format_helm_version(\n+\t\t\t\t\t&utils::exec_cmd(\"helm\", &[\"version\", \"--short\", \"--client\"])?\n+\t\t\t\t\t\t.stdout\n+\t\t\t\t\t\t.as_str(),\n+\t\t\t\t)\n+\t\t\t\t\t.map(Ok),\n+\t\t\t\t_ => None,\n+\t\t\t})\n+\t\t\t.parse(None)\n+\t});\n+\n+\tmodule.set_segments(match parsed {\n+\t\tOk(segments) => segments,\n+\t\tErr(error) => {\n+\t\t\tlog::warn!(\"Error in module `helm`:\\n{}\", error);\n+\t\t\treturn None;\n+\t\t}\n+\t});\n+\n+\tSome(module)\n+}\n+\n+fn format_helm_version(helm_stdout: &str) -> Option<String> {\n+\t// `helm version --short --client` output looks like this:\n+\t// v3.1.1+gafe7058\n+\n+\tlet version = helm_stdout\n+\t\t// split into [\"v3.1.1\",\"gafe7058\"]\n+\t\t.splitn(2, '+')\n+\t\t// return \"v3.1.1\"\n+\t\t.next()?;\n+\n+\tSome(version.to_string())\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+\tuse super::*;\n+\tuse crate::modules::utils::test::render_module;\n+\tuse ansi_term::Color;\n+\tuse std::fs::File;\n+\tuse std::io;\n+\n+\t#[test]\n+\tfn folder_without_helm_files() -> io::Result<()> {\n+\t\tlet dir = tempfile::tempdir()?;\n+\n+\t\tlet actual = render_module(\"helm\", dir.path(), None);\n+\n+\t\tlet expected = None;\n+\t\tassert_eq!(expected, actual);\n+\t\tdir.close()\n+\t}\n+\n+\t#[test]\n+\tfn folder_with_helm_file() -> io::Result<()> {\n+\t\tlet dir = tempfile::tempdir()?;\n+\t\tFile::create(dir.path().join(\"helmfile.yaml\"))?.sync_all()?;\n+\n+\t\tlet actual = render_module(\"helm\", dir.path(), None);\n+\n+\t\tlet expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"⎈ v3.1.1\")));\n+\t\tassert_eq!(expected, actual);\n+\t\tdir.close()\n+\t}\n+\n+\t#[test]\n+\tfn folder_with_chart_file() -> io::Result<()> {\n+\t\tlet dir = tempfile::tempdir()?;\n+\t\tFile::create(dir.path().join(\"Chart.yaml\"))?.sync_all()?;\n+\n+\t\tlet actual = render_module(\"helm\", dir.path(), None);\n+\n+\t\tlet expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"⎈ v3.1.1\")));\n+\t\tassert_eq!(expected, actual);\n+\t\tdir.close()\n+\t}\n+\n+\t#[test]\n+\tfn test_format_helm_version() {\n+\t\tlet input = \"v3.1.1+ggit afe7058\";\n+\t\tassert_eq!(format_helm_version(input), Some(\"v3.1.1\".to_string()));\n+\t}",
+    "path": "src/modules/helm.rs",
+    "commit_id": "3d6d751c2d4b674ca0c8db2e6ca7ac694db2ec80",
+    "original_commit_id": "020a41afa714006cf0e7e75831e611c69b946f57",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Maybe change this to also test for helm2 versions.\r\n\r\n ```suggestion\r\n\tfn test_format_helm_version() {\r\n\t\tassert_eq!(format_helm_version(\"v3.1.1+gafe7058\"), Some(\"v3.1.1\".to_string()));\r\n\t\tassert_eq!(format_helm_version(\"Client: v2.16.9+g8ad7037\"), Some(\"v2.16.9\".to_string()));\r\n\t}\r\n```",
+    "created_at": "2020-07-10T08:04:10Z",
+    "updated_at": "2020-07-17T06:05:30Z",
+    "html_url": "https://github.com/starship/starship/pull/1463#discussion_r452688231",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/452688231"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1463#discussion_r452688231"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/452688231/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 115,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 118,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 118,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/452700956",
+    "pull_request_review_id": 446218488,
+    "id": 452700956,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1MjcwMDk1Ng==",
+    "diff_hunk": "@@ -0,0 +1,119 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::helm::HelmConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+/// Creates a module with the current Helm version\n+///\n+/// Will display the Helm version if any of the following criteria are met:\n+///     - Current directory contains a `helmfile.yaml` file\n+///     - Current directory contains a `Chart.yaml` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+\tlet is_helm_project = context\n+\t\t.try_begin_scan()?\n+\t\t.set_files(&[\"helmfile.yaml\", \"Chart.yaml\"])\n+\t\t.set_folders(&[\"templates\"])",
+    "path": "src/modules/helm.rs",
+    "commit_id": "3d6d751c2d4b674ca0c8db2e6ca7ac694db2ec80",
+    "original_commit_id": "020a41afa714006cf0e7e75831e611c69b946f57",
+    "user": {
+      "login": "Dentrax",
+      "id": 16493751,
+      "node_id": "MDQ6VXNlcjE2NDkzNzUx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16493751?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Dentrax",
+      "html_url": "https://github.com/Dentrax",
+      "followers_url": "https://api.github.com/users/Dentrax/followers",
+      "following_url": "https://api.github.com/users/Dentrax/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Dentrax/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Dentrax/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Dentrax/subscriptions",
+      "organizations_url": "https://api.github.com/users/Dentrax/orgs",
+      "repos_url": "https://api.github.com/users/Dentrax/repos",
+      "events_url": "https://api.github.com/users/Dentrax/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Dentrax/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "In this case, i don't have to check any folders anymore, right?",
+    "created_at": "2020-07-10T08:29:45Z",
+    "updated_at": "2020-07-17T06:05:30Z",
+    "html_url": "https://github.com/starship/starship/pull/1463#discussion_r452700956",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/452700956"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1463#discussion_r452700956"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/452700956/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 16,
+    "side": "RIGHT",
+    "in_reply_to_id": 452684329,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 16,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/452712635",
+    "pull_request_review_id": 446233823,
+    "id": 452712635,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1MjcxMjYzNQ==",
+    "diff_hunk": "@@ -0,0 +1,119 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::helm::HelmConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+/// Creates a module with the current Helm version\n+///\n+/// Will display the Helm version if any of the following criteria are met:\n+///     - Current directory contains a `helmfile.yaml` file\n+///     - Current directory contains a `Chart.yaml` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+\tlet is_helm_project = context\n+\t\t.try_begin_scan()?\n+\t\t.set_files(&[\"helmfile.yaml\", \"Chart.yaml\"])\n+\t\t.set_folders(&[\"templates\"])\n+\t\t.is_match();\n+\n+\tif !is_helm_project {\n+\t\treturn None;\n+\t}\n+\n+\tlet mut module = context.new_module(\"helm\");\n+\tlet config = HelmConfig::try_load(module.config);\n+\tlet parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+\t\tformatter\n+\t\t\t.map_meta(|var, _| match var {\n+\t\t\t\t\"symbol\" => Some(config.symbol),\n+\t\t\t\t_ => None,\n+\t\t\t})\n+\t\t\t.map_style(|variable| match variable {\n+\t\t\t\t\"style\" => Some(Ok(config.style)),\n+\t\t\t\t_ => None,\n+\t\t\t})\n+\t\t\t.map(|variable| match variable {\n+\t\t\t\t\"version\" => format_helm_version(\n+\t\t\t\t\t&utils::exec_cmd(\"helm\", &[\"version\", \"--short\", \"--client\"])?\n+\t\t\t\t\t\t.stdout\n+\t\t\t\t\t\t.as_str(),\n+\t\t\t\t)\n+\t\t\t\t\t.map(Ok),\n+\t\t\t\t_ => None,\n+\t\t\t})\n+\t\t\t.parse(None)\n+\t});\n+\n+\tmodule.set_segments(match parsed {\n+\t\tOk(segments) => segments,\n+\t\tErr(error) => {\n+\t\t\tlog::warn!(\"Error in module `helm`:\\n{}\", error);\n+\t\t\treturn None;\n+\t\t}\n+\t});\n+\n+\tSome(module)\n+}\n+\n+fn format_helm_version(helm_stdout: &str) -> Option<String> {\n+\t// `helm version --short --client` output looks like this:\n+\t// v3.1.1+gafe7058\n+\n+\tlet version = helm_stdout\n+\t\t// split into [\"v3.1.1\",\"gafe7058\"]\n+\t\t.splitn(2, '+')\n+\t\t// return \"v3.1.1\"\n+\t\t.next()?;\n+\n+\tSome(version.to_string())\n+}",
+    "path": "src/modules/helm.rs",
+    "commit_id": "3d6d751c2d4b674ca0c8db2e6ca7ac694db2ec80",
+    "original_commit_id": "020a41afa714006cf0e7e75831e611c69b946f57",
+    "user": {
+      "login": "Dentrax",
+      "id": 16493751,
+      "node_id": "MDQ6VXNlcjE2NDkzNzUx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16493751?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Dentrax",
+      "html_url": "https://github.com/Dentrax",
+      "followers_url": "https://api.github.com/users/Dentrax/followers",
+      "following_url": "https://api.github.com/users/Dentrax/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Dentrax/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Dentrax/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Dentrax/subscriptions",
+      "organizations_url": "https://api.github.com/users/Dentrax/orgs",
+      "repos_url": "https://api.github.com/users/Dentrax/repos",
+      "events_url": "https://api.github.com/users/Dentrax/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Dentrax/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I just changed this parser logic, now should be support both Helm 1 and 2 version commands, i guess. :)",
+    "created_at": "2020-07-10T08:52:33Z",
+    "updated_at": "2020-07-17T06:05:30Z",
+    "html_url": "https://github.com/starship/starship/pull/1463#discussion_r452712635",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/452712635"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1463#discussion_r452712635"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/452712635/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 58,
+    "original_start_line": 58,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 75,
+    "side": "RIGHT",
+    "in_reply_to_id": 452686379,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 69,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/452712843",
+    "pull_request_review_id": 446234092,
+    "id": 452712843,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1MjcxMjg0Mw==",
+    "diff_hunk": "@@ -0,0 +1,119 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::helm::HelmConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+/// Creates a module with the current Helm version\n+///\n+/// Will display the Helm version if any of the following criteria are met:\n+///     - Current directory contains a `helmfile.yaml` file\n+///     - Current directory contains a `Chart.yaml` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+\tlet is_helm_project = context\n+\t\t.try_begin_scan()?\n+\t\t.set_files(&[\"helmfile.yaml\", \"Chart.yaml\"])\n+\t\t.set_folders(&[\"templates\"])\n+\t\t.is_match();\n+\n+\tif !is_helm_project {\n+\t\treturn None;\n+\t}\n+\n+\tlet mut module = context.new_module(\"helm\");\n+\tlet config = HelmConfig::try_load(module.config);\n+\tlet parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+\t\tformatter\n+\t\t\t.map_meta(|var, _| match var {\n+\t\t\t\t\"symbol\" => Some(config.symbol),\n+\t\t\t\t_ => None,\n+\t\t\t})\n+\t\t\t.map_style(|variable| match variable {\n+\t\t\t\t\"style\" => Some(Ok(config.style)),\n+\t\t\t\t_ => None,\n+\t\t\t})\n+\t\t\t.map(|variable| match variable {\n+\t\t\t\t\"version\" => format_helm_version(\n+\t\t\t\t\t&utils::exec_cmd(\"helm\", &[\"version\", \"--short\", \"--client\"])?\n+\t\t\t\t\t\t.stdout\n+\t\t\t\t\t\t.as_str(),\n+\t\t\t\t)\n+\t\t\t\t\t.map(Ok),\n+\t\t\t\t_ => None,\n+\t\t\t})\n+\t\t\t.parse(None)\n+\t});\n+\n+\tmodule.set_segments(match parsed {\n+\t\tOk(segments) => segments,\n+\t\tErr(error) => {\n+\t\t\tlog::warn!(\"Error in module `helm`:\\n{}\", error);\n+\t\t\treturn None;\n+\t\t}\n+\t});\n+\n+\tSome(module)\n+}\n+\n+fn format_helm_version(helm_stdout: &str) -> Option<String> {\n+\t// `helm version --short --client` output looks like this:\n+\t// v3.1.1+gafe7058\n+\n+\tlet version = helm_stdout\n+\t\t// split into [\"v3.1.1\",\"gafe7058\"]\n+\t\t.splitn(2, '+')\n+\t\t// return \"v3.1.1\"\n+\t\t.next()?;\n+\n+\tSome(version.to_string())\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+\tuse super::*;\n+\tuse crate::modules::utils::test::render_module;\n+\tuse ansi_term::Color;\n+\tuse std::fs::File;\n+\tuse std::io;\n+\n+\t#[test]\n+\tfn folder_without_helm_files() -> io::Result<()> {\n+\t\tlet dir = tempfile::tempdir()?;\n+\n+\t\tlet actual = render_module(\"helm\", dir.path(), None);\n+\n+\t\tlet expected = None;\n+\t\tassert_eq!(expected, actual);\n+\t\tdir.close()\n+\t}\n+\n+\t#[test]\n+\tfn folder_with_helm_file() -> io::Result<()> {\n+\t\tlet dir = tempfile::tempdir()?;\n+\t\tFile::create(dir.path().join(\"helmfile.yaml\"))?.sync_all()?;\n+\n+\t\tlet actual = render_module(\"helm\", dir.path(), None);\n+\n+\t\tlet expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"⎈ v3.1.1\")));\n+\t\tassert_eq!(expected, actual);\n+\t\tdir.close()\n+\t}\n+\n+\t#[test]\n+\tfn folder_with_chart_file() -> io::Result<()> {\n+\t\tlet dir = tempfile::tempdir()?;\n+\t\tFile::create(dir.path().join(\"Chart.yaml\"))?.sync_all()?;\n+\n+\t\tlet actual = render_module(\"helm\", dir.path(), None);\n+\n+\t\tlet expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"⎈ v3.1.1\")));\n+\t\tassert_eq!(expected, actual);\n+\t\tdir.close()\n+\t}\n+\n+\t#[test]\n+\tfn test_format_helm_version() {\n+\t\tlet input = \"v3.1.1+ggit afe7058\";\n+\t\tassert_eq!(format_helm_version(input), Some(\"v3.1.1\".to_string()));\n+\t}",
+    "path": "src/modules/helm.rs",
+    "commit_id": "3d6d751c2d4b674ca0c8db2e6ca7ac694db2ec80",
+    "original_commit_id": "020a41afa714006cf0e7e75831e611c69b946f57",
+    "user": {
+      "login": "Dentrax",
+      "id": 16493751,
+      "node_id": "MDQ6VXNlcjE2NDkzNzUx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16493751?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Dentrax",
+      "html_url": "https://github.com/Dentrax",
+      "followers_url": "https://api.github.com/users/Dentrax/followers",
+      "following_url": "https://api.github.com/users/Dentrax/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Dentrax/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Dentrax/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Dentrax/subscriptions",
+      "organizations_url": "https://api.github.com/users/Dentrax/orgs",
+      "repos_url": "https://api.github.com/users/Dentrax/repos",
+      "events_url": "https://api.github.com/users/Dentrax/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Dentrax/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Done",
+    "created_at": "2020-07-10T08:52:54Z",
+    "updated_at": "2020-07-17T06:05:30Z",
+    "html_url": "https://github.com/starship/starship/pull/1463#discussion_r452712843",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/452712843"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1463#discussion_r452712843"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/452712843/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 115,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 118,
+    "side": "RIGHT",
+    "in_reply_to_id": 452688231,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 118,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/452758274",
+    "pull_request_review_id": 446291816,
+    "id": 452758274,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1Mjc1ODI3NA==",
+    "diff_hunk": "@@ -1150,6 +1151,79 @@ trim_at = \".companyname.com\"\n disabled = false\n ```\n \n+## Helm\n+\n+The `helm` module shows the currently installed version of Helm.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `helmfile.yaml` file\n+- The current directory contains a `Chart.yaml` file\n+\n+### Options\n+\n+| Option     | Default                            | Description                                    |\n+| ---------- | ---------------------------------- | ---------------------------------------------- |\n+| `format`   | `\"via [$symbol$version]($style) \"` | The format for the module.                     |\n+| `symbol`   | `\"🐹 \"`                            | A format string representing the symbol of Helm. |",
+    "path": "docs/config/README.md",
+    "commit_id": "3d6d751c2d4b674ca0c8db2e6ca7ac694db2ec80",
+    "original_commit_id": "5582a14ad1668b629483a8ba669926babf428028",
+    "user": {
+      "login": "cappyzawa",
+      "id": 12455284,
+      "node_id": "MDQ6VXNlcjEyNDU1Mjg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12455284?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cappyzawa",
+      "html_url": "https://github.com/cappyzawa",
+      "followers_url": "https://api.github.com/users/cappyzawa/followers",
+      "following_url": "https://api.github.com/users/cappyzawa/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cappyzawa/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cappyzawa/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cappyzawa/subscriptions",
+      "organizations_url": "https://api.github.com/users/cappyzawa/orgs",
+      "repos_url": "https://api.github.com/users/cappyzawa/repos",
+      "events_url": "https://api.github.com/users/cappyzawa/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cappyzawa/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Based on https://github.com/starship/starship/pull/1463/files#diff-3009cc0091e546b48a6d01d63548e923R17, I think the following is correct.\r\n\r\n```suggestion\r\n| `symbol`   | `\"⎈ \"`                            | A format string representing the symbol of Helm. |\r\n```",
+    "created_at": "2020-07-10T10:21:54Z",
+    "updated_at": "2020-07-17T06:05:30Z",
+    "html_url": "https://github.com/starship/starship/pull/1463#discussion_r452758274",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/452758274"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1463#discussion_r452758274"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/452758274/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1167,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 25,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/452774356",
+    "pull_request_review_id": 446312025,
+    "id": 452774356,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1Mjc3NDM1Ng==",
+    "diff_hunk": "@@ -1150,6 +1151,79 @@ trim_at = \".companyname.com\"\n disabled = false\n ```\n \n+## Helm\n+\n+The `helm` module shows the currently installed version of Helm.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `helmfile.yaml` file\n+- The current directory contains a `Chart.yaml` file\n+\n+### Options\n+\n+| Option     | Default                            | Description                                    |\n+| ---------- | ---------------------------------- | ---------------------------------------------- |\n+| `format`   | `\"via [$symbol$version]($style) \"` | The format for the module.                     |\n+| `symbol`   | `\"🐹 \"`                            | A format string representing the symbol of Helm. |",
+    "path": "docs/config/README.md",
+    "commit_id": "3d6d751c2d4b674ca0c8db2e6ca7ac694db2ec80",
+    "original_commit_id": "5582a14ad1668b629483a8ba669926babf428028",
+    "user": {
+      "login": "Dentrax",
+      "id": 16493751,
+      "node_id": "MDQ6VXNlcjE2NDkzNzUx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16493751?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Dentrax",
+      "html_url": "https://github.com/Dentrax",
+      "followers_url": "https://api.github.com/users/Dentrax/followers",
+      "following_url": "https://api.github.com/users/Dentrax/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Dentrax/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Dentrax/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Dentrax/subscriptions",
+      "organizations_url": "https://api.github.com/users/Dentrax/orgs",
+      "repos_url": "https://api.github.com/users/Dentrax/repos",
+      "events_url": "https://api.github.com/users/Dentrax/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Dentrax/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Updated",
+    "created_at": "2020-07-10T10:58:32Z",
+    "updated_at": "2020-07-17T06:05:30Z",
+    "html_url": "https://github.com/starship/starship/pull/1463#discussion_r452774356",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/452774356"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1463#discussion_r452774356"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/452774356/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1167,
+    "side": "RIGHT",
+    "in_reply_to_id": 452758274,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 25,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/453061335",
+    "pull_request_review_id": 446680857,
+    "id": 453061335,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1MzA2MTMzNQ==",
+    "diff_hunk": "@@ -0,0 +1,127 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::helm::HelmConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+/// Creates a module with the current Helm version\n+///\n+/// Will display the Helm version if any of the following criteria are met:\n+///     - Current directory contains a `helmfile.yaml` file\n+///     - Current directory contains a `Chart.yaml` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_helm_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"helmfile.yaml\", \"Chart.yaml\"])\n+        .is_match();\n+\n+    if !is_helm_project {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"helm\");\n+    let config = HelmConfig::try_load(module.config);\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => format_helm_version(\n+                    &utils::exec_cmd(\"helm\", &[\"version\", \"--short\", \"--client\"])?\n+                        .stdout\n+                        .as_str(),\n+                )\n+                .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `helm`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn format_helm_version(helm_stdout: &str) -> Option<String> {\n+    // `helm version --short --client` output looks like this:\n+    // v3.1.1+gafe7058\n+    // `helm version --short --client` output looks like this for Helm 2:\n+    // Client: v2.16.9+g8ad7037\n+\n+    Some(\n+        helm_stdout\n+            // split into [\"v3.1.1\",\"gafe7058\"] or [\"Client: v3.1.1\",\"gafe7058\"]\n+            .splitn(2, '+')\n+            // return \"v3.1.1\" or \"Client: v3.1.1\"\n+            .next()?\n+            // return \"v3.1.1\" or \" v3.1.1\"\n+            .trim_start_matches(\"Client: \")\n+            // return \"v3.1.1\"\n+            .trim()\n+            .to_owned(),\n+    )\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::*;\n+    use crate::modules::utils::test::render_module;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn folder_without_helm_files() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+\n+        let actual = render_module(\"helm\", dir.path(), None);\n+\n+        let expected = None;\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_helm_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"helmfile.yaml\"))?.sync_all()?;\n+\n+        let actual = render_module(\"helm\", dir.path(), None);\n+\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"⎈ v3.1.1\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_chart_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"Chart.yaml\"))?.sync_all()?;\n+\n+        let actual = render_module(\"helm\", dir.path(), None);\n+\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"⎈ v3.1.1\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn test_format_helm_version() {\n+        let helm_1 = \"v3.1.1+ggit afe7058\";\n+        let helm_2 = \"Client: v2.16.9+g8ad7037\";\n+        assert_eq!(format_helm_version(helm_1), Some(\"v3.1.1\".to_string()));",
+    "path": "src/modules/helm.rs",
+    "commit_id": "3d6d751c2d4b674ca0c8db2e6ca7ac694db2ec80",
+    "original_commit_id": "7541d7b536d362a4ae9aee2c6ee4357e18a60784",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Minor consistency correction here.\r\n\r\n```suggestion\r\n        let helm_3 = \"v3.1.1+ggit afe7058\";\r\n        let helm_2 = \"Client: v2.16.9+g8ad7037\";\r\n        assert_eq!(format_helm_version(helm_3), Some(\"v3.1.1\".to_string()));\r\n```",
+    "created_at": "2020-07-10T20:25:09Z",
+    "updated_at": "2020-07-17T06:05:30Z",
+    "html_url": "https://github.com/starship/starship/pull/1463#discussion_r453061335",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/453061335"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1463#discussion_r453061335"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/453061335/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 122,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 124,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 124,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/453062515",
+    "pull_request_review_id": 446680857,
+    "id": 453062515,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1MzA2MjUxNQ==",
+    "diff_hunk": "@@ -1150,6 +1151,79 @@ trim_at = \".companyname.com\"\n disabled = false\n ```\n \n+## Helm\n+\n+The `helm` module shows the currently installed version of Helm.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `helmfile.yaml` file\n+- The current directory contains a `Chart.yaml` file\n+\n+### Options\n+\n+| Option     | Default                            | Description                                    |\n+| ---------- | ---------------------------------- | ---------------------------------------------- |\n+| `format`   | `\"via [$symbol$version]($style) \"` | The format for the module.                     |\n+| `symbol`   | `\"⎈ \"`                            | A format string representing the symbol of Helm. |\n+| `style`    | `\"bold blue\"`                      | The style for the module.                      |\n+| `disabled` | `false`                            | Disables the `helm` module.                  |\n+\n+### Variables\n+\n+| Variable | Example   | Description                          |\n+| -------- | --------- | ------------------------------------ |\n+| version  | `v3.1.1` | The version of `helm`                  |\n+| symbol   |           | Mirrors the value of option `symbol` |\n+| style\\*  |           | Mirrors the value of option `style`  |\n+\n+\\*: This variable can only be used as a part of a style string\n+\n+### Example\n+\n+```toml\n+# ~/.config/starship.toml\n+\n+[helm]\n+format = \"via [⎈ $version](bold blue) \"\n+```\n+\n+## Hostname",
+    "path": "docs/config/README.md",
+    "commit_id": "3d6d751c2d4b674ca0c8db2e6ca7ac694db2ec80",
+    "original_commit_id": "7541d7b536d362a4ae9aee2c6ee4357e18a60784",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It looks like you have duplicated the hostname entry here.",
+    "created_at": "2020-07-10T20:28:16Z",
+    "updated_at": "2020-07-17T06:05:30Z",
+    "html_url": "https://github.com/starship/starship/pull/1463#discussion_r453062515",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/453062515"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1463#discussion_r453062515"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/453062515/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1154,
+    "original_line": 1154,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 48,
+    "position": 48,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/453480849",
+    "pull_request_review_id": 447035225,
+    "id": 453480849,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1MzQ4MDg0OQ==",
+    "diff_hunk": "@@ -0,0 +1,127 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::helm::HelmConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+/// Creates a module with the current Helm version\n+///\n+/// Will display the Helm version if any of the following criteria are met:\n+///     - Current directory contains a `helmfile.yaml` file\n+///     - Current directory contains a `Chart.yaml` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_helm_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"helmfile.yaml\", \"Chart.yaml\"])\n+        .is_match();\n+\n+    if !is_helm_project {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"helm\");\n+    let config = HelmConfig::try_load(module.config);\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => format_helm_version(\n+                    &utils::exec_cmd(\"helm\", &[\"version\", \"--short\", \"--client\"])?\n+                        .stdout\n+                        .as_str(),\n+                )\n+                .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `helm`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn format_helm_version(helm_stdout: &str) -> Option<String> {\n+    // `helm version --short --client` output looks like this:\n+    // v3.1.1+gafe7058\n+    // `helm version --short --client` output looks like this for Helm 2:\n+    // Client: v2.16.9+g8ad7037\n+\n+    Some(\n+        helm_stdout\n+            // split into [\"v3.1.1\",\"gafe7058\"] or [\"Client: v3.1.1\",\"gafe7058\"]\n+            .splitn(2, '+')\n+            // return \"v3.1.1\" or \"Client: v3.1.1\"\n+            .next()?\n+            // return \"v3.1.1\" or \" v3.1.1\"\n+            .trim_start_matches(\"Client: \")\n+            // return \"v3.1.1\"\n+            .trim()\n+            .to_owned(),\n+    )\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::*;\n+    use crate::modules::utils::test::render_module;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn folder_without_helm_files() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+\n+        let actual = render_module(\"helm\", dir.path(), None);\n+\n+        let expected = None;\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_helm_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"helmfile.yaml\"))?.sync_all()?;\n+\n+        let actual = render_module(\"helm\", dir.path(), None);\n+\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"⎈ v3.1.1\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_chart_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"Chart.yaml\"))?.sync_all()?;\n+\n+        let actual = render_module(\"helm\", dir.path(), None);\n+\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"⎈ v3.1.1\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn test_format_helm_version() {\n+        let helm_1 = \"v3.1.1+ggit afe7058\";\n+        let helm_2 = \"Client: v2.16.9+g8ad7037\";\n+        assert_eq!(format_helm_version(helm_1), Some(\"v3.1.1\".to_string()));",
+    "path": "src/modules/helm.rs",
+    "commit_id": "3d6d751c2d4b674ca0c8db2e6ca7ac694db2ec80",
+    "original_commit_id": "7541d7b536d362a4ae9aee2c6ee4357e18a60784",
+    "user": {
+      "login": "Dentrax",
+      "id": 16493751,
+      "node_id": "MDQ6VXNlcjE2NDkzNzUx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16493751?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Dentrax",
+      "html_url": "https://github.com/Dentrax",
+      "followers_url": "https://api.github.com/users/Dentrax/followers",
+      "following_url": "https://api.github.com/users/Dentrax/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Dentrax/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Dentrax/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Dentrax/subscriptions",
+      "organizations_url": "https://api.github.com/users/Dentrax/orgs",
+      "repos_url": "https://api.github.com/users/Dentrax/repos",
+      "events_url": "https://api.github.com/users/Dentrax/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Dentrax/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Done",
+    "created_at": "2020-07-13T08:30:21Z",
+    "updated_at": "2020-07-17T06:05:30Z",
+    "html_url": "https://github.com/starship/starship/pull/1463#discussion_r453480849",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/453480849"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1463#discussion_r453480849"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/453480849/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 122,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 124,
+    "side": "RIGHT",
+    "in_reply_to_id": 453061335,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 124,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/453481807",
+    "pull_request_review_id": 447036559,
+    "id": 453481807,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1MzQ4MTgwNw==",
+    "diff_hunk": "@@ -1150,6 +1151,79 @@ trim_at = \".companyname.com\"\n disabled = false\n ```\n \n+## Helm\n+\n+The `helm` module shows the currently installed version of Helm.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `helmfile.yaml` file\n+- The current directory contains a `Chart.yaml` file\n+\n+### Options\n+\n+| Option     | Default                            | Description                                    |\n+| ---------- | ---------------------------------- | ---------------------------------------------- |\n+| `format`   | `\"via [$symbol$version]($style) \"` | The format for the module.                     |\n+| `symbol`   | `\"⎈ \"`                            | A format string representing the symbol of Helm. |\n+| `style`    | `\"bold blue\"`                      | The style for the module.                      |\n+| `disabled` | `false`                            | Disables the `helm` module.                  |\n+\n+### Variables\n+\n+| Variable | Example   | Description                          |\n+| -------- | --------- | ------------------------------------ |\n+| version  | `v3.1.1` | The version of `helm`                  |\n+| symbol   |           | Mirrors the value of option `symbol` |\n+| style\\*  |           | Mirrors the value of option `style`  |\n+\n+\\*: This variable can only be used as a part of a style string\n+\n+### Example\n+\n+```toml\n+# ~/.config/starship.toml\n+\n+[helm]\n+format = \"via [⎈ $version](bold blue) \"\n+```\n+\n+## Hostname",
+    "path": "docs/config/README.md",
+    "commit_id": "3d6d751c2d4b674ca0c8db2e6ca7ac694db2ec80",
+    "original_commit_id": "7541d7b536d362a4ae9aee2c6ee4357e18a60784",
+    "user": {
+      "login": "Dentrax",
+      "id": 16493751,
+      "node_id": "MDQ6VXNlcjE2NDkzNzUx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16493751?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Dentrax",
+      "html_url": "https://github.com/Dentrax",
+      "followers_url": "https://api.github.com/users/Dentrax/followers",
+      "following_url": "https://api.github.com/users/Dentrax/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Dentrax/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Dentrax/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Dentrax/subscriptions",
+      "organizations_url": "https://api.github.com/users/Dentrax/orgs",
+      "repos_url": "https://api.github.com/users/Dentrax/repos",
+      "events_url": "https://api.github.com/users/Dentrax/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Dentrax/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "👍 some copy-paste problems. :) removed.",
+    "created_at": "2020-07-13T08:32:03Z",
+    "updated_at": "2020-07-17T06:05:30Z",
+    "html_url": "https://github.com/starship/starship/pull/1463#discussion_r453481807",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/453481807"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1463#discussion_r453481807"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/453481807/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1154,
+    "original_line": 1154,
+    "side": "RIGHT",
+    "in_reply_to_id": 453062515,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 48,
+    "position": 48,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/456112558",
+    "pull_request_review_id": 450257722,
+    "id": 456112558,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1NjExMjU1OA==",
+    "diff_hunk": "@@ -1114,6 +1115,42 @@ The module will be shown if any of the following conditions are met:\n format = \"via [🏎💨 $version](bold cyan) \"\n ```\n \n+## Helm\n+\n+The `helm` module shows the currently installed version of Helm.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `helmfile.yaml` file\n+- The current directory contains a `Chart.yaml` file\n+\n+### Options\n+\n+| Option     | Default                            | Description                                    |\n+| ---------- | ---------------------------------- | ---------------------------------------------- |\n+| `format`   | `\"via [$symbol$version]($style) \"` | The format for the module.                     |\n+| `symbol`   | `\"⎈ \"`                            | A format string representing the symbol of Helm. |\n+| `style`    | `\"bold white\"`                      | The style for the module.                      |\n+| `disabled` | `false`                            | Disables the `helm` module.                  |\n+\n+### Variables\n+\n+| Variable | Example   | Description                          |\n+| -------- | --------- | ------------------------------------ |\n+| version  | `v3.1.1` | The version of `helm`                  |\n+| symbol   |           | Mirrors the value of option `symbol` |\n+| style\\*  |           | Mirrors the value of option `style`  |\n+\n+\\*: This variable can only be used as a part of a style string\n+\n+### Example\n+\n+```toml\n+# ~/.config/starship.toml\n+\n+[helm]\n+format = \"via [⎈ $version](bold blue) \"",
+    "path": "docs/config/README.md",
+    "commit_id": "3d6d751c2d4b674ca0c8db2e6ca7ac694db2ec80",
+    "original_commit_id": "9a104df5058f39b03d8029a4a7bae95f1f2e054f",
+    "user": {
+      "login": "cappyzawa",
+      "id": 12455284,
+      "node_id": "MDQ6VXNlcjEyNDU1Mjg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12455284?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cappyzawa",
+      "html_url": "https://github.com/cappyzawa",
+      "followers_url": "https://api.github.com/users/cappyzawa/followers",
+      "following_url": "https://api.github.com/users/cappyzawa/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cappyzawa/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cappyzawa/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cappyzawa/subscriptions",
+      "organizations_url": "https://api.github.com/users/cappyzawa/orgs",
+      "repos_url": "https://api.github.com/users/cappyzawa/repos",
+      "events_url": "https://api.github.com/users/cappyzawa/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cappyzawa/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "~Based on https://github.com/starship/starship/pull/1463/files#diff-3009cc0091e546b48a6d01d63548e923R18~\r\n\r\n```suggestion\r\nformat = \"via [⎈ $version](bold white) \"\r\n```\r\n\r\nI made a mistake.\r\nThis was an example.\r\n",
+    "created_at": "2020-07-16T22:25:29Z",
+    "updated_at": "2020-07-17T06:05:30Z",
+    "html_url": "https://github.com/starship/starship/pull/1463#discussion_r456112558",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/456112558"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1463#discussion_r456112558"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/456112558/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1151,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 45,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/456236607",
+    "pull_request_review_id": 450393813,
+    "id": 456236607,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ1NjIzNjYwNw==",
+    "diff_hunk": "@@ -1114,6 +1115,42 @@ The module will be shown if any of the following conditions are met:\n format = \"via [🏎💨 $version](bold cyan) \"\n ```\n \n+## Helm\n+\n+The `helm` module shows the currently installed version of Helm.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `helmfile.yaml` file\n+- The current directory contains a `Chart.yaml` file\n+\n+### Options\n+\n+| Option     | Default                            | Description                                    |\n+| ---------- | ---------------------------------- | ---------------------------------------------- |\n+| `format`   | `\"via [$symbol$version]($style) \"` | The format for the module.                     |\n+| `symbol`   | `\"⎈ \"`                            | A format string representing the symbol of Helm. |\n+| `style`    | `\"bold white\"`                      | The style for the module.                      |\n+| `disabled` | `false`                            | Disables the `helm` module.                  |\n+\n+### Variables\n+\n+| Variable | Example   | Description                          |\n+| -------- | --------- | ------------------------------------ |\n+| version  | `v3.1.1` | The version of `helm`                  |\n+| symbol   |           | Mirrors the value of option `symbol` |\n+| style\\*  |           | Mirrors the value of option `style`  |\n+\n+\\*: This variable can only be used as a part of a style string\n+\n+### Example\n+\n+```toml\n+# ~/.config/starship.toml\n+\n+[helm]\n+format = \"via [⎈ $version](bold blue) \"",
+    "path": "docs/config/README.md",
+    "commit_id": "3d6d751c2d4b674ca0c8db2e6ca7ac694db2ec80",
+    "original_commit_id": "9a104df5058f39b03d8029a4a7bae95f1f2e054f",
+    "user": {
+      "login": "Dentrax",
+      "id": 16493751,
+      "node_id": "MDQ6VXNlcjE2NDkzNzUx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16493751?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Dentrax",
+      "html_url": "https://github.com/Dentrax",
+      "followers_url": "https://api.github.com/users/Dentrax/followers",
+      "following_url": "https://api.github.com/users/Dentrax/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Dentrax/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Dentrax/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Dentrax/subscriptions",
+      "organizations_url": "https://api.github.com/users/Dentrax/orgs",
+      "repos_url": "https://api.github.com/users/Dentrax/repos",
+      "events_url": "https://api.github.com/users/Dentrax/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Dentrax/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Done! :)",
+    "created_at": "2020-07-17T06:05:43Z",
+    "updated_at": "2020-07-17T06:05:43Z",
+    "html_url": "https://github.com/starship/starship/pull/1463#discussion_r456236607",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1463",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/456236607"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1463#discussion_r456236607"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1463"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/456236607/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1151,
+    "side": "RIGHT",
+    "in_reply_to_id": 456112558,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 45,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

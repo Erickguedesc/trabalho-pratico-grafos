@@ -1,0 +1,419 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/438471053",
+    "pull_request_review_id": 428506561,
+    "id": 438471053,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzODQ3MTA1Mw==",
+    "diff_hunk": "@@ -196,6 +207,7 @@ fn get_dotnet_file_type(path: &Path) -> Option<FileType> {\n     match extension_lower.as_ref().map(|f| f.as_ref()) {\n         Some(\"sln\") => return Some(FileType::SolutionFile),\n         Some(\"csproj\") | Some(\"fsproj\") | Some(\"xproj\") => return Some(FileType::ProjectFile),\n+        Some(\"props\") | Some(\"targets\") => return Some(FileType::MsBuildFile),",
+    "path": "src/modules/dotnet.rs",
+    "commit_id": "b9ae7628d6d19233a515994639d031f0cddb4213",
+    "original_commit_id": "55187e5bbb5471907dc1c36c7e5325e5bb700b26",
+    "user": {
+      "login": "daniel-white",
+      "id": 735269,
+      "node_id": "MDQ6VXNlcjczNTI2OQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/735269?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/daniel-white",
+      "html_url": "https://github.com/daniel-white",
+      "followers_url": "https://api.github.com/users/daniel-white/followers",
+      "following_url": "https://api.github.com/users/daniel-white/following{/other_user}",
+      "gists_url": "https://api.github.com/users/daniel-white/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/daniel-white/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/daniel-white/subscriptions",
+      "organizations_url": "https://api.github.com/users/daniel-white/orgs",
+      "repos_url": "https://api.github.com/users/daniel-white/repos",
+      "events_url": "https://api.github.com/users/daniel-white/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/daniel-white/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "the general classification of these files are msbuild specific files, i didn't see a reason to break it out right now",
+    "created_at": "2020-06-11T00:01:44Z",
+    "updated_at": "2020-06-18T18:45:55Z",
+    "html_url": "https://github.com/starship/starship/pull/1303#discussion_r438471053",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1303",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/438471053"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1303#discussion_r438471053"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1303"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/438471053/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 208,
+    "original_line": 208,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 38,
+    "position": 29,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/438471108",
+    "pull_request_review_id": 428506620,
+    "id": 438471108,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzODQ3MTEwOA==",
+    "diff_hunk": "@@ -23,14 +26,22 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     // check for the version using the JSON files\n     let is_dotnet_project = context\n         .try_begin_scan()?\n-        .set_files(&[GLOBAL_JSON_FILE, PROJECT_JSON_FILE])\n+        .set_files(&[\n+            GLOBAL_JSON_FILE,\n+            PROJECT_JSON_FILE,\n+            DIRECTORY_BUILD_PROPS_FILE,\n+            DIRECTORY_BUILD_TARGETS_FILE,\n+            PACKAGES_PROPS_FILE\n+        ])\n         .set_extensions(&[\"sln\", \"csproj\", \"fsproj\", \"xproj\"])\n         .is_match();\n \n     if !is_dotnet_project {\n         return None;\n     }\n \n+    eprintln!(\"File found!!!!!!DW\");",
+    "path": "src/modules/dotnet.rs",
+    "commit_id": "b9ae7628d6d19233a515994639d031f0cddb4213",
+    "original_commit_id": "55187e5bbb5471907dc1c36c7e5325e5bb700b26",
+    "user": {
+      "login": "daniel-white",
+      "id": 735269,
+      "node_id": "MDQ6VXNlcjczNTI2OQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/735269?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/daniel-white",
+      "html_url": "https://github.com/daniel-white",
+      "followers_url": "https://api.github.com/users/daniel-white/followers",
+      "following_url": "https://api.github.com/users/daniel-white/following{/other_user}",
+      "gists_url": "https://api.github.com/users/daniel-white/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/daniel-white/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/daniel-white/subscriptions",
+      "organizations_url": "https://api.github.com/users/daniel-white/orgs",
+      "repos_url": "https://api.github.com/users/daniel-white/repos",
+      "events_url": "https://api.github.com/users/daniel-white/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/daniel-white/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "let me fix that up",
+    "created_at": "2020-06-11T00:01:58Z",
+    "updated_at": "2020-06-18T18:45:55Z",
+    "html_url": "https://github.com/starship/starship/pull/1303#discussion_r438471108",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1303",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/438471108"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1303#discussion_r438471108"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1303"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/438471108/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 43,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 29,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/441960597",
+    "pull_request_review_id": 432931188,
+    "id": 441960597,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0MTk2MDU5Nw==",
+    "diff_hunk": "@@ -12,12 +12,39 @@ fn shows_nothing_in_directory_with_zero_relevant_files() -> io::Result<()> {\n     workspace.close()\n }\n \n+#[test]\n+#[ignore]\n+fn shows_latest_in_directory_with_directory_build_props_file() -> io::Result<()> {\n+    let workspace = create_workspace(false)?;\n+    touch_path(&workspace, \"Directory.Build.props\", None)?;\n+    expect_output(&workspace, \".\", Some(\"•NET v\"))?;\n+    workspace.close()\n+}\n+\n+#[test]\n+#[ignore]\n+fn shows_latest_in_directory_with_directory_build_targets_file() -> io::Result<()> {\n+    let workspace = create_workspace(false)?;\n+    touch_path(&workspace, \"Directory.Build.targets\", None)?;\n+    expect_output(&workspace, \".\", Some(\"•NET v\"))?;\n+    workspace.close()\n+}\n+\n+#[test]\n+#[ignore]\n+fn shows_latest_in_directory_with_packages_props_file() -> io::Result<()> {\n+    let workspace = create_workspace(false)?;\n+    touch_path(&workspace, \"Packages.props\", None)?;\n+    expect_output(&workspace, \".\", Some(\"•NET v\"))?;\n+    workspace.close()\n+}\n+\n #[test]\n #[ignore]\n fn shows_latest_in_directory_with_solution() -> io::Result<()> {\n     let workspace = create_workspace(false)?;\n     touch_path(&workspace, \"solution.sln\", None)?;\n-    expect_output(&workspace, \".\", Some(\"•NET v2.2.402\"))?;\n+    expect_output(&workspace, \".\", Some(\"•NET v\"))?;",
+    "path": "tests/testsuite/dotnet.rs",
+    "commit_id": "b9ae7628d6d19233a515994639d031f0cddb4213",
+    "original_commit_id": "c8a75a428c40baee3ee0309cf3b847116c61b380",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "While I now understand why these changes were necessary/correct, I spent about 30 minutes being very confused over what was going on here.\r\n\r\nCould we leave a comment (either at the top of the dotnet test module or at the first time it's used) explaining why this form is the correct output to expect, and isn't just us breaking the tests so that the version doesn't need to display?\r\n\r\nAlternatively, is there a way we could make this match better, e.g. by employing a regex in testing so that we at least know we're getting valid version numbers on the end and not random strings?",
+    "created_at": "2020-06-18T04:24:04Z",
+    "updated_at": "2020-06-18T18:45:55Z",
+    "html_url": "https://github.com/starship/starship/pull/1303#discussion_r441960597",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1303",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/441960597"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1303#discussion_r441960597"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1303"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/441960597/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 47,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 37,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/442356852",
+    "pull_request_review_id": 433457176,
+    "id": 442356852,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0MjM1Njg1Mg==",
+    "diff_hunk": "@@ -12,12 +12,39 @@ fn shows_nothing_in_directory_with_zero_relevant_files() -> io::Result<()> {\n     workspace.close()\n }\n \n+#[test]\n+#[ignore]\n+fn shows_latest_in_directory_with_directory_build_props_file() -> io::Result<()> {\n+    let workspace = create_workspace(false)?;\n+    touch_path(&workspace, \"Directory.Build.props\", None)?;\n+    expect_output(&workspace, \".\", Some(\"•NET v\"))?;\n+    workspace.close()\n+}\n+\n+#[test]\n+#[ignore]\n+fn shows_latest_in_directory_with_directory_build_targets_file() -> io::Result<()> {\n+    let workspace = create_workspace(false)?;\n+    touch_path(&workspace, \"Directory.Build.targets\", None)?;\n+    expect_output(&workspace, \".\", Some(\"•NET v\"))?;\n+    workspace.close()\n+}\n+\n+#[test]\n+#[ignore]\n+fn shows_latest_in_directory_with_packages_props_file() -> io::Result<()> {\n+    let workspace = create_workspace(false)?;\n+    touch_path(&workspace, \"Packages.props\", None)?;\n+    expect_output(&workspace, \".\", Some(\"•NET v\"))?;\n+    workspace.close()\n+}\n+\n #[test]\n #[ignore]\n fn shows_latest_in_directory_with_solution() -> io::Result<()> {\n     let workspace = create_workspace(false)?;\n     touch_path(&workspace, \"solution.sln\", None)?;\n-    expect_output(&workspace, \".\", Some(\"•NET v2.2.402\"))?;\n+    expect_output(&workspace, \".\", Some(\"•NET v\"))?;",
+    "path": "tests/testsuite/dotnet.rs",
+    "commit_id": "b9ae7628d6d19233a515994639d031f0cddb4213",
+    "original_commit_id": "c8a75a428c40baee3ee0309cf3b847116c61b380",
+    "user": {
+      "login": "daniel-white",
+      "id": 735269,
+      "node_id": "MDQ6VXNlcjczNTI2OQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/735269?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/daniel-white",
+      "html_url": "https://github.com/daniel-white",
+      "followers_url": "https://api.github.com/users/daniel-white/followers",
+      "following_url": "https://api.github.com/users/daniel-white/following{/other_user}",
+      "gists_url": "https://api.github.com/users/daniel-white/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/daniel-white/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/daniel-white/subscriptions",
+      "organizations_url": "https://api.github.com/users/daniel-white/orgs",
+      "repos_url": "https://api.github.com/users/daniel-white/repos",
+      "events_url": "https://api.github.com/users/daniel-white/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/daniel-white/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "i could add a regex to this to make it more robust. i'm dabbling for the first time with rust for this so it'll take me a bit.",
+    "created_at": "2020-06-18T16:34:18Z",
+    "updated_at": "2020-06-18T18:45:55Z",
+    "html_url": "https://github.com/starship/starship/pull/1303#discussion_r442356852",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1303",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/442356852"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1303#discussion_r442356852"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1303"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/442356852/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 47,
+    "side": "RIGHT",
+    "in_reply_to_id": 441960597,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 37,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/442371501",
+    "pull_request_review_id": 433476132,
+    "id": 442371501,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0MjM3MTUwMQ==",
+    "diff_hunk": "@@ -12,12 +12,39 @@ fn shows_nothing_in_directory_with_zero_relevant_files() -> io::Result<()> {\n     workspace.close()\n }\n \n+#[test]\n+#[ignore]\n+fn shows_latest_in_directory_with_directory_build_props_file() -> io::Result<()> {\n+    let workspace = create_workspace(false)?;\n+    touch_path(&workspace, \"Directory.Build.props\", None)?;\n+    expect_output(&workspace, \".\", Some(\"•NET v\"))?;\n+    workspace.close()\n+}\n+\n+#[test]\n+#[ignore]\n+fn shows_latest_in_directory_with_directory_build_targets_file() -> io::Result<()> {\n+    let workspace = create_workspace(false)?;\n+    touch_path(&workspace, \"Directory.Build.targets\", None)?;\n+    expect_output(&workspace, \".\", Some(\"•NET v\"))?;\n+    workspace.close()\n+}\n+\n+#[test]\n+#[ignore]\n+fn shows_latest_in_directory_with_packages_props_file() -> io::Result<()> {\n+    let workspace = create_workspace(false)?;\n+    touch_path(&workspace, \"Packages.props\", None)?;\n+    expect_output(&workspace, \".\", Some(\"•NET v\"))?;\n+    workspace.close()\n+}\n+\n #[test]\n #[ignore]\n fn shows_latest_in_directory_with_solution() -> io::Result<()> {\n     let workspace = create_workspace(false)?;\n     touch_path(&workspace, \"solution.sln\", None)?;\n-    expect_output(&workspace, \".\", Some(\"•NET v2.2.402\"))?;\n+    expect_output(&workspace, \".\", Some(\"•NET v\"))?;",
+    "path": "tests/testsuite/dotnet.rs",
+    "commit_id": "b9ae7628d6d19233a515994639d031f0cddb4213",
+    "original_commit_id": "c8a75a428c40baee3ee0309cf3b847116c61b380",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think you would need to add the regex into the `expect_output` function, so that instead of checking for a substring match, it checks for substring + version-number-looking-thing.\r\n\r\nFortunately, [we already use the regex crate](https://github.com/starship/starship/blob/master/Cargo.toml#L55) so you can just use/import it in the tests.",
+    "created_at": "2020-06-18T16:58:10Z",
+    "updated_at": "2020-06-18T18:45:55Z",
+    "html_url": "https://github.com/starship/starship/pull/1303#discussion_r442371501",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1303",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/442371501"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1303#discussion_r442371501"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1303"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/442371501/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 47,
+    "side": "RIGHT",
+    "in_reply_to_id": 441960597,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 37,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/442429956",
+    "pull_request_review_id": 433553022,
+    "id": 442429956,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0MjQyOTk1Ng==",
+    "diff_hunk": "@@ -12,12 +12,39 @@ fn shows_nothing_in_directory_with_zero_relevant_files() -> io::Result<()> {\n     workspace.close()\n }\n \n+#[test]\n+#[ignore]\n+fn shows_latest_in_directory_with_directory_build_props_file() -> io::Result<()> {\n+    let workspace = create_workspace(false)?;\n+    touch_path(&workspace, \"Directory.Build.props\", None)?;\n+    expect_output(&workspace, \".\", Some(\"•NET v\"))?;\n+    workspace.close()\n+}\n+\n+#[test]\n+#[ignore]\n+fn shows_latest_in_directory_with_directory_build_targets_file() -> io::Result<()> {\n+    let workspace = create_workspace(false)?;\n+    touch_path(&workspace, \"Directory.Build.targets\", None)?;\n+    expect_output(&workspace, \".\", Some(\"•NET v\"))?;\n+    workspace.close()\n+}\n+\n+#[test]\n+#[ignore]\n+fn shows_latest_in_directory_with_packages_props_file() -> io::Result<()> {\n+    let workspace = create_workspace(false)?;\n+    touch_path(&workspace, \"Packages.props\", None)?;\n+    expect_output(&workspace, \".\", Some(\"•NET v\"))?;\n+    workspace.close()\n+}\n+\n #[test]\n #[ignore]\n fn shows_latest_in_directory_with_solution() -> io::Result<()> {\n     let workspace = create_workspace(false)?;\n     touch_path(&workspace, \"solution.sln\", None)?;\n-    expect_output(&workspace, \".\", Some(\"•NET v2.2.402\"))?;\n+    expect_output(&workspace, \".\", Some(\"•NET v\"))?;",
+    "path": "tests/testsuite/dotnet.rs",
+    "commit_id": "b9ae7628d6d19233a515994639d031f0cddb4213",
+    "original_commit_id": "c8a75a428c40baee3ee0309cf3b847116c61b380",
+    "user": {
+      "login": "daniel-white",
+      "id": 735269,
+      "node_id": "MDQ6VXNlcjczNTI2OQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/735269?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/daniel-white",
+      "html_url": "https://github.com/daniel-white",
+      "followers_url": "https://api.github.com/users/daniel-white/followers",
+      "following_url": "https://api.github.com/users/daniel-white/following{/other_user}",
+      "gists_url": "https://api.github.com/users/daniel-white/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/daniel-white/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/daniel-white/subscriptions",
+      "organizations_url": "https://api.github.com/users/daniel-white/orgs",
+      "repos_url": "https://api.github.com/users/daniel-white/repos",
+      "events_url": "https://api.github.com/users/daniel-white/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/daniel-white/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "@chipbuster great thanks! i just refactored to account for a pattern string to being passed to the `expect_output` function. ill get the formatting fixed in a jiffy",
+    "created_at": "2020-06-18T18:44:11Z",
+    "updated_at": "2020-06-18T18:45:55Z",
+    "html_url": "https://github.com/starship/starship/pull/1303#discussion_r442429956",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1303",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/442429956"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1303#discussion_r442429956"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1303"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/442429956/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 47,
+    "side": "RIGHT",
+    "in_reply_to_id": 441960597,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 37,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

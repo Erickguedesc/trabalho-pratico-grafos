@@ -1,0 +1,209 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/872354139",
+    "pull_request_review_id": 972192636,
+    "id": 872354139,
+    "node_id": "PRRC_kwDOCqswNs4z_xFb",
+    "diff_hunk": "@@ -55,28 +55,29 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     // Create pipestatus string\n     let pipestatus = match pipestatus_status {\n-        PipeStatusStatus::Pipe(pipestatus) => pipestatus\n-            .iter()\n-            .map(\n-                |ec| match format_exit_code(ec.as_str(), config.format, None, &config, context) {\n-                    Ok(segments) => segments\n-                        .into_iter()\n-                        .map(|s| s.to_string())\n-                        .collect::<Vec<String>>()\n-                        .join(\"\"),\n-                    Err(_) => \"\".to_string(),\n-                },\n-            )\n-            .collect::<Vec<String>>()\n-            .join(config.pipestatus_separator),\n-        _ => \"\".to_string(),\n+        PipeStatusStatus::Pipe(pipestatus) => {\n+            let format = config.format.trim();",
+    "path": "src/modules/status.rs",
+    "commit_id": "6a4741aecc5cac8b5e2a36cc1959cc30da0c9417",
+    "original_commit_id": "6a4741aecc5cac8b5e2a36cc1959cc30da0c9417",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Previously, the code didn't trim the format string, please remove this line.",
+    "created_at": "2022-05-13T12:38:09Z",
+    "updated_at": "2022-05-13T13:01:24Z",
+    "html_url": "https://github.com/starship/starship/pull/3741#discussion_r872354139",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3741",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/872354139"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3741#discussion_r872354139"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3741"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/872354139/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 59,
+    "original_line": 59,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 20,
+    "position": 20,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/872371178",
+    "pull_request_review_id": 972192636,
+    "id": 872371178,
+    "node_id": "PRRC_kwDOCqswNs4z_1Pq",
+    "diff_hunk": "@@ -55,28 +55,29 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     // Create pipestatus string\n     let pipestatus = match pipestatus_status {\n-        PipeStatusStatus::Pipe(pipestatus) => pipestatus\n-            .iter()\n-            .map(\n-                |ec| match format_exit_code(ec.as_str(), config.format, None, &config, context) {\n-                    Ok(segments) => segments\n-                        .into_iter()\n-                        .map(|s| s.to_string())\n-                        .collect::<Vec<String>>()\n-                        .join(\"\"),\n-                    Err(_) => \"\".to_string(),\n-                },\n-            )\n-            .collect::<Vec<String>>()\n-            .join(config.pipestatus_separator),\n-        _ => \"\".to_string(),\n+        PipeStatusStatus::Pipe(pipestatus) => {\n+            let format = config.format.trim();\n+            let mut pipestatus = pipestatus\n+                .iter()\n+                .flat_map(|ec| {\n+                    let mut segments =\n+                        format_exit_code(ec.as_str(), format, None, &config, context)\n+                            .unwrap_or_else(|e| Segment::from_text(None, e.to_string()));\n+                    segments.append(&mut Segment::from_text(None, config.pipestatus_separator));\n+                    segments\n+                })\n+                .collect::<Vec<Segment>>();",
+    "path": "src/modules/status.rs",
+    "commit_id": "6a4741aecc5cac8b5e2a36cc1959cc30da0c9417",
+    "original_commit_id": "6a4741aecc5cac8b5e2a36cc1959cc30da0c9417",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This didn't happen in the old version, but please store and forward any errors here.",
+    "created_at": "2022-05-13T12:57:05Z",
+    "updated_at": "2022-05-13T13:01:25Z",
+    "html_url": "https://github.com/starship/starship/pull/3741#discussion_r872371178",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3741",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/872371178"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3741#discussion_r872371178"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3741"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/872371178/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 60,
+    "original_start_line": 60,
+    "start_side": "RIGHT",
+    "line": 69,
+    "original_line": 69,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 30,
+    "position": 30,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/872371626",
+    "pull_request_review_id": 972192636,
+    "id": 872371626,
+    "node_id": "PRRC_kwDOCqswNs4z_1Wq",
+    "diff_hunk": "@@ -154,16 +155,10 @@ fn format_exit_code<'a>(\n                 \"common_meaning\" => Ok(common_meaning).transpose(),\n                 \"signal_number\" => Ok(signal_number.as_deref()).transpose(),\n                 \"signal_name\" => Ok(signal_name).transpose(),\n-                \"pipestatus\" => {\n-                    let pipestatus = pipestatus.unwrap_or_else(|| {\n-                        // We might enter this case if pipestatus hasn't\n-                        // been processed yet, which means that it has been\n-                        // set in format\n-                        log::warn!(\"pipestatus variable is only available in pipestatus_format\");\n-                        \"\"\n-                    });",
+    "path": "src/modules/status.rs",
+    "commit_id": "6a4741aecc5cac8b5e2a36cc1959cc30da0c9417",
+    "original_commit_id": "6a4741aecc5cac8b5e2a36cc1959cc30da0c9417",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this still needs to be handled.",
+    "created_at": "2022-05-13T12:57:22Z",
+    "updated_at": "2022-05-13T13:01:25Z",
+    "html_url": "https://github.com/starship/starship/pull/3741#discussion_r872371626",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3741",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/872371626"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3741#discussion_r872371626"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3741"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/872371626/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 158,
+    "original_start_line": 158,
+    "start_side": "LEFT",
+    "line": 164,
+    "original_line": 164,
+    "side": "LEFT",
+    "author_association": "MEMBER",
+    "original_position": 66,
+    "position": 66,
+    "subject_type": "line"
+  }
+]

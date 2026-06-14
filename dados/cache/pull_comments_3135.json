@@ -1,0 +1,1042 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/725442842",
+    "pull_request_review_id": 775549134,
+    "id": 725442842,
+    "node_id": "PRRC_kwDOCqswNs4rPWEa",
+    "diff_hunk": "@@ -0,0 +1,68 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::sudo::SudoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with sudo credential cache status\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"sudo\");\n+    let config = SudoConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    let is_sudo_cached = context.exec_cmd(\"sudo\", &[\"-n\", \"true\"]).is_some();\n+\n+    if !is_sudo_cached {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `sudo`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::{test::ModuleRenderer, utils::CommandOutput};\n+\n+    #[test]\n+    fn test_sudo_not_cached() {\n+        let actual = ModuleRenderer::new(\"sudo\")\n+            .cmd(\n+                \"command -v sudo\",\n+                Some(CommandOutput {\n+                    stdout: \"/usr/bin/sudo\".to_string(),\n+                    stderr: \"\".to_string(),\n+                }),",
+    "path": "src/modules/sudo.rs",
+    "commit_id": "16d9a044b96cf605aea542681f10e6a060bb72d5",
+    "original_commit_id": "3893db245955ee334568f196bfadc9383839e1f0",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think the tests are failing because you are mocking the wrong command here. I think this should be\n\n```suggestion\n            .cmd(\n                \"sudo -n true\",\n                None),\n```\n",
+    "created_at": "2021-10-09T06:33:03Z",
+    "updated_at": "2021-10-09T06:34:46Z",
+    "html_url": "https://github.com/starship/starship/pull/3135#discussion_r725442842",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3135",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/725442842"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3135#discussion_r725442842"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3135"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/725442842/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 52,
+    "original_start_line": 52,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 57,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/725443002",
+    "pull_request_review_id": 775549134,
+    "id": 725443002,
+    "node_id": "PRRC_kwDOCqswNs4rPWG6",
+    "diff_hunk": "@@ -0,0 +1,68 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::sudo::SudoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with sudo credential cache status\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"sudo\");\n+    let config = SudoConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    let is_sudo_cached = context.exec_cmd(\"sudo\", &[\"-n\", \"true\"]).is_some();\n+\n+    if !is_sudo_cached {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `sudo`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::{test::ModuleRenderer, utils::CommandOutput};\n+",
+    "path": "src/modules/sudo.rs",
+    "commit_id": "16d9a044b96cf605aea542681f10e6a060bb72d5",
+    "original_commit_id": "3893db245955ee334568f196bfadc9383839e1f0",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Can you also add a test for when sudo is cached. ",
+    "created_at": "2021-10-09T06:34:29Z",
+    "updated_at": "2021-10-09T06:34:46Z",
+    "html_url": "https://github.com/starship/starship/pull/3135#discussion_r725443002",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3135",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/725443002"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3135#discussion_r725443002"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3135"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/725443002/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 55,
+    "original_line": 48,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 48,
+    "position": 55,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/725459230",
+    "pull_request_review_id": 775560280,
+    "id": 725459230,
+    "node_id": "PRRC_kwDOCqswNs4rPaEe",
+    "diff_hunk": "@@ -0,0 +1,68 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::sudo::SudoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with sudo credential cache status\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"sudo\");\n+    let config = SudoConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    let is_sudo_cached = context.exec_cmd(\"sudo\", &[\"-n\", \"true\"]).is_some();\n+\n+    if !is_sudo_cached {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `sudo`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::{test::ModuleRenderer, utils::CommandOutput};\n+\n+    #[test]\n+    fn test_sudo_not_cached() {\n+        let actual = ModuleRenderer::new(\"sudo\")\n+            .cmd(\n+                \"command -v sudo\",\n+                Some(CommandOutput {\n+                    stdout: \"/usr/bin/sudo\".to_string(),\n+                    stderr: \"\".to_string(),\n+                }),",
+    "path": "src/modules/sudo.rs",
+    "commit_id": "16d9a044b96cf605aea542681f10e6a060bb72d5",
+    "original_commit_id": "3893db245955ee334568f196bfadc9383839e1f0",
+    "user": {
+      "login": "gabrielvictorcf",
+      "id": 64982761,
+      "node_id": "MDQ6VXNlcjY0OTgyNzYx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/64982761?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/gabrielvictorcf",
+      "html_url": "https://github.com/gabrielvictorcf",
+      "followers_url": "https://api.github.com/users/gabrielvictorcf/followers",
+      "following_url": "https://api.github.com/users/gabrielvictorcf/following{/other_user}",
+      "gists_url": "https://api.github.com/users/gabrielvictorcf/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/gabrielvictorcf/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/gabrielvictorcf/subscriptions",
+      "organizations_url": "https://api.github.com/users/gabrielvictorcf/orgs",
+      "repos_url": "https://api.github.com/users/gabrielvictorcf/repos",
+      "events_url": "https://api.github.com/users/gabrielvictorcf/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/gabrielvictorcf/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "You're right, it really was the wrong command. Tested locally and it passes, will be commiting shortly",
+    "created_at": "2021-10-09T09:00:41Z",
+    "updated_at": "2021-10-09T09:00:42Z",
+    "html_url": "https://github.com/starship/starship/pull/3135#discussion_r725459230",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3135",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/725459230"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3135#discussion_r725459230"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3135"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/725459230/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 52,
+    "original_start_line": 52,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 57,
+    "side": "RIGHT",
+    "in_reply_to_id": 725442842,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/725462613",
+    "pull_request_review_id": 775562737,
+    "id": 725462613,
+    "node_id": "PRRC_kwDOCqswNs4rPa5V",
+    "diff_hunk": "@@ -0,0 +1,68 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::sudo::SudoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with sudo credential cache status\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"sudo\");\n+    let config = SudoConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    let is_sudo_cached = context.exec_cmd(\"sudo\", &[\"-n\", \"true\"]).is_some();\n+\n+    if !is_sudo_cached {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `sudo`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::{test::ModuleRenderer, utils::CommandOutput};\n+",
+    "path": "src/modules/sudo.rs",
+    "commit_id": "16d9a044b96cf605aea542681f10e6a060bb72d5",
+    "original_commit_id": "3893db245955ee334568f196bfadc9383839e1f0",
+    "user": {
+      "login": "gabrielvictorcf",
+      "id": 64982761,
+      "node_id": "MDQ6VXNlcjY0OTgyNzYx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/64982761?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/gabrielvictorcf",
+      "html_url": "https://github.com/gabrielvictorcf",
+      "followers_url": "https://api.github.com/users/gabrielvictorcf/followers",
+      "following_url": "https://api.github.com/users/gabrielvictorcf/following{/other_user}",
+      "gists_url": "https://api.github.com/users/gabrielvictorcf/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/gabrielvictorcf/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/gabrielvictorcf/subscriptions",
+      "organizations_url": "https://api.github.com/users/gabrielvictorcf/orgs",
+      "repos_url": "https://api.github.com/users/gabrielvictorcf/repos",
+      "events_url": "https://api.github.com/users/gabrielvictorcf/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/gabrielvictorcf/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Done! Hopefully it works properly.",
+    "created_at": "2021-10-09T09:30:43Z",
+    "updated_at": "2021-10-09T09:30:43Z",
+    "html_url": "https://github.com/starship/starship/pull/3135#discussion_r725462613",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3135",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/725462613"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3135#discussion_r725462613"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3135"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/725462613/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 55,
+    "original_line": 48,
+    "side": "RIGHT",
+    "in_reply_to_id": 725443002,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 48,
+    "position": 55,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/725483165",
+    "pull_request_review_id": 775575763,
+    "id": 725483165,
+    "node_id": "PRRC_kwDOCqswNs4rPf6d",
+    "diff_hunk": "@@ -2939,6 +2940,48 @@ disabled = false\n \n ```\n \n+## Sudo\n+\n+The `sudo` module displays if sudo credentials are currently cached.\n+The module will only be shown if credentials are cached.\n+\n+::: tip\n+\n+This module is disabled by default.\n+To enable it, set `disabled` to `false` in your configuration file.\n+\n+:::\n+\n+### Options\n+\n+| Option     | Default                 | Description                           |\n+| -----------| ------------------------| --------------------------------------|\n+| `format`   | `[as $symbol]($style)\"` | The format of the module              |\n+| `symbol`   | `\"🧙‍ \"`                | The symbol displayed on program error |\n+| `style`    | `\"bold blue\"`           | The style for the module.             |\n+| `disabled` | `true`                  | Disables the `sudo` module.           |",
+    "path": "docs/config/README.md",
+    "commit_id": "16d9a044b96cf605aea542681f10e6a060bb72d5",
+    "original_commit_id": "f726855ad95c786fd403f783f1b4bf4542e1fd2e",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this needs an `os` option (like in custom modules) or an `allow_windows` option because some `sudo` implementations on Windows might cause UAC prompts if they don't support the `-n` flag.\r\nA `binary`/`sudo_binary` option might also be a good idea in case people want to use this module with `doas`.",
+    "created_at": "2021-10-09T12:43:09Z",
+    "updated_at": "2021-10-09T12:43:09Z",
+    "html_url": "https://github.com/starship/starship/pull/3135#discussion_r725483165",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3135",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/725483165"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3135#discussion_r725483165"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3135"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/725483165/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 2962,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 31,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/725485923",
+    "pull_request_review_id": 775577594,
+    "id": 725485923,
+    "node_id": "PRRC_kwDOCqswNs4rPglj",
+    "diff_hunk": "@@ -2939,6 +2940,48 @@ disabled = false\n \n ```\n \n+## Sudo\n+\n+The `sudo` module displays if sudo credentials are currently cached.\n+The module will only be shown if credentials are cached.\n+\n+::: tip\n+\n+This module is disabled by default.\n+To enable it, set `disabled` to `false` in your configuration file.\n+\n+:::\n+\n+### Options\n+\n+| Option     | Default                 | Description                           |\n+| -----------| ------------------------| --------------------------------------|\n+| `format`   | `[as $symbol]($style)\"` | The format of the module              |\n+| `symbol`   | `\"🧙‍ \"`                | The symbol displayed on program error |\n+| `style`    | `\"bold blue\"`           | The style for the module.             |\n+| `disabled` | `true`                  | Disables the `sudo` module.           |",
+    "path": "docs/config/README.md",
+    "commit_id": "16d9a044b96cf605aea542681f10e6a060bb72d5",
+    "original_commit_id": "f726855ad95c786fd403f783f1b4bf4542e1fd2e",
+    "user": {
+      "login": "gabrielvictorcf",
+      "id": 64982761,
+      "node_id": "MDQ6VXNlcjY0OTgyNzYx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/64982761?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/gabrielvictorcf",
+      "html_url": "https://github.com/gabrielvictorcf",
+      "followers_url": "https://api.github.com/users/gabrielvictorcf/followers",
+      "following_url": "https://api.github.com/users/gabrielvictorcf/following{/other_user}",
+      "gists_url": "https://api.github.com/users/gabrielvictorcf/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/gabrielvictorcf/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/gabrielvictorcf/subscriptions",
+      "organizations_url": "https://api.github.com/users/gabrielvictorcf/orgs",
+      "repos_url": "https://api.github.com/users/gabrielvictorcf/repos",
+      "events_url": "https://api.github.com/users/gabrielvictorcf/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/gabrielvictorcf/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Yeah, good catch! Initially i was thinking only on the scope of the original issue, but i agree - more options is better. I'm thinking this warrants a name change of the module too, what are you thoughts on this? Maybe `superuser` or `elevated`?",
+    "created_at": "2021-10-09T13:09:40Z",
+    "updated_at": "2021-10-09T13:09:41Z",
+    "html_url": "https://github.com/starship/starship/pull/3135#discussion_r725485923",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3135",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/725485923"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3135#discussion_r725485923"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3135"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/725485923/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 2962,
+    "side": "RIGHT",
+    "in_reply_to_id": 725483165,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 31,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/725486414",
+    "pull_request_review_id": 775577922,
+    "id": 725486414,
+    "node_id": "PRRC_kwDOCqswNs4rPgtO",
+    "diff_hunk": "@@ -2939,6 +2940,48 @@ disabled = false\n \n ```\n \n+## Sudo\n+\n+The `sudo` module displays if sudo credentials are currently cached.\n+The module will only be shown if credentials are cached.\n+\n+::: tip\n+\n+This module is disabled by default.\n+To enable it, set `disabled` to `false` in your configuration file.\n+\n+:::\n+\n+### Options\n+\n+| Option     | Default                 | Description                           |\n+| -----------| ------------------------| --------------------------------------|\n+| `format`   | `[as $symbol]($style)\"` | The format of the module              |\n+| `symbol`   | `\"🧙‍ \"`                | The symbol displayed on program error |\n+| `style`    | `\"bold blue\"`           | The style for the module.             |\n+| `disabled` | `true`                  | Disables the `sudo` module.           |",
+    "path": "docs/config/README.md",
+    "commit_id": "16d9a044b96cf605aea542681f10e6a060bb72d5",
+    "original_commit_id": "f726855ad95c786fd403f783f1b4bf4542e1fd2e",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'd prefer to keep the name as-is because I think it reflects the main functionality better. I would expect `superuser` or `elevated` to activate if the prompt was being run by a super user and not anything related to `sudo`.",
+    "created_at": "2021-10-09T13:13:49Z",
+    "updated_at": "2021-10-09T13:13:50Z",
+    "html_url": "https://github.com/starship/starship/pull/3135#discussion_r725486414",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3135",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/725486414"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3135#discussion_r725486414"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3135"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/725486414/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 2962,
+    "side": "RIGHT",
+    "in_reply_to_id": 725483165,
+    "author_association": "MEMBER",
+    "original_position": 31,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/725646672",
+    "pull_request_review_id": 775676656,
+    "id": 725646672,
+    "node_id": "PRRC_kwDOCqswNs4rQH1Q",
+    "diff_hunk": "@@ -0,0 +1,134 @@\n+use std::env;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::sudo::SudoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with sudo credential cache status\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"sudo\");\n+    let config = SudoConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    if !config.allow_windows && env::consts::FAMILY == \"windows\" {\n+        return None;\n+    }\n+\n+    let binary = config.binary.trim();\n+    let is_sudo_cached = context.exec_cmd(binary, &[\"-n\", \"true\"]).is_some();\n+\n+    if !is_sudo_cached {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `sudo`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+\n+    #[test]\n+    #[cfg(not(windows))]\n+    fn test_sudo_not_cached() {\n+        let actual = ModuleRenderer::new(\"sudo\")\n+            .cmd(\"sudo -n true\", None)\n+            .config(toml::toml! {\n+                [sudo]\n+                disabled = false\n+            })\n+            .collect();\n+        let expected = None;\n+\n+        assert_eq!(expected, actual);\n+    }\n+\n+    #[test]\n+    #[cfg(not(windows))]\n+    fn test_sudo_cached() {\n+        let actual = ModuleRenderer::new(\"sudo\")\n+            .cmd(\"sudo -v\", None)\n+            .config(toml::toml! {\n+                [sudo]\n+                disabled = false\n+            })\n+            .collect();\n+        let expected = Some(format!(\"{}\", Color::Blue.bold().paint(\"as 🧙‍ \")));\n+\n+        assert_eq!(expected, actual);\n+    }\n+\n+    #[test]\n+    #[cfg(not(windows))]\n+    fn test_doas_not_cached() {\n+        let actual = ModuleRenderer::new(\"sudo\")\n+            .cmd(\"doas -n true\", None)\n+            .config(toml::toml! {\n+                [sudo]\n+                disabled = false\n+                binary = \"doas\"\n+            })\n+            .collect();\n+        let expected = None;\n+\n+        assert_eq!(expected, actual);\n+    }\n+\n+    #[test]\n+    #[cfg(not(windows))]\n+    fn test_doas_cached() {\n+        let actual = ModuleRenderer::new(\"sudo\")\n+            .cmd(\"doas true\", None)",
+    "path": "src/modules/sudo.rs",
+    "commit_id": "16d9a044b96cf605aea542681f10e6a060bb72d5",
+    "original_commit_id": "c87704d52e343ca43cc8589b9fb69a4d19427c5e",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this is missing the `-n` flag:\r\n```suggestion\r\n            .cmd(\"doas -n true\", None)\r\n```",
+    "created_at": "2021-10-10T14:19:38Z",
+    "updated_at": "2021-10-10T14:19:39Z",
+    "html_url": "https://github.com/starship/starship/pull/3135#discussion_r725646672",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3135",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/725646672"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3135#discussion_r725646672"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3135"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/725646672/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 107,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 107,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/729196443",
+    "pull_request_review_id": 780054256,
+    "id": 729196443,
+    "node_id": "PRRC_kwDOCqswNs4rdqeb",
+    "diff_hunk": "@@ -0,0 +1,102 @@\n+use std::env;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::sudo::SudoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with sudo credential cache status\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"sudo\");\n+    let config = SudoConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    if !config.allow_windows && env::consts::FAMILY == \"windows\" {\n+        return None;\n+    }\n+\n+    let is_sudo_cached = context.exec_cmd(\"sudo\", &[\"-n\", \"true\"]).is_some();\n+\n+    if !is_sudo_cached {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `sudo`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+\n+    #[test]\n+    #[cfg(not(windows))]\n+    fn test_sudo_not_cached() {\n+        let actual = ModuleRenderer::new(\"sudo\")\n+            .cmd(\"sudo -k\", None)\n+            .cmd(\"sudo -n true\", None)",
+    "path": "src/modules/sudo.rs",
+    "commit_id": "16d9a044b96cf605aea542681f10e6a060bb72d5",
+    "original_commit_id": "d245b7a920adc93ce947cae4a236898fc665b198",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please mock `sudo -n true` for every test. Please don't need to mock other commands like `sudo -k` or `sudo -v` that will not be executed.",
+    "created_at": "2021-10-14T17:27:36Z",
+    "updated_at": "2021-10-14T17:27:37Z",
+    "html_url": "https://github.com/starship/starship/pull/3135#discussion_r729196443",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3135",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/729196443"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3135#discussion_r729196443"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3135"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/729196443/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 59,
+    "original_line": 61,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 61,
+    "position": 59,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/731160422",
+    "pull_request_review_id": 782375412,
+    "id": 731160422,
+    "node_id": "PRRC_kwDOCqswNs4rlJ9m",
+    "diff_hunk": "@@ -0,0 +1,101 @@\n+use std::env;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::sudo::SudoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with sudo credential cache status\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"sudo\");\n+    let config = SudoConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    if !config.allow_windows && env::consts::FAMILY == \"windows\" {\n+        return None;\n+    }\n+\n+    let is_sudo_cached = context.exec_cmd(\"sudo\", &[\"-n\", \"true\"]).is_some();\n+\n+    if !is_sudo_cached {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `sudo`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+\n+    #[test]\n+    #[cfg(not(windows))]\n+    fn test_sudo_not_cached() {\n+        let actual = ModuleRenderer::new(\"sudo\")\n+            .cmd(\"sudo -n true\", None)\n+            .config(toml::toml! {\n+                [sudo]\n+                disabled = false\n+            })\n+            .collect();\n+        let expected = None;\n+\n+        assert_eq!(expected, actual);\n+    }\n+\n+    #[test]\n+    #[cfg(not(windows))]\n+    fn test_sudo_cached() {\n+        let actual = ModuleRenderer::new(\"sudo\")\n+            .cmd(\"sudo -n true\", None)",
+    "path": "src/modules/sudo.rs",
+    "commit_id": "16d9a044b96cf605aea542681f10e6a060bb72d5",
+    "original_commit_id": "20d03c7b2296baa14ecc8384c1f2790011660184",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "To fix the tests, you need to mock the expected value in every test and not only `None`. In this test, that would be the following:\r\n\r\n```rust\r\nSome(CommandOutput {\r\n    stdout: \"\".to_owned(),\r\n    stderr: \"\".to_owned(),\r\n})\r\n```\r\n\r\n",
+    "created_at": "2021-10-18T17:33:20Z",
+    "updated_at": "2021-10-18T17:33:20Z",
+    "html_url": "https://github.com/starship/starship/pull/3135#discussion_r731160422",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3135",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/731160422"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3135#discussion_r731160422"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3135"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/731160422/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 75,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 75,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/748725065",
+    "pull_request_review_id": 805371108,
+    "id": 748725065,
+    "node_id": "PRRC_kwDOCqswNs4soKNJ",
+    "diff_hunk": "@@ -0,0 +1,107 @@\n+use std::env;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::sudo::SudoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with sudo credential cache status\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"sudo\");\n+    let config = SudoConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    if !config.allow_windows && env::consts::FAMILY == \"windows\" {\n+        return None;\n+    }\n+\n+    let is_sudo_cached = context.exec_cmd(\"sudo\", &[\"-n\", \"true\"]).is_some();\n+\n+    if !is_sudo_cached {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `sudo`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::{test::ModuleRenderer, utils::CommandOutput};\n+    use ansi_term::Color;\n+\n+    #[test]\n+    #[cfg(not(windows))]\n+    fn test_sudo_not_cached() {\n+        let actual = ModuleRenderer::new(\"sudo\")\n+            .cmd(\"sudo -n true\", None)\n+            .config(toml::toml! {\n+                [sudo]\n+                disabled = false\n+            })\n+            .collect();\n+        let expected = None;\n+\n+        assert_eq!(expected, actual);\n+    }\n+\n+    #[test]\n+    #[cfg(not(windows))]",
+    "path": "src/modules/sudo.rs",
+    "commit_id": "16d9a044b96cf605aea542681f10e6a060bb72d5",
+    "original_commit_id": "eea6105d5e48ece1098eaa5fc1ca0d3baf1553fe",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Can you add `allow_windows = true` to all the tests currently blocking windows and allow them to run there, to ensure `allow_windows = true` also works?",
+    "created_at": "2021-11-13T13:41:06Z",
+    "updated_at": "2021-11-13T13:42:14Z",
+    "html_url": "https://github.com/starship/starship/pull/3135#discussion_r748725065",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3135",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/748725065"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3135#discussion_r748725065"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3135"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/748725065/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 72,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 72,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/748725137",
+    "pull_request_review_id": 805371108,
+    "id": 748725137,
+    "node_id": "PRRC_kwDOCqswNs4soKOR",
+    "diff_hunk": "@@ -0,0 +1,107 @@\n+use std::env;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::sudo::SudoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with sudo credential cache status\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"sudo\");\n+    let config = SudoConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    if !config.allow_windows && env::consts::FAMILY == \"windows\" {\n+        return None;\n+    }\n+\n+    let is_sudo_cached = context.exec_cmd(\"sudo\", &[\"-n\", \"true\"]).is_some();\n+\n+    if !is_sudo_cached {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `sudo`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::{test::ModuleRenderer, utils::CommandOutput};\n+    use ansi_term::Color;\n+\n+    #[test]\n+    #[cfg(not(windows))]\n+    fn test_sudo_not_cached() {\n+        let actual = ModuleRenderer::new(\"sudo\")\n+            .cmd(\"sudo -n true\", None)\n+            .config(toml::toml! {\n+                [sudo]\n+                disabled = false\n+            })\n+            .collect();\n+        let expected = None;\n+\n+        assert_eq!(expected, actual);\n+    }\n+\n+    #[test]\n+    #[cfg(not(windows))]\n+    fn test_sudo_cached() {\n+        let actual = ModuleRenderer::new(\"sudo\")\n+            .cmd(\n+                \"sudo -n true\",\n+                Some(CommandOutput {\n+                    stdout: \"\".to_owned(),\n+                    stderr: \"\".to_owned(),\n+                }),\n+            )\n+            .config(toml::toml! {\n+                [sudo]\n+                disabled = false\n+            })\n+            .collect();\n+        let expected = Some(format!(\"{}\", Color::Blue.bold().paint(\"as 🧙 \")));\n+\n+        assert_eq!(expected, actual);\n+    }\n+\n+    #[test]\n+    #[cfg(windows)]\n+    fn test_allow_windows_disabled_blocks_windows() {\n+        let actual = ModuleRenderer::new(\"sudo\")\n+            .cmd(\"sudo -n true\", None)",
+    "path": "src/modules/sudo.rs",
+    "commit_id": "16d9a044b96cf605aea542681f10e6a060bb72d5",
+    "original_commit_id": "eea6105d5e48ece1098eaa5fc1ca0d3baf1553fe",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "For this test to work as intended, `sudo` needs to succeed to check if it's being blocked properly.\r\n\r\n```suggestion\r\n            .cmd(\r\n                \"sudo -n true\",\r\n                Some(CommandOutput {\r\n                    stdout: \"\".to_owned(),\r\n                    stderr: \"\".to_owned(),\r\n                }),\r\n             )\r\n```",
+    "created_at": "2021-11-13T13:41:39Z",
+    "updated_at": "2021-11-13T13:41:58Z",
+    "html_url": "https://github.com/starship/starship/pull/3135#discussion_r748725137",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3135",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/748725137"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3135#discussion_r748725137"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3135"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/748725137/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 96,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 96,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/748848350",
+    "pull_request_review_id": 805466791,
+    "id": 748848350,
+    "node_id": "PRRC_kwDOCqswNs4sooTe",
+    "diff_hunk": "@@ -0,0 +1,115 @@\n+use std::env;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::sudo::SudoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with sudo credential cache status\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"sudo\");\n+    let config = SudoConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    if !config.allow_windows && env::consts::FAMILY == \"windows\" {\n+        return None;\n+    }\n+\n+    let is_sudo_cached = context.exec_cmd(\"sudo\", &[\"-n\", \"true\"]).is_some();\n+\n+    if !is_sudo_cached {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .parse(None)",
+    "path": "src/modules/sudo.rs",
+    "commit_id": "16d9a044b96cf605aea542681f10e6a060bb72d5",
+    "original_commit_id": "d74cf0ed0a5fb0487743e5c36e22a03894ada63f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "To fix compilation:\r\n```suggestion\r\n            .parse(None, Some(context))\r\n```",
+    "created_at": "2021-11-14T12:35:39Z",
+    "updated_at": "2021-11-14T12:37:27Z",
+    "html_url": "https://github.com/starship/starship/pull/3135#discussion_r748848350",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3135",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/748848350"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3135#discussion_r748848350"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3135"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/748848350/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 37,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 37,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/748848395",
+    "pull_request_review_id": 805466791,
+    "id": 748848395,
+    "node_id": "PRRC_kwDOCqswNs4sooUL",
+    "diff_hunk": "@@ -0,0 +1,115 @@\n+use std::env;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::sudo::SudoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with sudo credential cache status\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"sudo\");\n+    let config = SudoConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    if !config.allow_windows && env::consts::FAMILY == \"windows\" {\n+        return None;\n+    }\n+\n+    let is_sudo_cached = context.exec_cmd(\"sudo\", &[\"-n\", \"true\"]).is_some();\n+\n+    if !is_sudo_cached {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `sudo`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::{test::ModuleRenderer, utils::CommandOutput};\n+    use ansi_term::Color;\n+\n+    #[test]\n+    #[cfg(not(windows))]",
+    "path": "src/modules/sudo.rs",
+    "commit_id": "16d9a044b96cf605aea542681f10e6a060bb72d5",
+    "original_commit_id": "d74cf0ed0a5fb0487743e5c36e22a03894ada63f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This test can run on Windows with the `allow_windows = true` change.\r\n\r\n```suggestion\r\n```",
+    "created_at": "2021-11-14T12:35:54Z",
+    "updated_at": "2021-11-14T12:37:27Z",
+    "html_url": "https://github.com/starship/starship/pull/3135#discussion_r748848395",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3135",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/748848395"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3135#discussion_r748848395"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3135"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/748848395/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 57,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/748848525",
+    "pull_request_review_id": 805466791,
+    "id": 748848525,
+    "node_id": "PRRC_kwDOCqswNs4sooWN",
+    "diff_hunk": "@@ -0,0 +1,107 @@\n+use std::env;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::sudo::SudoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with sudo credential cache status\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"sudo\");\n+    let config = SudoConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    if !config.allow_windows && env::consts::FAMILY == \"windows\" {\n+        return None;\n+    }\n+\n+    let is_sudo_cached = context.exec_cmd(\"sudo\", &[\"-n\", \"true\"]).is_some();\n+\n+    if !is_sudo_cached {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `sudo`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::{test::ModuleRenderer, utils::CommandOutput};\n+    use ansi_term::Color;\n+\n+    #[test]\n+    #[cfg(not(windows))]\n+    fn test_sudo_not_cached() {\n+        let actual = ModuleRenderer::new(\"sudo\")\n+            .cmd(\"sudo -n true\", None)\n+            .config(toml::toml! {\n+                [sudo]\n+                disabled = false\n+            })\n+            .collect();\n+        let expected = None;\n+\n+        assert_eq!(expected, actual);\n+    }\n+\n+    #[test]\n+    #[cfg(not(windows))]",
+    "path": "src/modules/sudo.rs",
+    "commit_id": "16d9a044b96cf605aea542681f10e6a060bb72d5",
+    "original_commit_id": "eea6105d5e48ece1098eaa5fc1ca0d3baf1553fe",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Same here:\r\n```suggestion\r\n```",
+    "created_at": "2021-11-14T12:37:14Z",
+    "updated_at": "2021-11-14T12:37:27Z",
+    "html_url": "https://github.com/starship/starship/pull/3135#discussion_r748848525",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3135",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/748848525"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3135#discussion_r748848525"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3135"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/748848525/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 72,
+    "side": "RIGHT",
+    "in_reply_to_id": 748725065,
+    "author_association": "MEMBER",
+    "original_position": 72,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

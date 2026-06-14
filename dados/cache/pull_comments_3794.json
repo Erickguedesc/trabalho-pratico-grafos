@@ -1,0 +1,347 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/846836277",
+    "pull_request_review_id": 937324860,
+    "id": 846836277,
+    "node_id": "PRRC_kwDOCqswNs4yebI1",
+    "diff_hunk": "@@ -326,55 +279,6 @@ fn get_config_path() -> OsString {\n mod tests {\n     use super::*;\n \n-    // This is every possible permutation, 3² = 9.",
+    "path": "src/configure.rs",
+    "commit_id": "1d9f6788c84d4af288c98c9f292d75fae47af685",
+    "original_commit_id": "1d9f6788c84d4af288c98c9f292d75fae47af685",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please migrate all these test instead of deleting them.",
+    "created_at": "2022-04-10T20:14:40Z",
+    "updated_at": "2022-04-21T19:12:09Z",
+    "html_url": "https://github.com/starship/starship/pull/3794#discussion_r846836277",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3794",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/846836277"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3794#discussion_r846836277"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3794"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/846836277/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 329,
+    "original_line": 329,
+    "side": "LEFT",
+    "author_association": "MEMBER",
+    "original_position": 74,
+    "position": 74,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/855510451",
+    "pull_request_review_id": 937324860,
+    "id": 855510451,
+    "node_id": "PRRC_kwDOCqswNs4y_g2z",
+    "diff_hunk": "@@ -96,6 +102,65 @@ impl PartialEq for CommandOutput {\n     }\n }\n \n+/// Allow the user to edit the given buffer in the system editor\n+pub fn edit_temp(buffer: String) -> Result<String> {\n+    let mut file = tempfile::NamedTempFile::new()?;\n+    file.write_all(buffer.as_bytes())?;\n+\n+    let file = file.into_temp_path();\n+    let fp = file.as_os_str().to_os_string();\n+    edit(fp);\n+    let buffer = read_file(&file)?;\n+\n+    file.close()?;\n+    Ok(buffer)\n+}\n+\n+/// Open the given path in the system editor\n+pub fn edit(path: OsString) {\n+    let editor_cmd = shell_words::split(&get_editor()).expect(\"Unmatched quotes found in $EDITOR.\");\n+\n+    let command = create_command(&editor_cmd[0])\n+        .expect(\"Unable to locate editor in $PATH.\")\n+        .stdin(Stdio::inherit())\n+        .stdout(Stdio::inherit())\n+        .stderr(Stdio::inherit())\n+        .args(&editor_cmd[1..])\n+        .arg(path)\n+        .status();",
+    "path": "src/utils.rs",
+    "commit_id": "1d9f6788c84d4af288c98c9f292d75fae47af685",
+    "original_commit_id": "1d9f6788c84d4af288c98c9f292d75fae47af685",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'd prefer improving error handling on editing before going forward with this change (https://github.com/starship/starship/issues/3758 #3766)",
+    "created_at": "2022-04-21T19:02:40Z",
+    "updated_at": "2022-04-21T19:12:09Z",
+    "html_url": "https://github.com/starship/starship/pull/3794#discussion_r855510451",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3794",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/855510451"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3794#discussion_r855510451"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3794"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/855510451/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 123,
+    "original_start_line": 123,
+    "start_side": "RIGHT",
+    "line": 130,
+    "original_line": 130,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 53,
+    "position": 53,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/855511269",
+    "pull_request_review_id": 937324860,
+    "id": 855511269,
+    "node_id": "PRRC_kwDOCqswNs4y_hDl",
+    "diff_hunk": "@@ -17,7 +17,27 @@ pub fn create() {\n         starship_config: get_starship_config(),\n     };\n \n-    let link = make_github_issue_link(environment);\n+    let report = get_report(environment);\n+\n+    if print {\n+        println!(\"{}\", report);\n+        return;\n+    }\n+\n+    // Drop to system editor in a temp file\n+    let report = match utils::edit_temp(report) {\n+        Ok(r) => r,\n+        Err(e) => {\n+            eprintln!(\"Error editing bug report: {}\", e);\n+            return;\n+        }\n+    };\n+\n+    if report.is_empty() {\n+        return;\n+    };",
+    "path": "src/bug_report.rs",
+    "commit_id": "1d9f6788c84d4af288c98c9f292d75fae47af685",
+    "original_commit_id": "1d9f6788c84d4af288c98c9f292d75fae47af685",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please print a message before exiting, or preferably just accept empty reports?",
+    "created_at": "2022-04-21T19:03:54Z",
+    "updated_at": "2022-04-21T19:12:09Z",
+    "html_url": "https://github.com/starship/starship/pull/3794#discussion_r855511269",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3794",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/855511269"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3794#discussion_r855511269"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3794"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/855511269/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 36,
+    "original_start_line": 36,
+    "start_side": "RIGHT",
+    "line": 38,
+    "original_line": 38,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 32,
+    "position": 32,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/855511981",
+    "pull_request_review_id": 937324860,
+    "id": 855511981,
+    "node_id": "PRRC_kwDOCqswNs4y_hOt",
+    "diff_hunk": "@@ -17,7 +17,27 @@ pub fn create() {\n         starship_config: get_starship_config(),\n     };\n \n-    let link = make_github_issue_link(environment);\n+    let report = get_report(environment);\n+\n+    if print {\n+        println!(\"{}\", report);\n+        return;\n+    }\n+\n+    // Drop to system editor in a temp file\n+    let report = match utils::edit_temp(report) {\n+        Ok(r) => r,\n+        Err(e) => {\n+            eprintln!(\"Error editing bug report: {}\", e);\n+            return;\n+        }\n+    };",
+    "path": "src/bug_report.rs",
+    "commit_id": "1d9f6788c84d4af288c98c9f292d75fae47af685",
+    "original_commit_id": "1d9f6788c84d4af288c98c9f292d75fae47af685",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Perhaps ask for confirmation before sending? Some editors might not wait for exit like `code` without `--wait`.\r\n\r\nA flag for skipping editing in general might be good too (and reference it in relevant error messages). ",
+    "created_at": "2022-04-21T19:05:01Z",
+    "updated_at": "2022-04-21T19:12:09Z",
+    "html_url": "https://github.com/starship/starship/pull/3794#discussion_r855511981",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3794",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/855511981"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3794#discussion_r855511981"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3794"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/855511981/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 28,
+    "original_start_line": 28,
+    "start_side": "RIGHT",
+    "line": 34,
+    "original_line": 34,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 28,
+    "position": 28,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/855515005",
+    "pull_request_review_id": 937324860,
+    "id": 855515005,
+    "node_id": "PRRC_kwDOCqswNs4y_h99",
+    "diff_hunk": "@@ -96,6 +102,65 @@ impl PartialEq for CommandOutput {\n     }\n }\n \n+/// Allow the user to edit the given buffer in the system editor\n+pub fn edit_temp(buffer: String) -> Result<String> {\n+    let mut file = tempfile::NamedTempFile::new()?;\n+    file.write_all(buffer.as_bytes())?;\n+\n+    let file = file.into_temp_path();\n+    let fp = file.as_os_str().to_os_string();\n+    edit(fp);\n+    let buffer = read_file(&file)?;\n+\n+    file.close()?;\n+    Ok(buffer)\n+}\n+\n+/// Open the given path in the system editor\n+pub fn edit(path: OsString) {",
+    "path": "src/utils.rs",
+    "commit_id": "1d9f6788c84d4af288c98c9f292d75fae47af685",
+    "original_commit_id": "1d9f6788c84d4af288c98c9f292d75fae47af685",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Why not `&Path`?",
+    "created_at": "2022-04-21T19:09:02Z",
+    "updated_at": "2022-04-21T19:12:09Z",
+    "html_url": "https://github.com/starship/starship/pull/3794#discussion_r855515005",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3794",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/855515005"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3794#discussion_r855515005"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3794"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/855515005/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 120,
+    "original_line": 120,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 43,
+    "position": 43,
+    "subject_type": "line"
+  }
+]

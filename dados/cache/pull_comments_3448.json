@@ -1,0 +1,210 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/785480945",
+    "pull_request_review_id": 853708839,
+    "id": 785480945,
+    "node_id": "PRRC_kwDOCqswNs4u0Xzx",
+    "diff_hunk": "@@ -169,148 +169,230 @@\n \n - A [Nerd Font](https://www.nerdfonts.com/) installed and enabled in your terminal (for example, try the [Fira Code Nerd Font](https://www.nerdfonts.com/font-downloads)).\n \n-### Getting Started\n+### Step 1. Install Starship\n \n-**Note**: due to the proliferation of different platforms, only a subset of supported platforms are\n-shown below. Can't see yours? Have a look at the [extra platform instructions](https://starship.rs/installing/).\n+Select your operating system from the list below to view installation instructions:\n \n-1. Install the **starship** binary:\n+<details>\n+<summary>Android</summary>\n \n-   #### Install Latest Version\n+Install Starship using any of the following package managers:\n \n-   ##### From prebuilt binary, with Shell:\n+| Repository | Instructions           |\n+| ---------- | ---------------------- |\n+| [Termux]   | `pkg install starship` |\n \n-   ```sh\n-   sh -c \"$(curl -fsSL https://starship.rs/install.sh)\"\n-   ```\n+</details>\n \n-   To update the Starship itself, rerun the above script. It will replace the current version without touching Starship's configuration.\n+<details>\n+<summary>BSD</summary>\n \n-   **Note** - The defaults of the install script can be overridden see the built-in help.\n+Install Starship using any of the following package managers:\n \n-   ```sh\n-   sh -c \"$(curl -fsSL https://starship.rs/install.sh)\" -- --help\n-   ```\n+#### Install via package manager\n \n-   #### Install via Package Manager\n+| Distribution | Repository      | Instructions             |\n+| ------------ | --------------- | ------------------------ |\n+| **_Any_**    | **[crates.io]** | `cargo install starship` |\n+| FreeBSD      | [FreshPorts]    | `pkg install starship`   |\n+| NetBSD       | [pkgsrc]        | `pkgin install starship` |\n \n-   ##### With [Homebrew](https://brew.sh/):\n+</details>\n \n-   ```sh\n-   brew install starship\n-   ```\n+<details>\n+<summary>Linux</summary>\n \n-   ##### With [Scoop](https://scoop.sh):\n+Install the latest version for your system:\n \n-   ```powershell\n-   scoop install starship\n-   ```\n+```sh\n+sh -c \"$(curl -fsSL https://starship.rs/install.sh)\"\n+```\n \n-2. Add the init script to your shell's config file:\n+Alternatively, install Starship using any of the following package managers:\n \n-   #### Bash\n+| Distribution       | Repository              | Instructions                                                  |\n+| ------------------ | ----------------------- | ------------------------------------------------------------- |\n+| **_Any_**          | **[crates.io]**         | `cargo install starship`                                      |\n+| _Any_              | [conda-forge]           | `conda install -c conda-forge starship`                       |\n+| _Any_              | [Linuxbrew]             | `brew install starship`                                       |\n+| Alpine Linux 3.13+ | [Alpine Linux Packages] | `apk add starship`                                            |\n+| Arch Linux         | [Arch Linux Community]  | `pacman -S starship`                                          |\n+| CentOS 7+          | [Copr]                  | `dnf copr enable atim/starship` <br /> `dnf install starship` |\n+| Fedora 31+         | [Fedora Packages]       | `dnf install starship`                                        |\n+| NixOS              | [nixpkgs]               | `nix-env -iA nixos.starship`                                  |\n+| Gentoo             | [Gentoo Packages]       | `emerge app-shells/starship`                                  |\n+| Manjaro            |                         | `pacman -S starship`                                          |\n+| NixOS              | [nixpkgs]               | `nix-env -iA nixpkgs.starship`                                |\n+| Void Linux         | [Void Linux Packages]   | `xbps-install -S starship`                                    |\n \n-   Add the following to the end of `~/.bashrc`:\n+</details>\n \n-   ```sh\n-   # ~/.bashrc\n+<details>\n+<summary>macOS</summary>\n \n-   eval \"$(starship init bash)\"\n-   ```\n+Install the latest version for your system:\n \n-   #### Fish\n+```sh\n+sh -c \"$(curl -fsSL https://starship.rs/install.sh)\"\n+```\n \n-   Add the following to the end of `~/.config/fish/config.fish`:\n+Alternatively, install Starship using any of the following package managers:\n \n-   ```sh\n-   # ~/.config/fish/config.fish\n+| Repository      | Instructions                            |\n+| --------------- | --------------------------------------- |\n+| **[crates.io]** | `cargo install starship`                |\n+| [conda-forge]   | `conda install -c conda-forge starship` |\n+| [Homebrew]      | `brew install starship`                 |\n+| [MacPorts]      | `port install starship`                 |\n \n-   starship init fish | source\n-   ```\n+</details>\n \n-   #### Zsh\n+<details>\n+<summary>Windows</summary>\n \n-   Add the following to the end of `~/.zshrc`:\n+Install Starship using any of the following package managers:\n \n-   ```sh\n-   # ~/.zshrc\n+| Repository      | Instructions                            |\n+| --------------- | --------------------------------------- |\n+| **[crates.io]** | `cargo install starship`                |\n+| [Chocolatey]    | `choco install starship`                |\n+| [conda-forge]   | `conda install -c conda-forge starship` |\n+| [Scoop]         | `scoop install starship`                |\n \n-   eval \"$(starship init zsh)\"\n-   ```\n+</details>\n \n-   #### PowerShell\n+### Step 2. Setup your shell to use Starship\n \n-   Add the following to the end of `Microsoft.PowerShell_profile.ps1`. You can check the location of this file by querying the `$PROFILE` variable in PowerShell. Typically the path is `~\\Documents\\PowerShell\\Microsoft.PowerShell_profile.ps1` or `~/.config/powershell/Microsoft.PowerShell_profile.ps1` on -Nix.\n+Configure your shell to initialize starship. Select yours from the list below:\n \n-   ```powershell\n-   Invoke-Expression (&starship init powershell)\n-   ```\n+<details>\n+<summary>Bash</summary>\n \n-   #### Ion\n+Add the following to the end of `~/.bashrc`:\n \n-   Add the following to the end of `~/.config/ion/initrc`:\n+```sh\n+eval \"$(starship init bash)\"\n+```\n \n-   ```sh\n-   # ~/.config/ion/initrc\n+</details>\n \n-   eval $(starship init ion)\n-   ```\n+<details>\n+<summary>Cmd</summary>\n \n-   #### Elvish\n+You need to use [Clink](https://chrisant996.github.io/clink/clink.html) (v1.2.30+) with Cmd.\n+Create a file at this path `%LocalAppData%\\clink\\starship.lua` with the following contents:\n \n-   **Warning** Only elvish v0.17 or higher is supported.\n-   Add the following to the end of `~/.elvish/rc.elv`:\n+```lua\n+load(io.popen('starship init cmd'):read(\"*a\"))()\n+```\n \n-   ```sh\n-   # ~/.elvish/rc.elv\n+</details>\n \n-   eval (starship init elvish)\n-   ```\n+<details>\n+<summary>Elvish</summary>\n \n-   #### Tcsh\n+Add the following to the end of `~/.elvish/rc.elv`:\n \n-   Add the following to the end of `~/.tcshrc`:\n+```sh\n+eval (starship init elvish)\n+```\n \n-   ```sh\n-   # ~/.tcshrc\n+Note: Only Elvish v0.17+ is supported\n \n-   eval `starship init tcsh`\n-   ```\n+</details>\n \n-   #### Xonsh\n+<details>\n+<summary>Fish</summary>\n \n-   Add the following to the end of `~/.xonshrc`:\n+Add the following to the end of `~/.config/fish/config.fish`:\n \n-   ```sh\n-   # ~/.xonshrc\n+```fish\n+starship init fish | source\n+```\n \n-   execx($(starship init xonsh))\n-   ```\n+</details>\n \n-   #### Cmd\n+<details>\n+<summary>Ion</summary>\n \n-   You need to use [Clink](https://chrisant996.github.io/clink/clink.html) (v1.2.30+) with Cmd. Add the following to a file `starship.lua` and place this file in Clink scripts directory:\n+Add the following to the end of `~/.config/ion/initrc`:\n \n-   ```lua\n-   -- starship.lua\n+```sh\n+eval $(starship init ion)\n+```\n \n-   load(io.popen('starship init cmd'):read(\"*a\"))()\n-   ```\n+</details>\n \n-   #### Nushell\n+<details>\n+<summary>Nushell</summary>\n \n-   **Warning** This will change in the future. Only nu version v0.33 or higher is supported.\n-   Add the following to your nu config file. You can check the location of this\n-   file by running `config path` in nu.\n+Add the following to the end of your Nushell configuration (find it by running `config path`):\n \n-   ```toml\n-   startup = [\n-    \"mkdir ~/.cache/starship\",\n-    \"starship init nu | save ~/.cache/starship/init.nu\",\n-    \"source ~/.cache/starship/init.nu\"\n-   ]\n-   prompt = \"starship_prompt\"\n-   ```\n+```toml\n+startup = [\n+ \"mkdir ~/.cache/starship\",\n+ \"starship init nu | save ~/.cache/starship/init.nu\",\n+ \"source ~/.cache/starship/init.nu\"\n+]\n+prompt = \"starship_prompt\"\n+```\n+\n+</details>\n+\n+<details>\n+<summary>PowerShell</summary>\n+\n+Add the following to the end of your PowerShell configuration (find it by running `echo $profile`):",
+    "path": "README.md",
+    "commit_id": "ed398147a826badef6709eda123d875ae3ecfcf7",
+    "original_commit_id": "c6a5025fa27cba54fbf08c381e29fa0812827d85",
+    "user": {
+      "login": "rashil2000",
+      "id": 46838874,
+      "node_id": "MDQ6VXNlcjQ2ODM4ODc0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/46838874?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rashil2000",
+      "html_url": "https://github.com/rashil2000",
+      "followers_url": "https://api.github.com/users/rashil2000/followers",
+      "following_url": "https://api.github.com/users/rashil2000/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rashil2000/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rashil2000/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rashil2000/subscriptions",
+      "organizations_url": "https://api.github.com/users/rashil2000/orgs",
+      "repos_url": "https://api.github.com/users/rashil2000/repos",
+      "events_url": "https://api.github.com/users/rashil2000/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rashil2000/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\nAdd the following to the end of your PowerShell configuration (find it by running `$PROFILE`):\r\n```\r\n\r\nMinor nit: `echo` command in PowerShell is implicit. Variables can be directly queried. See more - https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/write-output?view=powershell-7.2#description",
+    "created_at": "2022-01-16T18:50:07Z",
+    "updated_at": "2022-01-16T18:50:07Z",
+    "html_url": "https://github.com/starship/starship/pull/3448#discussion_r785480945",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3448",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/785480945"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3448#discussion_r785480945"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3448"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/785480945/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 345,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 267,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/785481777",
+    "pull_request_review_id": 853709493,
+    "id": 785481777,
+    "node_id": "PRRC_kwDOCqswNs4u0YAx",
+    "diff_hunk": "@@ -169,148 +169,230 @@\n \n - A [Nerd Font](https://www.nerdfonts.com/) installed and enabled in your terminal (for example, try the [Fira Code Nerd Font](https://www.nerdfonts.com/font-downloads)).\n \n-### Getting Started\n+### Step 1. Install Starship\n \n-**Note**: due to the proliferation of different platforms, only a subset of supported platforms are\n-shown below. Can't see yours? Have a look at the [extra platform instructions](https://starship.rs/installing/).\n+Select your operating system from the list below to view installation instructions:\n \n-1. Install the **starship** binary:\n+<details>\n+<summary>Android</summary>\n \n-   #### Install Latest Version\n+Install Starship using any of the following package managers:\n \n-   ##### From prebuilt binary, with Shell:\n+| Repository | Instructions           |\n+| ---------- | ---------------------- |\n+| [Termux]   | `pkg install starship` |\n \n-   ```sh\n-   sh -c \"$(curl -fsSL https://starship.rs/install.sh)\"\n-   ```\n+</details>\n \n-   To update the Starship itself, rerun the above script. It will replace the current version without touching Starship's configuration.\n+<details>\n+<summary>BSD</summary>\n \n-   **Note** - The defaults of the install script can be overridden see the built-in help.\n+Install Starship using any of the following package managers:\n \n-   ```sh\n-   sh -c \"$(curl -fsSL https://starship.rs/install.sh)\" -- --help\n-   ```\n+#### Install via package manager\n \n-   #### Install via Package Manager\n+| Distribution | Repository      | Instructions             |\n+| ------------ | --------------- | ------------------------ |\n+| **_Any_**    | **[crates.io]** | `cargo install starship` |\n+| FreeBSD      | [FreshPorts]    | `pkg install starship`   |\n+| NetBSD       | [pkgsrc]        | `pkgin install starship` |\n \n-   ##### With [Homebrew](https://brew.sh/):\n+</details>\n \n-   ```sh\n-   brew install starship\n-   ```\n+<details>\n+<summary>Linux</summary>\n \n-   ##### With [Scoop](https://scoop.sh):\n+Install the latest version for your system:\n \n-   ```powershell\n-   scoop install starship\n-   ```\n+```sh\n+sh -c \"$(curl -fsSL https://starship.rs/install.sh)\"\n+```\n \n-2. Add the init script to your shell's config file:\n+Alternatively, install Starship using any of the following package managers:\n \n-   #### Bash\n+| Distribution       | Repository              | Instructions                                                  |\n+| ------------------ | ----------------------- | ------------------------------------------------------------- |\n+| **_Any_**          | **[crates.io]**         | `cargo install starship`                                      |\n+| _Any_              | [conda-forge]           | `conda install -c conda-forge starship`                       |\n+| _Any_              | [Linuxbrew]             | `brew install starship`                                       |\n+| Alpine Linux 3.13+ | [Alpine Linux Packages] | `apk add starship`                                            |\n+| Arch Linux         | [Arch Linux Community]  | `pacman -S starship`                                          |\n+| CentOS 7+          | [Copr]                  | `dnf copr enable atim/starship` <br /> `dnf install starship` |\n+| Fedora 31+         | [Fedora Packages]       | `dnf install starship`                                        |\n+| NixOS              | [nixpkgs]               | `nix-env -iA nixos.starship`                                  |\n+| Gentoo             | [Gentoo Packages]       | `emerge app-shells/starship`                                  |\n+| Manjaro            |                         | `pacman -S starship`                                          |\n+| NixOS              | [nixpkgs]               | `nix-env -iA nixpkgs.starship`                                |\n+| Void Linux         | [Void Linux Packages]   | `xbps-install -S starship`                                    |\n \n-   Add the following to the end of `~/.bashrc`:\n+</details>\n \n-   ```sh\n-   # ~/.bashrc\n+<details>\n+<summary>macOS</summary>\n \n-   eval \"$(starship init bash)\"\n-   ```\n+Install the latest version for your system:\n \n-   #### Fish\n+```sh\n+sh -c \"$(curl -fsSL https://starship.rs/install.sh)\"\n+```\n \n-   Add the following to the end of `~/.config/fish/config.fish`:\n+Alternatively, install Starship using any of the following package managers:\n \n-   ```sh\n-   # ~/.config/fish/config.fish\n+| Repository      | Instructions                            |\n+| --------------- | --------------------------------------- |\n+| **[crates.io]** | `cargo install starship`                |\n+| [conda-forge]   | `conda install -c conda-forge starship` |\n+| [Homebrew]      | `brew install starship`                 |\n+| [MacPorts]      | `port install starship`                 |\n \n-   starship init fish | source\n-   ```\n+</details>\n \n-   #### Zsh\n+<details>\n+<summary>Windows</summary>\n \n-   Add the following to the end of `~/.zshrc`:\n+Install Starship using any of the following package managers:\n \n-   ```sh\n-   # ~/.zshrc\n+| Repository      | Instructions                            |\n+| --------------- | --------------------------------------- |\n+| **[crates.io]** | `cargo install starship`                |\n+| [Chocolatey]    | `choco install starship`                |\n+| [conda-forge]   | `conda install -c conda-forge starship` |\n+| [Scoop]         | `scoop install starship`                |\n \n-   eval \"$(starship init zsh)\"\n-   ```\n+</details>\n \n-   #### PowerShell\n+### Step 2. Setup your shell to use Starship\n \n-   Add the following to the end of `Microsoft.PowerShell_profile.ps1`. You can check the location of this file by querying the `$PROFILE` variable in PowerShell. Typically the path is `~\\Documents\\PowerShell\\Microsoft.PowerShell_profile.ps1` or `~/.config/powershell/Microsoft.PowerShell_profile.ps1` on -Nix.\n+Configure your shell to initialize starship. Select yours from the list below:\n \n-   ```powershell\n-   Invoke-Expression (&starship init powershell)\n-   ```\n+<details>\n+<summary>Bash</summary>\n \n-   #### Ion\n+Add the following to the end of `~/.bashrc`:\n \n-   Add the following to the end of `~/.config/ion/initrc`:\n+```sh\n+eval \"$(starship init bash)\"\n+```\n \n-   ```sh\n-   # ~/.config/ion/initrc\n+</details>\n \n-   eval $(starship init ion)\n-   ```\n+<details>\n+<summary>Cmd</summary>\n \n-   #### Elvish\n+You need to use [Clink](https://chrisant996.github.io/clink/clink.html) (v1.2.30+) with Cmd.\n+Create a file at this path `%LocalAppData%\\clink\\starship.lua` with the following contents:\n \n-   **Warning** Only elvish v0.17 or higher is supported.\n-   Add the following to the end of `~/.elvish/rc.elv`:\n+```lua\n+load(io.popen('starship init cmd'):read(\"*a\"))()\n+```\n \n-   ```sh\n-   # ~/.elvish/rc.elv\n+</details>\n \n-   eval (starship init elvish)\n-   ```\n+<details>\n+<summary>Elvish</summary>\n \n-   #### Tcsh\n+Add the following to the end of `~/.elvish/rc.elv`:\n \n-   Add the following to the end of `~/.tcshrc`:\n+```sh\n+eval (starship init elvish)\n+```\n \n-   ```sh\n-   # ~/.tcshrc\n+Note: Only Elvish v0.17+ is supported\n \n-   eval `starship init tcsh`\n-   ```\n+</details>\n \n-   #### Xonsh\n+<details>\n+<summary>Fish</summary>\n \n-   Add the following to the end of `~/.xonshrc`:\n+Add the following to the end of `~/.config/fish/config.fish`:\n \n-   ```sh\n-   # ~/.xonshrc\n+```fish\n+starship init fish | source\n+```\n \n-   execx($(starship init xonsh))\n-   ```\n+</details>\n \n-   #### Cmd\n+<details>\n+<summary>Ion</summary>\n \n-   You need to use [Clink](https://chrisant996.github.io/clink/clink.html) (v1.2.30+) with Cmd. Add the following to a file `starship.lua` and place this file in Clink scripts directory:\n+Add the following to the end of `~/.config/ion/initrc`:\n \n-   ```lua\n-   -- starship.lua\n+```sh\n+eval $(starship init ion)\n+```\n \n-   load(io.popen('starship init cmd'):read(\"*a\"))()\n-   ```\n+</details>\n \n-   #### Nushell\n+<details>\n+<summary>Nushell</summary>\n \n-   **Warning** This will change in the future. Only nu version v0.33 or higher is supported.\n-   Add the following to your nu config file. You can check the location of this\n-   file by running `config path` in nu.\n+Add the following to the end of your Nushell configuration (find it by running `config path`):\n \n-   ```toml\n-   startup = [\n-    \"mkdir ~/.cache/starship\",\n-    \"starship init nu | save ~/.cache/starship/init.nu\",\n-    \"source ~/.cache/starship/init.nu\"\n-   ]\n-   prompt = \"starship_prompt\"\n-   ```\n+```toml\n+startup = [\n+ \"mkdir ~/.cache/starship\",\n+ \"starship init nu | save ~/.cache/starship/init.nu\",\n+ \"source ~/.cache/starship/init.nu\"\n+]\n+prompt = \"starship_prompt\"\n+```\n+\n+</details>\n+\n+<details>\n+<summary>PowerShell</summary>\n+\n+Add the following to the end of your PowerShell configuration (find it by running `echo $profile`):",
+    "path": "README.md",
+    "commit_id": "ed398147a826badef6709eda123d875ae3ecfcf7",
+    "original_commit_id": "c6a5025fa27cba54fbf08c381e29fa0812827d85",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ooh, thanks for the heads up, Rashil! 👍",
+    "created_at": "2022-01-16T18:58:02Z",
+    "updated_at": "2022-01-16T18:58:02Z",
+    "html_url": "https://github.com/starship/starship/pull/3448#discussion_r785481777",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3448",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/785481777"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3448#discussion_r785481777"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3448"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/785481777/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 345,
+    "side": "RIGHT",
+    "in_reply_to_id": 785480945,
+    "author_association": "MEMBER",
+    "original_position": 267,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/785482648",
+    "pull_request_review_id": 853710265,
+    "id": 785482648,
+    "node_id": "PRRC_kwDOCqswNs4u0YOY",
+    "diff_hunk": "@@ -339,3 +421,19 @@ Please check out these previous works that helped inspire the creation of starsh\n \n Copyright © 2019-present, [Starship Contributors](https://github.com/starship/starship/graphs/contributors).<br>\n This project is [ISC](https://github.com/starship/starship/blob/master/LICENSE) licensed.\n+\n+[alpine linux packages]: https://pkgs.alpinelinux.org/packages?name=starship\n+[arch linux community]: https://archlinux.org/packages/community/x86_64/starship\n+[conda-forge]: https://anaconda.org/conda-forge/starship",
+    "path": "README.md",
+    "commit_id": "ed398147a826badef6709eda123d875ae3ecfcf7",
+    "original_commit_id": "156fd716ce73c259ab75daac0210b5e94645254c",
+    "user": {
+      "login": "rashil2000",
+      "id": 46838874,
+      "node_id": "MDQ6VXNlcjQ2ODM4ODc0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/46838874?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rashil2000",
+      "html_url": "https://github.com/rashil2000",
+      "followers_url": "https://api.github.com/users/rashil2000/followers",
+      "following_url": "https://api.github.com/users/rashil2000/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rashil2000/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rashil2000/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rashil2000/subscriptions",
+      "organizations_url": "https://api.github.com/users/rashil2000/orgs",
+      "repos_url": "https://api.github.com/users/rashil2000/repos",
+      "events_url": "https://api.github.com/users/rashil2000/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rashil2000/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n[chocolatey]: https://community.chocolatey.org/packages/starship\r\n[conda-forge]: https://anaconda.org/conda-forge/starship\r\n```\r\n\r\nStarship is in community repository of Chocolatey",
+    "created_at": "2022-01-16T19:07:02Z",
+    "updated_at": "2022-01-16T19:07:03Z",
+    "html_url": "https://github.com/starship/starship/pull/3448#discussion_r785482648",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3448",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/785482648"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3448#discussion_r785482648"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3448"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/785482648/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 426,
+    "original_line": 427,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 328,
+    "position": 342,
+    "subject_type": "line"
+  }
+]

@@ -1,0 +1,349 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/317375097",
+    "pull_request_review_id": 279311683,
+    "id": 317375097,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMxNzM3NTA5Nw==",
+    "diff_hunk": "@@ -0,0 +1,79 @@\n+name: Continuous Integration\n+on: push\n+jobs:\n+\n+  # Run the `rustfmt` code formatter\n+  rustfmt:\n+    runs-on: ubuntu-latest\n+    steps:\n+      - uses: hecrj/setup-rust-action@master\n+      - uses: actions/checkout@master\n+      - run: rustup component add rustfmt\n+      - run: cargo fmt --all -- --check\n+\n+  # Run the `clippy` linting tool\n+  clippy:\n+    runs-on: ubuntu-latest\n+    steps:\n+      - uses: hecrj/setup-rust-action@master\n+      - uses: actions/checkout@master\n+      - run: rustup component add clippy\n+      - run: cargo clippy --all-targets --all-features -- -D clippy::all\n+\n+  # Ensure that the project could be successfully compiled\n+  cargo_check:\n+    runs-on: ubuntu-latest\n+    steps:\n+      - uses: hecrj/setup-rust-action@master\n+      - uses: actions/checkout@master\n+      - run: cargo check --all\n+\n+  # Run tests on Linux, and macOS\n+  # On both Rust stable and Rust nightly\n+  test:\n+    needs: [rustfmt, clippy, cargo_check]\n+    runs-on: ${{ matrix.os }}\n+    strategy:\n+      fail-fast: false\n+      matrix:\n+        os: [ubuntu-latest, macOS-latest, windows-latest]\n+        rust: [stable, nightly]\n+    steps:\n+      # Install all the required dependencies for testing\n+      - uses: hecrj/setup-rust-action@master\n+        with:\n+          rust-version: ${{ matrix.rust }}\n+\n+      # Install Node.js at a fixed version\n+      - uses: actions/setup-node@master\n+        with:\n+          node-version: \"12.0.0\"\n+\n+      # Install Golang at a fixed version\n+      - uses: actions/setup-go@master\n+        with:\n+          go-version: \"1.12.1\"\n+\n+      # Install Ruby at a fixed version\n+      - uses: actions/setup-ruby@master\n+        with:\n+          ruby-version: \"2.6.3\"\n+\n+      # Install Python at a fixed version\n+      - uses: actions/setup-python@master\n+        with:\n+          python-version: \"3.6.9\"\n+\n+      # Run the ignored tests that expect the above setup\n+      - uses: actions/checkout@master\n+      - run: cargo test  -- -Z unstable-options --include-ignored\n+\n+  # Run the tests in the Docker image\n+  docker_test:\n+    needs: [rustfmt, clippy, cargo_check]\n+    runs-on: ubuntu-latest\n+    steps:\n+      - uses: actions/checkout@master\n+      - run: docker pull starshipcommand/starship-test",
+    "path": ".github/workflows/continuous-integration.yml",
+    "commit_id": "475641dc339999dbb3605d0bd38ddcb8b8192dfd",
+    "original_commit_id": "b029615672a3f77056bb0796d8b594bbbf3ba89f",
+    "user": {
+      "login": "JasonEtco",
+      "id": 10660468,
+      "node_id": "MDQ6VXNlcjEwNjYwNDY4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10660468?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/JasonEtco",
+      "html_url": "https://github.com/JasonEtco",
+      "followers_url": "https://api.github.com/users/JasonEtco/followers",
+      "following_url": "https://api.github.com/users/JasonEtco/following{/other_user}",
+      "gists_url": "https://api.github.com/users/JasonEtco/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/JasonEtco/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/JasonEtco/subscriptions",
+      "organizations_url": "https://api.github.com/users/JasonEtco/orgs",
+      "repos_url": "https://api.github.com/users/JasonEtco/repos",
+      "events_url": "https://api.github.com/users/JasonEtco/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/JasonEtco/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": true
+    },
+    "body": "Is this the same image as `tests/Dockerfile`? If so, maybe it makes more sense to build from there, rather than pulling the public one - that way changes to the Dockerfile are automatically tests. It'd be slower because it needs to build the image, but more reliable.\r\n\r\nYou _could_ do both even, but that feels redundant.",
+    "created_at": "2019-08-24T21:37:43Z",
+    "updated_at": "2019-09-04T22:26:28Z",
+    "html_url": "https://github.com/starship/starship/pull/233#discussion_r317375097",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/233",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/317375097"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/233#discussion_r317375097"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/233"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/317375097/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 77,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 77,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/317375516",
+    "pull_request_review_id": 279312167,
+    "id": 317375516,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMxNzM3NTUxNg==",
+    "diff_hunk": "@@ -0,0 +1,79 @@\n+name: Continuous Integration\n+on: push\n+jobs:\n+\n+  # Run the `rustfmt` code formatter\n+  rustfmt:\n+    runs-on: ubuntu-latest\n+    steps:\n+      - uses: hecrj/setup-rust-action@master\n+      - uses: actions/checkout@master\n+      - run: rustup component add rustfmt\n+      - run: cargo fmt --all -- --check\n+\n+  # Run the `clippy` linting tool\n+  clippy:\n+    runs-on: ubuntu-latest\n+    steps:\n+      - uses: hecrj/setup-rust-action@master\n+      - uses: actions/checkout@master\n+      - run: rustup component add clippy\n+      - run: cargo clippy --all-targets --all-features -- -D clippy::all\n+\n+  # Ensure that the project could be successfully compiled\n+  cargo_check:\n+    runs-on: ubuntu-latest\n+    steps:\n+      - uses: hecrj/setup-rust-action@master\n+      - uses: actions/checkout@master\n+      - run: cargo check --all\n+\n+  # Run tests on Linux, and macOS\n+  # On both Rust stable and Rust nightly\n+  test:\n+    needs: [rustfmt, clippy, cargo_check]\n+    runs-on: ${{ matrix.os }}\n+    strategy:\n+      fail-fast: false\n+      matrix:\n+        os: [ubuntu-latest, macOS-latest, windows-latest]\n+        rust: [stable, nightly]\n+    steps:\n+      # Install all the required dependencies for testing\n+      - uses: hecrj/setup-rust-action@master\n+        with:\n+          rust-version: ${{ matrix.rust }}\n+\n+      # Install Node.js at a fixed version\n+      - uses: actions/setup-node@master\n+        with:\n+          node-version: \"12.0.0\"\n+\n+      # Install Golang at a fixed version\n+      - uses: actions/setup-go@master\n+        with:\n+          go-version: \"1.12.1\"\n+\n+      # Install Ruby at a fixed version\n+      - uses: actions/setup-ruby@master\n+        with:\n+          ruby-version: \"2.6.3\"\n+\n+      # Install Python at a fixed version\n+      - uses: actions/setup-python@master\n+        with:\n+          python-version: \"3.6.9\"\n+\n+      # Run the ignored tests that expect the above setup\n+      - uses: actions/checkout@master\n+      - run: cargo test  -- -Z unstable-options --include-ignored\n+\n+  # Run the tests in the Docker image\n+  docker_test:\n+    needs: [rustfmt, clippy, cargo_check]\n+    runs-on: ubuntu-latest\n+    steps:\n+      - uses: actions/checkout@master\n+      - run: docker pull starshipcommand/starship-test",
+    "path": ".github/workflows/continuous-integration.yml",
+    "commit_id": "475641dc339999dbb3605d0bd38ddcb8b8192dfd",
+    "original_commit_id": "b029615672a3f77056bb0796d8b594bbbf3ba89f",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I just pull the public one so it'll run faster.\r\nIn the end `./integration_test` does build `tests/Dockerfile` using the cache from the pulled version.\r\n\r\nThe build is _really really slow_.",
+    "created_at": "2019-08-24T21:59:03Z",
+    "updated_at": "2019-09-04T22:26:28Z",
+    "html_url": "https://github.com/starship/starship/pull/233#discussion_r317375516",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/233",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/317375516"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/233#discussion_r317375516"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/233"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/317375516/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 77,
+    "side": "RIGHT",
+    "in_reply_to_id": 317375097,
+    "author_association": "MEMBER",
+    "original_position": 77,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/319743128",
+    "pull_request_review_id": 282327140,
+    "id": 319743128,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMxOTc0MzEyOA==",
+    "diff_hunk": "@@ -0,0 +1,106 @@\n+name: Continuous Integration\n+on: push\n+jobs:\n+  # Run the `rustfmt` code formatter\n+  rustfmt:\n+    runs-on: ubuntu-latest\n+    steps:\n+      - uses: hecrj/setup-rust-action@master\n+      - uses: actions/checkout@master\n+      - run: rustup component add rustfmt\n+      - run: cargo fmt --all -- --check\n+\n+  # Run the `clippy` linting tool\n+  clippy:\n+    runs-on: ubuntu-latest\n+    steps:\n+      - uses: hecrj/setup-rust-action@master\n+      - uses: actions/checkout@master\n+      - run: rustup component add clippy\n+      - run: cargo clippy --all-targets --all-features -- -D clippy::all\n+\n+  # Ensure that the project could be successfully compiled\n+  cargo_check:\n+    runs-on: ubuntu-latest\n+    steps:\n+      - uses: hecrj/setup-rust-action@master\n+      - uses: actions/checkout@master\n+      - run: cargo check --all\n+\n+  # Run tests on Linux, and macOS\n+  # On both Rust stable and Rust nightly\n+  test:\n+    needs: [rustfmt, clippy, cargo_check]\n+    runs-on: ${{ matrix.os }}\n+    strategy:\n+      fail-fast: false\n+      matrix:\n+        os: [ubuntu-latest, macOS-latest]\n+        rust: [stable, nightly]\n+    steps:\n+      # Install all the required dependencies for testing\n+      - uses: hecrj/setup-rust-action@master\n+        with:\n+          rust-version: ${{ matrix.rust }}\n+\n+      # Install Node.js at a fixed version\n+      - uses: actions/setup-node@master\n+        with:\n+          node-version: \"12.0.0\"\n+\n+      # Install Golang at a fixed version\n+      - uses: actions/setup-go@master\n+        with:\n+          go-version: \"1.12.1\"\n+\n+      # Install Ruby at a fixed version\n+      - uses: actions/setup-ruby@master\n+        with:\n+          ruby-version: \"2.6.3\"\n+\n+      # Install Python at a fixed version\n+      - uses: actions/setup-python@master\n+        with:\n+          python-version: \"3.6.9\"\n+\n+      # Run the ignored tests that expect the above setup\n+      - uses: actions/checkout@master\n+      - run: cargo test  -- -Z unstable-options --include-ignored\n+\n+  # Run the tests in the Docker image\n+  docker_test:\n+    needs: [rustfmt, clippy, cargo_check]\n+    runs-on: ubuntu-latest\n+    steps:\n+      - uses: actions/checkout@master\n+      - run: docker pull starshipcommand/starship-test\n+      - run: chmod -R a+w .\n+      - run: ./integration_test\n+\n+  github_release:\n+    needs: [test, docker_test]\n+    runs-on: ${{ matrix.os }}\n+    strategy:\n+      fail-fast: false\n+      matrix:\n+        os: [ubuntu-latest, macOS-latest]\n+    steps:\n+      - uses: hecrj/setup-rust-action@master\n+      - uses: actions/checkout@master\n+\n+      # Install cross\n+      # Temporary fix until https://github.com/rust-embedded/cross/pull/169 is merged.\n+      - run: git config --global user.email \"not_necessery@dont.need\"",
+    "path": ".github/workflows/continuous-integration.yml",
+    "commit_id": "475641dc339999dbb3605d0bd38ddcb8b8192dfd",
+    "original_commit_id": "331002468bf8558de6fd3c5af26bf7e9302cb901",
+    "user": {
+      "login": "JasonEtco",
+      "id": 10660468,
+      "node_id": "MDQ6VXNlcjEwNjYwNDY4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10660468?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/JasonEtco",
+      "html_url": "https://github.com/JasonEtco",
+      "followers_url": "https://api.github.com/users/JasonEtco/followers",
+      "following_url": "https://api.github.com/users/JasonEtco/following{/other_user}",
+      "gists_url": "https://api.github.com/users/JasonEtco/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/JasonEtco/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/JasonEtco/subscriptions",
+      "organizations_url": "https://api.github.com/users/JasonEtco/orgs",
+      "repos_url": "https://api.github.com/users/JasonEtco/repos",
+      "events_url": "https://api.github.com/users/JasonEtco/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/JasonEtco/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": true
+    },
+    "body": "You can do a multi-line run:\r\n\r\n```yaml\r\n  - run: |\r\n      echo one\r\n      echo two\r\n      echo \"Hey Matan\"\r\n```",
+    "created_at": "2019-09-01T04:17:51Z",
+    "updated_at": "2019-09-04T22:26:28Z",
+    "html_url": "https://github.com/starship/starship/pull/233#discussion_r319743128",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/233",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/319743128"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/233#discussion_r319743128"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/233"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/319743128/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 93,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 93,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/319743150",
+    "pull_request_review_id": 282327168,
+    "id": 319743150,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMxOTc0MzE1MA==",
+    "diff_hunk": "@@ -0,0 +1,106 @@\n+name: Continuous Integration\n+on: push\n+jobs:\n+  # Run the `rustfmt` code formatter\n+  rustfmt:\n+    runs-on: ubuntu-latest\n+    steps:\n+      - uses: hecrj/setup-rust-action@master\n+      - uses: actions/checkout@master\n+      - run: rustup component add rustfmt\n+      - run: cargo fmt --all -- --check\n+\n+  # Run the `clippy` linting tool\n+  clippy:\n+    runs-on: ubuntu-latest\n+    steps:\n+      - uses: hecrj/setup-rust-action@master\n+      - uses: actions/checkout@master\n+      - run: rustup component add clippy\n+      - run: cargo clippy --all-targets --all-features -- -D clippy::all\n+\n+  # Ensure that the project could be successfully compiled\n+  cargo_check:\n+    runs-on: ubuntu-latest\n+    steps:\n+      - uses: hecrj/setup-rust-action@master\n+      - uses: actions/checkout@master\n+      - run: cargo check --all\n+\n+  # Run tests on Linux, and macOS\n+  # On both Rust stable and Rust nightly\n+  test:\n+    needs: [rustfmt, clippy, cargo_check]\n+    runs-on: ${{ matrix.os }}\n+    strategy:\n+      fail-fast: false\n+      matrix:\n+        os: [ubuntu-latest, macOS-latest]\n+        rust: [stable, nightly]\n+    steps:\n+      # Install all the required dependencies for testing\n+      - uses: hecrj/setup-rust-action@master\n+        with:\n+          rust-version: ${{ matrix.rust }}\n+\n+      # Install Node.js at a fixed version\n+      - uses: actions/setup-node@master\n+        with:\n+          node-version: \"12.0.0\"\n+\n+      # Install Golang at a fixed version\n+      - uses: actions/setup-go@master\n+        with:\n+          go-version: \"1.12.1\"\n+\n+      # Install Ruby at a fixed version\n+      - uses: actions/setup-ruby@master\n+        with:\n+          ruby-version: \"2.6.3\"\n+\n+      # Install Python at a fixed version\n+      - uses: actions/setup-python@master\n+        with:\n+          python-version: \"3.6.9\"\n+\n+      # Run the ignored tests that expect the above setup\n+      - uses: actions/checkout@master\n+      - run: cargo test  -- -Z unstable-options --include-ignored\n+\n+  # Run the tests in the Docker image\n+  docker_test:\n+    needs: [rustfmt, clippy, cargo_check]\n+    runs-on: ubuntu-latest\n+    steps:\n+      - uses: actions/checkout@master\n+      - run: docker pull starshipcommand/starship-test\n+      - run: chmod -R a+w .\n+      - run: ./integration_test\n+\n+  github_release:\n+    needs: [test, docker_test]\n+    runs-on: ${{ matrix.os }}\n+    strategy:\n+      fail-fast: false\n+      matrix:\n+        os: [ubuntu-latest, macOS-latest]\n+    steps:\n+      - uses: hecrj/setup-rust-action@master\n+      - uses: actions/checkout@master\n+\n+      # Install cross\n+      # Temporary fix until https://github.com/rust-embedded/cross/pull/169 is merged.\n+      - run: git config --global user.email \"not_necessery@dont.need\"",
+    "path": ".github/workflows/continuous-integration.yml",
+    "commit_id": "475641dc339999dbb3605d0bd38ddcb8b8192dfd",
+    "original_commit_id": "331002468bf8558de6fd3c5af26bf7e9302cb901",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Omg this changes everything!\r\nI was looking everywhere in the docs for an example of this. 🤯",
+    "created_at": "2019-09-01T04:19:35Z",
+    "updated_at": "2019-09-04T22:26:28Z",
+    "html_url": "https://github.com/starship/starship/pull/233#discussion_r319743150",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/233",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/319743150"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/233#discussion_r319743150"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/233"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/319743150/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 93,
+    "side": "RIGHT",
+    "in_reply_to_id": 319743128,
+    "author_association": "MEMBER",
+    "original_position": 93,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/321004832",
+    "pull_request_review_id": 283933048,
+    "id": 321004832,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMTAwNDgzMg==",
+    "diff_hunk": "@@ -110,42 +109,3 @@ fn with_virtual_env() -> io::Result<()> {\n     assert_eq!(expected, actual);\n     Ok(())\n }\n-",
+    "path": "tests/testsuite/python.rs",
+    "commit_id": "475641dc339999dbb3605d0bd38ddcb8b8192dfd",
+    "original_commit_id": "475641dc339999dbb3605d0bd38ddcb8b8192dfd",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Why are we deleting this? Has the test been obsoleted by something?",
+    "created_at": "2019-09-04T22:39:02Z",
+    "updated_at": "2019-09-04T22:39:02Z",
+    "html_url": "https://github.com/starship/starship/pull/233#discussion_r321004832",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/233",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/321004832"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/233#discussion_r321004832"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/233"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/321004832/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 113,
+    "original_line": 113,
+    "side": "LEFT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 12,
+    "position": 12,
+    "subject_type": "line"
+  }
+]

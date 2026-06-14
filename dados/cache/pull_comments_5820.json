@@ -1,0 +1,419 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510379736",
+    "pull_request_review_id": 1913105935,
+    "id": 1510379736,
+    "node_id": "PRRC_kwDOCqswNs5aBpDY",
+    "diff_hunk": "@@ -0,0 +1,89 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::quarto::QuartoConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+/// Creates a module with the current Quarto version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"quarto\");\n+    let config = QuartoConfig::try_load(module.config);\n+\n+    let is_quarto_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_quarto_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let version = context.exec_cmd(\"quarto\", &[\"--version\"])?.stdout;",
+    "path": "src/modules/quarto.rs",
+    "commit_id": "8445bbbb5049b58523fc103ed036d0ad7a5a8f74",
+    "original_commit_id": "00cb5b1da6d6d10f669012dc38fac10157f757ec",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please handle the trailing newline and update the command mocks to add it.",
+    "created_at": "2024-03-03T20:05:44Z",
+    "updated_at": "2024-03-03T20:05:44Z",
+    "html_url": "https://github.com/starship/starship/pull/5820#discussion_r1510379736",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5820",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1510379736"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5820#discussion_r1510379736"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5820"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510379736/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 34,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 34,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510393300",
+    "pull_request_review_id": 1913114890,
+    "id": 1510393300,
+    "node_id": "PRRC_kwDOCqswNs5aBsXU",
+    "diff_hunk": "@@ -3601,6 +3602,39 @@ detect_extensions = []\n python_binary = ['./venv/bin/python', 'python', 'python3', 'python2']\n ```\n \n+## Quarto\n+\n+The `quarto` module shows the current installed version of Quarto used in a project.\n+\n+By default, the module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `_quarto.yml` file\n+- The current directory contains any `*.qmd` file\n+\n+### Options\n+\n+| Option              | Default                              | Description                                                               |\n+| ------------------- | ------------------------------------ | ------------------------------------------------------------------------- |\n+| `format`            | `'via [$symbol($version )]($style)'` | The format for the module.                                                |\n+| `version_format`    | `'v${raw}'`                          | The version format. Available vars are `raw`, `major`, `minor`, & `patch` |\n+| `symbol`            | `'⨁ '`                               | A format string representing the symbol of Quarto                         |",
+    "path": "docs/config/README.md",
+    "commit_id": "8445bbbb5049b58523fc103ed036d0ad7a5a8f74",
+    "original_commit_id": "00cb5b1da6d6d10f669012dc38fac10157f757ec",
+    "user": {
+      "login": "jankatins",
+      "id": 890156,
+      "node_id": "MDQ6VXNlcjg5MDE1Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/890156?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jankatins",
+      "html_url": "https://github.com/jankatins",
+      "followers_url": "https://api.github.com/users/jankatins/followers",
+      "following_url": "https://api.github.com/users/jankatins/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jankatins/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jankatins/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jankatins/subscriptions",
+      "organizations_url": "https://api.github.com/users/jankatins/orgs",
+      "repos_url": "https://api.github.com/users/jankatins/repos",
+      "events_url": "https://api.github.com/users/jankatins/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jankatins/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "One space too many in the default column, at least on github",
+    "created_at": "2024-03-03T20:52:56Z",
+    "updated_at": "2024-03-03T20:52:56Z",
+    "html_url": "https://github.com/starship/starship/pull/5820#discussion_r1510393300",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5820",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1510393300"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5820#discussion_r1510393300"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5820"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510393300/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 3609,
+    "original_line": 3609,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 27,
+    "position": 27,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510393613",
+    "pull_request_review_id": 1913115202,
+    "id": 1510393613,
+    "node_id": "PRRC_kwDOCqswNs5aBscN",
+    "diff_hunk": "@@ -3601,6 +3602,39 @@ detect_extensions = []\n python_binary = ['./venv/bin/python', 'python', 'python3', 'python2']\n ```\n \n+## Quarto\n+\n+The `quarto` module shows the current installed version of Quarto used in a project.\n+\n+By default, the module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `_quarto.yml` file\n+- The current directory contains any `*.qmd` file\n+\n+### Options\n+\n+| Option              | Default                              | Description                                                               |\n+| ------------------- | ------------------------------------ | ------------------------------------------------------------------------- |\n+| `format`            | `'via [$symbol($version )]($style)'` | The format for the module.                                                |\n+| `version_format`    | `'v${raw}'`                          | The version format. Available vars are `raw`, `major`, `minor`, & `patch` |\n+| `symbol`            | `'⨁ '`                               | A format string representing the symbol of Quarto                         |",
+    "path": "docs/config/README.md",
+    "commit_id": "8445bbbb5049b58523fc103ed036d0ad7a5a8f74",
+    "original_commit_id": "00cb5b1da6d6d10f669012dc38fac10157f757ec",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This is what the formatter settled on, so it should be fine.",
+    "created_at": "2024-03-03T20:54:41Z",
+    "updated_at": "2024-03-03T20:54:42Z",
+    "html_url": "https://github.com/starship/starship/pull/5820#discussion_r1510393613",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5820",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1510393613"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5820#discussion_r1510393613"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5820"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510393613/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 3609,
+    "original_line": 3609,
+    "side": "RIGHT",
+    "in_reply_to_id": 1510393300,
+    "author_association": "MEMBER",
+    "original_position": 27,
+    "position": 27,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510395274",
+    "pull_request_review_id": 1913116177,
+    "id": 1510395274,
+    "node_id": "PRRC_kwDOCqswNs5aBs2K",
+    "diff_hunk": "@@ -3601,6 +3602,39 @@ detect_extensions = []\n python_binary = ['./venv/bin/python', 'python', 'python3', 'python2']\n ```\n \n+## Quarto\n+\n+The `quarto` module shows the current installed version of Quarto used in a project.\n+\n+By default, the module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `_quarto.yml` file\n+- The current directory contains any `*.qmd` file\n+\n+### Options\n+\n+| Option              | Default                              | Description                                                               |\n+| ------------------- | ------------------------------------ | ------------------------------------------------------------------------- |\n+| `format`            | `'via [$symbol($version )]($style)'` | The format for the module.                                                |\n+| `version_format`    | `'v${raw}'`                          | The version format. Available vars are `raw`, `major`, `minor`, & `patch` |\n+| `symbol`            | `'⨁ '`                               | A format string representing the symbol of Quarto                         |\n+| `style`             | `'bold #0093A7'`                     | The style for the module.                                                 |\n+| `detect_extensions` | `['.qmd']`                           | Which extensions should trigger this module.                              |\n+| `detect_files`      | `['_quarto.yml']`                    | Which filenames should trigger this module.                               |\n+| `detect_folders`    | `[]`                                 | Which folders should trigger this module.                                 |\n+| `disabled`          | `false`                              | Disables the `quarto` module.                                             |\n+\n+### Variables\n+\n+| Variable      | Example   | Description                                       |\n+| ------------- | --------- | ------------------------------------------------- |\n+| version       | `1.4.549` | The version of `quarto`, alias for quarto_version |\n+| typst_version | `default` | The current Typst version                         |",
+    "path": "docs/config/README.md",
+    "commit_id": "8445bbbb5049b58523fc103ed036d0ad7a5a8f74",
+    "original_commit_id": "00cb5b1da6d6d10f669012dc38fac10157f757ec",
+    "user": {
+      "login": "jankatins",
+      "id": 890156,
+      "node_id": "MDQ6VXNlcjg5MDE1Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/890156?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jankatins",
+      "html_url": "https://github.com/jankatins",
+      "followers_url": "https://api.github.com/users/jankatins/followers",
+      "following_url": "https://api.github.com/users/jankatins/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jankatins/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jankatins/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jankatins/subscriptions",
+      "organizations_url": "https://api.github.com/users/jankatins/orgs",
+      "repos_url": "https://api.github.com/users/jankatins/repos",
+      "events_url": "https://api.github.com/users/jankatins/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jankatins/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I don't see anything parsing/filling that variable. Is this needed/wanted?\r\n\r\nIn any case: given that quarto bundles typst, what's the value in this, given that in most (or even all cases: can you overwrite the typst version by installing a newer version), the quarto version will determine the typst version?",
+    "created_at": "2024-03-03T20:59:19Z",
+    "updated_at": "2024-03-03T21:02:38Z",
+    "html_url": "https://github.com/starship/starship/pull/5820#discussion_r1510395274",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5820",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1510395274"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5820#discussion_r1510395274"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5820"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1510395274/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 3632,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 39,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1511412494",
+    "pull_request_review_id": 1914720875,
+    "id": 1511412494,
+    "node_id": "PRRC_kwDOCqswNs5aFlMO",
+    "diff_hunk": "@@ -0,0 +1,89 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::quarto::QuartoConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+/// Creates a module with the current Quarto version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"quarto\");\n+    let config = QuartoConfig::try_load(module.config);\n+\n+    let is_quarto_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_quarto_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let version = context.exec_cmd(\"quarto\", &[\"--version\"])?.stdout;",
+    "path": "src/modules/quarto.rs",
+    "commit_id": "8445bbbb5049b58523fc103ed036d0ad7a5a8f74",
+    "original_commit_id": "00cb5b1da6d6d10f669012dc38fac10157f757ec",
+    "user": {
+      "login": "Armavica",
+      "id": 5855503,
+      "node_id": "MDQ6VXNlcjU4NTU1MDM=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5855503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Armavica",
+      "html_url": "https://github.com/Armavica",
+      "followers_url": "https://api.github.com/users/Armavica/followers",
+      "following_url": "https://api.github.com/users/Armavica/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Armavica/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Armavica/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Armavica/subscriptions",
+      "organizations_url": "https://api.github.com/users/Armavica/orgs",
+      "repos_url": "https://api.github.com/users/Armavica/repos",
+      "events_url": "https://api.github.com/users/Armavica/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Armavica/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Thank you, done.",
+    "created_at": "2024-03-04T16:09:34Z",
+    "updated_at": "2024-03-04T16:09:34Z",
+    "html_url": "https://github.com/starship/starship/pull/5820#discussion_r1511412494",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5820",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1511412494"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5820#discussion_r1511412494"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5820"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1511412494/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 34,
+    "side": "RIGHT",
+    "in_reply_to_id": 1510379736,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 34,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1511413089",
+    "pull_request_review_id": 1914721808,
+    "id": 1511413089,
+    "node_id": "PRRC_kwDOCqswNs5aFlVh",
+    "diff_hunk": "@@ -3601,6 +3602,39 @@ detect_extensions = []\n python_binary = ['./venv/bin/python', 'python', 'python3', 'python2']\n ```\n \n+## Quarto\n+\n+The `quarto` module shows the current installed version of Quarto used in a project.\n+\n+By default, the module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `_quarto.yml` file\n+- The current directory contains any `*.qmd` file\n+\n+### Options\n+\n+| Option              | Default                              | Description                                                               |\n+| ------------------- | ------------------------------------ | ------------------------------------------------------------------------- |\n+| `format`            | `'via [$symbol($version )]($style)'` | The format for the module.                                                |\n+| `version_format`    | `'v${raw}'`                          | The version format. Available vars are `raw`, `major`, `minor`, & `patch` |\n+| `symbol`            | `'⨁ '`                               | A format string representing the symbol of Quarto                         |\n+| `style`             | `'bold #0093A7'`                     | The style for the module.                                                 |\n+| `detect_extensions` | `['.qmd']`                           | Which extensions should trigger this module.                              |\n+| `detect_files`      | `['_quarto.yml']`                    | Which filenames should trigger this module.                               |\n+| `detect_folders`    | `[]`                                 | Which folders should trigger this module.                                 |\n+| `disabled`          | `false`                              | Disables the `quarto` module.                                             |\n+\n+### Variables\n+\n+| Variable      | Example   | Description                                       |\n+| ------------- | --------- | ------------------------------------------------- |\n+| version       | `1.4.549` | The version of `quarto`, alias for quarto_version |\n+| typst_version | `default` | The current Typst version                         |",
+    "path": "docs/config/README.md",
+    "commit_id": "8445bbbb5049b58523fc103ed036d0ad7a5a8f74",
+    "original_commit_id": "00cb5b1da6d6d10f669012dc38fac10157f757ec",
+    "user": {
+      "login": "Armavica",
+      "id": 5855503,
+      "node_id": "MDQ6VXNlcjU4NTU1MDM=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5855503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Armavica",
+      "html_url": "https://github.com/Armavica",
+      "followers_url": "https://api.github.com/users/Armavica/followers",
+      "following_url": "https://api.github.com/users/Armavica/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Armavica/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Armavica/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Armavica/subscriptions",
+      "organizations_url": "https://api.github.com/users/Armavica/orgs",
+      "repos_url": "https://api.github.com/users/Armavica/repos",
+      "events_url": "https://api.github.com/users/Armavica/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Armavica/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Indeed, that's a copy/paste fail. I removed the variable.",
+    "created_at": "2024-03-04T16:09:59Z",
+    "updated_at": "2024-03-04T16:09:59Z",
+    "html_url": "https://github.com/starship/starship/pull/5820#discussion_r1511413089",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5820",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1511413089"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5820#discussion_r1511413089"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5820"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1511413089/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 3632,
+    "side": "RIGHT",
+    "in_reply_to_id": 1510395274,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 39,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

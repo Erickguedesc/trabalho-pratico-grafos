@@ -1,0 +1,1394 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2014354048",
+    "pull_request_review_id": 2717546050,
+    "id": 2014354048,
+    "node_id": "PRRC_kwDOCqswNs54EJqA",
+    "diff_hunk": "@@ -87,25 +88,71 @@ fn get_jsr_package_version(context: &Context, config: &PackageConfig) -> Option<\n     format_version(raw_version, config.version_format)\n }\n \n-fn get_poetry_version(pyproject: &toml::Table) -> Option<&str> {\n+fn get_poetry_version(pyproject: &toml::Table) -> Option<String> {\n     pyproject\n         .get(\"tool\")?\n         .get(\"poetry\")?\n         .get(\"version\")?\n         .as_str()\n+        .map(|s| s.to_owned())\n }\n \n-fn get_pep621_version(pyproject: &toml::Table) -> Option<&str> {\n-    pyproject.get(\"project\")?.get(\"version\")?.as_str()\n+fn parse_file_version(context: &Context, path: &str) -> Option<String> {\n+    let file_contents = read_file(context.current_dir.join(path)).ok()?;\n+    let re = Regex::new(r#\"(__version__|VERSION)\\s*=\\s*[\"']([^\"']+)[\"']\"#).ok()?;\n+    Some(\n+        re.captures(&file_contents)\n+            .and_then(|cap| cap.get(2))?\n+            .as_str()\n+            .to_owned(),\n+    )\n+}",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "857d543718ee73f6bbab2e5f4b7e04e23a7780bf",
+    "user": {
+      "login": "lucascolley",
+      "id": 51488791,
+      "node_id": "MDQ6VXNlcjUxNDg4Nzkx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51488791?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lucascolley",
+      "html_url": "https://github.com/lucascolley",
+      "followers_url": "https://api.github.com/users/lucascolley/followers",
+      "following_url": "https://api.github.com/users/lucascolley/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lucascolley/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lucascolley/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lucascolley/subscriptions",
+      "organizations_url": "https://api.github.com/users/lucascolley/orgs",
+      "repos_url": "https://api.github.com/users/lucascolley/repos",
+      "events_url": "https://api.github.com/users/lucascolley/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lucascolley/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "based on my limited Rust knowledge, it seems that we need to return a `String` rather than an `&str` here otherwise there would be a dangling reference to the file contents which is local to this function. The other nearby functions are modified to return `Option<String>` rather than `Option<&str>` accordingly.",
+    "created_at": "2025-03-26T14:48:42Z",
+    "updated_at": "2025-03-26T14:55:54Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2014354048",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2014354048"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2014354048"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2014354048/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 100,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 109,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 33,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2014354952",
+    "pull_request_review_id": 2717546050,
+    "id": 2014354952,
+    "node_id": "PRRC_kwDOCqswNs54EJ4I",
+    "diff_hunk": "@@ -87,25 +88,71 @@ fn get_jsr_package_version(context: &Context, config: &PackageConfig) -> Option<\n     format_version(raw_version, config.version_format)\n }\n \n-fn get_poetry_version(pyproject: &toml::Table) -> Option<&str> {\n+fn get_poetry_version(pyproject: &toml::Table) -> Option<String> {\n     pyproject\n         .get(\"tool\")?\n         .get(\"poetry\")?\n         .get(\"version\")?\n         .as_str()\n+        .map(|s| s.to_owned())\n }\n \n-fn get_pep621_version(pyproject: &toml::Table) -> Option<&str> {\n-    pyproject.get(\"project\")?.get(\"version\")?.as_str()\n+fn parse_file_version(context: &Context, path: &str) -> Option<String> {\n+    let file_contents = read_file(context.current_dir.join(path)).ok()?;\n+    let re = Regex::new(r#\"(__version__|VERSION)\\s*=\\s*[\"']([^\"']+)[\"']\"#).ok()?;\n+    Some(\n+        re.captures(&file_contents)\n+            .and_then(|cap| cap.get(2))?\n+            .as_str()\n+            .to_owned(),\n+    )\n+}\n+\n+fn parse_hatchling_dynamic_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    let version_path = pyproject\n+        .get(\"tool\")?\n+        .get(\"hatch\")?\n+        .get(\"version\")?\n+        .get(\"path\")?\n+        .as_str()?;\n+    // TODO: custom regex pattern",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "857d543718ee73f6bbab2e5f4b7e04e23a7780bf",
+    "user": {
+      "login": "lucascolley",
+      "id": 51488791,
+      "node_id": "MDQ6VXNlcjUxNDg4Nzkx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51488791?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lucascolley",
+      "html_url": "https://github.com/lucascolley",
+      "followers_url": "https://api.github.com/users/lucascolley/followers",
+      "following_url": "https://api.github.com/users/lucascolley/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lucascolley/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lucascolley/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lucascolley/subscriptions",
+      "organizations_url": "https://api.github.com/users/lucascolley/orgs",
+      "repos_url": "https://api.github.com/users/lucascolley/repos",
+      "events_url": "https://api.github.com/users/lucascolley/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lucascolley/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "https://hatch.pypa.io/1.9/version/#configuration",
+    "created_at": "2025-03-26T14:49:09Z",
+    "updated_at": "2025-03-26T14:55:54Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2014354952",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2014354952"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2014354952"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2014354952/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 118,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 42,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2014355657",
+    "pull_request_review_id": 2717546050,
+    "id": 2014355657,
+    "node_id": "PRRC_kwDOCqswNs54EKDJ",
+    "diff_hunk": "@@ -87,25 +88,71 @@ fn get_jsr_package_version(context: &Context, config: &PackageConfig) -> Option<\n     format_version(raw_version, config.version_format)\n }\n \n-fn get_poetry_version(pyproject: &toml::Table) -> Option<&str> {\n+fn get_poetry_version(pyproject: &toml::Table) -> Option<String> {\n     pyproject\n         .get(\"tool\")?\n         .get(\"poetry\")?\n         .get(\"version\")?\n         .as_str()\n+        .map(|s| s.to_owned())\n }\n \n-fn get_pep621_version(pyproject: &toml::Table) -> Option<&str> {\n-    pyproject.get(\"project\")?.get(\"version\")?.as_str()\n+fn parse_file_version(context: &Context, path: &str) -> Option<String> {\n+    let file_contents = read_file(context.current_dir.join(path)).ok()?;\n+    let re = Regex::new(r#\"(__version__|VERSION)\\s*=\\s*[\"']([^\"']+)[\"']\"#).ok()?;",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "857d543718ee73f6bbab2e5f4b7e04e23a7780bf",
+    "user": {
+      "login": "lucascolley",
+      "id": 51488791,
+      "node_id": "MDQ6VXNlcjUxNDg4Nzkx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51488791?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lucascolley",
+      "html_url": "https://github.com/lucascolley",
+      "followers_url": "https://api.github.com/users/lucascolley/followers",
+      "following_url": "https://api.github.com/users/lucascolley/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lucascolley/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lucascolley/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lucascolley/subscriptions",
+      "organizations_url": "https://api.github.com/users/lucascolley/orgs",
+      "repos_url": "https://api.github.com/users/lucascolley/repos",
+      "events_url": "https://api.github.com/users/lucascolley/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lucascolley/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "https://hatch.pypa.io/1.9/version/#configuration",
+    "created_at": "2025-03-26T14:49:29Z",
+    "updated_at": "2025-03-26T14:55:54Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2014355657",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2014355657"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2014355657"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2014355657/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 105,
+    "original_line": 102,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 26,
+    "position": 35,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2014360813",
+    "pull_request_review_id": 2717546050,
+    "id": 2014360813,
+    "node_id": "PRRC_kwDOCqswNs54ELTt",
+    "diff_hunk": "@@ -87,25 +88,71 @@ fn get_jsr_package_version(context: &Context, config: &PackageConfig) -> Option<\n     format_version(raw_version, config.version_format)\n }\n \n-fn get_poetry_version(pyproject: &toml::Table) -> Option<&str> {\n+fn get_poetry_version(pyproject: &toml::Table) -> Option<String> {\n     pyproject\n         .get(\"tool\")?\n         .get(\"poetry\")?\n         .get(\"version\")?\n         .as_str()\n+        .map(|s| s.to_owned())\n }\n \n-fn get_pep621_version(pyproject: &toml::Table) -> Option<&str> {\n-    pyproject.get(\"project\")?.get(\"version\")?.as_str()\n+fn parse_file_version(context: &Context, path: &str) -> Option<String> {\n+    let file_contents = read_file(context.current_dir.join(path)).ok()?;\n+    let re = Regex::new(r#\"(__version__|VERSION)\\s*=\\s*[\"']([^\"']+)[\"']\"#).ok()?;\n+    Some(\n+        re.captures(&file_contents)\n+            .and_then(|cap| cap.get(2))?\n+            .as_str()\n+            .to_owned(),\n+    )\n+}\n+\n+fn parse_hatchling_dynamic_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    let version_path = pyproject\n+        .get(\"tool\")?\n+        .get(\"hatch\")?\n+        .get(\"version\")?\n+        .get(\"path\")?\n+        .as_str()?;\n+    // TODO: custom regex pattern\n+    parse_file_version(context, version_path)\n+}\n+\n+fn parse_pep621_dynamic_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    // TODO: Flit, PDM, Setuptools\n+    parse_hatchling_dynamic_version(context, pyproject)",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "857d543718ee73f6bbab2e5f4b7e04e23a7780bf",
+    "user": {
+      "login": "lucascolley",
+      "id": 51488791,
+      "node_id": "MDQ6VXNlcjUxNDg4Nzkx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51488791?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lucascolley",
+      "html_url": "https://github.com/lucascolley",
+      "followers_url": "https://api.github.com/users/lucascolley/followers",
+      "following_url": "https://api.github.com/users/lucascolley/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lucascolley/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lucascolley/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lucascolley/subscriptions",
+      "organizations_url": "https://api.github.com/users/lucascolley/orgs",
+      "repos_url": "https://api.github.com/users/lucascolley/repos",
+      "events_url": "https://api.github.com/users/lucascolley/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lucascolley/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "https://packaging.python.org/en/latest/discussions/single-source-version/#build-system-version-handling",
+    "created_at": "2025-03-26T14:52:02Z",
+    "updated_at": "2025-03-26T14:55:54Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2014360813",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2014360813"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2014360813"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2014360813/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 123,
+    "original_start_line": 123,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 124,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 48,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2014361548",
+    "pull_request_review_id": 2717546050,
+    "id": 2014361548,
+    "node_id": "PRRC_kwDOCqswNs54ELfM",
+    "diff_hunk": "@@ -87,25 +88,71 @@ fn get_jsr_package_version(context: &Context, config: &PackageConfig) -> Option<\n     format_version(raw_version, config.version_format)\n }\n \n-fn get_poetry_version(pyproject: &toml::Table) -> Option<&str> {\n+fn get_poetry_version(pyproject: &toml::Table) -> Option<String> {\n     pyproject\n         .get(\"tool\")?\n         .get(\"poetry\")?\n         .get(\"version\")?\n         .as_str()\n+        .map(|s| s.to_owned())\n }\n \n-fn get_pep621_version(pyproject: &toml::Table) -> Option<&str> {\n-    pyproject.get(\"project\")?.get(\"version\")?.as_str()\n+fn parse_file_version(context: &Context, path: &str) -> Option<String> {\n+    let file_contents = read_file(context.current_dir.join(path)).ok()?;\n+    let re = Regex::new(r#\"(__version__|VERSION)\\s*=\\s*[\"']([^\"']+)[\"']\"#).ok()?;\n+    Some(\n+        re.captures(&file_contents)\n+            .and_then(|cap| cap.get(2))?\n+            .as_str()\n+            .to_owned(),\n+    )\n+}\n+\n+fn parse_hatchling_dynamic_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    let version_path = pyproject\n+        .get(\"tool\")?\n+        .get(\"hatch\")?\n+        .get(\"version\")?\n+        .get(\"path\")?\n+        .as_str()?;\n+    // TODO: custom regex pattern\n+    parse_file_version(context, version_path)\n+}\n+\n+fn parse_pep621_dynamic_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    // TODO: Flit, PDM, Setuptools\n+    parse_hatchling_dynamic_version(context, pyproject)\n+}\n+\n+fn get_pep621_dynamic_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    pyproject\n+        .get(\"project\")?\n+        .get(\"dynamic\")?\n+        .as_array()?\n+        .iter()\n+        .any(|v| v.as_str() == Some(\"version\"))\n+        .then(|| parse_pep621_dynamic_version(context, pyproject))?\n+}\n+\n+fn get_pep621_static_version(pyproject: &toml::Table) -> Option<String> {\n+    pyproject\n+        .get(\"project\")?\n+        .get(\"version\")?\n+        .as_str()\n+        .map(|s| s.to_owned())\n+}\n+\n+fn get_pep621_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    get_pep621_static_version(pyproject).or_else(|| get_pep621_dynamic_version(context, pyproject))\n }\n \n fn get_pyproject_version(context: &Context, config: &PackageConfig) -> Option<String> {\n     let file_contents = context.read_file_from_pwd(\"pyproject.toml\")?;\n     let pyproject_toml: toml::Table = toml::from_str(&file_contents).ok()?;\n \n-    get_pep621_version(&pyproject_toml)\n+    get_pep621_version(context, &pyproject_toml)",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "857d543718ee73f6bbab2e5f4b7e04e23a7780bf",
+    "user": {
+      "login": "lucascolley",
+      "id": 51488791,
+      "node_id": "MDQ6VXNlcjUxNDg4Nzkx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51488791?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lucascolley",
+      "html_url": "https://github.com/lucascolley",
+      "followers_url": "https://api.github.com/users/lucascolley/followers",
+      "following_url": "https://api.github.com/users/lucascolley/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lucascolley/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lucascolley/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lucascolley/subscriptions",
+      "organizations_url": "https://api.github.com/users/lucascolley/orgs",
+      "repos_url": "https://api.github.com/users/lucascolley/repos",
+      "events_url": "https://api.github.com/users/lucascolley/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lucascolley/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "passing through the context allows us to use `context.current_dir` to access files referenced by `pyproject.toml` above",
+    "created_at": "2025-03-26T14:52:24Z",
+    "updated_at": "2025-03-26T14:55:54Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2014361548",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2014361548"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2014361548"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2014361548/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 158,
+    "original_line": 153,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 78,
+    "position": 89,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2014368091",
+    "pull_request_review_id": 2717546050,
+    "id": 2014368091,
+    "node_id": "PRRC_kwDOCqswNs54ENFb",
+    "diff_hunk": "@@ -1528,10 +1619,16 @@ Title: Starship\n \n     fn fill_config(\n         project_dir: &TempDir,\n-        file_name: &str,\n+        file_path: &str,\n         contents: Option<&str>,\n     ) -> io::Result<()> {\n-        let mut file = File::create(project_dir.path().join(file_name))?;\n+        let mut file = {\n+            let path = project_dir.path().join(file_path);\n+            if let Some(parent) = path.parent() {\n+                fs::create_dir_all(parent)?;\n+            }",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "857d543718ee73f6bbab2e5f4b7e04e23a7780bf",
+    "user": {
+      "login": "lucascolley",
+      "id": 51488791,
+      "node_id": "MDQ6VXNlcjUxNDg4Nzkx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51488791?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lucascolley",
+      "html_url": "https://github.com/lucascolley",
+      "followers_url": "https://api.github.com/users/lucascolley/followers",
+      "following_url": "https://api.github.com/users/lucascolley/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lucascolley/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lucascolley/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lucascolley/subscriptions",
+      "organizations_url": "https://api.github.com/users/lucascolley/orgs",
+      "repos_url": "https://api.github.com/users/lucascolley/repos",
+      "events_url": "https://api.github.com/users/lucascolley/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lucascolley/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "the codecov warning seems erroneous, these lines are used where we pass `\"src/__init__.py\"` to `file_path` in `test_extract_pep621_dynamic_version_hatchling_1`, as can be observed by commenting out these lines to make the test fail.",
+    "created_at": "2025-03-26T14:55:25Z",
+    "updated_at": "2025-03-26T14:55:54Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2014368091",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2014368091"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2014368091"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2014368091/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 1679,
+    "original_start_line": 1627,
+    "start_side": "RIGHT",
+    "line": 1681,
+    "original_line": 1629,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 165,
+    "position": 176,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2327955241",
+    "pull_request_review_id": 3193359523,
+    "id": 2327955241,
+    "node_id": "PRRC_kwDOCqswNs6Kwccp",
+    "diff_hunk": "@@ -87,25 +88,71 @@ fn get_jsr_package_version(context: &Context, config: &PackageConfig) -> Option<\n     format_version(raw_version, config.version_format)\n }\n \n-fn get_poetry_version(pyproject: &toml::Table) -> Option<&str> {\n+fn get_poetry_version(pyproject: &toml::Table) -> Option<String> {\n     pyproject\n         .get(\"tool\")?\n         .get(\"poetry\")?\n         .get(\"version\")?\n         .as_str()\n+        .map(|s| s.to_owned())\n }\n \n-fn get_pep621_version(pyproject: &toml::Table) -> Option<&str> {\n-    pyproject.get(\"project\")?.get(\"version\")?.as_str()\n+fn parse_file_version(context: &Context, path: &str) -> Option<String> {\n+    let file_contents = read_file(context.current_dir.join(path)).ok()?;\n+    let re = Regex::new(r#\"(__version__|VERSION)\\s*=\\s*[\"']([^\"']+)[\"']\"#).ok()?;\n+    Some(\n+        re.captures(&file_contents)\n+            .and_then(|cap| cap.get(2))?\n+            .as_str()\n+            .to_owned(),\n+    )\n+}\n+\n+fn parse_hatchling_dynamic_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    let version_path = pyproject\n+        .get(\"tool\")?\n+        .get(\"hatch\")?\n+        .get(\"version\")?\n+        .get(\"path\")?\n+        .as_str()?;\n+    // TODO: custom regex pattern",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "857d543718ee73f6bbab2e5f4b7e04e23a7780bf",
+    "user": {
+      "login": "lucascolley",
+      "id": 51488791,
+      "node_id": "MDQ6VXNlcjUxNDg4Nzkx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51488791?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lucascolley",
+      "html_url": "https://github.com/lucascolley",
+      "followers_url": "https://api.github.com/users/lucascolley/followers",
+      "following_url": "https://api.github.com/users/lucascolley/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lucascolley/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lucascolley/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lucascolley/subscriptions",
+      "organizations_url": "https://api.github.com/users/lucascolley/orgs",
+      "repos_url": "https://api.github.com/users/lucascolley/repos",
+      "events_url": "https://api.github.com/users/lucascolley/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lucascolley/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "this could be a follow-up PR as the regex option seems rather niche",
+    "created_at": "2025-09-06T17:10:11Z",
+    "updated_at": "2025-09-06T17:10:11Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2327955241",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2327955241"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2327955241"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2327955241/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 118,
+    "side": "RIGHT",
+    "in_reply_to_id": 2014354952,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 42,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2327955903",
+    "pull_request_review_id": 3193360330,
+    "id": 2327955903,
+    "node_id": "PRRC_kwDOCqswNs6Kwcm_",
+    "diff_hunk": "@@ -87,25 +88,71 @@ fn get_jsr_package_version(context: &Context, config: &PackageConfig) -> Option<\n     format_version(raw_version, config.version_format)\n }\n \n-fn get_poetry_version(pyproject: &toml::Table) -> Option<&str> {\n+fn get_poetry_version(pyproject: &toml::Table) -> Option<String> {\n     pyproject\n         .get(\"tool\")?\n         .get(\"poetry\")?\n         .get(\"version\")?\n         .as_str()\n+        .map(|s| s.to_owned())\n }\n \n-fn get_pep621_version(pyproject: &toml::Table) -> Option<&str> {\n-    pyproject.get(\"project\")?.get(\"version\")?.as_str()\n+fn parse_file_version(context: &Context, path: &str) -> Option<String> {\n+    let file_contents = read_file(context.current_dir.join(path)).ok()?;\n+    let re = Regex::new(r#\"(__version__|VERSION)\\s*=\\s*[\"']([^\"']+)[\"']\"#).ok()?;\n+    Some(\n+        re.captures(&file_contents)\n+            .and_then(|cap| cap.get(2))?\n+            .as_str()\n+            .to_owned(),\n+    )\n+}\n+\n+fn parse_hatchling_dynamic_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    let version_path = pyproject\n+        .get(\"tool\")?\n+        .get(\"hatch\")?\n+        .get(\"version\")?\n+        .get(\"path\")?\n+        .as_str()?;\n+    // TODO: custom regex pattern\n+    parse_file_version(context, version_path)\n+}\n+\n+fn parse_pep621_dynamic_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    // TODO: Flit, PDM, Setuptools\n+    parse_hatchling_dynamic_version(context, pyproject)",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "857d543718ee73f6bbab2e5f4b7e04e23a7780bf",
+    "user": {
+      "login": "lucascolley",
+      "id": 51488791,
+      "node_id": "MDQ6VXNlcjUxNDg4Nzkx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51488791?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lucascolley",
+      "html_url": "https://github.com/lucascolley",
+      "followers_url": "https://api.github.com/users/lucascolley/followers",
+      "following_url": "https://api.github.com/users/lucascolley/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lucascolley/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lucascolley/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lucascolley/subscriptions",
+      "organizations_url": "https://api.github.com/users/lucascolley/orgs",
+      "repos_url": "https://api.github.com/users/lucascolley/repos",
+      "events_url": "https://api.github.com/users/lucascolley/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lucascolley/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "other build backends could also be separate PRs",
+    "created_at": "2025-09-06T17:10:25Z",
+    "updated_at": "2025-09-06T17:10:25Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2327955903",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2327955903"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2327955903"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2327955903/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 123,
+    "original_start_line": 123,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 124,
+    "side": "RIGHT",
+    "in_reply_to_id": 2014360813,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 48,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2327987788",
+    "pull_request_review_id": 3193395476,
+    "id": 2327987788,
+    "node_id": "PRRC_kwDOCqswNs6KwkZM",
+    "diff_hunk": "@@ -87,25 +88,71 @@ fn get_jsr_package_version(context: &Context, config: &PackageConfig) -> Option<\n     format_version(raw_version, config.version_format)\n }\n \n-fn get_poetry_version(pyproject: &toml::Table) -> Option<&str> {\n+fn get_poetry_version(pyproject: &toml::Table) -> Option<String> {\n     pyproject\n         .get(\"tool\")?\n         .get(\"poetry\")?\n         .get(\"version\")?\n         .as_str()\n+        .map(|s| s.to_owned())\n }\n \n-fn get_pep621_version(pyproject: &toml::Table) -> Option<&str> {\n-    pyproject.get(\"project\")?.get(\"version\")?.as_str()\n+fn parse_file_version(context: &Context, path: &str) -> Option<String> {",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "857d543718ee73f6bbab2e5f4b7e04e23a7780bf",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This module is not python-specific so the function naming should reflect that.",
+    "created_at": "2025-09-06T17:24:04Z",
+    "updated_at": "2025-09-06T17:29:09Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2327987788",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2327987788"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2327987788"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2327987788/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 100,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 24,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2327988708",
+    "pull_request_review_id": 3193395476,
+    "id": 2327988708,
+    "node_id": "PRRC_kwDOCqswNs6Kwknk",
+    "diff_hunk": "@@ -87,25 +88,71 @@ fn get_jsr_package_version(context: &Context, config: &PackageConfig) -> Option<\n     format_version(raw_version, config.version_format)\n }\n \n-fn get_poetry_version(pyproject: &toml::Table) -> Option<&str> {\n+fn get_poetry_version(pyproject: &toml::Table) -> Option<String> {\n     pyproject\n         .get(\"tool\")?\n         .get(\"poetry\")?\n         .get(\"version\")?\n         .as_str()\n+        .map(|s| s.to_owned())\n }\n \n-fn get_pep621_version(pyproject: &toml::Table) -> Option<&str> {\n-    pyproject.get(\"project\")?.get(\"version\")?.as_str()\n+fn parse_file_version(context: &Context, path: &str) -> Option<String> {\n+    let file_contents = read_file(context.current_dir.join(path)).ok()?;\n+    let re = Regex::new(r#\"(__version__|VERSION)\\s*=\\s*[\"']([^\"']+)[\"']\"#).ok()?;",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "857d543718ee73f6bbab2e5f4b7e04e23a7780bf",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please reference relevant documentation in comments as appropriate .",
+    "created_at": "2025-09-06T17:24:27Z",
+    "updated_at": "2025-09-06T17:29:09Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2327988708",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2327988708"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2327988708"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2327988708/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 105,
+    "original_line": 102,
+    "side": "RIGHT",
+    "in_reply_to_id": 2014355657,
+    "author_association": "MEMBER",
+    "original_position": 26,
+    "position": 35,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2327992832",
+    "pull_request_review_id": 3193395476,
+    "id": 2327992832,
+    "node_id": "PRRC_kwDOCqswNs6KwloA",
+    "diff_hunk": "@@ -87,25 +88,71 @@ fn get_jsr_package_version(context: &Context, config: &PackageConfig) -> Option<\n     format_version(raw_version, config.version_format)\n }\n \n-fn get_poetry_version(pyproject: &toml::Table) -> Option<&str> {\n+fn get_poetry_version(pyproject: &toml::Table) -> Option<String> {\n     pyproject\n         .get(\"tool\")?\n         .get(\"poetry\")?\n         .get(\"version\")?\n         .as_str()\n+        .map(|s| s.to_owned())\n }\n \n-fn get_pep621_version(pyproject: &toml::Table) -> Option<&str> {\n-    pyproject.get(\"project\")?.get(\"version\")?.as_str()\n+fn parse_file_version(context: &Context, path: &str) -> Option<String> {\n+    let file_contents = read_file(context.current_dir.join(path)).ok()?;\n+    let re = Regex::new(r#\"(__version__|VERSION)\\s*=\\s*[\"']([^\"']+)[\"']\"#).ok()?;\n+    Some(\n+        re.captures(&file_contents)\n+            .and_then(|cap| cap.get(2))?\n+            .as_str()\n+            .to_owned(),\n+    )\n+}\n+\n+fn parse_hatchling_dynamic_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    let version_path = pyproject\n+        .get(\"tool\")?\n+        .get(\"hatch\")?\n+        .get(\"version\")?\n+        .get(\"path\")?\n+        .as_str()?;\n+    // TODO: custom regex pattern",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "857d543718ee73f6bbab2e5f4b7e04e23a7780bf",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Since this is parsing Python files please validate any returned value via `semver::Version::parse`",
+    "created_at": "2025-09-06T17:26:30Z",
+    "updated_at": "2025-09-06T17:29:09Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2327992832",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2327992832"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2327992832"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2327992832/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 118,
+    "side": "RIGHT",
+    "in_reply_to_id": 2014354952,
+    "author_association": "MEMBER",
+    "original_position": 42,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328176416",
+    "pull_request_review_id": 3193668980,
+    "id": 2328176416,
+    "node_id": "PRRC_kwDOCqswNs6KxScg",
+    "diff_hunk": "@@ -87,25 +88,71 @@ fn get_jsr_package_version(context: &Context, config: &PackageConfig) -> Option<\n     format_version(raw_version, config.version_format)\n }\n \n-fn get_poetry_version(pyproject: &toml::Table) -> Option<&str> {\n+fn get_poetry_version(pyproject: &toml::Table) -> Option<String> {\n     pyproject\n         .get(\"tool\")?\n         .get(\"poetry\")?\n         .get(\"version\")?\n         .as_str()\n+        .map(|s| s.to_owned())\n }\n \n-fn get_pep621_version(pyproject: &toml::Table) -> Option<&str> {\n-    pyproject.get(\"project\")?.get(\"version\")?.as_str()\n+fn parse_file_version(context: &Context, path: &str) -> Option<String> {\n+    let file_contents = read_file(context.current_dir.join(path)).ok()?;\n+    let re = Regex::new(r#\"(__version__|VERSION)\\s*=\\s*[\"']([^\"']+)[\"']\"#).ok()?;\n+    Some(\n+        re.captures(&file_contents)\n+            .and_then(|cap| cap.get(2))?\n+            .as_str()\n+            .to_owned(),\n+    )\n+}\n+\n+fn parse_hatchling_dynamic_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    let version_path = pyproject\n+        .get(\"tool\")?\n+        .get(\"hatch\")?\n+        .get(\"version\")?\n+        .get(\"path\")?\n+        .as_str()?;\n+    // TODO: custom regex pattern",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "857d543718ee73f6bbab2e5f4b7e04e23a7780bf",
+    "user": {
+      "login": "lucascolley",
+      "id": 51488791,
+      "node_id": "MDQ6VXNlcjUxNDg4Nzkx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51488791?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lucascolley",
+      "html_url": "https://github.com/lucascolley",
+      "followers_url": "https://api.github.com/users/lucascolley/followers",
+      "following_url": "https://api.github.com/users/lucascolley/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lucascolley/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lucascolley/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lucascolley/subscriptions",
+      "organizations_url": "https://api.github.com/users/lucascolley/orgs",
+      "repos_url": "https://api.github.com/users/lucascolley/repos",
+      "events_url": "https://api.github.com/users/lucascolley/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lucascolley/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I opted for https://docs.rs/pep440_rs/latest/pep440_rs/index.html instead as the `semver` crate seemed undesirably restrictive on allowed syntax. Let me know if that is okay!",
+    "created_at": "2025-09-06T18:37:06Z",
+    "updated_at": "2025-09-06T18:37:06Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2328176416",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2328176416"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2328176416"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328176416/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 118,
+    "side": "RIGHT",
+    "in_reply_to_id": 2014354952,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 42,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328577091",
+    "pull_request_review_id": 3194312955,
+    "id": 2328577091,
+    "node_id": "PRRC_kwDOCqswNs6Ky0RD",
+    "diff_hunk": "@@ -87,25 +88,71 @@ fn get_jsr_package_version(context: &Context, config: &PackageConfig) -> Option<\n     format_version(raw_version, config.version_format)\n }\n \n-fn get_poetry_version(pyproject: &toml::Table) -> Option<&str> {\n+fn get_poetry_version(pyproject: &toml::Table) -> Option<String> {\n     pyproject\n         .get(\"tool\")?\n         .get(\"poetry\")?\n         .get(\"version\")?\n         .as_str()\n+        .map(|s| s.to_owned())\n }\n \n-fn get_pep621_version(pyproject: &toml::Table) -> Option<&str> {\n-    pyproject.get(\"project\")?.get(\"version\")?.as_str()\n+fn parse_file_version(context: &Context, path: &str) -> Option<String> {\n+    let file_contents = read_file(context.current_dir.join(path)).ok()?;\n+    let re = Regex::new(r#\"(__version__|VERSION)\\s*=\\s*[\"']([^\"']+)[\"']\"#).ok()?;\n+    Some(\n+        re.captures(&file_contents)\n+            .and_then(|cap| cap.get(2))?\n+            .as_str()\n+            .to_owned(),\n+    )\n+}\n+\n+fn parse_hatchling_dynamic_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    let version_path = pyproject\n+        .get(\"tool\")?\n+        .get(\"hatch\")?\n+        .get(\"version\")?\n+        .get(\"path\")?\n+        .as_str()?;\n+    // TODO: custom regex pattern",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "857d543718ee73f6bbab2e5f4b7e04e23a7780bf",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Wait I picked the wrong crate from our dependencies, `versions::Version::new` (or `versions::Mess::new`) should be flexible enough to handle everything.",
+    "created_at": "2025-09-07T08:38:17Z",
+    "updated_at": "2025-09-07T08:38:17Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2328577091",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2328577091"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2328577091"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328577091/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 118,
+    "side": "RIGHT",
+    "in_reply_to_id": 2014354952,
+    "author_association": "MEMBER",
+    "original_position": 42,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328590593",
+    "pull_request_review_id": 3194328877,
+    "id": 2328590593,
+    "node_id": "PRRC_kwDOCqswNs6Ky3kB",
+    "diff_hunk": "@@ -87,25 +88,71 @@ fn get_jsr_package_version(context: &Context, config: &PackageConfig) -> Option<\n     format_version(raw_version, config.version_format)\n }\n \n-fn get_poetry_version(pyproject: &toml::Table) -> Option<&str> {\n+fn get_poetry_version(pyproject: &toml::Table) -> Option<String> {\n     pyproject\n         .get(\"tool\")?\n         .get(\"poetry\")?\n         .get(\"version\")?\n         .as_str()\n+        .map(|s| s.to_owned())\n }\n \n-fn get_pep621_version(pyproject: &toml::Table) -> Option<&str> {\n-    pyproject.get(\"project\")?.get(\"version\")?.as_str()\n+fn parse_file_version(context: &Context, path: &str) -> Option<String> {\n+    let file_contents = read_file(context.current_dir.join(path)).ok()?;\n+    let re = Regex::new(r#\"(__version__|VERSION)\\s*=\\s*[\"']([^\"']+)[\"']\"#).ok()?;\n+    Some(\n+        re.captures(&file_contents)\n+            .and_then(|cap| cap.get(2))?\n+            .as_str()\n+            .to_owned(),\n+    )\n+}\n+\n+fn parse_hatchling_dynamic_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    let version_path = pyproject\n+        .get(\"tool\")?\n+        .get(\"hatch\")?\n+        .get(\"version\")?\n+        .get(\"path\")?\n+        .as_str()?;\n+    // TODO: custom regex pattern",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "857d543718ee73f6bbab2e5f4b7e04e23a7780bf",
+    "user": {
+      "login": "lucascolley",
+      "id": 51488791,
+      "node_id": "MDQ6VXNlcjUxNDg4Nzkx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51488791?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lucascolley",
+      "html_url": "https://github.com/lucascolley",
+      "followers_url": "https://api.github.com/users/lucascolley/followers",
+      "following_url": "https://api.github.com/users/lucascolley/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lucascolley/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lucascolley/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lucascolley/subscriptions",
+      "organizations_url": "https://api.github.com/users/lucascolley/orgs",
+      "repos_url": "https://api.github.com/users/lucascolley/repos",
+      "events_url": "https://api.github.com/users/lucascolley/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lucascolley/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "> Wait I picked the wrong crate from our dependencies, `versions::Version::new` (or `versions::Mess::new`) should be flexible enough to handle everything.\r\n\r\nchanged to `versions::Version::new`!",
+    "created_at": "2025-09-07T09:19:04Z",
+    "updated_at": "2025-09-07T09:19:04Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2328590593",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2328590593"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2328590593"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328590593/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 118,
+    "side": "RIGHT",
+    "in_reply_to_id": 2014354952,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 42,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328592771",
+    "pull_request_review_id": 3194331080,
+    "id": 2328592771,
+    "node_id": "PRRC_kwDOCqswNs6Ky4GD",
+    "diff_hunk": "@@ -87,25 +88,71 @@ fn get_jsr_package_version(context: &Context, config: &PackageConfig) -> Option<\n     format_version(raw_version, config.version_format)\n }\n \n-fn get_poetry_version(pyproject: &toml::Table) -> Option<&str> {\n+fn get_poetry_version(pyproject: &toml::Table) -> Option<String> {\n     pyproject\n         .get(\"tool\")?\n         .get(\"poetry\")?\n         .get(\"version\")?\n         .as_str()\n+        .map(|s| s.to_owned())\n }\n \n-fn get_pep621_version(pyproject: &toml::Table) -> Option<&str> {\n-    pyproject.get(\"project\")?.get(\"version\")?.as_str()\n+fn parse_file_version(context: &Context, path: &str) -> Option<String> {\n+    let file_contents = read_file(context.current_dir.join(path)).ok()?;\n+    let re = Regex::new(r#\"(__version__|VERSION)\\s*=\\s*[\"']([^\"']+)[\"']\"#).ok()?;\n+    Some(\n+        re.captures(&file_contents)\n+            .and_then(|cap| cap.get(2))?\n+            .as_str()\n+            .to_owned(),\n+    )\n+}\n+\n+fn parse_hatchling_dynamic_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    let version_path = pyproject\n+        .get(\"tool\")?\n+        .get(\"hatch\")?\n+        .get(\"version\")?\n+        .get(\"path\")?\n+        .as_str()?;\n+    // TODO: custom regex pattern",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "857d543718ee73f6bbab2e5f4b7e04e23a7780bf",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "You changed it to `Versioning` which may end up falling back to `Mess`; I would prefer avoiding going through multiple fallbacks during validation (e.g. just using `Mess` straight away). Since `Mess` looks very loose, I feel like `Version` is a sensible choice to ensure a higher level of sanity, though I am not sure how messy python version strings get in practice.",
+    "created_at": "2025-09-07T09:25:14Z",
+    "updated_at": "2025-09-07T09:25:41Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2328592771",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2328592771"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2328592771"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328592771/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 118,
+    "side": "RIGHT",
+    "in_reply_to_id": 2014354952,
+    "author_association": "MEMBER",
+    "original_position": 42,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328594266",
+    "pull_request_review_id": 3194332548,
+    "id": 2328594266,
+    "node_id": "PRRC_kwDOCqswNs6Ky4da",
+    "diff_hunk": "@@ -87,25 +88,71 @@ fn get_jsr_package_version(context: &Context, config: &PackageConfig) -> Option<\n     format_version(raw_version, config.version_format)\n }\n \n-fn get_poetry_version(pyproject: &toml::Table) -> Option<&str> {\n+fn get_poetry_version(pyproject: &toml::Table) -> Option<String> {\n     pyproject\n         .get(\"tool\")?\n         .get(\"poetry\")?\n         .get(\"version\")?\n         .as_str()\n+        .map(|s| s.to_owned())\n }\n \n-fn get_pep621_version(pyproject: &toml::Table) -> Option<&str> {\n-    pyproject.get(\"project\")?.get(\"version\")?.as_str()\n+fn parse_file_version(context: &Context, path: &str) -> Option<String> {\n+    let file_contents = read_file(context.current_dir.join(path)).ok()?;\n+    let re = Regex::new(r#\"(__version__|VERSION)\\s*=\\s*[\"']([^\"']+)[\"']\"#).ok()?;\n+    Some(\n+        re.captures(&file_contents)\n+            .and_then(|cap| cap.get(2))?\n+            .as_str()\n+            .to_owned(),\n+    )\n+}\n+\n+fn parse_hatchling_dynamic_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    let version_path = pyproject\n+        .get(\"tool\")?\n+        .get(\"hatch\")?\n+        .get(\"version\")?\n+        .get(\"path\")?\n+        .as_str()?;\n+    // TODO: custom regex pattern",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "857d543718ee73f6bbab2e5f4b7e04e23a7780bf",
+    "user": {
+      "login": "lucascolley",
+      "id": 51488791,
+      "node_id": "MDQ6VXNlcjUxNDg4Nzkx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51488791?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lucascolley",
+      "html_url": "https://github.com/lucascolley",
+      "followers_url": "https://api.github.com/users/lucascolley/followers",
+      "following_url": "https://api.github.com/users/lucascolley/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lucascolley/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lucascolley/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lucascolley/subscriptions",
+      "organizations_url": "https://api.github.com/users/lucascolley/orgs",
+      "repos_url": "https://api.github.com/users/lucascolley/repos",
+      "events_url": "https://api.github.com/users/lucascolley/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lucascolley/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "let's give `Version` a go!",
+    "created_at": "2025-09-07T09:29:32Z",
+    "updated_at": "2025-09-07T09:29:33Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2328594266",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2328594266"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2328594266"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328594266/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 118,
+    "side": "RIGHT",
+    "in_reply_to_id": 2014354952,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 42,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328595921",
+    "pull_request_review_id": 3194334277,
+    "id": 2328595921,
+    "node_id": "PRRC_kwDOCqswNs6Ky43R",
+    "diff_hunk": "@@ -88,25 +90,75 @@ fn get_jsr_package_version(context: &Context, config: &PackageConfig) -> Option<\n     format_version(raw_version, config.version_format)\n }\n \n-fn get_poetry_version(pyproject: &toml::Table) -> Option<&str> {\n+fn get_poetry_version(pyproject: &toml::Table) -> Option<String> {\n     pyproject\n         .get(\"tool\")?\n         .get(\"poetry\")?\n         .get(\"version\")?\n         .as_str()\n+        .map(|s| s.to_owned())\n }\n \n-fn get_pep621_version(pyproject: &toml::Table) -> Option<&str> {\n-    pyproject.get(\"project\")?.get(\"version\")?.as_str()\n+fn parse_file_version_for_hatchling(context: &Context, path: &str) -> Option<String> {\n+    let file_contents = read_file(context.current_dir.join(path)).ok()?;\n+    // https://hatch.pypa.io/latest/version/\n+    let re = Regex::new(r#\"(__version__|VERSION)\\s*=\\s*[\"']([^\"']+)[\"']\"#).ok()?;\n+    Some(\n+        re.captures(&file_contents)\n+            .and_then(|cap| cap.get(2))?\n+            .as_str()\n+            .to_owned(),\n+    )\n+}\n+\n+fn parse_hatchling_dynamic_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    let version_path = pyproject\n+        .get(\"tool\")?\n+        .get(\"hatch\")?\n+        .get(\"version\")?\n+        .get(\"path\")?\n+        .as_str()?;\n+\n+    parse_file_version_for_hatchling(context, version_path)\n+        .and_then(|s| Version::new(s.as_str()))\n+        .map(|v| v.to_string())",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "c2f2cb5c08b2d7b91d20994d1c469b0a0766be82",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Apart from that LGTM if tests pass once `master` is fixed.\n\n```suggestion\n        .filter(|s| Version::new(s.as_str()).is_some())\n```",
+    "created_at": "2025-09-07T09:35:05Z",
+    "updated_at": "2025-09-07T09:35:44Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2328595921",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2328595921"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2328595921"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328595921/reactions",
+      "total_count": 1,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 1,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 123,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 124,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 54,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328596722",
+    "pull_request_review_id": 3194335153,
+    "id": 2328596722,
+    "node_id": "PRRC_kwDOCqswNs6Ky5Dy",
+    "diff_hunk": "@@ -88,25 +90,75 @@ fn get_jsr_package_version(context: &Context, config: &PackageConfig) -> Option<\n     format_version(raw_version, config.version_format)\n }\n \n-fn get_poetry_version(pyproject: &toml::Table) -> Option<&str> {\n+fn get_poetry_version(pyproject: &toml::Table) -> Option<String> {\n     pyproject\n         .get(\"tool\")?\n         .get(\"poetry\")?\n         .get(\"version\")?\n         .as_str()\n+        .map(|s| s.to_owned())\n }\n \n-fn get_pep621_version(pyproject: &toml::Table) -> Option<&str> {\n-    pyproject.get(\"project\")?.get(\"version\")?.as_str()\n+fn parse_file_version_for_hatchling(context: &Context, path: &str) -> Option<String> {\n+    let file_contents = read_file(context.current_dir.join(path)).ok()?;\n+    // https://hatch.pypa.io/latest/version/\n+    let re = Regex::new(r#\"(__version__|VERSION)\\s*=\\s*[\"']([^\"']+)[\"']\"#).ok()?;\n+    Some(\n+        re.captures(&file_contents)\n+            .and_then(|cap| cap.get(2))?\n+            .as_str()\n+            .to_owned(),\n+    )\n+}\n+\n+fn parse_hatchling_dynamic_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    let version_path = pyproject\n+        .get(\"tool\")?\n+        .get(\"hatch\")?\n+        .get(\"version\")?\n+        .get(\"path\")?\n+        .as_str()?;\n+\n+    parse_file_version_for_hatchling(context, version_path)\n+        .and_then(|s| Version::new(s.as_str()))\n+        .map(|v| v.to_string())",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "c2f2cb5c08b2d7b91d20994d1c469b0a0766be82",
+    "user": {
+      "login": "lucascolley",
+      "id": 51488791,
+      "node_id": "MDQ6VXNlcjUxNDg4Nzkx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51488791?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lucascolley",
+      "html_url": "https://github.com/lucascolley",
+      "followers_url": "https://api.github.com/users/lucascolley/followers",
+      "following_url": "https://api.github.com/users/lucascolley/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lucascolley/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lucascolley/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lucascolley/subscriptions",
+      "organizations_url": "https://api.github.com/users/lucascolley/orgs",
+      "repos_url": "https://api.github.com/users/lucascolley/repos",
+      "events_url": "https://api.github.com/users/lucascolley/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lucascolley/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Don't we still need to convert from `Version` to `String` here?",
+    "created_at": "2025-09-07T09:37:36Z",
+    "updated_at": "2025-09-07T09:37:36Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2328596722",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2328596722"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2328596722"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328596722/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 123,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 124,
+    "side": "RIGHT",
+    "in_reply_to_id": 2328595921,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 54,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328604630",
+    "pull_request_review_id": 3194344267,
+    "id": 2328604630,
+    "node_id": "PRRC_kwDOCqswNs6Ky6_W",
+    "diff_hunk": "@@ -88,25 +90,75 @@ fn get_jsr_package_version(context: &Context, config: &PackageConfig) -> Option<\n     format_version(raw_version, config.version_format)\n }\n \n-fn get_poetry_version(pyproject: &toml::Table) -> Option<&str> {\n+fn get_poetry_version(pyproject: &toml::Table) -> Option<String> {\n     pyproject\n         .get(\"tool\")?\n         .get(\"poetry\")?\n         .get(\"version\")?\n         .as_str()\n+        .map(|s| s.to_owned())\n }\n \n-fn get_pep621_version(pyproject: &toml::Table) -> Option<&str> {\n-    pyproject.get(\"project\")?.get(\"version\")?.as_str()\n+fn parse_file_version_for_hatchling(context: &Context, path: &str) -> Option<String> {\n+    let file_contents = read_file(context.current_dir.join(path)).ok()?;\n+    // https://hatch.pypa.io/latest/version/\n+    let re = Regex::new(r#\"(__version__|VERSION)\\s*=\\s*[\"']([^\"']+)[\"']\"#).ok()?;\n+    Some(\n+        re.captures(&file_contents)\n+            .and_then(|cap| cap.get(2))?\n+            .as_str()\n+            .to_owned(),\n+    )\n+}\n+\n+fn parse_hatchling_dynamic_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    let version_path = pyproject\n+        .get(\"tool\")?\n+        .get(\"hatch\")?\n+        .get(\"version\")?\n+        .get(\"path\")?\n+        .as_str()?;\n+\n+    parse_file_version_for_hatchling(context, version_path)\n+        .and_then(|s| Version::new(s.as_str()))\n+        .map(|v| v.to_string())",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "c2f2cb5c08b2d7b91d20994d1c469b0a0766be82",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The `filter` maps the value to `None` if the it can't parse the `Version`, while not changing the original value if it can. Thus the original verified string can be returned because it is still there.",
+    "created_at": "2025-09-07T10:01:21Z",
+    "updated_at": "2025-09-07T10:01:21Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2328604630",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2328604630"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2328604630"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328604630/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 123,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 124,
+    "side": "RIGHT",
+    "in_reply_to_id": 2328595921,
+    "author_association": "MEMBER",
+    "original_position": 54,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328658441",
+    "pull_request_review_id": 3194420033,
+    "id": 2328658441,
+    "node_id": "PRRC_kwDOCqswNs6KzIIJ",
+    "diff_hunk": "@@ -88,25 +90,75 @@ fn get_jsr_package_version(context: &Context, config: &PackageConfig) -> Option<\n     format_version(raw_version, config.version_format)\n }\n \n-fn get_poetry_version(pyproject: &toml::Table) -> Option<&str> {\n+fn get_poetry_version(pyproject: &toml::Table) -> Option<String> {\n     pyproject\n         .get(\"tool\")?\n         .get(\"poetry\")?\n         .get(\"version\")?\n         .as_str()\n+        .map(|s| s.to_owned())\n }\n \n-fn get_pep621_version(pyproject: &toml::Table) -> Option<&str> {\n-    pyproject.get(\"project\")?.get(\"version\")?.as_str()\n+fn parse_file_version_for_hatchling(context: &Context, path: &str) -> Option<String> {\n+    let file_contents = read_file(context.current_dir.join(path)).ok()?;\n+    // https://hatch.pypa.io/latest/version/\n+    let re = Regex::new(r#\"(__version__|VERSION)\\s*=\\s*[\"']([^\"']+)[\"']\"#).ok()?;\n+    Some(\n+        re.captures(&file_contents)\n+            .and_then(|cap| cap.get(2))?\n+            .as_str()\n+            .to_owned(),\n+    )\n+}\n+\n+fn parse_hatchling_dynamic_version(context: &Context, pyproject: &toml::Table) -> Option<String> {\n+    let version_path = pyproject\n+        .get(\"tool\")?\n+        .get(\"hatch\")?\n+        .get(\"version\")?\n+        .get(\"path\")?\n+        .as_str()?;\n+\n+    parse_file_version_for_hatchling(context, version_path)\n+        .and_then(|s| Version::new(s.as_str()))\n+        .map(|v| v.to_string())",
+    "path": "src/modules/package.rs",
+    "commit_id": "826dc0cad534e295426457ed484c202da36584da",
+    "original_commit_id": "c2f2cb5c08b2d7b91d20994d1c469b0a0766be82",
+    "user": {
+      "login": "lucascolley",
+      "id": 51488791,
+      "node_id": "MDQ6VXNlcjUxNDg4Nzkx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51488791?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lucascolley",
+      "html_url": "https://github.com/lucascolley",
+      "followers_url": "https://api.github.com/users/lucascolley/followers",
+      "following_url": "https://api.github.com/users/lucascolley/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lucascolley/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lucascolley/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lucascolley/subscriptions",
+      "organizations_url": "https://api.github.com/users/lucascolley/orgs",
+      "repos_url": "https://api.github.com/users/lucascolley/repos",
+      "events_url": "https://api.github.com/users/lucascolley/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lucascolley/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Aha thanks, TIL",
+    "created_at": "2025-09-07T12:14:02Z",
+    "updated_at": "2025-09-07T12:14:09Z",
+    "html_url": "https://github.com/starship/starship/pull/6656#discussion_r2328658441",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6656",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2328658441"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6656#discussion_r2328658441"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6656"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328658441/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 123,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 124,
+    "side": "RIGHT",
+    "in_reply_to_id": 2328595921,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 54,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

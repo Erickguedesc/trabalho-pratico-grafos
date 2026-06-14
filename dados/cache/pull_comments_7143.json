@@ -1,0 +1,557 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2659770855",
+    "pull_request_review_id": 3625076580,
+    "id": 2659770855,
+    "node_id": "PRRC_kwDOCqswNs6eiOHn",
+    "diff_hunk": "@@ -202,27 +202,42 @@ where\n     let mut used = 0usize;\n     let mut current: Vec<AnsiString> = Vec::new();\n     let mut chunks: Vec<(Vec<AnsiString>, &FillSegment)> = Vec::new();\n-    let mut prev_style: Option<AnsiStyle> = None;\n \n+    let mut collected = Vec::<&'a Segment>::new();\n     for segment in segments {\n+        collected.push(segment);\n+        if matches!(segment, Segment::LineTerm) {\n+            break;\n+        }\n+    }\n+\n+    for (idx, &segment) in collected.iter().enumerate() {\n         match segment {\n             Segment::Fill(fs) => {\n                 chunks.push((current, fs));\n                 current = Vec::new();\n-                prev_style = None;\n             }\n             _ => {\n                 used += segment.width_graphemes();\n-                let current_segment_string = segment.ansi_string(prev_style.as_ref());\n+                let prev = if idx <= 0 {",
+    "path": "src/module.rs",
+    "commit_id": "7f0f70e1c57a10489a2cf691e8d0749693f0c55b",
+    "original_commit_id": "7f0f70e1c57a10489a2cf691e8d0749693f0c55b",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please make sure CI passes and fix any clippy warnings, and prefer using safe integer manipulation in cases like this.",
+    "created_at": "2026-01-04T16:17:28Z",
+    "updated_at": "2026-01-04T16:33:28Z",
+    "html_url": "https://github.com/starship/starship/pull/7143#discussion_r2659770855",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7143",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2659770855"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7143#discussion_r2659770855"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7143"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2659770855/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 222,
+    "original_line": 222,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 32,
+    "position": 32,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2659772075",
+    "pull_request_review_id": 3625076580,
+    "id": 2659772075,
+    "node_id": "PRRC_kwDOCqswNs6eiOar",
+    "diff_hunk": "@@ -202,27 +202,42 @@ where\n     let mut used = 0usize;\n     let mut current: Vec<AnsiString> = Vec::new();\n     let mut chunks: Vec<(Vec<AnsiString>, &FillSegment)> = Vec::new();\n-    let mut prev_style: Option<AnsiStyle> = None;\n \n+    let mut collected = Vec::<&'a Segment>::new();\n     for segment in segments {\n+        collected.push(segment);\n+        if matches!(segment, Segment::LineTerm) {\n+            break;\n+        }\n+    }\n+\n+    for (idx, &segment) in collected.iter().enumerate() {\n         match segment {",
+    "path": "src/module.rs",
+    "commit_id": "7f0f70e1c57a10489a2cf691e8d0749693f0c55b",
+    "original_commit_id": "7f0f70e1c57a10489a2cf691e8d0749693f0c55b",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I would prefer not to change this to indexing, please use `peek()` to reference upcoming segments. AFAICT the current approach will **break** transitive backward colour references. Please also ensure that:\n- transitive backward colour references are tested.\n- corner cases involving this are tested.",
+    "created_at": "2026-01-04T16:19:21Z",
+    "updated_at": "2026-01-04T16:33:28Z",
+    "html_url": "https://github.com/starship/starship/pull/7143#discussion_r2659772075",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7143",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2659772075"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7143#discussion_r2659772075"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7143"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2659772075/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 205,
+    "original_start_line": 205,
+    "start_side": "LEFT",
+    "line": 215,
+    "original_line": 215,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 23,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2659773149",
+    "pull_request_review_id": 3625076580,
+    "id": 2659773149,
+    "node_id": "PRRC_kwDOCqswNs6eiOrd",
+    "diff_hunk": "@@ -356,7 +356,8 @@ Style strings are a list of words, separated by whitespace. The words are not ca\n - `none`\n \n where `<color>` is a color specifier (discussed below). `fg:<color>` and `<color>` currently do the same thing, though this may change in the future.\n-`<color>` can also be set to `prev_fg` or `prev_bg` which evaluates to the previous item's foreground or background color respectively if available or `none` otherwise.\n+`<color>` can also be set to `prev_fg`, `prev_bg`, `next_fg` or `next_fg`, which evaluates to, respectively, the previous and next item's foreground or background color if available or `none` otherwise.",
+    "path": "docs/advanced-config/README.md",
+    "commit_id": "7f0f70e1c57a10489a2cf691e8d0749693f0c55b",
+    "original_commit_id": "7f0f70e1c57a10489a2cf691e8d0749693f0c55b",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\n`<color>` can also be set to `prev_fg`, `prev_bg`, `next_fg` or `next_bg`, which evaluates to, respectively, the previous and next item's foreground or background color if available or `none` otherwise.\n```",
+    "created_at": "2026-01-04T16:20:53Z",
+    "updated_at": "2026-01-04T16:33:28Z",
+    "html_url": "https://github.com/starship/starship/pull/7143#discussion_r2659773149",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7143",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2659773149"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7143#discussion_r2659773149"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7143"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2659773149/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 359,
+    "original_line": 359,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 5,
+    "position": 5,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2659773510",
+    "pull_request_review_id": 3625076580,
+    "id": 2659773510,
+    "node_id": "PRRC_kwDOCqswNs6eiOxG",
+    "diff_hunk": "@@ -356,7 +356,8 @@ Style strings are a list of words, separated by whitespace. The words are not ca\n - `none`\n \n where `<color>` is a color specifier (discussed below). `fg:<color>` and `<color>` currently do the same thing, though this may change in the future.\n-`<color>` can also be set to `prev_fg` or `prev_bg` which evaluates to the previous item's foreground or background color respectively if available or `none` otherwise.\n+`<color>` can also be set to `prev_fg`, `prev_bg`, `next_fg` or `next_fg`, which evaluates to, respectively, the previous and next item's foreground or background color if available or `none` otherwise.\n+Please also note that if the previous or next module also references a color with, for instance, `bg:next_fg`, the reference won't be followed and the default style will apply.",
+    "path": "docs/advanced-config/README.md",
+    "commit_id": "7f0f70e1c57a10489a2cf691e8d0749693f0c55b",
+    "original_commit_id": "7f0f70e1c57a10489a2cf691e8d0749693f0c55b",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This was not true for backward colour references.",
+    "created_at": "2026-01-04T16:21:24Z",
+    "updated_at": "2026-01-04T16:33:28Z",
+    "html_url": "https://github.com/starship/starship/pull/7143#discussion_r2659773510",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7143",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2659773510"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7143#discussion_r2659773510"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7143"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2659773510/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 360,
+    "original_line": 360,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 6,
+    "position": 6,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2659776253",
+    "pull_request_review_id": 3625076580,
+    "id": 2659776253,
+    "node_id": "PRRC_kwDOCqswNs6eiPb9",
+    "diff_hunk": "@@ -9,17 +9,17 @@ use unicode_segmentation::UnicodeSegmentation;\n #[derive(Clone)]\n pub struct TextSegment {\n     /// The segment's style. If None, will inherit the style of the module containing it.\n-    style: Option<Style>,\n+    pub(crate) style: Option<Style>,\n \n     /// The string value of the current segment.\n-    value: String,\n+    pub(crate) value: String,\n }\n \n impl TextSegment {\n     // Returns the AnsiString of the segment value\n-    fn ansi_string(&self, prev: Option<&AnsiStyle>) -> AnsiString<'_> {\n+    fn ansi_string(&self, prev: Option<&AnsiStyle>, next: Option<&AnsiStyle>) -> AnsiString<'_> {",
+    "path": "src/segment.rs",
+    "commit_id": "7f0f70e1c57a10489a2cf691e8d0749693f0c55b",
+    "original_commit_id": "7f0f70e1c57a10489a2cf691e8d0749693f0c55b",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Suggestion: Switch to an optional struct that holds both next and prev.",
+    "created_at": "2026-01-04T16:26:17Z",
+    "updated_at": "2026-01-04T16:33:28Z",
+    "html_url": "https://github.com/starship/starship/pull/7143#discussion_r2659776253",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7143",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2659776253"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7143#discussion_r2659776253"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7143"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2659776253/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 20,
+    "original_line": 20,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 15,
+    "position": 15,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2660724853",
+    "pull_request_review_id": 3625963243,
+    "id": 2660724853,
+    "node_id": "PRRC_kwDOCqswNs6el3B1",
+    "diff_hunk": "@@ -356,7 +356,8 @@ Style strings are a list of words, separated by whitespace. The words are not ca\n - `none`\n \n where `<color>` is a color specifier (discussed below). `fg:<color>` and `<color>` currently do the same thing, though this may change in the future.\n-`<color>` can also be set to `prev_fg` or `prev_bg` which evaluates to the previous item's foreground or background color respectively if available or `none` otherwise.\n+`<color>` can also be set to `prev_fg`, `prev_bg`, `next_fg` or `next_fg`, which evaluates to, respectively, the previous and next item's foreground or background color if available or `none` otherwise.\n+Please also note that if the previous or next module also references a color with, for instance, `bg:next_fg`, the reference won't be followed and the default style will apply.",
+    "path": "docs/advanced-config/README.md",
+    "commit_id": "7f0f70e1c57a10489a2cf691e8d0749693f0c55b",
+    "original_commit_id": "7f0f70e1c57a10489a2cf691e8d0749693f0c55b",
+    "user": {
+      "login": "christophehenry",
+      "id": 22097904,
+      "node_id": "MDQ6VXNlcjIyMDk3OTA0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22097904?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/christophehenry",
+      "html_url": "https://github.com/christophehenry",
+      "followers_url": "https://api.github.com/users/christophehenry/followers",
+      "following_url": "https://api.github.com/users/christophehenry/following{/other_user}",
+      "gists_url": "https://api.github.com/users/christophehenry/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/christophehenry/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/christophehenry/subscriptions",
+      "organizations_url": "https://api.github.com/users/christophehenry/orgs",
+      "repos_url": "https://api.github.com/users/christophehenry/repos",
+      "events_url": "https://api.github.com/users/christophehenry/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/christophehenry/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Hmm… True. Now, reflecting on this I see that `prev_bg` was transitive because we go through the sequences in order so any reference to the previous style is known because we keep a reference to the previous style. Were I to do the same for forward colour references, I would have to first go through the sequences in reverse order, resolve the forward references and then process the sequences like it is currently done. But TBH, I don't really know how to to this in Rust. should I just generate a new `segments` where I would `segment.copy()` with partially resolved styles?",
+    "created_at": "2026-01-05T08:51:55Z",
+    "updated_at": "2026-01-05T08:51:55Z",
+    "html_url": "https://github.com/starship/starship/pull/7143#discussion_r2660724853",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7143",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2660724853"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7143#discussion_r2660724853"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7143"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2660724853/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 360,
+    "original_line": 360,
+    "side": "RIGHT",
+    "in_reply_to_id": 2659773510,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 6,
+    "position": 6,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2662652412",
+    "pull_request_review_id": 3628243829,
+    "id": 2662652412,
+    "node_id": "PRRC_kwDOCqswNs6etNn8",
+    "diff_hunk": "@@ -356,7 +356,8 @@ Style strings are a list of words, separated by whitespace. The words are not ca\n - `none`\n \n where `<color>` is a color specifier (discussed below). `fg:<color>` and `<color>` currently do the same thing, though this may change in the future.\n-`<color>` can also be set to `prev_fg` or `prev_bg` which evaluates to the previous item's foreground or background color respectively if available or `none` otherwise.\n+`<color>` can also be set to `prev_fg`, `prev_bg`, `next_fg` or `next_fg`, which evaluates to, respectively, the previous and next item's foreground or background color if available or `none` otherwise.\n+Please also note that if the previous or next module also references a color with, for instance, `bg:next_fg`, the reference won't be followed and the default style will apply.",
+    "path": "docs/advanced-config/README.md",
+    "commit_id": "7f0f70e1c57a10489a2cf691e8d0749693f0c55b",
+    "original_commit_id": "7f0f70e1c57a10489a2cf691e8d0749693f0c55b",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "You can store the segment iterator in a variable and use `peek()` (may require `peekable()`) to reference upcoming iterator items.",
+    "created_at": "2026-01-05T20:01:21Z",
+    "updated_at": "2026-01-05T20:01:21Z",
+    "html_url": "https://github.com/starship/starship/pull/7143#discussion_r2662652412",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7143",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2662652412"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7143#discussion_r2662652412"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7143"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2662652412/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 360,
+    "original_line": 360,
+    "side": "RIGHT",
+    "in_reply_to_id": 2659773510,
+    "author_association": "MEMBER",
+    "original_position": 6,
+    "position": 6,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2662843374",
+    "pull_request_review_id": 3628469020,
+    "id": 2662843374,
+    "node_id": "PRRC_kwDOCqswNs6et8Pu",
+    "diff_hunk": "@@ -356,7 +356,8 @@ Style strings are a list of words, separated by whitespace. The words are not ca\n - `none`\n \n where `<color>` is a color specifier (discussed below). `fg:<color>` and `<color>` currently do the same thing, though this may change in the future.\n-`<color>` can also be set to `prev_fg` or `prev_bg` which evaluates to the previous item's foreground or background color respectively if available or `none` otherwise.\n+`<color>` can also be set to `prev_fg`, `prev_bg`, `next_fg` or `next_fg`, which evaluates to, respectively, the previous and next item's foreground or background color if available or `none` otherwise.\n+Please also note that if the previous or next module also references a color with, for instance, `bg:next_fg`, the reference won't be followed and the default style will apply.",
+    "path": "docs/advanced-config/README.md",
+    "commit_id": "7f0f70e1c57a10489a2cf691e8d0749693f0c55b",
+    "original_commit_id": "7f0f70e1c57a10489a2cf691e8d0749693f0c55b",
+    "user": {
+      "login": "christophehenry",
+      "id": 22097904,
+      "node_id": "MDQ6VXNlcjIyMDk3OTA0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22097904?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/christophehenry",
+      "html_url": "https://github.com/christophehenry",
+      "followers_url": "https://api.github.com/users/christophehenry/followers",
+      "following_url": "https://api.github.com/users/christophehenry/following{/other_user}",
+      "gists_url": "https://api.github.com/users/christophehenry/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/christophehenry/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/christophehenry/subscriptions",
+      "organizations_url": "https://api.github.com/users/christophehenry/orgs",
+      "repos_url": "https://api.github.com/users/christophehenry/repos",
+      "events_url": "https://api.github.com/users/christophehenry/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/christophehenry/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ah I see that I can use `Peekable::nth` to look further that the next element so I can do transitive. However it feels suboptimal. Worst case scenario is all the segments are references to the very last then I traverse the vector *n×(n+1)/2*. It should be fine since I expect the segments vector size to be less than 10 and the number of references to be no more than 1 or 2 segments away. But still. It bothers me a bit. ",
+    "created_at": "2026-01-05T21:22:59Z",
+    "updated_at": "2026-01-05T21:27:27Z",
+    "html_url": "https://github.com/starship/starship/pull/7143#discussion_r2662843374",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7143",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2662843374"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7143#discussion_r2662843374"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7143"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2662843374/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 360,
+    "original_line": 360,
+    "side": "RIGHT",
+    "in_reply_to_id": 2659773510,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 6,
+    "position": 6,
+    "subject_type": "line"
+  }
+]

@@ -1,0 +1,278 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/426694959",
+    "pull_request_review_id": 413684017,
+    "id": 426694959,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyNjY5NDk1OQ==",
+    "diff_hunk": "@@ -1380,3 +1381,28 @@ files = [\"foo\"]       # can specify filters\n when = \"\"\" test \"$HOME\" == \"$PWD\" \"\"\"\n prefix = \" transcending \"\n ```\n+\n+## PureScript\n+\n+The `purescript` module shows the currently installed version of PureScript version.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `spago.dhall` file\n+- The current directory contains a \\*.purs files\n+\n+### Options\n+\n+| Variable   | Default        | Description                                                  |\n+| ---------- | -------------- | ------------------------------------------------------------ |\n+| `symbol`   | `\"<=> \"`       | The symbol used before displaying the version of PureScript. |\n+| `style`    | `\"bold black\"` | The style for the module.                                    |\n+| `disabled` | `false`        | Disables the `purescript` module.                            |\n+\n+### Example\n+\n+```toml\n+# ~/.config/starship.toml\n+\n+[haskell]",
+    "path": "docs/config/README.md",
+    "commit_id": "9fc48adc32ba15705b644be725c11add6c9e20cd",
+    "original_commit_id": "b7804519aaeadbc555b4f75bab1c8a82c68704d7",
+    "user": {
+      "login": "erikprice",
+      "id": 3916,
+      "node_id": "MDQ6VXNlcjM5MTY=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3916?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/erikprice",
+      "html_url": "https://github.com/erikprice",
+      "followers_url": "https://api.github.com/users/erikprice/followers",
+      "following_url": "https://api.github.com/users/erikprice/following{/other_user}",
+      "gists_url": "https://api.github.com/users/erikprice/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/erikprice/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/erikprice/subscriptions",
+      "organizations_url": "https://api.github.com/users/erikprice/orgs",
+      "repos_url": "https://api.github.com/users/erikprice/repos",
+      "events_url": "https://api.github.com/users/erikprice/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/erikprice/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Should this be `[purescript]`?",
+    "created_at": "2020-05-18T15:06:16Z",
+    "updated_at": "2020-05-22T11:20:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1227#discussion_r426694959",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1227",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/426694959"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1227#discussion_r426694959"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1227"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/426694959/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1406,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 34,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/426695545",
+    "pull_request_review_id": 413684745,
+    "id": 426695545,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyNjY5NTU0NQ==",
+    "diff_hunk": "@@ -0,0 +1,72 @@\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::purescript::PureScriptConfig;\n+use crate::utils;\n+\n+/// Creates a module with the current PureScript version\n+///\n+/// Will display the PureScript version if any of the following criteria are met:\n+///     - Current directory contains a `spago.dhall` file\n+///     - Current directory contains a `*.purs` files\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_purs_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"spago.dhall\"])\n+        .set_extensions(&[\"purs\"])\n+        .is_match();\n+\n+    if !is_purs_project {\n+        return None;\n+    }\n+\n+    let purs_version = utils::exec_cmd(\"purs\", &[\"--version\"])?.stdout;\n+    let formatted_version = Some(format!(\"v{}\", purs_version.trim()))?;\n+\n+    let mut module = context.new_module(\"purescript\");\n+    let config: PureScriptConfig = PureScriptConfig::try_load(module.config);\n+    module.set_style(config.style);\n+\n+    module.create_segment(\"symbol\", &config.symbol);\n+    module.create_segment(\"version\", &SegmentConfig::new(&formatted_version));\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::modules::utils::test::render_module;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn folder_without_purscript_files() -> io::Result<()> {",
+    "path": "src/modules/purescript.rs",
+    "commit_id": "9fc48adc32ba15705b644be725c11add6c9e20cd",
+    "original_commit_id": "b7804519aaeadbc555b4f75bab1c8a82c68704d7",
+    "user": {
+      "login": "erikprice",
+      "id": 3916,
+      "node_id": "MDQ6VXNlcjM5MTY=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3916?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/erikprice",
+      "html_url": "https://github.com/erikprice",
+      "followers_url": "https://api.github.com/users/erikprice/followers",
+      "following_url": "https://api.github.com/users/erikprice/following{/other_user}",
+      "gists_url": "https://api.github.com/users/erikprice/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/erikprice/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/erikprice/subscriptions",
+      "organizations_url": "https://api.github.com/users/erikprice/orgs",
+      "repos_url": "https://api.github.com/users/erikprice/repos",
+      "events_url": "https://api.github.com/users/erikprice/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/erikprice/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Should this be `folder_without_purescript_files`?",
+    "created_at": "2020-05-18T15:06:59Z",
+    "updated_at": "2020-05-22T11:20:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1227#discussion_r426695545",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1227",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/426695545"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1227#discussion_r426695545"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1227"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/426695545/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 43,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 43,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/428780876",
+    "pull_request_review_id": 416319446,
+    "id": 428780876,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyODc4MDg3Ng==",
+    "diff_hunk": "@@ -1380,3 +1381,28 @@ files = [\"foo\"]       # can specify filters\n when = \"\"\" test \"$HOME\" == \"$PWD\" \"\"\"\n prefix = \" transcending \"\n ```\n+\n+## PureScript\n+\n+The `purescript` module shows the currently installed version of PureScript version.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `spago.dhall` file\n+- The current directory contains a \\*.purs files\n+\n+### Options\n+\n+| Variable   | Default        | Description                                                  |\n+| ---------- | -------------- | ------------------------------------------------------------ |\n+| `symbol`   | `\"<=> \"`       | The symbol used before displaying the version of PureScript. |\n+| `style`    | `\"bold black\"` | The style for the module.                                    |",
+    "path": "docs/config/README.md",
+    "commit_id": "9fc48adc32ba15705b644be725c11add6c9e20cd",
+    "original_commit_id": "f83f5be02ae77b26a63ff443f44aae7b6c46520b",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The default here is `bold black` but in the config it is `bold white` should this be changed?",
+    "created_at": "2020-05-21T16:51:31Z",
+    "updated_at": "2020-05-22T11:20:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1227#discussion_r428780876",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1227",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/428780876"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1227#discussion_r428780876"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1227"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/428780876/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1398,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 26,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/428782057",
+    "pull_request_review_id": 416319446,
+    "id": 428782057,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyODc4MjA1Nw==",
+    "diff_hunk": "@@ -81,6 +82,7 @@ pub fn handle<'a>(module: &str, context: &'a Context) -> Option<Module<'a>> {\n         \"nodejs\" => nodejs::module(context),\n         \"package\" => package::module(context),\n         \"php\" => php::module(context),\n+        \"purescript\" => purescript::module(context),\n         \"python\" => python::module(context),\n         \"ruby\" => ruby::module(context),\n         \"rust\" => rust::module(context),",
+    "path": "src/modules/mod.rs",
+    "commit_id": "9fc48adc32ba15705b644be725c11add6c9e20cd",
+    "original_commit_id": "f83f5be02ae77b26a63ff443f44aae7b6c46520b",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Can you also add `purescript` to the description function below around line 134.",
+    "created_at": "2020-05-21T16:53:30Z",
+    "updated_at": "2020-05-22T11:20:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1227#discussion_r428782057",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1227",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/428782057"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1227#discussion_r428782057"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1227"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/428782057/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 88,
+    "original_line": 88,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 15,
+    "position": 15,
+    "subject_type": "line"
+  }
+]

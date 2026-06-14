@@ -1,0 +1,556 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1142030559",
+    "pull_request_review_id": 1348404829,
+    "id": 1142030559,
+    "node_id": "PRRC_kwDOCqswNs5EEgDf",
+    "diff_hunk": "@@ -125,6 +125,7 @@ winres = \"0.1.12\"\n \n [dev-dependencies]\n mockall = \"0.11\"\n+temp-env = \"0.3.2\"",
+    "path": "Cargo.toml",
+    "commit_id": "fdd4a63cbbd15873fed9967047ae02bc02efbfcc",
+    "original_commit_id": "e35d18dbf90d34e260315e2dae3e79dda8dd11c5",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I would prefer not to introduce a new dependency and another means of mocking the environment (which `Context` usually handles).",
+    "created_at": "2023-03-20T12:19:58Z",
+    "updated_at": "2023-03-20T12:19:59Z",
+    "html_url": "https://github.com/starship/starship/pull/5001#discussion_r1142030559",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5001",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1142030559"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5001#discussion_r1142030559"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5001"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1142030559/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 128,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1146016042",
+    "pull_request_review_id": 1354340155,
+    "id": 1146016042,
+    "node_id": "PRRC_kwDOCqswNs5ETtEq",
+    "diff_hunk": "@@ -125,6 +125,7 @@ winres = \"0.1.12\"\n \n [dev-dependencies]\n mockall = \"0.11\"\n+temp-env = \"0.3.2\"",
+    "path": "Cargo.toml",
+    "commit_id": "fdd4a63cbbd15873fed9967047ae02bc02efbfcc",
+    "original_commit_id": "e35d18dbf90d34e260315e2dae3e79dda8dd11c5",
+    "user": {
+      "login": "domsleee",
+      "id": 14891742,
+      "node_id": "MDQ6VXNlcjE0ODkxNzQy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14891742?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/domsleee",
+      "html_url": "https://github.com/domsleee",
+      "followers_url": "https://api.github.com/users/domsleee/followers",
+      "following_url": "https://api.github.com/users/domsleee/following{/other_user}",
+      "gists_url": "https://api.github.com/users/domsleee/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/domsleee/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/domsleee/subscriptions",
+      "organizations_url": "https://api.github.com/users/domsleee/orgs",
+      "repos_url": "https://api.github.com/users/domsleee/repos",
+      "events_url": "https://api.github.com/users/domsleee/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/domsleee/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ah alright\r\nI'm thinking a few things then:\r\n* A new method `Context#get_config_path`\r\n* Would need `Context#new_with_env` for testing since the init of `Context` uses STARSHIP_CONFIG / HOME on `new`\r\n* There is `config.rs#get_config_path` and `configure.rs#get_config_path`. They look practically identical to me, I think they can be consolidated to one definition in a new method `Context#get_config_path`?\r\n\r\nCode in `master` is like this:\r\n\r\n```mermaid\r\nclassDiagram\r\n`configure.rs#print_configuration` --> `config.rs#StarshipConfig` : in initialize()\r\n`config.rs#StarshipConfig` --> env : config.rs#get_config_path fetches STARSHIP_CONFIG\r\n`context.rs#Context` *-- `config.rs#StarshipConfig` : in new()\r\n```\r\n\r\nI think these ideas are ok if the idea is to have all env mocking in `Context`, what do you think?",
+    "created_at": "2023-03-23T11:02:36Z",
+    "updated_at": "2023-03-23T11:02:36Z",
+    "html_url": "https://github.com/starship/starship/pull/5001#discussion_r1146016042",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5001",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1146016042"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5001#discussion_r1146016042"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5001"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1146016042/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 128,
+    "side": "RIGHT",
+    "in_reply_to_id": 1142030559,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1157365372",
+    "pull_request_review_id": 1371158758,
+    "id": 1157365372,
+    "node_id": "PRRC_kwDOCqswNs5E-_58",
+    "diff_hunk": "@@ -391,6 +380,36 @@ impl<'a> Context<'a> {\n \n         read_file(self.current_dir.join(file_name)).ok()\n     }\n+\n+    pub fn get_config_path_os(&self) -> OsString {\n+        get_config_path_os(&self.env)\n+    }\n+}\n+\n+impl Default for Context<'_> {\n+    fn default() -> Self {\n+        Context::new(Default::default(), Target::Main)\n+    }\n+}\n+\n+fn home_dir(env: &Env) -> Option<PathBuf> {\n+    if cfg!(test) {\n+        if let Some(home) = env.get_env(\"HOME\") {\n+            return Some(PathBuf::from(home));\n+        }\n+    }\n+    utils::home_dir()\n+}\n+\n+fn get_config_path_os(env: &Env) -> OsString {\n+    if let Some(config_path) = env.get_env_os(\"STARSHIP_CONFIG\") {\n+        return config_path;\n+    }\n+    home_dir(env)\n+        .expect(\"couldn't find home directory\")",
+    "path": "src/context.rs",
+    "commit_id": "fdd4a63cbbd15873fed9967047ae02bc02efbfcc",
+    "original_commit_id": "95f40c3d9a2fc29dd3f821b605014d91305516c2",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Since, the aim is to reduce panics, perhaps also get red of this one by returning `Option<OsString>` instead.",
+    "created_at": "2023-04-04T14:43:28Z",
+    "updated_at": "2023-04-07T13:48:42Z",
+    "html_url": "https://github.com/starship/starship/pull/5001#discussion_r1157365372",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5001",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1157365372"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5001#discussion_r1157365372"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5001"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1157365372/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 409,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 134,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1160710758",
+    "pull_request_review_id": 1371158758,
+    "id": 1160710758,
+    "node_id": "PRRC_kwDOCqswNs5FLwpm",
+    "diff_hunk": "@@ -1,10 +1,11 @@\n use crate::config::{ModuleConfig, StarshipConfig};\n use crate::configs::StarshipRootConfig;\n+use crate::context_env::Env;\n use crate::module::Module;\n use crate::utils::{create_command, exec_timeout, read_file, CommandOutput};\n \n use crate::modules;\n-use crate::utils::{self, home_dir};\n+use crate::utils::{self};",
+    "path": "src/context.rs",
+    "commit_id": "fdd4a63cbbd15873fed9967047ae02bc02efbfcc",
+    "original_commit_id": "95f40c3d9a2fc29dd3f821b605014d91305516c2",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\nuse crate::utils;\r\n```",
+    "created_at": "2023-04-07T13:43:12Z",
+    "updated_at": "2023-04-07T13:48:42Z",
+    "html_url": "https://github.com/starship/starship/pull/5001#discussion_r1160710758",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5001",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1160710758"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5001#discussion_r1160710758"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5001"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1160710758/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 8,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 9,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1161111176",
+    "pull_request_review_id": 1376762807,
+    "id": 1161111176,
+    "node_id": "PRRC_kwDOCqswNs5FNSaI",
+    "diff_hunk": "@@ -433,12 +433,11 @@ fn git_status_wsl(context: &Context, conf: &GitStatusConfig) -> Option<String> {\n \n     let out = match create_command(starship_exe)\n         .map(|mut c| {\n-            c.env(\n-                \"STARSHIP_CONFIG\",\n-                crate::config::get_config_path().unwrap_or_else(|| \"/dev/null\".to_string()),\n-            )\n-            .env(\"WSLENV\", wslenv)\n-            .args([\"module\", \"git_status\", \"--path\", winpath]);\n+            if let Some(config_path_os) = context.get_config_path_os() {\n+                c.env(\"STARSHIP_CONFIG\", config_path_os);\n+            }",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "fdd4a63cbbd15873fed9967047ae02bc02efbfcc",
+    "original_commit_id": "e8772b1b3e3367a6e658ca3f1571881988fe6d3b",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "If config file resolutions fails on Linux, it should also fail on Windows, by defaulting to `/dev/null` as before.",
+    "created_at": "2023-04-08T13:15:01Z",
+    "updated_at": "2023-04-13T09:03:14Z",
+    "html_url": "https://github.com/starship/starship/pull/5001#discussion_r1161111176",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5001",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1161111176"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5001#discussion_r1161111176"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5001"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1161111176/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 436,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 438,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 12,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1165228071",
+    "pull_request_review_id": 1376762807,
+    "id": 1165228071,
+    "node_id": "PRRC_kwDOCqswNs5Fc_gn",
+    "diff_hunk": "@@ -217,41 +216,26 @@ fn handle_toggle_configuration(doc: &mut Document, name: &str, key: &str) -> Res\n     Ok(())\n }\n \n-pub fn get_configuration() -> toml::Table {\n-    let starship_config = StarshipConfig::initialize();\n+pub fn get_configuration(context: &Context) -> toml::Table {\n+    let starship_config = StarshipConfig::initialize(&context.get_config_path_os());\n \n-    starship_config\n-        .config\n-        .expect(\"Failed to load starship config\")\n+    starship_config.config.unwrap_or(toml::Table::new())\n }\n \n-pub fn get_configuration_edit() -> Document {\n-    let file_path = get_config_path();\n-    let toml_content = match utils::read_file(file_path) {\n-        Ok(content) => {\n-            log::trace!(\"Config file content: \\\"\\n{}\\\"\", &content);\n-            Some(content)\n-        }\n-        Err(e) => {\n-            let level = if e.kind() == ErrorKind::NotFound {\n-                log::Level::Debug\n-            } else {\n-                log::Level::Error\n-            };\n-\n-            log::log!(level, \"Unable to read config file content: {}\", &e);\n-            None\n-        }\n-    };\n+pub fn get_configuration_edit(context: &Context) -> Document {\n+    let config_file_path = context.get_config_path_os();\n+    let toml_content = StarshipConfig::read_config_content_as_str(&config_file_path);\n \n     toml_content\n         .unwrap_or_default()\n         .parse::<Document>()\n         .expect(\"Failed to load starship config\")\n }\n \n-pub fn write_configuration(doc: &Document) {\n-    let config_path = get_config_path();\n+pub fn write_configuration(context: &Context, doc: &Document) {\n+    let config_path = context\n+        .get_config_path_os()\n+        .expect(\"able to get config path\");",
+    "path": "src/configure.rs",
+    "commit_id": "fdd4a63cbbd15873fed9967047ae02bc02efbfcc",
+    "original_commit_id": "e8772b1b3e3367a6e658ca3f1571881988fe6d3b",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This isn't really worse than what we had, but for user-facing errors like this, please prefer using `eprintln!` and `exit`, the output of `expect` can be hard to parse.",
+    "created_at": "2023-04-13T09:02:26Z",
+    "updated_at": "2023-04-13T09:03:14Z",
+    "html_url": "https://github.com/starship/starship/pull/5001#discussion_r1165228071",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5001",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1165228071"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5001#discussion_r1165228071"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5001"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1165228071/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 236,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 238,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 127,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1165228250",
+    "pull_request_review_id": 1376762807,
+    "id": 1165228250,
+    "node_id": "PRRC_kwDOCqswNs5Fc_ja",
+    "diff_hunk": "@@ -260,10 +244,15 @@ pub fn write_configuration(doc: &Document) {\n         .expect(\"Error writing starship config\");\n }\n \n-pub fn edit_configuration(editor_override: Option<&str>) -> Result<(), Box<dyn std::error::Error>> {\n+pub fn edit_configuration(\n+    context: &Context,\n+    editor_override: Option<&str>,\n+) -> Result<(), Box<dyn std::error::Error>> {\n     // Argument currently only used for testing, but could be used to specify\n     // an editor override on the command line.\n-    let config_path = get_config_path();\n+    let config_path = context\n+        .get_config_path_os()\n+        .expect(\"config path required to edit the config\");",
+    "path": "src/configure.rs",
+    "commit_id": "fdd4a63cbbd15873fed9967047ae02bc02efbfcc",
+    "original_commit_id": "e8772b1b3e3367a6e658ca3f1571881988fe6d3b",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This isn't really worse than what we had, but for user-facing errors like this, please prefer using `eprintln!` and `exit`, the output of `expect` can be hard to parse.",
+    "created_at": "2023-04-13T09:02:36Z",
+    "updated_at": "2023-04-13T09:03:14Z",
+    "html_url": "https://github.com/starship/starship/pull/5001#discussion_r1165228250",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5001",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1165228250"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5001#discussion_r1165228250"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5001"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1165228250/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 253,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 255,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 145,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1165464110",
+    "pull_request_review_id": 1383323432,
+    "id": 1165464110,
+    "node_id": "PRRC_kwDOCqswNs5Fd5Iu",
+    "diff_hunk": "@@ -217,41 +216,26 @@ fn handle_toggle_configuration(doc: &mut Document, name: &str, key: &str) -> Res\n     Ok(())\n }\n \n-pub fn get_configuration() -> toml::Table {\n-    let starship_config = StarshipConfig::initialize();\n+pub fn get_configuration(context: &Context) -> toml::Table {\n+    let starship_config = StarshipConfig::initialize(&context.get_config_path_os());\n \n-    starship_config\n-        .config\n-        .expect(\"Failed to load starship config\")\n+    starship_config.config.unwrap_or(toml::Table::new())\n }\n \n-pub fn get_configuration_edit() -> Document {\n-    let file_path = get_config_path();\n-    let toml_content = match utils::read_file(file_path) {\n-        Ok(content) => {\n-            log::trace!(\"Config file content: \\\"\\n{}\\\"\", &content);\n-            Some(content)\n-        }\n-        Err(e) => {\n-            let level = if e.kind() == ErrorKind::NotFound {\n-                log::Level::Debug\n-            } else {\n-                log::Level::Error\n-            };\n-\n-            log::log!(level, \"Unable to read config file content: {}\", &e);\n-            None\n-        }\n-    };\n+pub fn get_configuration_edit(context: &Context) -> Document {\n+    let config_file_path = context.get_config_path_os();\n+    let toml_content = StarshipConfig::read_config_content_as_str(&config_file_path);\n \n     toml_content\n         .unwrap_or_default()\n         .parse::<Document>()\n         .expect(\"Failed to load starship config\")\n }\n \n-pub fn write_configuration(doc: &Document) {\n-    let config_path = get_config_path();\n+pub fn write_configuration(context: &Context, doc: &Document) {\n+    let config_path = context\n+        .get_config_path_os()\n+        .expect(\"able to get config path\");",
+    "path": "src/configure.rs",
+    "commit_id": "fdd4a63cbbd15873fed9967047ae02bc02efbfcc",
+    "original_commit_id": "e8772b1b3e3367a6e658ca3f1571881988fe6d3b",
+    "user": {
+      "login": "domsleee",
+      "id": 14891742,
+      "node_id": "MDQ6VXNlcjE0ODkxNzQy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14891742?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/domsleee",
+      "html_url": "https://github.com/domsleee",
+      "followers_url": "https://api.github.com/users/domsleee/followers",
+      "following_url": "https://api.github.com/users/domsleee/following{/other_user}",
+      "gists_url": "https://api.github.com/users/domsleee/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/domsleee/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/domsleee/subscriptions",
+      "organizations_url": "https://api.github.com/users/domsleee/orgs",
+      "repos_url": "https://api.github.com/users/domsleee/repos",
+      "events_url": "https://api.github.com/users/domsleee/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/domsleee/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "sure, can do",
+    "created_at": "2023-04-13T12:40:19Z",
+    "updated_at": "2023-04-13T12:40:19Z",
+    "html_url": "https://github.com/starship/starship/pull/5001#discussion_r1165464110",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5001",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1165464110"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5001#discussion_r1165464110"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5001"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1165464110/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 236,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 238,
+    "side": "RIGHT",
+    "in_reply_to_id": 1165228071,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 127,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

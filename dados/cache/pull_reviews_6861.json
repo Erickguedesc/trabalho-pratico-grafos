@@ -1,0 +1,82 @@
+[
+  {
+    "id": 3081036981,
+    "node_id": "PRR_kwDOCqswNs63pOS1",
+    "user": {
+      "login": "cappyzawa",
+      "id": 12455284,
+      "node_id": "MDQ6VXNlcjEyNDU1Mjg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12455284?u=4ad94c0467e33e1e96d13ebc85a72f3758c141a0&v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cappyzawa",
+      "html_url": "https://github.com/cappyzawa",
+      "followers_url": "https://api.github.com/users/cappyzawa/followers",
+      "following_url": "https://api.github.com/users/cappyzawa/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cappyzawa/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cappyzawa/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cappyzawa/subscriptions",
+      "organizations_url": "https://api.github.com/users/cappyzawa/orgs",
+      "repos_url": "https://api.github.com/users/cappyzawa/repos",
+      "events_url": "https://api.github.com/users/cappyzawa/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cappyzawa/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Great catch! This fixes the ANSI escape code width calculation issue in `starship explain`.\n\nThe fix works correctly, but I noticed a performance impact - `width_graphemes()` now compiles the regex on every call. Consider using `std::sync::OnceLock` to cache the compiled regex:\n\n```rust\nuse std::sync::OnceLock;\n\nstatic ANSI_REGEX: OnceLock<Regex> = OnceLock::new();\n\nfn get_ansi_regex() -> &'static Regex {\n    ANSI_REGEX.get_or_init(|| Regex::new(r\"\\x1B\\[[0-9;]*m\").unwrap())\n}\n\n// Then in width_graphemes():\nfn width_graphemes(&self) -> usize {\n    get_ansi_regex()\n        .replace_all(self.as_ref(), \"\")\n        .graphemes(true)\n        .map(Grapheme)\n        .map(|g| g.width())\n        .sum()\n}\n```\n\nOtherwise LGTM! 👍",
+    "state": "COMMENTED",
+    "html_url": "https://github.com/starship/starship/pull/6861#pullrequestreview-3081036981",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6861",
+    "author_association": "MEMBER",
+    "_links": {
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6861#pullrequestreview-3081036981"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6861"
+      }
+    },
+    "submitted_at": "2025-08-02T12:47:34Z",
+    "commit_id": "70da1cdaf692e0e2ac9e77a786346f9c3a409695"
+  },
+  {
+    "id": 3081154168,
+    "node_id": "PRR_kwDOCqswNs63pq54",
+    "user": {
+      "login": "cappyzawa",
+      "id": 12455284,
+      "node_id": "MDQ6VXNlcjEyNDU1Mjg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12455284?u=4ad94c0467e33e1e96d13ebc85a72f3758c141a0&v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cappyzawa",
+      "html_url": "https://github.com/cappyzawa",
+      "followers_url": "https://api.github.com/users/cappyzawa/followers",
+      "following_url": "https://api.github.com/users/cappyzawa/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cappyzawa/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cappyzawa/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cappyzawa/subscriptions",
+      "organizations_url": "https://api.github.com/users/cappyzawa/orgs",
+      "repos_url": "https://api.github.com/users/cappyzawa/repos",
+      "events_url": "https://api.github.com/users/cappyzawa/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cappyzawa/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "LGTM",
+    "state": "APPROVED",
+    "html_url": "https://github.com/starship/starship/pull/6861#pullrequestreview-3081154168",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6861",
+    "author_association": "MEMBER",
+    "_links": {
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6861#pullrequestreview-3081154168"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6861"
+      }
+    },
+    "submitted_at": "2025-08-02T16:56:37Z",
+    "commit_id": "497c5c4025ab420d051f86d4efdeddf006f1976f"
+  }
+]

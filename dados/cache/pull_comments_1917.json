@@ -1,0 +1,280 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/548985438",
+    "pull_request_review_id": 558874804,
+    "id": 548985438,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU0ODk4NTQzOA==",
+    "diff_hunk": "@@ -29,11 +29,11 @@ fn main() {\n         .takes_value(true);\n \n     let shell_arg = Arg::with_name(\"shell\")\n-        .value_name(\"SHELL\")\n-        .help(\n-            \"The name of the currently running shell\\nCurrently supported options: bash, zsh, fish, powershell, ion\",\n-        )\n-        .required(true);\n+\t\t.value_name(\"SHELL\")\n+\t\t.help(\n+\t\t\t\"The name of the currently running shell\\nCurrently supported options: bash, zsh, fish, powershell, ion\",\n+\t\t)\n+\t\t.required(true);",
+    "path": "src/main.rs",
+    "commit_id": "f10e8254a8da274b0d6d09c6654146b61f194e32",
+    "original_commit_id": "38ad54a7dd62b7ea6885066f0ee456bef4b56cb2",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'm not sure what if anything is changing here, is this just a whitespace change? If so is it required?",
+    "created_at": "2020-12-26T13:58:59Z",
+    "updated_at": "2020-12-26T18:38:53Z",
+    "html_url": "https://github.com/starship/starship/pull/1917#discussion_r548985438",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1917",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/548985438"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1917#discussion_r548985438"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1917"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/548985438/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 32,
+    "original_start_line": 32,
+    "start_side": "LEFT",
+    "line": 36,
+    "original_line": 36,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 13,
+    "position": 13,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/548995743",
+    "pull_request_review_id": 558874804,
+    "id": 548995743,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU0ODk5NTc0Mw==",
+    "diff_hunk": "@@ -54,14 +48,57 @@ pub fn update_configuration(name: &str, value: &str) {\n             table.insert(keys[0].to_string(), Value::Table(updated_values));\n         }\n \n-        let config_str =\n-            toml::to_string_pretty(&table).expect(\"Failed to serialize the config to string\");\n-        File::create(&config_path)\n-            .and_then(|mut file| file.write_all(config_str.as_ref()))\n-            .expect(\"Error writing starship config\");\n+        write_configuration(table);\n+    }\n+}\n+\n+pub fn toggle_configuration(name: &str, key: &str) {\n+    if let Some(table) = get_configuration().as_table_mut() {\n+        if let Some(values) = table.get(name).unwrap().as_table() {",
+    "path": "src/configure.rs",
+    "commit_id": "f10e8254a8da274b0d6d09c6654146b61f194e32",
+    "original_commit_id": "38ad54a7dd62b7ea6885066f0ee456bef4b56cb2",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "As you mentioned in the PR description I think it would be better if we handled this a bit more gracefully, maybe we could log an error here if the module section is not set in the config file?",
+    "created_at": "2020-12-26T14:11:06Z",
+    "updated_at": "2020-12-26T18:38:53Z",
+    "html_url": "https://github.com/starship/starship/pull/1917#discussion_r548995743",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1917",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/548995743"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1917#discussion_r548995743"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1917"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/548995743/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 57,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 45,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/548999799",
+    "pull_request_review_id": 558877607,
+    "id": 548999799,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU0ODk5OTc5OQ==",
+    "diff_hunk": "@@ -29,11 +29,11 @@ fn main() {\n         .takes_value(true);\n \n     let shell_arg = Arg::with_name(\"shell\")\n-        .value_name(\"SHELL\")\n-        .help(\n-            \"The name of the currently running shell\\nCurrently supported options: bash, zsh, fish, powershell, ion\",\n-        )\n-        .required(true);\n+\t\t.value_name(\"SHELL\")\n+\t\t.help(\n+\t\t\t\"The name of the currently running shell\\nCurrently supported options: bash, zsh, fish, powershell, ion\",\n+\t\t)\n+\t\t.required(true);",
+    "path": "src/main.rs",
+    "commit_id": "f10e8254a8da274b0d6d09c6654146b61f194e32",
+    "original_commit_id": "38ad54a7dd62b7ea6885066f0ee456bef4b56cb2",
+    "user": {
+      "login": "Dentrax",
+      "id": 16493751,
+      "node_id": "MDQ6VXNlcjE2NDkzNzUx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16493751?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Dentrax",
+      "html_url": "https://github.com/Dentrax",
+      "followers_url": "https://api.github.com/users/Dentrax/followers",
+      "following_url": "https://api.github.com/users/Dentrax/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Dentrax/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Dentrax/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Dentrax/subscriptions",
+      "organizations_url": "https://api.github.com/users/Dentrax/orgs",
+      "repos_url": "https://api.github.com/users/Dentrax/repos",
+      "events_url": "https://api.github.com/users/Dentrax/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Dentrax/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I did not touch here actually, it's so weird that does not show up my name in annotate. Maybe `rustfmt` did this?\r\n\r\n<img width=\"1220\" alt=\"Screen Shot 2020-12-26 at 17 39 11\" src=\"https://user-images.githubusercontent.com/16493751/103153398-4487f680-47a1-11eb-9160-34aaecd9fd5a.png\">\r\n",
+    "created_at": "2020-12-26T14:40:38Z",
+    "updated_at": "2020-12-26T18:38:53Z",
+    "html_url": "https://github.com/starship/starship/pull/1917#discussion_r548999799",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1917",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/548999799"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1917#discussion_r548999799"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1917"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/548999799/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 32,
+    "original_start_line": 32,
+    "start_side": "LEFT",
+    "line": 36,
+    "original_line": 36,
+    "side": "RIGHT",
+    "in_reply_to_id": 548985438,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 13,
+    "position": 13,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/549019098",
+    "pull_request_review_id": 558886437,
+    "id": 549019098,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU0OTAxOTA5OA==",
+    "diff_hunk": "@@ -54,14 +48,57 @@ pub fn update_configuration(name: &str, value: &str) {\n             table.insert(keys[0].to_string(), Value::Table(updated_values));\n         }\n \n-        let config_str =\n-            toml::to_string_pretty(&table).expect(\"Failed to serialize the config to string\");\n-        File::create(&config_path)\n-            .and_then(|mut file| file.write_all(config_str.as_ref()))\n-            .expect(\"Error writing starship config\");\n+        write_configuration(table);\n+    }\n+}\n+\n+pub fn toggle_configuration(name: &str, key: &str) {\n+    if let Some(table) = get_configuration().as_table_mut() {\n+        if let Some(values) = table.get(name).unwrap().as_table() {",
+    "path": "src/configure.rs",
+    "commit_id": "f10e8254a8da274b0d6d09c6654146b61f194e32",
+    "original_commit_id": "38ad54a7dd62b7ea6885066f0ee456bef4b56cb2",
+    "user": {
+      "login": "Dentrax",
+      "id": 16493751,
+      "node_id": "MDQ6VXNlcjE2NDkzNzUx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16493751?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Dentrax",
+      "html_url": "https://github.com/Dentrax",
+      "followers_url": "https://api.github.com/users/Dentrax/followers",
+      "following_url": "https://api.github.com/users/Dentrax/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Dentrax/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Dentrax/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Dentrax/subscriptions",
+      "organizations_url": "https://api.github.com/users/Dentrax/orgs",
+      "repos_url": "https://api.github.com/users/Dentrax/repos",
+      "events_url": "https://api.github.com/users/Dentrax/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Dentrax/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Good catch! It's done. Now it should log `Given module 'winamp' not found in config file` and `exit(1)` in case of error.",
+    "created_at": "2020-12-26T18:40:07Z",
+    "updated_at": "2020-12-26T18:40:07Z",
+    "html_url": "https://github.com/starship/starship/pull/1917#discussion_r549019098",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1917",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/549019098"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1917#discussion_r549019098"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1917"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/549019098/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 57,
+    "side": "RIGHT",
+    "in_reply_to_id": 548995743,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 45,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

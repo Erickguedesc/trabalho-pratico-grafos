@@ -1,0 +1,485 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/776175325",
+    "pull_request_review_id": 841212106,
+    "id": 776175325,
+    "node_id": "PRRC_kwDOCqswNs4uQ37d",
+    "diff_hunk": "@@ -40,11 +40,16 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     } else {\n         host.as_ref()\n     };\n+    let (_choose_style, choose_config) = if ssh_connection.is_some() {\n+        (\"ssh_style\", config.ssh_style)\n+    } else {\n+        (\"style\", config.style)\n+    };\n \n     let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n         formatter\n             .map_style(|variable| match variable {\n-                \"style\" => Some(Ok(config.style)),\n+                _choose_style => Some(Ok(choose_config)),",
+    "path": "src/modules/hostname.rs",
+    "commit_id": "3610a9f5938ef673d514bb49a5956e8ebbcdb0f1",
+    "original_commit_id": "4e8d30b80f08c3f28da13d24c95bcbfda713cc5d",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This likely doesn't work the way you think it does. This is always going to match, shadowing whatever value `_choose_style` had previously. The `_ => None` arm after this will never be matched.\r\n\r\nHere is one way to rewrite it, though I don't think it's optimal:\r\n\r\n```\r\nmatch variable {\r\n  \"ssh_style\" if ssh_connection.is_some() => Some(Ok(config.ssh_style)),\r\n  \"ssh_style\" if ssh_connection.is_none() => Some(Ok(config.style)),\r\n  \"style\" => Some(Ok(config.style)),\r\n  _ => None,\r\n}\r\n```",
+    "created_at": "2021-12-29T06:48:01Z",
+    "updated_at": "2021-12-29T06:51:03Z",
+    "html_url": "https://github.com/starship/starship/pull/3224#discussion_r776175325",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/776175325"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3224#discussion_r776175325"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/776175325/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 52,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 14,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/776175497",
+    "pull_request_review_id": 841212106,
+    "id": 776175497,
+    "node_id": "PRRC_kwDOCqswNs4uQ3-J",
+    "diff_hunk": "@@ -123,7 +128,7 @@ mod tests {\n             })\n             .env(\"SSH_CONNECTION\", \"something\")\n             .collect();\n-        let expected = Some(format!(\"{} in \", style().paint(hostname)));\n+        let expected = Some(format!(\"{} in \", ssh_style().paint(hostname)));",
+    "path": "src/modules/hostname.rs",
+    "commit_id": "3610a9f5938ef673d514bb49a5956e8ebbcdb0f1",
+    "original_commit_id": "4e8d30b80f08c3f28da13d24c95bcbfda713cc5d",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "If we're going to do this, perhaps we should use a non-standard ssh_style in the config so that we can be sure that that codepath is actually being triggered?",
+    "created_at": "2021-12-29T06:48:47Z",
+    "updated_at": "2021-12-29T06:51:03Z",
+    "html_url": "https://github.com/starship/starship/pull/3224#discussion_r776175497",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/776175497"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3224#discussion_r776175497"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/776175497/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 134,
+    "original_line": 131,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 29,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/790063165",
+    "pull_request_review_id": 860123125,
+    "id": 790063165,
+    "node_id": "PRRC_kwDOCqswNs4vF2g9",
+    "diff_hunk": "@@ -1591,13 +1590,14 @@ The `hostname` module shows the system hostname.\n \n ### Options\n \n-| Option     | Default                     | Description                                                                                                                          |\n-| ---------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |\n-| `ssh_only` | `true`                      | Only show hostname when connected to an SSH session.                                                                                 |\n-| `trim_at`  | `\".\"`                       | String that the hostname is cut off at, after the first match. `\".\"` will stop after the first dot. `\"\"` will disable any truncation |\n-| `format`   | `\"[$hostname]($style) in \"` | The format for the module.                                                                                                           |\n-| `style`    | `\"bold dimmed green\"`       | The style for the module.                                                                                                            |\n-| `disabled` | `false`                     | Disables the `hostname` module.                                                                                                      |\n+| Option      | Default                     | Description                                                                                                                          |\n+| ----------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |\n+| `ssh_only`  | `true`                      | Only show hostname when connected to an SSH session.                                                                                 |\n+| `trim_at`   | `\".\"`                       | String that the hostname is cut off at, after the first match. `\".\"` will stop after the first dot. `\"\"` will disable any truncation |\n+| `format`    | `\"[$hostname]($style) in \"` | The format for the module.                                                                                                           |\n+| `ssh_style` | `\"bold yellow\"`             | The style for remote hostname in SSH connection.                                                                                     |",
+    "path": "docs/config/README.md",
+    "commit_id": "3610a9f5938ef673d514bb49a5956e8ebbcdb0f1",
+    "original_commit_id": "48249189534c41c9a912b02b6c81c9e33939db5c",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "If I understand correctly, this also needs to be documented in the variables section. It also might be worth documenting that this is only used if an SSH connection is detected, otherwise strings styled with this variable will fall back to using `style`.",
+    "created_at": "2022-01-21T23:48:18Z",
+    "updated_at": "2022-01-21T23:48:19Z",
+    "html_url": "https://github.com/starship/starship/pull/3224#discussion_r790063165",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/790063165"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3224#discussion_r790063165"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/790063165/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1598,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 111,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/797976682",
+    "pull_request_review_id": 871056491,
+    "id": 797976682,
+    "node_id": "PRRC_kwDOCqswNs4vkChq",
+    "diff_hunk": "@@ -1199,7 +1199,7 @@ This is based on the `~/.config/gcloud/active_config` file and the `~/.config/gc\n | Option           | Default                                                  | Description                                                     |\n | ---------------- | -------------------------------------------------------- | --------------------------------------------------------------- |\n | `format`         | `'on [$symbol$account(@$domain)(\\($region\\))]($style) '` | The format for the module.                                      |\n-| `symbol`         | `\"☁️  \"`                                                 | The symbol used before displaying the current GCP profile.      |\n+| `symbol`         | `\"☁️ \"`                                                  | The symbol used before displaying the current GCP profile.      |",
+    "path": "docs/config/README.md",
+    "commit_id": "3610a9f5938ef673d514bb49a5956e8ebbcdb0f1",
+    "original_commit_id": "7c436186560bf727a44151d5868882dd2f98baa8",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This change needs to be reverted--the double space is important for certain terminals.",
+    "created_at": "2022-02-02T20:13:53Z",
+    "updated_at": "2022-02-02T20:14:17Z",
+    "html_url": "https://github.com/starship/starship/pull/3224#discussion_r797976682",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/797976682"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3224#discussion_r797976682"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/797976682/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1230,
+    "original_line": 1202,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 5,
+    "position": 15,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/797977058",
+    "pull_request_review_id": 871057007,
+    "id": 797977058,
+    "node_id": "PRRC_kwDOCqswNs4vkCni",
+    "diff_hunk": "@@ -2858,7 +2861,7 @@ set to a number and meets or exceeds the specified threshold.\n | ----------- | ---------------------------- | ------------------------------------------------------------- |\n | `threshold` | `2`                          | Display threshold.                                            |\n | `format`    | `\"[$symbol$shlvl]($style) \"` | The format for the module.                                    |\n-| `symbol`    | `\"↕️  \"`                     | The symbol used to represent the `SHLVL`.                     |\n+| `symbol`    | `\"↕️ \"`                      | The symbol used to represent the `SHLVL`.                     |",
+    "path": "docs/config/README.md",
+    "commit_id": "3610a9f5938ef673d514bb49a5956e8ebbcdb0f1",
+    "original_commit_id": "7c436186560bf727a44151d5868882dd2f98baa8",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This needs to be reverted as well.",
+    "created_at": "2022-02-02T20:14:24Z",
+    "updated_at": "2022-02-02T20:14:25Z",
+    "html_url": "https://github.com/starship/starship/pull/3224#discussion_r797977058",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/797977058"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3224#discussion_r797977058"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/797977058/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 2864,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 65,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/815389688",
+    "pull_request_review_id": 894463398,
+    "id": 815389688,
+    "node_id": "PRRC_kwDOCqswNs4wmdv4",
+    "diff_hunk": "@@ -2933,7 +2934,7 @@ set to a number and meets or exceeds the specified threshold.\n | ----------- | ---------------------------- | ------------------------------------------------------------- |\n | `threshold` | `2`                          | Display threshold.                                            |\n | `format`    | `\"[$symbol$shlvl]($style) \"` | The format for the module.                                    |\n-| `symbol`    | `\"↕️  \"`                     | The symbol used to represent the `SHLVL`.                     |\n+| `symbol`    | `\"↕️\"`                       | The symbol used to represent the `SHLVL`.                     |",
+    "path": "docs/config/README.md",
+    "commit_id": "3610a9f5938ef673d514bb49a5956e8ebbcdb0f1",
+    "original_commit_id": "3610a9f5938ef673d514bb49a5956e8ebbcdb0f1",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Not sure what happened here, but this seems to have gone in the wrong direction since I reviewed. The symbol needs to have two spaces after it before the close quote (how it was in the original documentation).",
+    "created_at": "2022-02-27T05:17:01Z",
+    "updated_at": "2022-02-27T05:17:02Z",
+    "html_url": "https://github.com/starship/starship/pull/3224#discussion_r815389688",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/815389688"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3224#discussion_r815389688"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/815389688/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 2937,
+    "original_line": 2937,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 50,
+    "position": 50,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/815390174",
+    "pull_request_review_id": 894463708,
+    "id": 815390174,
+    "node_id": "PRRC_kwDOCqswNs4wmd3e",
+    "diff_hunk": "@@ -18,6 +20,8 @@ impl<'a> Default for HostnameConfig<'a> {\n             ssh_only: true,\n             trim_at: \".\",\n             format: \"[$hostname]($style) in \",\n+            ssh_format: \"[$hostname]($ssh_style) in \",\n+            ssh_style: \"yellow bold\",",
+    "path": "src/configs/hostname.rs",
+    "commit_id": "3610a9f5938ef673d514bb49a5956e8ebbcdb0f1",
+    "original_commit_id": "3610a9f5938ef673d514bb49a5956e8ebbcdb0f1",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "@matchai Thoughts on whether this would be considered breaking?\r\n\r\nRight now, the defaults is to not display on localhost and to display in bold dimmed green when SSH'ed.\r\n\r\nWith current proposed changes, we will not display on localhost and display in bold yellow when SSH'ed.\r\n\r\nPossible chance would be to switch ssh_style and style.",
+    "created_at": "2022-02-27T05:23:36Z",
+    "updated_at": "2022-02-27T05:23:53Z",
+    "html_url": "https://github.com/starship/starship/pull/3224#discussion_r815390174",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/815390174"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3224#discussion_r815390174"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/815390174/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 24,
+    "original_line": 24,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 14,
+    "position": 14,
+    "subject_type": "line"
+  }
+]

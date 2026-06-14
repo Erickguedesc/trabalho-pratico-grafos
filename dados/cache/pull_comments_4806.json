@@ -1,0 +1,210 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1085930573",
+    "pull_request_review_id": 1268311668,
+    "id": 1085930573,
+    "node_id": "PRRC_kwDOCqswNs5AufxN",
+    "diff_hunk": "@@ -167,13 +167,22 @@ impl<'a> ModuleRenderer<'a> {\n \n #[derive(Clone, Copy)]\n pub enum FixtureProvider {\n+    Fossil,\n     Git,\n     Hg,\n     Pijul,\n }\n \n pub fn fixture_repo(provider: FixtureProvider) -> io::Result<TempDir> {\n     match provider {\n+        FixtureProvider::Fossil => {\n+            let path = tempfile::tempdir()?;\n+            fs::OpenOptions::new()\n+                .create(true)\n+                .write(true)\n+                .open(path.path().join(\".fslckout\"))?;",
+    "path": "src/test/mod.rs",
+    "commit_id": "5b0a6277c7993d6905f99329834eea958c918b48",
+    "original_commit_id": "9c52cb1c600dda2cd42e094f4577bdfb334b4807",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "To reduce intermittent test failures:\r\n```suggestion\r\n                .open(path.path().join(\".fslckout\"))?\r\n                .sync_all()?;\r\n```",
+    "created_at": "2023-01-24T21:16:00Z",
+    "updated_at": "2023-01-24T21:17:22Z",
+    "html_url": "https://github.com/starship/starship/pull/4806#discussion_r1085930573",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4806",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1085930573"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4806#discussion_r1085930573"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4806"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1085930573/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 183,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 17,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1085931653",
+    "pull_request_review_id": 1268311668,
+    "id": 1085931653,
+    "node_id": "PRRC_kwDOCqswNs5AugCF",
+    "diff_hunk": "@@ -0,0 +1,215 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::fossil_branch::FossilBranchConfig;\n+use crate::formatter::StringFormatter;\n+use crate::modules::utils::truncate::truncate_text;\n+\n+/// Creates a module with the Fossil branch of the check-out in the current directory\n+///\n+/// Will display the branch name if the current directory is a Fossil check-out\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_checkout = context\n+        .try_begin_scan()?\n+        .set_files(&[\".fslckout\"])\n+        .is_match();\n+\n+    if !is_checkout {\n+        return None;\n+    }\n+",
+    "path": "src/modules/fossil_branch.rs",
+    "commit_id": "5b0a6277c7993d6905f99329834eea958c918b48",
+    "original_commit_id": "9c52cb1c600dda2cd42e094f4577bdfb334b4807",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please move this after the `config.disabled` check, because it should be cheaper.",
+    "created_at": "2023-01-24T21:17:18Z",
+    "updated_at": "2023-01-24T21:17:22Z",
+    "html_url": "https://github.com/starship/starship/pull/4806#discussion_r1085931653",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4806",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1085931653"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4806#discussion_r1085931653"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4806"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1085931653/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 11,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 19,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 19,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1085984497",
+    "pull_request_review_id": 1268395670,
+    "id": 1085984497,
+    "node_id": "PRRC_kwDOCqswNs5Aus7x",
+    "diff_hunk": "@@ -0,0 +1,215 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::fossil_branch::FossilBranchConfig;\n+use crate::formatter::StringFormatter;\n+use crate::modules::utils::truncate::truncate_text;\n+\n+/// Creates a module with the Fossil branch of the check-out in the current directory\n+///\n+/// Will display the branch name if the current directory is a Fossil check-out\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_checkout = context\n+        .try_begin_scan()?\n+        .set_files(&[\".fslckout\"])\n+        .is_match();\n+\n+    if !is_checkout {\n+        return None;\n+    }\n+",
+    "path": "src/modules/fossil_branch.rs",
+    "commit_id": "5b0a6277c7993d6905f99329834eea958c918b48",
+    "original_commit_id": "9c52cb1c600dda2cd42e094f4577bdfb334b4807",
+    "user": {
+      "login": "VegardSkui",
+      "id": 3822906,
+      "node_id": "MDQ6VXNlcjM4MjI5MDY=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3822906?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/VegardSkui",
+      "html_url": "https://github.com/VegardSkui",
+      "followers_url": "https://api.github.com/users/VegardSkui/followers",
+      "following_url": "https://api.github.com/users/VegardSkui/following{/other_user}",
+      "gists_url": "https://api.github.com/users/VegardSkui/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/VegardSkui/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/VegardSkui/subscriptions",
+      "organizations_url": "https://api.github.com/users/VegardSkui/orgs",
+      "repos_url": "https://api.github.com/users/VegardSkui/repos",
+      "events_url": "https://api.github.com/users/VegardSkui/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/VegardSkui/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Changed the order of the checks now. This should probably be changed in the `pijul_channel` module as well to keep consistency between the modules.",
+    "created_at": "2023-01-24T21:58:04Z",
+    "updated_at": "2023-01-24T21:58:05Z",
+    "html_url": "https://github.com/starship/starship/pull/4806#discussion_r1085984497",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4806",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1085984497"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4806#discussion_r1085984497"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4806"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1085984497/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 11,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 19,
+    "side": "RIGHT",
+    "in_reply_to_id": 1085931653,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 19,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

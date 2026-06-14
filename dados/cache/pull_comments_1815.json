@@ -1,0 +1,768 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/509579155",
+    "pull_request_review_id": 514083416,
+    "id": 509579155,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUwOTU3OTE1NQ==",
+    "diff_hunk": "@@ -0,0 +1,115 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::lua::LuaConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+/// Creates a module with the current Lua version\n+///\n+/// Will display the Lua version if any of the following criteria are met:\n+///     - Current directory contains a `.lua-version` file\n+///     - Current directory contains a file with the `.lua` extension\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_lua_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\".lua-version\"])\n+        .set_extensions(&[\"lua\"])\n+        .is_match();\n+\n+    if !is_lua_project {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"lua\");\n+    let config = LuaConfig::try_load(module.config);\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    format_lua_version(&utils::exec_cmd(\"lua\", &[\"-v\"])?.stdout.as_str()).map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `lua`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn format_lua_version(lua_stdout: &str) -> Option<String> {\n+    // lua -v output looks like this:\n+    // Lua 5.4.0  Copyright (C) 1994-2020 Lua.org, PUC-Rio\n+\n+    let version = lua_stdout\n+        // split into [\"\", \"5.4.0  Copyright (C) 1994-2020 Lua.org, PUC-Rio\"]\n+        .splitn(2, \"Lua \")",
+    "path": "src/modules/lua.rs",
+    "commit_id": "d01c96b4ea75857350bb2439af97f47d0438645f",
+    "original_commit_id": "d1099ab6206fac44425d93e819c7b1649c5e0cda",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'm not a lua dev, but is it possible for someone to have `luajit` as `lua` in their path? In that line of thinking a `lua_binary` option like in the `python module` might be useful.\r\n\r\nThis line wouldn't work with `luajit` because the version string is `LuaJIT 2.1.0-beta3 -- Copyright (C) 2005-2017 Mike Pall. http://luajit.org/` on my system",
+    "created_at": "2020-10-21T18:52:33Z",
+    "updated_at": "2020-10-24T15:41:02Z",
+    "html_url": "https://github.com/starship/starship/pull/1815#discussion_r509579155",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1815",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/509579155"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1815#discussion_r509579155"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1815"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/509579155/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 61,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 61,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/509589161",
+    "pull_request_review_id": 514089801,
+    "id": 509589161,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUwOTU4OTE2MQ==",
+    "diff_hunk": "@@ -0,0 +1,115 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::lua::LuaConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+/// Creates a module with the current Lua version\n+///\n+/// Will display the Lua version if any of the following criteria are met:\n+///     - Current directory contains a `.lua-version` file\n+///     - Current directory contains a file with the `.lua` extension\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_lua_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\".lua-version\"])\n+        .set_extensions(&[\"lua\"])\n+        .is_match();\n+\n+    if !is_lua_project {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"lua\");\n+    let config = LuaConfig::try_load(module.config);\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    format_lua_version(&utils::exec_cmd(\"lua\", &[\"-v\"])?.stdout.as_str()).map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `lua`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn format_lua_version(lua_stdout: &str) -> Option<String> {\n+    // lua -v output looks like this:\n+    // Lua 5.4.0  Copyright (C) 1994-2020 Lua.org, PUC-Rio\n+\n+    let version = lua_stdout\n+        // split into [\"\", \"5.4.0  Copyright (C) 1994-2020 Lua.org, PUC-Rio\"]\n+        .splitn(2, \"Lua \")",
+    "path": "src/modules/lua.rs",
+    "commit_id": "d01c96b4ea75857350bb2439af97f47d0438645f",
+    "original_commit_id": "d1099ab6206fac44425d93e819c7b1649c5e0cda",
+    "user": {
+      "login": "cappyzawa",
+      "id": 12455284,
+      "node_id": "MDQ6VXNlcjEyNDU1Mjg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12455284?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cappyzawa",
+      "html_url": "https://github.com/cappyzawa",
+      "followers_url": "https://api.github.com/users/cappyzawa/followers",
+      "following_url": "https://api.github.com/users/cappyzawa/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cappyzawa/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cappyzawa/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cappyzawa/subscriptions",
+      "organizations_url": "https://api.github.com/users/cappyzawa/orgs",
+      "repos_url": "https://api.github.com/users/cappyzawa/repos",
+      "events_url": "https://api.github.com/users/cappyzawa/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cappyzawa/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Thanks for tips!\r\nI'll check it out 👍 ",
+    "created_at": "2020-10-21T19:00:22Z",
+    "updated_at": "2020-10-24T15:41:02Z",
+    "html_url": "https://github.com/starship/starship/pull/1815#discussion_r509589161",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1815",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/509589161"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1815#discussion_r509589161"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1815"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/509589161/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 61,
+    "side": "RIGHT",
+    "in_reply_to_id": 509579155,
+    "author_association": "MEMBER",
+    "original_position": 61,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/510788226",
+    "pull_request_review_id": 515538337,
+    "id": 510788226,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUxMDc4ODIyNg==",
+    "diff_hunk": "@@ -0,0 +1,170 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::lua::LuaConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+use regex::Regex;\n+const LUA_VERSION_PATERN: &str = \"(?P<version>[\\\\d\\\\.]+[a-z\\\\-]*[1-9]*)[^\\\\s]*\";\n+\n+/// Creates a module with the current Lua version\n+///\n+/// Will display the Lua version if any of the following criteria are met:\n+///     - Current directory contains a `.lua-version` file\n+///     - Current directory contains a `lua` directory\n+///     - Current directory contains a file with the `.lua` extension\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_lua_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\".lua-version\"])\n+        .set_folders(&[\"lua\"])\n+        .set_extensions(&[\"lua\"])\n+        .is_match();\n+\n+    if !is_lua_project {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"lua\");\n+    let config = LuaConfig::try_load(module.config);\n+    let lua_version = format_lua_version(&get_lua_version(&config.lua_binary)?)?;\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => Some(Ok(&lua_version)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `lua`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_lua_version(lua_binary: &str) -> Option<String> {\n+    match utils::exec_cmd(lua_binary, &[\"-v\"]) {\n+        Some(output) => {\n+            if output.stdout.is_empty() {\n+                Some(output.stderr)\n+            } else {\n+                Some(output.stdout)\n+            }\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn format_lua_version(lua_stdout: &str) -> Option<String> {\n+    // lua -v output looks like this:\n+    // Lua 5.4.0  Copyright (C) 1994-2020 Lua.org, PUC-Rio\n+\n+    // luajit -v output looks like this:\n+    // LuaJIT 2.0.5 -- Copyright (C) 2005-2017 Mike Pall. http://luajit.org/\n+    let re = Regex::new(LUA_VERSION_PATERN).ok()?;\n+    let captures = re.captures(lua_stdout)?;\n+    let version = &captures[\"version\"];\n+    Some(format!(\"v{}\", version))\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::*;\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+    use std::fs::{self, File};\n+    use std::io;\n+\n+    #[test]\n+    fn folder_without_lua_files() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = None;\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_lua_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"main.lua\"))?.sync_all()?;\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"🌙 v5.4.0\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_lua_version() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\".lua-version\"))?.sync_all()?;\n+\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"🌙 v5.4.0\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_lua_folder() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        let lua_dir = dir.path().join(\"lua\");\n+        fs::create_dir_all(&lua_dir)?;\n+\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"🌙 v5.4.0\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn lua_binary_is_luajit() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"main.lua\"))?.sync_all()?;\n+\n+        check_luajit_renders(&dir, None);\n+        dir.close()\n+    }\n+\n+    fn check_luajit_renders(dir: &tempfile::TempDir, starship_config: Option<toml::Value>) {",
+    "path": "src/modules/lua.rs",
+    "commit_id": "d01c96b4ea75857350bb2439af97f47d0438645f",
+    "original_commit_id": "7aeeb30654548628a4e6fd5d9b17fffa4efa0dcc",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n    #[test]\r\n    fn check_luajit_renders(dir: &tempfile::TempDir, starship_config: Option<toml::Value>) {\r\n```\r\nI think this is missing a `#[test]` annotation.",
+    "created_at": "2020-10-23T10:25:53Z",
+    "updated_at": "2020-10-24T15:41:02Z",
+    "html_url": "https://github.com/starship/starship/pull/1815#discussion_r510788226",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1815",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/510788226"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1815#discussion_r510788226"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1815"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/510788226/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 143,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 143,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/510806390",
+    "pull_request_review_id": 515563398,
+    "id": 510806390,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUxMDgwNjM5MA==",
+    "diff_hunk": "@@ -0,0 +1,170 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::lua::LuaConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+use regex::Regex;\n+const LUA_VERSION_PATERN: &str = \"(?P<version>[\\\\d\\\\.]+[a-z\\\\-]*[1-9]*)[^\\\\s]*\";\n+\n+/// Creates a module with the current Lua version\n+///\n+/// Will display the Lua version if any of the following criteria are met:\n+///     - Current directory contains a `.lua-version` file\n+///     - Current directory contains a `lua` directory\n+///     - Current directory contains a file with the `.lua` extension\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_lua_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\".lua-version\"])\n+        .set_folders(&[\"lua\"])\n+        .set_extensions(&[\"lua\"])\n+        .is_match();\n+\n+    if !is_lua_project {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"lua\");\n+    let config = LuaConfig::try_load(module.config);\n+    let lua_version = format_lua_version(&get_lua_version(&config.lua_binary)?)?;\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => Some(Ok(&lua_version)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `lua`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_lua_version(lua_binary: &str) -> Option<String> {\n+    match utils::exec_cmd(lua_binary, &[\"-v\"]) {\n+        Some(output) => {\n+            if output.stdout.is_empty() {\n+                Some(output.stderr)\n+            } else {\n+                Some(output.stdout)\n+            }\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn format_lua_version(lua_stdout: &str) -> Option<String> {\n+    // lua -v output looks like this:\n+    // Lua 5.4.0  Copyright (C) 1994-2020 Lua.org, PUC-Rio\n+\n+    // luajit -v output looks like this:\n+    // LuaJIT 2.0.5 -- Copyright (C) 2005-2017 Mike Pall. http://luajit.org/\n+    let re = Regex::new(LUA_VERSION_PATERN).ok()?;\n+    let captures = re.captures(lua_stdout)?;\n+    let version = &captures[\"version\"];\n+    Some(format!(\"v{}\", version))\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::*;\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+    use std::fs::{self, File};\n+    use std::io;\n+\n+    #[test]\n+    fn folder_without_lua_files() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = None;\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_lua_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"main.lua\"))?.sync_all()?;\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"🌙 v5.4.0\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_lua_version() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\".lua-version\"))?.sync_all()?;\n+\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"🌙 v5.4.0\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_lua_folder() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        let lua_dir = dir.path().join(\"lua\");\n+        fs::create_dir_all(&lua_dir)?;\n+\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"🌙 v5.4.0\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn lua_binary_is_luajit() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"main.lua\"))?.sync_all()?;\n+\n+        check_luajit_renders(&dir, None);\n+        dir.close()\n+    }\n+\n+    fn check_luajit_renders(dir: &tempfile::TempDir, starship_config: Option<toml::Value>) {",
+    "path": "src/modules/lua.rs",
+    "commit_id": "d01c96b4ea75857350bb2439af97f47d0438645f",
+    "original_commit_id": "7aeeb30654548628a4e6fd5d9b17fffa4efa0dcc",
+    "user": {
+      "login": "cappyzawa",
+      "id": 12455284,
+      "node_id": "MDQ6VXNlcjEyNDU1Mjg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12455284?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cappyzawa",
+      "html_url": "https://github.com/cappyzawa",
+      "followers_url": "https://api.github.com/users/cappyzawa/followers",
+      "following_url": "https://api.github.com/users/cappyzawa/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cappyzawa/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cappyzawa/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cappyzawa/subscriptions",
+      "organizations_url": "https://api.github.com/users/cappyzawa/orgs",
+      "repos_url": "https://api.github.com/users/cappyzawa/repos",
+      "events_url": "https://api.github.com/users/cappyzawa/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cappyzawa/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I referred to https://github.com/starship/starship/blob/master/src/modules/python.rs#L358.\r\n\r\nI think this fn doesn't require annotation because this is called by other tests that have `#[test]` annotation.",
+    "created_at": "2020-10-23T11:02:50Z",
+    "updated_at": "2020-10-24T15:41:02Z",
+    "html_url": "https://github.com/starship/starship/pull/1815#discussion_r510806390",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1815",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/510806390"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1815#discussion_r510806390"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1815"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/510806390/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 143,
+    "side": "RIGHT",
+    "in_reply_to_id": 510788226,
+    "author_association": "MEMBER",
+    "original_position": 143,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/510824648",
+    "pull_request_review_id": 515587935,
+    "id": 510824648,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUxMDgyNDY0OA==",
+    "diff_hunk": "@@ -0,0 +1,170 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::lua::LuaConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+use regex::Regex;\n+const LUA_VERSION_PATERN: &str = \"(?P<version>[\\\\d\\\\.]+[a-z\\\\-]*[1-9]*)[^\\\\s]*\";\n+\n+/// Creates a module with the current Lua version\n+///\n+/// Will display the Lua version if any of the following criteria are met:\n+///     - Current directory contains a `.lua-version` file\n+///     - Current directory contains a `lua` directory\n+///     - Current directory contains a file with the `.lua` extension\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_lua_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\".lua-version\"])\n+        .set_folders(&[\"lua\"])\n+        .set_extensions(&[\"lua\"])\n+        .is_match();\n+\n+    if !is_lua_project {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"lua\");\n+    let config = LuaConfig::try_load(module.config);\n+    let lua_version = format_lua_version(&get_lua_version(&config.lua_binary)?)?;\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => Some(Ok(&lua_version)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `lua`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_lua_version(lua_binary: &str) -> Option<String> {\n+    match utils::exec_cmd(lua_binary, &[\"-v\"]) {\n+        Some(output) => {\n+            if output.stdout.is_empty() {\n+                Some(output.stderr)\n+            } else {\n+                Some(output.stdout)\n+            }\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn format_lua_version(lua_stdout: &str) -> Option<String> {\n+    // lua -v output looks like this:\n+    // Lua 5.4.0  Copyright (C) 1994-2020 Lua.org, PUC-Rio\n+\n+    // luajit -v output looks like this:\n+    // LuaJIT 2.0.5 -- Copyright (C) 2005-2017 Mike Pall. http://luajit.org/\n+    let re = Regex::new(LUA_VERSION_PATERN).ok()?;\n+    let captures = re.captures(lua_stdout)?;\n+    let version = &captures[\"version\"];\n+    Some(format!(\"v{}\", version))\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::*;\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+    use std::fs::{self, File};\n+    use std::io;\n+\n+    #[test]\n+    fn folder_without_lua_files() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = None;\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_lua_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"main.lua\"))?.sync_all()?;\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"🌙 v5.4.0\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_lua_version() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\".lua-version\"))?.sync_all()?;\n+\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"🌙 v5.4.0\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_lua_folder() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        let lua_dir = dir.path().join(\"lua\");\n+        fs::create_dir_all(&lua_dir)?;\n+\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"🌙 v5.4.0\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn lua_binary_is_luajit() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"main.lua\"))?.sync_all()?;\n+\n+        check_luajit_renders(&dir, None);\n+        dir.close()\n+    }\n+\n+    fn check_luajit_renders(dir: &tempfile::TempDir, starship_config: Option<toml::Value>) {",
+    "path": "src/modules/lua.rs",
+    "commit_id": "d01c96b4ea75857350bb2439af97f47d0438645f",
+    "original_commit_id": "7aeeb30654548628a4e6fd5d9b17fffa4efa0dcc",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Sorry I didn't see that. The `assert_eq!(expected, actual);` tripped me up.",
+    "created_at": "2020-10-23T11:42:05Z",
+    "updated_at": "2020-10-24T15:41:02Z",
+    "html_url": "https://github.com/starship/starship/pull/1815#discussion_r510824648",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1815",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/510824648"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1815#discussion_r510824648"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1815"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/510824648/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 143,
+    "side": "RIGHT",
+    "in_reply_to_id": 510788226,
+    "author_association": "MEMBER",
+    "original_position": 143,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/510932742",
+    "pull_request_review_id": 515732849,
+    "id": 510932742,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUxMDkzMjc0Mg==",
+    "diff_hunk": "@@ -1489,6 +1490,44 @@ The `line_break` module separates the prompt into two lines.\n disabled = true\n ```\n \n+## Lua\n+\n+The `lua` module shows the currently installed version of Lua.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `.lua-version` file\n+- The current directory contains a `lua` directory\n+- The current directory contains a file with the `.lua` extension\n+\n+### Options\n+\n+| Option       | Default                            | Description                                                                   |\n+| ------------ | ---------------------------------- | ----------------------------------------------------------------------------- |\n+| `format`     | `\"via [$symbol$version]($style) \"` | The format for the module.                                                    |\n+| `symbol`     | `\"🌙 \"`                            | A format string representing the symbol of Lua.                               |\n+| `style`      | `\"bold blue\"`                      | The style for the module.                                                     |\n+| `lua_binary` | `\"lua\"`                            | Configures the python binary that Starship executes when getting the version. |",
+    "path": "docs/config/README.md",
+    "commit_id": "d01c96b4ea75857350bb2439af97f47d0438645f",
+    "original_commit_id": "7aeeb30654548628a4e6fd5d9b17fffa4efa0dcc",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Should this be lua not python? ",
+    "created_at": "2020-10-23T14:41:56Z",
+    "updated_at": "2020-10-24T15:41:02Z",
+    "html_url": "https://github.com/starship/starship/pull/1815#discussion_r510932742",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1815",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/510932742"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1815#discussion_r510932742"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1815"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/510932742/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1509,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 28,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/510941252",
+    "pull_request_review_id": 515744418,
+    "id": 510941252,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUxMDk0MTI1Mg==",
+    "diff_hunk": "@@ -0,0 +1,170 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::lua::LuaConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+use regex::Regex;\n+const LUA_VERSION_PATERN: &str = \"(?P<version>[\\\\d\\\\.]+[a-z\\\\-]*[1-9]*)[^\\\\s]*\";\n+\n+/// Creates a module with the current Lua version\n+///\n+/// Will display the Lua version if any of the following criteria are met:\n+///     - Current directory contains a `.lua-version` file\n+///     - Current directory contains a `lua` directory\n+///     - Current directory contains a file with the `.lua` extension\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_lua_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\".lua-version\"])\n+        .set_folders(&[\"lua\"])\n+        .set_extensions(&[\"lua\"])\n+        .is_match();\n+\n+    if !is_lua_project {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"lua\");\n+    let config = LuaConfig::try_load(module.config);\n+    let lua_version = format_lua_version(&get_lua_version(&config.lua_binary)?)?;\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => Some(Ok(&lua_version)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `lua`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_lua_version(lua_binary: &str) -> Option<String> {\n+    match utils::exec_cmd(lua_binary, &[\"-v\"]) {\n+        Some(output) => {\n+            if output.stdout.is_empty() {\n+                Some(output.stderr)\n+            } else {\n+                Some(output.stdout)\n+            }\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn format_lua_version(lua_stdout: &str) -> Option<String> {\n+    // lua -v output looks like this:\n+    // Lua 5.4.0  Copyright (C) 1994-2020 Lua.org, PUC-Rio\n+\n+    // luajit -v output looks like this:\n+    // LuaJIT 2.0.5 -- Copyright (C) 2005-2017 Mike Pall. http://luajit.org/\n+    let re = Regex::new(LUA_VERSION_PATERN).ok()?;\n+    let captures = re.captures(lua_stdout)?;\n+    let version = &captures[\"version\"];\n+    Some(format!(\"v{}\", version))\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::*;\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+    use std::fs::{self, File};\n+    use std::io;\n+\n+    #[test]\n+    fn folder_without_lua_files() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = None;\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_lua_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"main.lua\"))?.sync_all()?;\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"🌙 v5.4.0\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_lua_version() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\".lua-version\"))?.sync_all()?;\n+\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"🌙 v5.4.0\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_lua_folder() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        let lua_dir = dir.path().join(\"lua\");\n+        fs::create_dir_all(&lua_dir)?;\n+\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"🌙 v5.4.0\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn lua_binary_is_luajit() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"main.lua\"))?.sync_all()?;\n+\n+        check_luajit_renders(&dir, None);\n+        dir.close()\n+    }\n+\n+    fn check_luajit_renders(dir: &tempfile::TempDir, starship_config: Option<toml::Value>) {",
+    "path": "src/modules/lua.rs",
+    "commit_id": "d01c96b4ea75857350bb2439af97f47d0438645f",
+    "original_commit_id": "7aeeb30654548628a4e6fd5d9b17fffa4efa0dcc",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "So the reason that this was done in a separate function in the python module was because we reused the functions across all the tests so we would test all the different scenarios worked correctly, I am not sure if that is what is being done here. Would it make sense to test against both lua binaries in all the tests here too? ",
+    "created_at": "2020-10-23T14:54:14Z",
+    "updated_at": "2020-10-24T15:41:02Z",
+    "html_url": "https://github.com/starship/starship/pull/1815#discussion_r510941252",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1815",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/510941252"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1815#discussion_r510941252"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1815"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/510941252/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 143,
+    "side": "RIGHT",
+    "in_reply_to_id": 510788226,
+    "author_association": "MEMBER",
+    "original_position": 143,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/510985568",
+    "pull_request_review_id": 515805197,
+    "id": 510985568,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUxMDk4NTU2OA==",
+    "diff_hunk": "@@ -1489,6 +1490,44 @@ The `line_break` module separates the prompt into two lines.\n disabled = true\n ```\n \n+## Lua\n+\n+The `lua` module shows the currently installed version of Lua.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `.lua-version` file\n+- The current directory contains a `lua` directory\n+- The current directory contains a file with the `.lua` extension\n+\n+### Options\n+\n+| Option       | Default                            | Description                                                                   |\n+| ------------ | ---------------------------------- | ----------------------------------------------------------------------------- |\n+| `format`     | `\"via [$symbol$version]($style) \"` | The format for the module.                                                    |\n+| `symbol`     | `\"🌙 \"`                            | A format string representing the symbol of Lua.                               |\n+| `style`      | `\"bold blue\"`                      | The style for the module.                                                     |\n+| `lua_binary` | `\"lua\"`                            | Configures the python binary that Starship executes when getting the version. |",
+    "path": "docs/config/README.md",
+    "commit_id": "d01c96b4ea75857350bb2439af97f47d0438645f",
+    "original_commit_id": "7aeeb30654548628a4e6fd5d9b17fffa4efa0dcc",
+    "user": {
+      "login": "cappyzawa",
+      "id": 12455284,
+      "node_id": "MDQ6VXNlcjEyNDU1Mjg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12455284?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cappyzawa",
+      "html_url": "https://github.com/cappyzawa",
+      "followers_url": "https://api.github.com/users/cappyzawa/followers",
+      "following_url": "https://api.github.com/users/cappyzawa/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cappyzawa/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cappyzawa/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cappyzawa/subscriptions",
+      "organizations_url": "https://api.github.com/users/cappyzawa/orgs",
+      "repos_url": "https://api.github.com/users/cappyzawa/repos",
+      "events_url": "https://api.github.com/users/cappyzawa/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cappyzawa/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Yes 😢 \r\nI fixed it.",
+    "created_at": "2020-10-23T16:00:58Z",
+    "updated_at": "2020-10-24T15:41:02Z",
+    "html_url": "https://github.com/starship/starship/pull/1815#discussion_r510985568",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1815",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/510985568"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1815#discussion_r510985568"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1815"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/510985568/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1509,
+    "side": "RIGHT",
+    "in_reply_to_id": 510932742,
+    "author_association": "MEMBER",
+    "original_position": 28,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/511362581",
+    "pull_request_review_id": 516264142,
+    "id": 511362581,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUxMTM2MjU4MQ==",
+    "diff_hunk": "@@ -94,6 +95,7 @@ pub fn handle<'a>(module: &str, context: &'a Context) -> Option<Module<'a>> {\n             \"julia\" => julia::module(context),\n             \"kubernetes\" => kubernetes::module(context),\n             \"line_break\" => line_break::module(context),\n+            \"lua\" => lua::module(context),\n             \"memory_usage\" => memory_usage::module(context),\n             \"nim\" => nim::module(context),\n             \"nix_shell\" => nix_shell::module(context),",
+    "path": "src/modules/mod.rs",
+    "commit_id": "d01c96b4ea75857350bb2439af97f47d0438645f",
+    "original_commit_id": "8454e1684b551cb130cbc8269c8fc85871a48a30",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Sorry just realised I missed this earlier can you add a description for the lua module to the description function below.",
+    "created_at": "2020-10-24T09:30:18Z",
+    "updated_at": "2020-10-24T15:41:02Z",
+    "html_url": "https://github.com/starship/starship/pull/1815#discussion_r511362581",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1815",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/511362581"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1815#discussion_r511362581"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1815"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/511362581/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 101,
+    "original_line": 101,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 15,
+    "position": 15,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/511402260",
+    "pull_request_review_id": 516269875,
+    "id": 511402260,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUxMTQwMjI2MA==",
+    "diff_hunk": "@@ -94,6 +95,7 @@ pub fn handle<'a>(module: &str, context: &'a Context) -> Option<Module<'a>> {\n             \"julia\" => julia::module(context),\n             \"kubernetes\" => kubernetes::module(context),\n             \"line_break\" => line_break::module(context),\n+            \"lua\" => lua::module(context),\n             \"memory_usage\" => memory_usage::module(context),\n             \"nim\" => nim::module(context),\n             \"nix_shell\" => nix_shell::module(context),",
+    "path": "src/modules/mod.rs",
+    "commit_id": "d01c96b4ea75857350bb2439af97f47d0438645f",
+    "original_commit_id": "8454e1684b551cb130cbc8269c8fc85871a48a30",
+    "user": {
+      "login": "cappyzawa",
+      "id": 12455284,
+      "node_id": "MDQ6VXNlcjEyNDU1Mjg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12455284?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cappyzawa",
+      "html_url": "https://github.com/cappyzawa",
+      "followers_url": "https://api.github.com/users/cappyzawa/followers",
+      "following_url": "https://api.github.com/users/cappyzawa/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cappyzawa/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cappyzawa/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cappyzawa/subscriptions",
+      "organizations_url": "https://api.github.com/users/cappyzawa/orgs",
+      "repos_url": "https://api.github.com/users/cappyzawa/repos",
+      "events_url": "https://api.github.com/users/cappyzawa/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cappyzawa/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I added it 👍 ",
+    "created_at": "2020-10-24T11:16:05Z",
+    "updated_at": "2020-10-24T15:41:02Z",
+    "html_url": "https://github.com/starship/starship/pull/1815#discussion_r511402260",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1815",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/511402260"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1815#discussion_r511402260"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1815"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/511402260/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 101,
+    "original_line": 101,
+    "side": "RIGHT",
+    "in_reply_to_id": 511362581,
+    "author_association": "MEMBER",
+    "original_position": 15,
+    "position": 15,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/511485493",
+    "pull_request_review_id": 516286873,
+    "id": 511485493,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUxMTQ4NTQ5Mw==",
+    "diff_hunk": "@@ -0,0 +1,170 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::lua::LuaConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+use regex::Regex;\n+const LUA_VERSION_PATERN: &str = \"(?P<version>[\\\\d\\\\.]+[a-z\\\\-]*[1-9]*)[^\\\\s]*\";\n+\n+/// Creates a module with the current Lua version\n+///\n+/// Will display the Lua version if any of the following criteria are met:\n+///     - Current directory contains a `.lua-version` file\n+///     - Current directory contains a `lua` directory\n+///     - Current directory contains a file with the `.lua` extension\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_lua_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\".lua-version\"])\n+        .set_folders(&[\"lua\"])\n+        .set_extensions(&[\"lua\"])\n+        .is_match();\n+\n+    if !is_lua_project {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"lua\");\n+    let config = LuaConfig::try_load(module.config);\n+    let lua_version = format_lua_version(&get_lua_version(&config.lua_binary)?)?;\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => Some(Ok(&lua_version)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `lua`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_lua_version(lua_binary: &str) -> Option<String> {\n+    match utils::exec_cmd(lua_binary, &[\"-v\"]) {\n+        Some(output) => {\n+            if output.stdout.is_empty() {\n+                Some(output.stderr)\n+            } else {\n+                Some(output.stdout)\n+            }\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn format_lua_version(lua_stdout: &str) -> Option<String> {\n+    // lua -v output looks like this:\n+    // Lua 5.4.0  Copyright (C) 1994-2020 Lua.org, PUC-Rio\n+\n+    // luajit -v output looks like this:\n+    // LuaJIT 2.0.5 -- Copyright (C) 2005-2017 Mike Pall. http://luajit.org/\n+    let re = Regex::new(LUA_VERSION_PATERN).ok()?;\n+    let captures = re.captures(lua_stdout)?;\n+    let version = &captures[\"version\"];\n+    Some(format!(\"v{}\", version))\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::*;\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+    use std::fs::{self, File};\n+    use std::io;\n+\n+    #[test]\n+    fn folder_without_lua_files() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = None;\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_lua_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"main.lua\"))?.sync_all()?;\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"🌙 v5.4.0\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_lua_version() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\".lua-version\"))?.sync_all()?;\n+\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"🌙 v5.4.0\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_lua_folder() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        let lua_dir = dir.path().join(\"lua\");\n+        fs::create_dir_all(&lua_dir)?;\n+\n+        let actual = ModuleRenderer::new(\"lua\").path(dir.path()).collect();\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"🌙 v5.4.0\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn lua_binary_is_luajit() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"main.lua\"))?.sync_all()?;\n+\n+        check_luajit_renders(&dir, None);\n+        dir.close()\n+    }\n+\n+    fn check_luajit_renders(dir: &tempfile::TempDir, starship_config: Option<toml::Value>) {",
+    "path": "src/modules/lua.rs",
+    "commit_id": "d01c96b4ea75857350bb2439af97f47d0438645f",
+    "original_commit_id": "7aeeb30654548628a4e6fd5d9b17fffa4efa0dcc",
+    "user": {
+      "login": "cappyzawa",
+      "id": 12455284,
+      "node_id": "MDQ6VXNlcjEyNDU1Mjg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12455284?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cappyzawa",
+      "html_url": "https://github.com/cappyzawa",
+      "followers_url": "https://api.github.com/users/cappyzawa/followers",
+      "following_url": "https://api.github.com/users/cappyzawa/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cappyzawa/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cappyzawa/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cappyzawa/subscriptions",
+      "organizations_url": "https://api.github.com/users/cappyzawa/orgs",
+      "repos_url": "https://api.github.com/users/cappyzawa/repos",
+      "events_url": "https://api.github.com/users/cappyzawa/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cappyzawa/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I merge this function in `lua_binary_is_luajit` because it only is called by `lua_binary_is_luajit`.",
+    "created_at": "2020-10-24T15:45:56Z",
+    "updated_at": "2020-10-24T15:45:57Z",
+    "html_url": "https://github.com/starship/starship/pull/1815#discussion_r511485493",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1815",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/511485493"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1815#discussion_r511485493"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1815"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/511485493/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 143,
+    "side": "RIGHT",
+    "in_reply_to_id": 510788226,
+    "author_association": "MEMBER",
+    "original_position": 143,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

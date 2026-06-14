@@ -1,0 +1,140 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/421883797",
+    "pull_request_review_id": 407938442,
+    "id": 421883797,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyMTg4Mzc5Nw==",
+    "diff_hunk": "@@ -1,20 +1,17 @@\n-use crate::config::{ModuleConfig, RootModuleConfig, SegmentConfig};\n+use crate::config::{ModuleConfig, RootModuleConfig};\n \n-use ansi_term::{Color, Style};\n use starship_module_config_derive::ModuleConfig;\n \n #[derive(Clone, ModuleConfig)]\n pub struct PackageConfig<'a> {\n-    pub symbol: SegmentConfig<'a>,\n-    pub style: Style,\n+    pub format: &'a str,",
+    "path": "src/configs/package.rs",
+    "commit_id": "4e2a956c1faf083fe35a69abc6b051b784840b1d",
+    "original_commit_id": "f484178a270548e7133767807c5a0a53fec625f5",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Same as #1066",
+    "created_at": "2020-05-08T01:22:11Z",
+    "updated_at": "2020-06-20T08:57:05Z",
+    "html_url": "https://github.com/starship/starship/pull/1068#discussion_r421883797",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1068",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/421883797"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1068#discussion_r421883797"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1068"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/421883797/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 7,
+    "original_line": 7,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 11,
+    "position": 11,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/421883951",
+    "pull_request_review_id": 407938442,
+    "id": 421883951,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyMTg4Mzk1MQ==",
+    "diff_hunk": "@@ -1,34 +1,38 @@\n use std::path::PathBuf;\n \n-use super::{Context, Module};\n+use super::{Context, Module, RootModuleConfig};\n+use crate::configs::package::PackageConfig;\n+use crate::formatter::StringFormatter;\n use crate::utils;\n \n use regex::Regex;\n use serde_json as json;\n use toml;\n \n-use super::{RootModuleConfig, SegmentConfig};\n-use crate::configs::package::PackageConfig;\n-\n /// Creates a module with the current package version\n ///\n /// Will display if a version is defined for your Node.js or Rust project (if one exists)\n pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n-    match get_package_version(&context.current_dir) {\n-        Some(package_version) => {\n-            let mut module = context.new_module(\"package\");\n-            let config: PackageConfig = PackageConfig::try_load(module.config);\n+    let module_version = get_package_version(&context.current_dir)?;\n+\n+    let mut module = context.new_module(\"package\");\n+    let config: PackageConfig = PackageConfig::try_load(module.config);\n+    let formatter = if let Ok(formatter) = StringFormatter::new(config.format) {\n+        formatter.map(|variable| match variable {\n+            \"version\" => Some(module_version.clone()),\n+            _ => None,\n+        })\n+    } else {\n+        log::warn!(\"Error parsing format string in `package.format`\");\n+        return None;\n+    };",
+    "path": "src/modules/package.rs",
+    "commit_id": "4e2a956c1faf083fe35a69abc6b051b784840b1d",
+    "original_commit_id": "f484178a270548e7133767807c5a0a53fec625f5",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ditto",
+    "created_at": "2020-05-08T01:22:47Z",
+    "updated_at": "2020-06-20T08:57:05Z",
+    "html_url": "https://github.com/starship/starship/pull/1068#discussion_r421883951",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1068",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/421883951"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1068#discussion_r421883951"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1068"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/421883951/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 20,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 28,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 36,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

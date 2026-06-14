@@ -17,6 +17,7 @@ import urllib.request
 import urllib.error
 import json
 from typing import Any
+import http.client
 
 from .config import MinerConfig
 from .json_cache import CacheJson
@@ -147,7 +148,7 @@ class GitHubClient:
             self._throttle()
             req = self._build_request(url)
             try:
-                with urllib.request.urlopen(req, timeout=30) as resp:
+                with urllib.request.urlopen(req, timeout=180) as resp:
                     data = json.loads(resp.read())
                     next_url = self._parse_next_link(resp.headers.get("Link", ""))
                 self._rotate_token()
@@ -166,12 +167,12 @@ class GitHubClient:
                 logger.error("HTTP %s ao acessar %s: %s", exc.code, url, exc.reason)
                 raise
 
-            except urllib.error.URLError as exc:
+            except (urllib.error.URLError, TimeoutError, http.client.IncompleteRead) as exc:
                 if attempt < self._config.max_retries:
-                    logger.warning("Erro de rede (%s). Retentando em 5s...", exc.reason)
+                    logger.warning("Erro de rede/timeout (%s). Retentando em 5s...", exc)
                     time.sleep(5)
                     continue
-                logger.error("Erro de rede ao acessar %s: %s", url, exc.reason)
+                logger.error("Erro de rede/timeout ao acessar %s: %s", url, exc)
                 raise
 
         raise RateLimitError(f"Máximo de tentativas atingido para {url}")
@@ -204,3 +205,4 @@ class GitHubClient:
                 url_part = part.split(";")[0].strip()
                 return url_part.strip("<>")
         return None
+

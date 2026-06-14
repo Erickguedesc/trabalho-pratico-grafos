@@ -1,0 +1,280 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1264172658",
+    "pull_request_review_id": 1531041365,
+    "id": 1264172658,
+    "node_id": "PRRC_kwDOCqswNs5LWb5y",
+    "diff_hunk": "@@ -317,12 +315,12 @@ fn substitute_path(dir_string: String, substitutions: &IndexMap<String, &str>) -\n /// Absolute Path: `/some/Path/not/in_a/repo/but_nested`\n /// Contracted Path: `in_a/repo/but_nested`\n /// With Fish Style: `/s/P/n/in_a/repo/but_nested`\n-fn to_fish_style(pwd_dir_length: usize, dir_string: String, truncated_dir_string: &str) -> String {\n-    let replaced_dir_string = dir_string.trim_end_matches(truncated_dir_string).to_owned();\n+fn to_fish_style(pwd_dir_length: usize, dir_string: &str, truncated_dir_string: &str) -> String {\n+    let replaced_dir_string = dir_string.trim_end_matches(truncated_dir_string);\n     let components = replaced_dir_string.split('/').collect::<Vec<&str>>();\n \n     if components.is_empty() {\n-        return replaced_dir_string;\n+        return replaced_dir_string.to_string();",
+    "path": "src/modules/directory.rs",
+    "commit_id": "1971b338d8052708e47c0cc711567c7631af056a",
+    "original_commit_id": "1971b338d8052708e47c0cc711567c7631af056a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this change could increase copies, maybe change the type to `Cow`.",
+    "created_at": "2023-07-14T21:01:02Z",
+    "updated_at": "2023-07-17T08:26:49Z",
+    "html_url": "https://github.com/starship/starship/pull/5313#discussion_r1264172658",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5313",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1264172658"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5313#discussion_r1264172658"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5313"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1264172658/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 318,
+    "original_start_line": 318,
+    "start_side": "RIGHT",
+    "line": 323,
+    "original_line": 323,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 76,
+    "position": 76,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1265031069",
+    "pull_request_review_id": 1531041365,
+    "id": 1265031069,
+    "node_id": "PRRC_kwDOCqswNs5LZted",
+    "diff_hunk": "@@ -149,12 +147,12 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n                 _ => None,\n             })\n             .map(|variable| match variable {\n-                \"path\" => Some(Ok(&path_vec[2])),\n-                \"before_root_path\" => Some(Ok(&path_vec[0])),\n-                \"repo_root\" => Some(Ok(&path_vec[1])),\n+                \"path\" => Some(Ok(path_vec[2].as_str())),\n+                \"before_root_path\" => Some(Ok(path_vec[0].as_str())),\n+                \"repo_root\" => Some(Ok(path_vec[1].as_str())),\n                 \"read_only\" => {\n                     if is_readonly_dir(physical_dir) {\n-                        Some(Ok(&lock_symbol))\n+                        Some(Ok(config.read_only))",
+    "path": "src/modules/directory.rs",
+    "commit_id": "1971b338d8052708e47c0cc711567c7631af056a",
+    "original_commit_id": "1971b338d8052708e47c0cc711567c7631af056a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Shouldn't `as_str` usually match `&`?",
+    "created_at": "2023-07-17T08:25:52Z",
+    "updated_at": "2023-07-17T08:26:49Z",
+    "html_url": "https://github.com/starship/starship/pull/5313#discussion_r1265031069",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5313",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1265031069"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5313#discussion_r1265031069"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5313"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1265031069/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 150,
+    "original_start_line": 150,
+    "start_side": "RIGHT",
+    "line": 155,
+    "original_line": 155,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 60,
+    "position": 60,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1266906005",
+    "pull_request_review_id": 1535246060,
+    "id": 1266906005,
+    "node_id": "PRRC_kwDOCqswNs5Lg3OV",
+    "diff_hunk": "@@ -149,12 +147,12 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n                 _ => None,\n             })\n             .map(|variable| match variable {\n-                \"path\" => Some(Ok(&path_vec[2])),\n-                \"before_root_path\" => Some(Ok(&path_vec[0])),\n-                \"repo_root\" => Some(Ok(&path_vec[1])),\n+                \"path\" => Some(Ok(path_vec[2].as_str())),\n+                \"before_root_path\" => Some(Ok(path_vec[0].as_str())),\n+                \"repo_root\" => Some(Ok(path_vec[1].as_str())),\n                 \"read_only\" => {\n                     if is_readonly_dir(physical_dir) {\n-                        Some(Ok(&lock_symbol))\n+                        Some(Ok(config.read_only))",
+    "path": "src/modules/directory.rs",
+    "commit_id": "1971b338d8052708e47c0cc711567c7631af056a",
+    "original_commit_id": "1971b338d8052708e47c0cc711567c7631af056a",
+    "user": {
+      "login": "cgzones",
+      "id": 6131885,
+      "node_id": "MDQ6VXNlcjYxMzE4ODU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6131885?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cgzones",
+      "html_url": "https://github.com/cgzones",
+      "followers_url": "https://api.github.com/users/cgzones/followers",
+      "following_url": "https://api.github.com/users/cgzones/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cgzones/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cgzones/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cgzones/subscriptions",
+      "organizations_url": "https://api.github.com/users/cgzones/orgs",
+      "repos_url": "https://api.github.com/users/cgzones/repos",
+      "events_url": "https://api.github.com/users/cgzones/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cgzones/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "No, since `&` converts into `&String` (not `&str`), which `config.read_only` would not fit.",
+    "created_at": "2023-07-18T14:59:14Z",
+    "updated_at": "2023-07-18T14:59:14Z",
+    "html_url": "https://github.com/starship/starship/pull/5313#discussion_r1266906005",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5313",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1266906005"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5313#discussion_r1266906005"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5313"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1266906005/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 150,
+    "original_start_line": 150,
+    "start_side": "RIGHT",
+    "line": 155,
+    "original_line": 155,
+    "side": "RIGHT",
+    "in_reply_to_id": 1265031069,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 60,
+    "position": 60,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1266907144",
+    "pull_request_review_id": 1535247913,
+    "id": 1266907144,
+    "node_id": "PRRC_kwDOCqswNs5Lg3gI",
+    "diff_hunk": "@@ -317,12 +315,12 @@ fn substitute_path(dir_string: String, substitutions: &IndexMap<String, &str>) -\n /// Absolute Path: `/some/Path/not/in_a/repo/but_nested`\n /// Contracted Path: `in_a/repo/but_nested`\n /// With Fish Style: `/s/P/n/in_a/repo/but_nested`\n-fn to_fish_style(pwd_dir_length: usize, dir_string: String, truncated_dir_string: &str) -> String {\n-    let replaced_dir_string = dir_string.trim_end_matches(truncated_dir_string).to_owned();\n+fn to_fish_style(pwd_dir_length: usize, dir_string: &str, truncated_dir_string: &str) -> String {\n+    let replaced_dir_string = dir_string.trim_end_matches(truncated_dir_string);\n     let components = replaced_dir_string.split('/').collect::<Vec<&str>>();\n \n     if components.is_empty() {\n-        return replaced_dir_string;\n+        return replaced_dir_string.to_string();",
+    "path": "src/modules/directory.rs",
+    "commit_id": "1971b338d8052708e47c0cc711567c7631af056a",
+    "original_commit_id": "1971b338d8052708e47c0cc711567c7631af056a",
+    "user": {
+      "login": "cgzones",
+      "id": 6131885,
+      "node_id": "MDQ6VXNlcjYxMzE4ODU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6131885?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cgzones",
+      "html_url": "https://github.com/cgzones",
+      "followers_url": "https://api.github.com/users/cgzones/followers",
+      "following_url": "https://api.github.com/users/cgzones/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cgzones/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cgzones/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cgzones/subscriptions",
+      "organizations_url": "https://api.github.com/users/cgzones/orgs",
+      "repos_url": "https://api.github.com/users/cgzones/repos",
+      "events_url": "https://api.github.com/users/cgzones/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cgzones/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Previously the copy was made in line 321 via `to_owned()`, so there should not be an additional copy.",
+    "created_at": "2023-07-18T15:00:05Z",
+    "updated_at": "2023-07-18T15:00:05Z",
+    "html_url": "https://github.com/starship/starship/pull/5313#discussion_r1266907144",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5313",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1266907144"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5313#discussion_r1266907144"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5313"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1266907144/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 318,
+    "original_start_line": 318,
+    "start_side": "RIGHT",
+    "line": 323,
+    "original_line": 323,
+    "side": "RIGHT",
+    "in_reply_to_id": 1264172658,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 76,
+    "position": 76,
+    "subject_type": "line"
+  }
+]

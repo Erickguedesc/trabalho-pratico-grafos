@@ -1,0 +1,71 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/548889970",
+    "pull_request_review_id": 558827281,
+    "id": 548889970,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU0ODg4OTk3MA==",
+    "diff_hunk": "@@ -4,32 +4,40 @@ use crate::configs::username::UsernameConfig;\n use crate::formatter::StringFormatter;\n use crate::utils;\n \n+const ROOT_UID: Option<u32> = Some(0);\n+#[cfg(not(target_os = \"windows\"))]\n+const USERNAME_ENV_VAR: &str = \"USER\";\n+\n+#[cfg(target_os = \"windows\")]\n+const USERNAME_ENV_VAR: &str = \"USERNAME\";\n+\n /// Creates a module with the current user's username\n ///\n /// Will display the username if any of the following criteria are met:\n ///     - The current user isn't the same as the one that is logged in (`$LOGNAME` != `$USER`)\n ///     - The current user is root (UID = 0)\n ///     - The user is currently connected as an SSH session (`$SSH_CONNECTION`)\n pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n-    let user = context.get_env(\"USER\");\n+    let username = context.get_env(USERNAME_ENV_VAR)?;\n     let logname = context.get_env(\"LOGNAME\");\n \n-    const ROOT_UID: Option<u32> = Some(0);\n     let user_uid = get_uid();\n \n+    let is_not_login = logname.is_some() && username != logname.unwrap_or_default();",
+    "path": "src/modules/username.rs",
+    "commit_id": "1f1d02be8e205bab3e2cd6ef8660eca2f271aaf5",
+    "original_commit_id": "529f6f43cbe28484186aa4d1c90da22c095f8bfb",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Nitpick:\r\nI'd prefer\r\n```suggestion\r\n    let is_not_login = logname.map(|logname| username != logname).unwrap_or(false);\r\n```\r\nor\r\n```suggestion\r\n    let is_not_login = logname.is_some() && username != logname.unwrap();\r\n```\r\nhere",
+    "created_at": "2020-12-25T16:24:41Z",
+    "updated_at": "2020-12-26T12:18:06Z",
+    "html_url": "https://github.com/starship/starship/pull/2014#discussion_r548889970",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2014",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/548889970"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2014#discussion_r548889970"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2014"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/548889970/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 26,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 25,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

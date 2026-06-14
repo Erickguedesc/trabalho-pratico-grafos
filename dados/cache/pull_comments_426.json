@@ -1,0 +1,906 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328118272",
+    "pull_request_review_id": 293071329,
+    "id": 328118272,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODExODI3Mg==",
+    "diff_hunk": "@@ -19,27 +23,85 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         return None;\n     }\n \n-    match get_rust_version() {\n-        Some(rust_version) => {\n-            const RUST_CHAR: &str = \"🦀 \";\n+    let module_version = if let Some(toolchain) = env_rustup_toolchain()\n+        .or_else(|| execute_rustup_override_list(&context.current_dir))\n+        .or_else(|| find_rust_toolchain_file(&context.current_dir))\n+    {\n+        match execute_rustup_run_rustc_version(&toolchain) {\n+            Err(err) => err,\n+            Ok(stdout) => format_rustc_version(stdout),\n+        }\n+    } else {\n+        format_rustc_version(execute_rustc_version()?)\n+    };\n+\n+    let mut module = context.new_module(\"rust\");\n \n-            let mut module = context.new_module(\"rust\");\n-            let module_style = module\n-                .config_value_style(\"style\")\n-                .unwrap_or_else(|| Color::Red.bold());\n-            module.set_style(module_style);\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::Red.bold());\n+    module.set_style(module_style);\n+    module.new_segment(\"symbol\", RUST_CHAR);\n+    module.new_segment(\"version\", &module_version);\n \n-            let formatted_version = format_rustc_version(rust_version);\n-            module.new_segment(\"symbol\", RUST_CHAR);\n-            module.new_segment(\"version\", &formatted_version);\n+    Some(module)\n+}\n \n-            Some(module)\n+fn env_rustup_toolchain() -> Option<String> {\n+    let val = env::var(\"RUSTUP_TOOLCHAIN\").ok()?;\n+    Some(val.trim().to_owned())\n+}\n+\n+fn execute_rustup_override_list(cwd: &Path) -> Option<String> {\n+    let Output { stdout, .. } = Command::new(\"rustup\")\n+        .args(&[\"override\", \"list\"])\n+        .output()\n+        .ok()?;\n+    let stdout = String::from_utf8(stdout).ok()?;\n+    if stdout == \"no overrides\\n\" {\n+        return None;\n+    }\n+    stdout",
+    "path": "src/modules/rust.rs",
+    "commit_id": "e3b9bc2cc05518bc6ea54aa19c5d152af2c0715b",
+    "original_commit_id": "eefb98cc57e60a054b89db177cc52f6ae7ba6ca2",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Would be great to move this `stdout` parsing logic in to another function, where we could write a test or two against it?",
+    "created_at": "2019-09-25T13:22:37Z",
+    "updated_at": "2019-09-30T02:15:28Z",
+    "html_url": "https://github.com/starship/starship/pull/426#discussion_r328118272",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/426",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328118272"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/426#discussion_r328118272"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/426"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328118272/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 91,
+    "original_line": 91,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 72,
+    "position": 90,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328119077",
+    "pull_request_review_id": 293071329,
+    "id": 328119077,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODExOTA3Nw==",
+    "diff_hunk": "@@ -19,27 +23,85 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         return None;\n     }\n \n-    match get_rust_version() {\n-        Some(rust_version) => {\n-            const RUST_CHAR: &str = \"🦀 \";\n+    let module_version = if let Some(toolchain) = env_rustup_toolchain()\n+        .or_else(|| execute_rustup_override_list(&context.current_dir))\n+        .or_else(|| find_rust_toolchain_file(&context.current_dir))\n+    {\n+        match execute_rustup_run_rustc_version(&toolchain) {\n+            Err(err) => err,\n+            Ok(stdout) => format_rustc_version(stdout),\n+        }\n+    } else {\n+        format_rustc_version(execute_rustc_version()?)\n+    };\n+\n+    let mut module = context.new_module(\"rust\");\n \n-            let mut module = context.new_module(\"rust\");\n-            let module_style = module\n-                .config_value_style(\"style\")\n-                .unwrap_or_else(|| Color::Red.bold());\n-            module.set_style(module_style);\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::Red.bold());\n+    module.set_style(module_style);\n+    module.new_segment(\"symbol\", RUST_CHAR);\n+    module.new_segment(\"version\", &module_version);\n \n-            let formatted_version = format_rustc_version(rust_version);\n-            module.new_segment(\"symbol\", RUST_CHAR);\n-            module.new_segment(\"version\", &formatted_version);\n+    Some(module)\n+}\n \n-            Some(module)\n+fn env_rustup_toolchain() -> Option<String> {\n+    let val = env::var(\"RUSTUP_TOOLCHAIN\").ok()?;\n+    Some(val.trim().to_owned())\n+}\n+\n+fn execute_rustup_override_list(cwd: &Path) -> Option<String> {\n+    let Output { stdout, .. } = Command::new(\"rustup\")\n+        .args(&[\"override\", \"list\"])\n+        .output()\n+        .ok()?;\n+    let stdout = String::from_utf8(stdout).ok()?;\n+    if stdout == \"no overrides\\n\" {\n+        return None;\n+    }\n+    stdout\n+        .lines()\n+        .flat_map(|line| {\n+            let mut words = line.split_whitespace();\n+            let dir = words.next()?;\n+            let toolchain = words.next()?;\n+            Some((dir, toolchain))\n+        })\n+        .find(|(dir, _)| cwd.starts_with(dir))\n+        .map(|(_, toolchain)| toolchain.to_owned())\n+}\n+\n+fn find_rust_toolchain_file(mut dir: &Path) -> Option<String> {\n+    loop {",
+    "path": "src/modules/rust.rs",
+    "commit_id": "e3b9bc2cc05518bc6ea54aa19c5d152af2c0715b",
+    "original_commit_id": "eefb98cc57e60a054b89db177cc52f6ae7ba6ca2",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Should we limit the maximum depth here to some small reasonable number? Though I realise this will potentially compromise accuracy..",
+    "created_at": "2019-09-25T13:24:02Z",
+    "updated_at": "2019-09-30T02:15:28Z",
+    "html_url": "https://github.com/starship/starship/pull/426#discussion_r328119077",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/426",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328119077"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/426#discussion_r328119077"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/426"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328119077/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 125,
+    "original_line": 125,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 85,
+    "position": 129,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328120075",
+    "pull_request_review_id": 293071329,
+    "id": 328120075,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODEyMDA3NQ==",
+    "diff_hunk": "@@ -19,27 +23,85 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         return None;\n     }\n \n-    match get_rust_version() {\n-        Some(rust_version) => {\n-            const RUST_CHAR: &str = \"🦀 \";\n+    let module_version = if let Some(toolchain) = env_rustup_toolchain()\n+        .or_else(|| execute_rustup_override_list(&context.current_dir))\n+        .or_else(|| find_rust_toolchain_file(&context.current_dir))\n+    {\n+        match execute_rustup_run_rustc_version(&toolchain) {\n+            Err(err) => err,\n+            Ok(stdout) => format_rustc_version(stdout),\n+        }\n+    } else {\n+        format_rustc_version(execute_rustc_version()?)\n+    };\n+\n+    let mut module = context.new_module(\"rust\");\n \n-            let mut module = context.new_module(\"rust\");\n-            let module_style = module\n-                .config_value_style(\"style\")\n-                .unwrap_or_else(|| Color::Red.bold());\n-            module.set_style(module_style);\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::Red.bold());\n+    module.set_style(module_style);\n+    module.new_segment(\"symbol\", RUST_CHAR);\n+    module.new_segment(\"version\", &module_version);\n \n-            let formatted_version = format_rustc_version(rust_version);\n-            module.new_segment(\"symbol\", RUST_CHAR);\n-            module.new_segment(\"version\", &formatted_version);\n+    Some(module)\n+}\n \n-            Some(module)\n+fn env_rustup_toolchain() -> Option<String> {\n+    let val = env::var(\"RUSTUP_TOOLCHAIN\").ok()?;\n+    Some(val.trim().to_owned())\n+}\n+\n+fn execute_rustup_override_list(cwd: &Path) -> Option<String> {\n+    let Output { stdout, .. } = Command::new(\"rustup\")\n+        .args(&[\"override\", \"list\"])\n+        .output()\n+        .ok()?;\n+    let stdout = String::from_utf8(stdout).ok()?;\n+    if stdout == \"no overrides\\n\" {\n+        return None;\n+    }\n+    stdout\n+        .lines()\n+        .flat_map(|line| {\n+            let mut words = line.split_whitespace();\n+            let dir = words.next()?;\n+            let toolchain = words.next()?;\n+            Some((dir, toolchain))\n+        })\n+        .find(|(dir, _)| cwd.starts_with(dir))\n+        .map(|(_, toolchain)| toolchain.to_owned())\n+}\n+\n+fn find_rust_toolchain_file(mut dir: &Path) -> Option<String> {\n+    loop {\n+        let path = dir.join(\"rust-toolchain\");\n+        if path.exists() {",
+    "path": "src/modules/rust.rs",
+    "commit_id": "e3b9bc2cc05518bc6ea54aa19c5d152af2c0715b",
+    "original_commit_id": "eefb98cc57e60a054b89db177cc52f6ae7ba6ca2",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "For the first iteration: we could consider use the cached data from `context.get_dir_files()` and `find()` rather than hitting the OS again.\r\n\r\nThis code is simpler though, so it's probably worth measuring...",
+    "created_at": "2019-09-25T13:25:53Z",
+    "updated_at": "2019-09-30T02:15:28Z",
+    "html_url": "https://github.com/starship/starship/pull/426#discussion_r328120075",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/426",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328120075"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/426#discussion_r328120075"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/426"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328120075/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 79,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 87,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328121051",
+    "pull_request_review_id": 293071329,
+    "id": 328121051,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODEyMTA1MQ==",
+    "diff_hunk": "@@ -19,27 +23,85 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         return None;\n     }\n \n-    match get_rust_version() {\n-        Some(rust_version) => {\n-            const RUST_CHAR: &str = \"🦀 \";\n+    let module_version = if let Some(toolchain) = env_rustup_toolchain()\n+        .or_else(|| execute_rustup_override_list(&context.current_dir))\n+        .or_else(|| find_rust_toolchain_file(&context.current_dir))\n+    {\n+        match execute_rustup_run_rustc_version(&toolchain) {\n+            Err(err) => err,\n+            Ok(stdout) => format_rustc_version(stdout),\n+        }\n+    } else {\n+        format_rustc_version(execute_rustc_version()?)\n+    };\n+\n+    let mut module = context.new_module(\"rust\");\n \n-            let mut module = context.new_module(\"rust\");\n-            let module_style = module\n-                .config_value_style(\"style\")\n-                .unwrap_or_else(|| Color::Red.bold());\n-            module.set_style(module_style);\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::Red.bold());\n+    module.set_style(module_style);\n+    module.new_segment(\"symbol\", RUST_CHAR);\n+    module.new_segment(\"version\", &module_version);\n \n-            let formatted_version = format_rustc_version(rust_version);\n-            module.new_segment(\"symbol\", RUST_CHAR);\n-            module.new_segment(\"version\", &formatted_version);\n+    Some(module)\n+}\n \n-            Some(module)\n+fn env_rustup_toolchain() -> Option<String> {\n+    let val = env::var(\"RUSTUP_TOOLCHAIN\").ok()?;\n+    Some(val.trim().to_owned())\n+}\n+\n+fn execute_rustup_override_list(cwd: &Path) -> Option<String> {\n+    let Output { stdout, .. } = Command::new(\"rustup\")\n+        .args(&[\"override\", \"list\"])\n+        .output()\n+        .ok()?;\n+    let stdout = String::from_utf8(stdout).ok()?;\n+    if stdout == \"no overrides\\n\" {\n+        return None;\n+    }\n+    stdout\n+        .lines()\n+        .flat_map(|line| {\n+            let mut words = line.split_whitespace();\n+            let dir = words.next()?;\n+            let toolchain = words.next()?;\n+            Some((dir, toolchain))\n+        })\n+        .find(|(dir, _)| cwd.starts_with(dir))\n+        .map(|(_, toolchain)| toolchain.to_owned())\n+}\n+\n+fn find_rust_toolchain_file(mut dir: &Path) -> Option<String> {\n+    loop {\n+        let path = dir.join(\"rust-toolchain\");\n+        if path.exists() {\n+            let content = fs::read_to_string(path).ok()?;\n+            break Some(content.trim().to_owned());\n         }\n-        None => None,\n+        dir = dir.parent()?;\n+    }\n+}\n+\n+fn execute_rustup_run_rustc_version(toolchain: &str) -> Result<String, String> {\n+    let output = Command::new(\"rustup\")\n+        .args(&[\"run\", toolchain, \"rustc\", \"--version\"])\n+        .output()\n+        .map_err(|e| e.to_string())?;\n+    if output.status.success() {\n+        String::from_utf8(output.stdout).map_err(|e| e.to_string())\n+    } else {\n+        let stderr = String::from_utf8(output.stderr).map_err(|e| e.to_string())?;\n+        Err(if stderr.starts_with(\"error: \") {",
+    "path": "src/modules/rust.rs",
+    "commit_id": "e3b9bc2cc05518bc6ea54aa19c5d152af2c0715b",
+    "original_commit_id": "eefb98cc57e60a054b89db177cc52f6ae7ba6ca2",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Would `trim_start_matches()` work better here?",
+    "created_at": "2019-09-25T13:27:49Z",
+    "updated_at": "2019-09-30T02:15:28Z",
+    "html_url": "https://github.com/starship/starship/pull/426#discussion_r328121051",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/426",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328121051"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/426#discussion_r328121051"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/426"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328121051/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 96,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 105,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328122880",
+    "pull_request_review_id": 293071329,
+    "id": 328122880,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODEyMjg4MA==",
+    "diff_hunk": "@@ -19,27 +23,85 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         return None;\n     }\n \n-    match get_rust_version() {\n-        Some(rust_version) => {\n-            const RUST_CHAR: &str = \"🦀 \";\n+    let module_version = if let Some(toolchain) = env_rustup_toolchain()\n+        .or_else(|| execute_rustup_override_list(&context.current_dir))\n+        .or_else(|| find_rust_toolchain_file(&context.current_dir))\n+    {\n+        match execute_rustup_run_rustc_version(&toolchain) {\n+            Err(err) => err,\n+            Ok(stdout) => format_rustc_version(stdout),\n+        }\n+    } else {\n+        format_rustc_version(execute_rustc_version()?)\n+    };\n+\n+    let mut module = context.new_module(\"rust\");\n \n-            let mut module = context.new_module(\"rust\");\n-            let module_style = module\n-                .config_value_style(\"style\")\n-                .unwrap_or_else(|| Color::Red.bold());\n-            module.set_style(module_style);\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::Red.bold());\n+    module.set_style(module_style);\n+    module.new_segment(\"symbol\", RUST_CHAR);\n+    module.new_segment(\"version\", &module_version);\n \n-            let formatted_version = format_rustc_version(rust_version);\n-            module.new_segment(\"symbol\", RUST_CHAR);\n-            module.new_segment(\"version\", &formatted_version);\n+    Some(module)\n+}\n \n-            Some(module)\n+fn env_rustup_toolchain() -> Option<String> {\n+    let val = env::var(\"RUSTUP_TOOLCHAIN\").ok()?;\n+    Some(val.trim().to_owned())\n+}\n+\n+fn execute_rustup_override_list(cwd: &Path) -> Option<String> {\n+    let Output { stdout, .. } = Command::new(\"rustup\")\n+        .args(&[\"override\", \"list\"])\n+        .output()\n+        .ok()?;\n+    let stdout = String::from_utf8(stdout).ok()?;\n+    if stdout == \"no overrides\\n\" {\n+        return None;\n+    }\n+    stdout\n+        .lines()\n+        .flat_map(|line| {\n+            let mut words = line.split_whitespace();\n+            let dir = words.next()?;\n+            let toolchain = words.next()?;\n+            Some((dir, toolchain))\n+        })\n+        .find(|(dir, _)| cwd.starts_with(dir))\n+        .map(|(_, toolchain)| toolchain.to_owned())\n+}\n+\n+fn find_rust_toolchain_file(mut dir: &Path) -> Option<String> {\n+    loop {\n+        let path = dir.join(\"rust-toolchain\");\n+        if path.exists() {\n+            let content = fs::read_to_string(path).ok()?;\n+            break Some(content.trim().to_owned());\n         }\n-        None => None,\n+        dir = dir.parent()?;\n+    }\n+}\n+\n+fn execute_rustup_run_rustc_version(toolchain: &str) -> Result<String, String> {\n+    let output = Command::new(\"rustup\")\n+        .args(&[\"run\", toolchain, \"rustc\", \"--version\"])\n+        .output()\n+        .map_err(|e| e.to_string())?;\n+    if output.status.success() {\n+        String::from_utf8(output.stdout).map_err(|e| e.to_string())\n+    } else {\n+        let stderr = String::from_utf8(output.stderr).map_err(|e| e.to_string())?;",
+    "path": "src/modules/rust.rs",
+    "commit_id": "e3b9bc2cc05518bc6ea54aa19c5d152af2c0715b",
+    "original_commit_id": "eefb98cc57e60a054b89db177cc52f6ae7ba6ca2",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'm personally not a huge fan of the long error in the prompt. Can we throw in some config to toggle this? Perhaps we could hide the whole module if this fails, or perhaps a single \"alert\" symbol to indicate something is wrong but without saying what.",
+    "created_at": "2019-09-25T13:30:55Z",
+    "updated_at": "2019-09-30T02:15:28Z",
+    "html_url": "https://github.com/starship/starship/pull/426#discussion_r328122880",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/426",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328122880"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/426#discussion_r328122880"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/426"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328122880/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 95,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 104,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328259990",
+    "pull_request_review_id": 293258792,
+    "id": 328259990,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODI1OTk5MA==",
+    "diff_hunk": "@@ -19,27 +23,85 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         return None;\n     }\n \n-    match get_rust_version() {\n-        Some(rust_version) => {\n-            const RUST_CHAR: &str = \"🦀 \";\n+    let module_version = if let Some(toolchain) = env_rustup_toolchain()\n+        .or_else(|| execute_rustup_override_list(&context.current_dir))\n+        .or_else(|| find_rust_toolchain_file(&context.current_dir))\n+    {\n+        match execute_rustup_run_rustc_version(&toolchain) {\n+            Err(err) => err,\n+            Ok(stdout) => format_rustc_version(stdout),\n+        }\n+    } else {\n+        format_rustc_version(execute_rustc_version()?)\n+    };\n+\n+    let mut module = context.new_module(\"rust\");\n \n-            let mut module = context.new_module(\"rust\");\n-            let module_style = module\n-                .config_value_style(\"style\")\n-                .unwrap_or_else(|| Color::Red.bold());\n-            module.set_style(module_style);\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::Red.bold());\n+    module.set_style(module_style);\n+    module.new_segment(\"symbol\", RUST_CHAR);\n+    module.new_segment(\"version\", &module_version);\n \n-            let formatted_version = format_rustc_version(rust_version);\n-            module.new_segment(\"symbol\", RUST_CHAR);\n-            module.new_segment(\"version\", &formatted_version);\n+    Some(module)\n+}\n \n-            Some(module)\n+fn env_rustup_toolchain() -> Option<String> {\n+    let val = env::var(\"RUSTUP_TOOLCHAIN\").ok()?;\n+    Some(val.trim().to_owned())\n+}\n+\n+fn execute_rustup_override_list(cwd: &Path) -> Option<String> {\n+    let Output { stdout, .. } = Command::new(\"rustup\")\n+        .args(&[\"override\", \"list\"])\n+        .output()\n+        .ok()?;\n+    let stdout = String::from_utf8(stdout).ok()?;\n+    if stdout == \"no overrides\\n\" {\n+        return None;\n+    }\n+    stdout",
+    "path": "src/modules/rust.rs",
+    "commit_id": "e3b9bc2cc05518bc6ea54aa19c5d152af2c0715b",
+    "original_commit_id": "eefb98cc57e60a054b89db177cc52f6ae7ba6ca2",
+    "user": {
+      "login": "qryxip",
+      "id": 14125495,
+      "node_id": "MDQ6VXNlcjE0MTI1NDk1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14125495?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/qryxip",
+      "html_url": "https://github.com/qryxip",
+      "followers_url": "https://api.github.com/users/qryxip/followers",
+      "following_url": "https://api.github.com/users/qryxip/following{/other_user}",
+      "gists_url": "https://api.github.com/users/qryxip/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/qryxip/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/qryxip/subscriptions",
+      "organizations_url": "https://api.github.com/users/qryxip/orgs",
+      "repos_url": "https://api.github.com/users/qryxip/repos",
+      "events_url": "https://api.github.com/users/qryxip/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/qryxip/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Right. I moved the part to `extract_toolchain_from_rustup_override_list` and added a test for it.",
+    "created_at": "2019-09-25T17:55:17Z",
+    "updated_at": "2019-09-30T02:15:28Z",
+    "html_url": "https://github.com/starship/starship/pull/426#discussion_r328259990",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/426",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328259990"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/426#discussion_r328259990"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/426"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328259990/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 91,
+    "original_line": 91,
+    "side": "RIGHT",
+    "in_reply_to_id": 328118272,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 72,
+    "position": 90,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328261236",
+    "pull_request_review_id": 293260319,
+    "id": 328261236,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODI2MTIzNg==",
+    "diff_hunk": "@@ -19,27 +23,85 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         return None;\n     }\n \n-    match get_rust_version() {\n-        Some(rust_version) => {\n-            const RUST_CHAR: &str = \"🦀 \";\n+    let module_version = if let Some(toolchain) = env_rustup_toolchain()\n+        .or_else(|| execute_rustup_override_list(&context.current_dir))\n+        .or_else(|| find_rust_toolchain_file(&context.current_dir))\n+    {\n+        match execute_rustup_run_rustc_version(&toolchain) {\n+            Err(err) => err,\n+            Ok(stdout) => format_rustc_version(stdout),\n+        }\n+    } else {\n+        format_rustc_version(execute_rustc_version()?)\n+    };\n+\n+    let mut module = context.new_module(\"rust\");\n \n-            let mut module = context.new_module(\"rust\");\n-            let module_style = module\n-                .config_value_style(\"style\")\n-                .unwrap_or_else(|| Color::Red.bold());\n-            module.set_style(module_style);\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::Red.bold());\n+    module.set_style(module_style);\n+    module.new_segment(\"symbol\", RUST_CHAR);\n+    module.new_segment(\"version\", &module_version);\n \n-            let formatted_version = format_rustc_version(rust_version);\n-            module.new_segment(\"symbol\", RUST_CHAR);\n-            module.new_segment(\"version\", &formatted_version);\n+    Some(module)\n+}\n \n-            Some(module)\n+fn env_rustup_toolchain() -> Option<String> {\n+    let val = env::var(\"RUSTUP_TOOLCHAIN\").ok()?;\n+    Some(val.trim().to_owned())\n+}\n+\n+fn execute_rustup_override_list(cwd: &Path) -> Option<String> {\n+    let Output { stdout, .. } = Command::new(\"rustup\")\n+        .args(&[\"override\", \"list\"])\n+        .output()\n+        .ok()?;\n+    let stdout = String::from_utf8(stdout).ok()?;\n+    if stdout == \"no overrides\\n\" {\n+        return None;\n+    }\n+    stdout\n+        .lines()\n+        .flat_map(|line| {\n+            let mut words = line.split_whitespace();\n+            let dir = words.next()?;\n+            let toolchain = words.next()?;\n+            Some((dir, toolchain))\n+        })\n+        .find(|(dir, _)| cwd.starts_with(dir))\n+        .map(|(_, toolchain)| toolchain.to_owned())\n+}\n+\n+fn find_rust_toolchain_file(mut dir: &Path) -> Option<String> {\n+    loop {\n+        let path = dir.join(\"rust-toolchain\");\n+        if path.exists() {\n+            let content = fs::read_to_string(path).ok()?;\n+            break Some(content.trim().to_owned());\n         }\n-        None => None,\n+        dir = dir.parent()?;\n+    }\n+}\n+\n+fn execute_rustup_run_rustc_version(toolchain: &str) -> Result<String, String> {\n+    let output = Command::new(\"rustup\")\n+        .args(&[\"run\", toolchain, \"rustc\", \"--version\"])\n+        .output()\n+        .map_err(|e| e.to_string())?;\n+    if output.status.success() {\n+        String::from_utf8(output.stdout).map_err(|e| e.to_string())\n+    } else {\n+        let stderr = String::from_utf8(output.stderr).map_err(|e| e.to_string())?;\n+        Err(if stderr.starts_with(\"error: \") {",
+    "path": "src/modules/rust.rs",
+    "commit_id": "e3b9bc2cc05518bc6ea54aa19c5d152af2c0715b",
+    "original_commit_id": "eefb98cc57e60a054b89db177cc52f6ae7ba6ca2",
+    "user": {
+      "login": "qryxip",
+      "id": 14125495,
+      "node_id": "MDQ6VXNlcjE0MTI1NDk1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14125495?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/qryxip",
+      "html_url": "https://github.com/qryxip",
+      "followers_url": "https://api.github.com/users/qryxip/followers",
+      "following_url": "https://api.github.com/users/qryxip/following{/other_user}",
+      "gists_url": "https://api.github.com/users/qryxip/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/qryxip/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/qryxip/subscriptions",
+      "organizations_url": "https://api.github.com/users/qryxip/orgs",
+      "repos_url": "https://api.github.com/users/qryxip/repos",
+      "events_url": "https://api.github.com/users/qryxip/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/qryxip/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I removed the part.",
+    "created_at": "2019-09-25T17:57:45Z",
+    "updated_at": "2019-09-30T02:15:28Z",
+    "html_url": "https://github.com/starship/starship/pull/426#discussion_r328261236",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/426",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328261236"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/426#discussion_r328261236"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/426"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328261236/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 96,
+    "side": "RIGHT",
+    "in_reply_to_id": 328121051,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 105,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328262014",
+    "pull_request_review_id": 293261337,
+    "id": 328262014,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODI2MjAxNA==",
+    "diff_hunk": "@@ -19,27 +23,85 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         return None;\n     }\n \n-    match get_rust_version() {\n-        Some(rust_version) => {\n-            const RUST_CHAR: &str = \"🦀 \";\n+    let module_version = if let Some(toolchain) = env_rustup_toolchain()\n+        .or_else(|| execute_rustup_override_list(&context.current_dir))\n+        .or_else(|| find_rust_toolchain_file(&context.current_dir))\n+    {\n+        match execute_rustup_run_rustc_version(&toolchain) {\n+            Err(err) => err,\n+            Ok(stdout) => format_rustc_version(stdout),\n+        }\n+    } else {\n+        format_rustc_version(execute_rustc_version()?)\n+    };\n+\n+    let mut module = context.new_module(\"rust\");\n \n-            let mut module = context.new_module(\"rust\");\n-            let module_style = module\n-                .config_value_style(\"style\")\n-                .unwrap_or_else(|| Color::Red.bold());\n-            module.set_style(module_style);\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::Red.bold());\n+    module.set_style(module_style);\n+    module.new_segment(\"symbol\", RUST_CHAR);\n+    module.new_segment(\"version\", &module_version);\n \n-            let formatted_version = format_rustc_version(rust_version);\n-            module.new_segment(\"symbol\", RUST_CHAR);\n-            module.new_segment(\"version\", &formatted_version);\n+    Some(module)\n+}\n \n-            Some(module)\n+fn env_rustup_toolchain() -> Option<String> {\n+    let val = env::var(\"RUSTUP_TOOLCHAIN\").ok()?;\n+    Some(val.trim().to_owned())\n+}\n+\n+fn execute_rustup_override_list(cwd: &Path) -> Option<String> {\n+    let Output { stdout, .. } = Command::new(\"rustup\")\n+        .args(&[\"override\", \"list\"])\n+        .output()\n+        .ok()?;\n+    let stdout = String::from_utf8(stdout).ok()?;\n+    if stdout == \"no overrides\\n\" {\n+        return None;\n+    }\n+    stdout\n+        .lines()\n+        .flat_map(|line| {\n+            let mut words = line.split_whitespace();\n+            let dir = words.next()?;\n+            let toolchain = words.next()?;\n+            Some((dir, toolchain))\n+        })\n+        .find(|(dir, _)| cwd.starts_with(dir))\n+        .map(|(_, toolchain)| toolchain.to_owned())\n+}\n+\n+fn find_rust_toolchain_file(mut dir: &Path) -> Option<String> {\n+    loop {\n+        let path = dir.join(\"rust-toolchain\");\n+        if path.exists() {\n+            let content = fs::read_to_string(path).ok()?;\n+            break Some(content.trim().to_owned());\n         }\n-        None => None,\n+        dir = dir.parent()?;\n+    }\n+}\n+\n+fn execute_rustup_run_rustc_version(toolchain: &str) -> Result<String, String> {\n+    let output = Command::new(\"rustup\")\n+        .args(&[\"run\", toolchain, \"rustc\", \"--version\"])\n+        .output()\n+        .map_err(|e| e.to_string())?;\n+    if output.status.success() {\n+        String::from_utf8(output.stdout).map_err(|e| e.to_string())\n+    } else {\n+        let stderr = String::from_utf8(output.stderr).map_err(|e| e.to_string())?;",
+    "path": "src/modules/rust.rs",
+    "commit_id": "e3b9bc2cc05518bc6ea54aa19c5d152af2c0715b",
+    "original_commit_id": "eefb98cc57e60a054b89db177cc52f6ae7ba6ca2",
+    "user": {
+      "login": "qryxip",
+      "id": 14125495,
+      "node_id": "MDQ6VXNlcjE0MTI1NDk1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14125495?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/qryxip",
+      "html_url": "https://github.com/qryxip",
+      "followers_url": "https://api.github.com/users/qryxip/followers",
+      "following_url": "https://api.github.com/users/qryxip/following{/other_user}",
+      "gists_url": "https://api.github.com/users/qryxip/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/qryxip/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/qryxip/subscriptions",
+      "organizations_url": "https://api.github.com/users/qryxip/orgs",
+      "repos_url": "https://api.github.com/users/qryxip/repos",
+      "events_url": "https://api.github.com/users/qryxip/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/qryxip/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Now it displays toolchain name (`channel-triple`). I updated the screenshot.",
+    "created_at": "2019-09-25T17:59:27Z",
+    "updated_at": "2019-09-30T02:15:28Z",
+    "html_url": "https://github.com/starship/starship/pull/426#discussion_r328262014",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/426",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328262014"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/426#discussion_r328262014"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/426"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328262014/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 95,
+    "side": "RIGHT",
+    "in_reply_to_id": 328122880,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 104,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328262781",
+    "pull_request_review_id": 293262138,
+    "id": 328262781,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODI2Mjc4MQ==",
+    "diff_hunk": "@@ -19,27 +23,85 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         return None;\n     }\n \n-    match get_rust_version() {\n-        Some(rust_version) => {\n-            const RUST_CHAR: &str = \"🦀 \";\n+    let module_version = if let Some(toolchain) = env_rustup_toolchain()\n+        .or_else(|| execute_rustup_override_list(&context.current_dir))\n+        .or_else(|| find_rust_toolchain_file(&context.current_dir))\n+    {\n+        match execute_rustup_run_rustc_version(&toolchain) {\n+            Err(err) => err,\n+            Ok(stdout) => format_rustc_version(stdout),\n+        }\n+    } else {\n+        format_rustc_version(execute_rustc_version()?)\n+    };\n+\n+    let mut module = context.new_module(\"rust\");\n \n-            let mut module = context.new_module(\"rust\");\n-            let module_style = module\n-                .config_value_style(\"style\")\n-                .unwrap_or_else(|| Color::Red.bold());\n-            module.set_style(module_style);\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::Red.bold());\n+    module.set_style(module_style);\n+    module.new_segment(\"symbol\", RUST_CHAR);\n+    module.new_segment(\"version\", &module_version);\n \n-            let formatted_version = format_rustc_version(rust_version);\n-            module.new_segment(\"symbol\", RUST_CHAR);\n-            module.new_segment(\"version\", &formatted_version);\n+    Some(module)\n+}\n \n-            Some(module)\n+fn env_rustup_toolchain() -> Option<String> {\n+    let val = env::var(\"RUSTUP_TOOLCHAIN\").ok()?;\n+    Some(val.trim().to_owned())\n+}\n+\n+fn execute_rustup_override_list(cwd: &Path) -> Option<String> {\n+    let Output { stdout, .. } = Command::new(\"rustup\")\n+        .args(&[\"override\", \"list\"])\n+        .output()\n+        .ok()?;\n+    let stdout = String::from_utf8(stdout).ok()?;\n+    if stdout == \"no overrides\\n\" {\n+        return None;\n+    }\n+    stdout\n+        .lines()\n+        .flat_map(|line| {\n+            let mut words = line.split_whitespace();\n+            let dir = words.next()?;\n+            let toolchain = words.next()?;\n+            Some((dir, toolchain))\n+        })\n+        .find(|(dir, _)| cwd.starts_with(dir))\n+        .map(|(_, toolchain)| toolchain.to_owned())\n+}\n+\n+fn find_rust_toolchain_file(mut dir: &Path) -> Option<String> {\n+    loop {\n+        let path = dir.join(\"rust-toolchain\");\n+        if path.exists() {",
+    "path": "src/modules/rust.rs",
+    "commit_id": "e3b9bc2cc05518bc6ea54aa19c5d152af2c0715b",
+    "original_commit_id": "eefb98cc57e60a054b89db177cc52f6ae7ba6ca2",
+    "user": {
+      "login": "qryxip",
+      "id": 14125495,
+      "node_id": "MDQ6VXNlcjE0MTI1NDk1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14125495?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/qryxip",
+      "html_url": "https://github.com/qryxip",
+      "followers_url": "https://api.github.com/users/qryxip/followers",
+      "following_url": "https://api.github.com/users/qryxip/following{/other_user}",
+      "gists_url": "https://api.github.com/users/qryxip/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/qryxip/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/qryxip/subscriptions",
+      "organizations_url": "https://api.github.com/users/qryxip/orgs",
+      "repos_url": "https://api.github.com/users/qryxip/repos",
+      "events_url": "https://api.github.com/users/qryxip/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/qryxip/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Used `Context::get_dir_files` for the first iteration.",
+    "created_at": "2019-09-25T18:00:45Z",
+    "updated_at": "2019-09-30T02:15:28Z",
+    "html_url": "https://github.com/starship/starship/pull/426#discussion_r328262781",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/426",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328262781"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/426#discussion_r328262781"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/426"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328262781/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 79,
+    "side": "RIGHT",
+    "in_reply_to_id": 328120075,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 87,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328270213",
+    "pull_request_review_id": 293271759,
+    "id": 328270213,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODI3MDIxMw==",
+    "diff_hunk": "@@ -19,27 +23,85 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         return None;\n     }\n \n-    match get_rust_version() {\n-        Some(rust_version) => {\n-            const RUST_CHAR: &str = \"🦀 \";\n+    let module_version = if let Some(toolchain) = env_rustup_toolchain()\n+        .or_else(|| execute_rustup_override_list(&context.current_dir))\n+        .or_else(|| find_rust_toolchain_file(&context.current_dir))\n+    {\n+        match execute_rustup_run_rustc_version(&toolchain) {\n+            Err(err) => err,\n+            Ok(stdout) => format_rustc_version(stdout),\n+        }\n+    } else {\n+        format_rustc_version(execute_rustc_version()?)\n+    };\n+\n+    let mut module = context.new_module(\"rust\");\n \n-            let mut module = context.new_module(\"rust\");\n-            let module_style = module\n-                .config_value_style(\"style\")\n-                .unwrap_or_else(|| Color::Red.bold());\n-            module.set_style(module_style);\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::Red.bold());\n+    module.set_style(module_style);\n+    module.new_segment(\"symbol\", RUST_CHAR);\n+    module.new_segment(\"version\", &module_version);\n \n-            let formatted_version = format_rustc_version(rust_version);\n-            module.new_segment(\"symbol\", RUST_CHAR);\n-            module.new_segment(\"version\", &formatted_version);\n+    Some(module)\n+}\n \n-            Some(module)\n+fn env_rustup_toolchain() -> Option<String> {\n+    let val = env::var(\"RUSTUP_TOOLCHAIN\").ok()?;\n+    Some(val.trim().to_owned())\n+}\n+\n+fn execute_rustup_override_list(cwd: &Path) -> Option<String> {\n+    let Output { stdout, .. } = Command::new(\"rustup\")\n+        .args(&[\"override\", \"list\"])\n+        .output()\n+        .ok()?;\n+    let stdout = String::from_utf8(stdout).ok()?;\n+    if stdout == \"no overrides\\n\" {\n+        return None;\n+    }\n+    stdout\n+        .lines()\n+        .flat_map(|line| {\n+            let mut words = line.split_whitespace();\n+            let dir = words.next()?;\n+            let toolchain = words.next()?;\n+            Some((dir, toolchain))\n+        })\n+        .find(|(dir, _)| cwd.starts_with(dir))\n+        .map(|(_, toolchain)| toolchain.to_owned())\n+}\n+\n+fn find_rust_toolchain_file(mut dir: &Path) -> Option<String> {\n+    loop {",
+    "path": "src/modules/rust.rs",
+    "commit_id": "e3b9bc2cc05518bc6ea54aa19c5d152af2c0715b",
+    "original_commit_id": "eefb98cc57e60a054b89db177cc52f6ae7ba6ca2",
+    "user": {
+      "login": "qryxip",
+      "id": 14125495,
+      "node_id": "MDQ6VXNlcjE0MTI1NDk1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14125495?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/qryxip",
+      "html_url": "https://github.com/qryxip",
+      "followers_url": "https://api.github.com/users/qryxip/followers",
+      "following_url": "https://api.github.com/users/qryxip/following{/other_user}",
+      "gists_url": "https://api.github.com/users/qryxip/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/qryxip/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/qryxip/subscriptions",
+      "organizations_url": "https://api.github.com/users/qryxip/orgs",
+      "repos_url": "https://api.github.com/users/qryxip/repos",
+      "events_url": "https://api.github.com/users/qryxip/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/qryxip/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I don't think this degrades the performance so much. Its behavior is same as [`~/.cargo/bin/rustc --version`](https://github.com/rust-lang/rustup.rs/blob/d84e6e50126bccd84649e42482fc35a11d019401/src/config.rs#L320-L358\r\n).",
+    "created_at": "2019-09-25T18:17:40Z",
+    "updated_at": "2019-09-30T02:15:28Z",
+    "html_url": "https://github.com/starship/starship/pull/426#discussion_r328270213",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/426",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328270213"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/426#discussion_r328270213"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/426"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328270213/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 125,
+    "original_line": 125,
+    "side": "RIGHT",
+    "in_reply_to_id": 328119077,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 85,
+    "position": 129,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328595823",
+    "pull_request_review_id": 293698727,
+    "id": 328595823,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODU5NTgyMw==",
+    "diff_hunk": "@@ -19,27 +23,85 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         return None;\n     }\n \n-    match get_rust_version() {\n-        Some(rust_version) => {\n-            const RUST_CHAR: &str = \"🦀 \";\n+    let module_version = if let Some(toolchain) = env_rustup_toolchain()\n+        .or_else(|| execute_rustup_override_list(&context.current_dir))\n+        .or_else(|| find_rust_toolchain_file(&context.current_dir))\n+    {\n+        match execute_rustup_run_rustc_version(&toolchain) {\n+            Err(err) => err,\n+            Ok(stdout) => format_rustc_version(stdout),\n+        }\n+    } else {\n+        format_rustc_version(execute_rustc_version()?)\n+    };\n+\n+    let mut module = context.new_module(\"rust\");\n \n-            let mut module = context.new_module(\"rust\");\n-            let module_style = module\n-                .config_value_style(\"style\")\n-                .unwrap_or_else(|| Color::Red.bold());\n-            module.set_style(module_style);\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::Red.bold());\n+    module.set_style(module_style);\n+    module.new_segment(\"symbol\", RUST_CHAR);\n+    module.new_segment(\"version\", &module_version);\n \n-            let formatted_version = format_rustc_version(rust_version);\n-            module.new_segment(\"symbol\", RUST_CHAR);\n-            module.new_segment(\"version\", &formatted_version);\n+    Some(module)\n+}\n \n-            Some(module)\n+fn env_rustup_toolchain() -> Option<String> {\n+    let val = env::var(\"RUSTUP_TOOLCHAIN\").ok()?;\n+    Some(val.trim().to_owned())\n+}\n+\n+fn execute_rustup_override_list(cwd: &Path) -> Option<String> {\n+    let Output { stdout, .. } = Command::new(\"rustup\")\n+        .args(&[\"override\", \"list\"])\n+        .output()\n+        .ok()?;\n+    let stdout = String::from_utf8(stdout).ok()?;\n+    if stdout == \"no overrides\\n\" {\n+        return None;\n+    }\n+    stdout\n+        .lines()\n+        .flat_map(|line| {\n+            let mut words = line.split_whitespace();\n+            let dir = words.next()?;\n+            let toolchain = words.next()?;\n+            Some((dir, toolchain))\n+        })\n+        .find(|(dir, _)| cwd.starts_with(dir))\n+        .map(|(_, toolchain)| toolchain.to_owned())\n+}\n+\n+fn find_rust_toolchain_file(mut dir: &Path) -> Option<String> {\n+    loop {\n+        let path = dir.join(\"rust-toolchain\");\n+        if path.exists() {\n+            let content = fs::read_to_string(path).ok()?;\n+            break Some(content.trim().to_owned());\n         }\n-        None => None,\n+        dir = dir.parent()?;\n+    }\n+}\n+\n+fn execute_rustup_run_rustc_version(toolchain: &str) -> Result<String, String> {\n+    let output = Command::new(\"rustup\")\n+        .args(&[\"run\", toolchain, \"rustc\", \"--version\"])\n+        .output()\n+        .map_err(|e| e.to_string())?;\n+    if output.status.success() {\n+        String::from_utf8(output.stdout).map_err(|e| e.to_string())\n+    } else {\n+        let stderr = String::from_utf8(output.stderr).map_err(|e| e.to_string())?;",
+    "path": "src/modules/rust.rs",
+    "commit_id": "e3b9bc2cc05518bc6ea54aa19c5d152af2c0715b",
+    "original_commit_id": "eefb98cc57e60a054b89db177cc52f6ae7ba6ca2",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Great!",
+    "created_at": "2019-09-26T12:55:15Z",
+    "updated_at": "2019-09-30T02:15:28Z",
+    "html_url": "https://github.com/starship/starship/pull/426#discussion_r328595823",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/426",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328595823"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/426#discussion_r328595823"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/426"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328595823/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 95,
+    "side": "RIGHT",
+    "in_reply_to_id": 328122880,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 104,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328596605",
+    "pull_request_review_id": 293699829,
+    "id": 328596605,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODU5NjYwNQ==",
+    "diff_hunk": "@@ -19,27 +23,85 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         return None;\n     }\n \n-    match get_rust_version() {\n-        Some(rust_version) => {\n-            const RUST_CHAR: &str = \"🦀 \";\n+    let module_version = if let Some(toolchain) = env_rustup_toolchain()\n+        .or_else(|| execute_rustup_override_list(&context.current_dir))\n+        .or_else(|| find_rust_toolchain_file(&context.current_dir))\n+    {\n+        match execute_rustup_run_rustc_version(&toolchain) {\n+            Err(err) => err,\n+            Ok(stdout) => format_rustc_version(stdout),\n+        }\n+    } else {\n+        format_rustc_version(execute_rustc_version()?)\n+    };\n+\n+    let mut module = context.new_module(\"rust\");\n \n-            let mut module = context.new_module(\"rust\");\n-            let module_style = module\n-                .config_value_style(\"style\")\n-                .unwrap_or_else(|| Color::Red.bold());\n-            module.set_style(module_style);\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::Red.bold());\n+    module.set_style(module_style);\n+    module.new_segment(\"symbol\", RUST_CHAR);\n+    module.new_segment(\"version\", &module_version);\n \n-            let formatted_version = format_rustc_version(rust_version);\n-            module.new_segment(\"symbol\", RUST_CHAR);\n-            module.new_segment(\"version\", &formatted_version);\n+    Some(module)\n+}\n \n-            Some(module)\n+fn env_rustup_toolchain() -> Option<String> {\n+    let val = env::var(\"RUSTUP_TOOLCHAIN\").ok()?;\n+    Some(val.trim().to_owned())\n+}\n+\n+fn execute_rustup_override_list(cwd: &Path) -> Option<String> {\n+    let Output { stdout, .. } = Command::new(\"rustup\")\n+        .args(&[\"override\", \"list\"])\n+        .output()\n+        .ok()?;\n+    let stdout = String::from_utf8(stdout).ok()?;\n+    if stdout == \"no overrides\\n\" {\n+        return None;\n+    }\n+    stdout\n+        .lines()\n+        .flat_map(|line| {\n+            let mut words = line.split_whitespace();\n+            let dir = words.next()?;\n+            let toolchain = words.next()?;\n+            Some((dir, toolchain))\n+        })\n+        .find(|(dir, _)| cwd.starts_with(dir))\n+        .map(|(_, toolchain)| toolchain.to_owned())\n+}\n+\n+fn find_rust_toolchain_file(mut dir: &Path) -> Option<String> {\n+    loop {",
+    "path": "src/modules/rust.rs",
+    "commit_id": "e3b9bc2cc05518bc6ea54aa19c5d152af2c0715b",
+    "original_commit_id": "eefb98cc57e60a054b89db177cc52f6ae7ba6ca2",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "My benchmarks suggests this is about 30% slower. That said, I think it is quick enough - under 100ms on most systems and under 50ms on systems with fast I/O.",
+    "created_at": "2019-09-26T12:57:04Z",
+    "updated_at": "2019-09-30T02:15:28Z",
+    "html_url": "https://github.com/starship/starship/pull/426#discussion_r328596605",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/426",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328596605"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/426#discussion_r328596605"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/426"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328596605/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 125,
+    "original_line": 125,
+    "side": "RIGHT",
+    "in_reply_to_id": 328119077,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 85,
+    "position": 129,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328885324",
+    "pull_request_review_id": 294078385,
+    "id": 328885324,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODg4NTMyNA==",
+    "diff_hunk": "@@ -19,27 +24,137 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         return None;\n     }\n \n-    match get_rust_version() {\n-        Some(rust_version) => {\n-            const RUST_CHAR: &str = \"🦀 \";\n+    // `$CARGO_HOME/bin/rustc(.exe) --version` may attempt installing a rustup toolchain.",
+    "path": "src/modules/rust.rs",
+    "commit_id": "e3b9bc2cc05518bc6ea54aa19c5d152af2c0715b",
+    "original_commit_id": "06917901fa470f3aadb8a9a80c59dbd16e2d3ba3",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Excellent detail in this comment! 💯 ",
+    "created_at": "2019-09-27T01:34:29Z",
+    "updated_at": "2019-09-30T02:15:28Z",
+    "html_url": "https://github.com/starship/starship/pull/426#discussion_r328885324",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/426",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328885324"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/426#discussion_r328885324"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/426"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328885324/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 27,
+    "original_line": 27,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 26,
+    "position": 26,
+    "subject_type": "line"
+  }
+]

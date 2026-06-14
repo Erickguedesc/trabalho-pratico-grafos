@@ -1,0 +1,242 @@
+[
+  {
+    "id": 441195953,
+    "node_id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDQxMTk1OTUz",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Have been testing this locally and it looks like `starship explain` is broken (see full trace below), everything else seems to work fine but would be good if we can get some more people to test this locally too. \r\n\r\n```\r\n❯ RUST_BACKTRACE=full target/debug/starship explain                                                                                  \r\nthread 'main' panicked at 'attempt to subtract with overflow', src/print.rs:107:64                               \r\nstack backtrace:                                                                                     \r\n   0:     0x59885c352dc4 - backtrace::backtrace::libunwind::trace::h5ae3454ebe40b621                       \r\n                               at /cargo/registry/src/github.com-1ecc6299db9ec823/backtrace-0.3.44/src/backtrace/libunwind.rs:86\r\n   1:     0x59885c352dc4 - backtrace::backtrace::trace_unsynchronized::hbf6f267a483fb2c0\r\n                               at /cargo/registry/src/github.com-1ecc6299db9ec823/backtrace-0.3.44/src/backtrace/mod.rs:66\r\n   2:     0x59885c352dc4 - std::sys_common::backtrace::_print_fmt::h37755015d94b9085                                                        [33/1985]\r\n                               at src/libstd/sys_common/backtrace.rs:78                                       \r\n   3:     0x59885c352dc4 - <std::sys_common::backtrace::_print::DisplayBacktrace as core::fmt::Display>::fmt::h0561c8cd3569b40d\r\n                               at src/libstd/sys_common/backtrace.rs:59                                     \r\n   4:     0x59885c37ad1c - core::fmt::write::h86a597a35d48a212                                            \r\n                               at src/libcore/fmt/mod.rs:1063                                                                \r\n   5:     0x59885c34ac73 - std::io::Write::write_fmt::h73d9dc0f29eefe48                                   \r\n                               at src/libstd/io/mod.rs:1426                                  \r\n   6:     0x59885c355645 - std::sys_common::backtrace::_print::h6c60c5ee09af0233                                          \r\n                               at src/libstd/sys_common/backtrace.rs:62\r\n   7:     0x59885c355645 - std::sys_common::backtrace::print::hf9d1db01634f9b2a\r\n                               at src/libstd/sys_common/backtrace.rs:49\r\n   8:     0x59885c355645 - std::panicking::default_hook::{{closure}}::h1db9298dd213ae95\r\n                               at src/libstd/panicking.rs:204                 \r\n   9:     0x59885c355392 - std::panicking::default_hook::h3272faf6cc91fd2e                           \r\n                               at src/libstd/panicking.rs:224                          \r\n  10:     0x59885c355ca2 - std::panicking::rust_panic_with_hook::hb976084785e50594\r\n                               at src/libstd/panicking.rs:470             \r\n  11:     0x59885c35588b - rust_begin_unwind                 \r\n                               at src/libstd/panicking.rs:378\r\n  12:     0x59885c378ac1 - core::panicking::panic_fmt::h45f7d6868edb5678\r\n                               at src/libcore/panicking.rs:85    \r\n  13:     0x59885c378a0d - core::panicking::panic::h0fd4184f909d9498\r\n                               at src/libcore/panicking.rs:52         \r\n  14:     0x59885baa3c3a - starship::print::explain::{{closure}}::h43dec254b6a172e6\r\n                               at src/print.rs:107                        \r\n  15:     0x59885baa2f8f - core::ops::function::impls::<impl core::ops::function::FnOnce<A> for &mut F>::call_once::hed659acf283f032d\r\n                               at /rustc/4fb7144ed159f94491249e86d5bbd033b5d60550/src/libcore/ops/function.rs:285\r\n  16:     0x59885b975de1 - core::option::Option<T>::map::h98daa106e945f00f                           \r\n                               at /rustc/4fb7144ed159f94491249e86d5bbd033b5d60550/src/libcore/option.rs:456\r\n  17:     0x59885b847145 - <core::iter::adapters::Map<I,F> as core::iter::traits::iterator::Iterator>::next::hc3385577640936e3\r\n                               at /rustc/4fb7144ed159f94491249e86d5bbd033b5d60550/src/libcore/iter/adapters/mod.rs:791\r\n  18:     0x59885b883f10 - alloc::vec::Vec<T>::extend_desugared::h1b7854dadfc8f1b3\r\n                               at /rustc/4fb7144ed159f94491249e86d5bbd033b5d60550/src/liballoc/vec.rs:2138\r\n  19:     0x59885b88bad7 - <alloc::vec::Vec<T> as alloc::vec::SpecExtend<T,I>>::spec_extend::h85ef7afe9b654090\r\n                               at /rustc/4fb7144ed159f94491249e86d5bbd033b5d60550/src/liballoc/vec.rs:2031\r\n  20:     0x59885b88ec02 - <alloc::vec::Vec<T> as alloc::vec::SpecExtend<T,I>>::from_iter::h4f3a91e10bf2fa9e\r\n                               at /rustc/4fb7144ed159f94491249e86d5bbd033b5d60550/src/liballoc/vec.rs:2026\r\n  21:     0x59885b894877 - <alloc::vec::Vec<T> as core::iter::traits::collect::FromIterator<T>>::from_iter::h961213faaabee4e7\r\n                               at /rustc/4fb7144ed159f94491249e86d5bbd033b5d60550/src/liballoc/vec.rs:1926\r\n  22:     0x59885b83948a - core::iter::traits::iterator::Iterator::collect::h38d3081702c450c5\r\n                               at /rustc/4fb7144ed159f94491249e86d5bbd033b5d60550/src/libcore/iter/traits/iterator.rs:1659\r\n  23:     0x59885b9f8a71 - starship::print::explain::h0723d666e067a49b\r\n                               at src/print.rs:100\r\n  24:     0x59885baedead - starship::main::ha80301059084e269\r\n                               at src/main.rs:200\r\n  25:     0x59885baf48db - std::rt::lang_start::{{closure}}::hb839453a6988fbf0\r\n                               at /rustc/4fb7144ed159f94491249e86d5bbd033b5d60550/src/libstd/rt.rs:67\r\n  26:     0x59885c355763 - std::rt::lang_start_internal::{{closure}}::hc0a1280e68ffc5da\r\n                               at src/libstd/rt.rs:52\r\n  27:     0x59885c355763 - std::panicking::try::do_call::h1d43a4d29f303ef5\r\n                               at src/libstd/panicking.rs:303\r\n  28:     0x59885c35e4f7 - __rust_maybe_catch_panic\r\n                               at src/libpanic_unwind/lib.rs:86\r\n  29:     0x59885c35628c - std::panicking::try::h5ef738612ab0072d\r\n                               at src/libstd/panicking.rs:281\r\n  30:     0x59885c35628c - std::panic::catch_unwind::h1df9a04c7f1c6fc3\r\n                               at src/libstd/panic.rs:394\r\n  31:     0x59885c35628c - std::rt::lang_start_internal::h97d4af4643f4b0e4\r\n                               at src/libstd/rt.rs:51\r\n  32:     0x59885baf48b7 - std::rt::lang_start::hd0f0e25dcc6f8f9b\r\n                               at /rustc/4fb7144ed159f94491249e86d5bbd033b5d60550/src/libstd/rt.rs:67\r\n  33:     0x59885baee59a - main\r\n  34:     0x7869da5e6b97 - __libc_start_main\r\n  35:     0x59885b7d7e1a - _start\r\n  36:                0x0 - <unknown>\r\n```",
+    "state": "CHANGES_REQUESTED",
+    "html_url": "https://github.com/starship/starship/pull/1374#pullrequestreview-441195953",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1374",
+    "author_association": "MEMBER",
+    "_links": {
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1374#pullrequestreview-441195953"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1374"
+      }
+    },
+    "submitted_at": "2020-07-01T21:04:47Z",
+    "commit_id": "13a1f0117293a48f61d7fd539d97aef637e7f336"
+  },
+  {
+    "id": 441204685,
+    "node_id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDQxMjA0Njg1",
+    "user": null,
+    "body": "First round of auditing done. This includes:\r\n- common copying mistakes\r\n- small consistency changes",
+    "state": "CHANGES_REQUESTED",
+    "html_url": "https://github.com/starship/starship/pull/1374#pullrequestreview-441204685",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1374",
+    "author_association": "NONE",
+    "_links": {
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1374#pullrequestreview-441204685"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1374"
+      }
+    },
+    "submitted_at": "2020-07-01T21:51:40Z",
+    "commit_id": "13a1f0117293a48f61d7fd539d97aef637e7f336"
+  },
+  {
+    "id": 442378248,
+    "node_id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDQyMzc4MjQ4",
+    "user": null,
+    "body": "",
+    "state": "COMMENTED",
+    "html_url": "https://github.com/starship/starship/pull/1374#pullrequestreview-442378248",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1374",
+    "author_association": "NONE",
+    "_links": {
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1374#pullrequestreview-442378248"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1374"
+      }
+    },
+    "submitted_at": "2020-07-03T12:26:19Z",
+    "commit_id": "13a1f0117293a48f61d7fd539d97aef637e7f336"
+  },
+  {
+    "id": 442657578,
+    "node_id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDQyNjU3NTc4",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "",
+    "state": "COMMENTED",
+    "html_url": "https://github.com/starship/starship/pull/1374#pullrequestreview-442657578",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1374",
+    "author_association": "MEMBER",
+    "_links": {
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1374#pullrequestreview-442657578"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1374"
+      }
+    },
+    "submitted_at": "2020-07-05T08:29:06Z",
+    "commit_id": "79b39ceec5386e72b6b511020cf828bbb4c791b4"
+  },
+  {
+    "id": 442686720,
+    "node_id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDQyNjg2NzIw",
+    "user": null,
+    "body": "",
+    "state": "COMMENTED",
+    "html_url": "https://github.com/starship/starship/pull/1374#pullrequestreview-442686720",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1374",
+    "author_association": "NONE",
+    "_links": {
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1374#pullrequestreview-442686720"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1374"
+      }
+    },
+    "submitted_at": "2020-07-05T15:34:02Z",
+    "commit_id": "79b39ceec5386e72b6b511020cf828bbb4c791b4"
+  },
+  {
+    "id": 442701067,
+    "node_id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDQyNzAxMDY3",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "",
+    "state": "COMMENTED",
+    "html_url": "https://github.com/starship/starship/pull/1374#pullrequestreview-442701067",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1374",
+    "author_association": "MEMBER",
+    "_links": {
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1374#pullrequestreview-442701067"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1374"
+      }
+    },
+    "submitted_at": "2020-07-05T19:32:34Z",
+    "commit_id": "e79ebe13b5a1f1ec21c3fb54952be467211b75b6"
+  },
+  {
+    "id": 442701431,
+    "node_id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDQyNzAxNDMx",
+    "user": null,
+    "body": "",
+    "state": "COMMENTED",
+    "html_url": "https://github.com/starship/starship/pull/1374#pullrequestreview-442701431",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1374",
+    "author_association": "NONE",
+    "_links": {
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1374#pullrequestreview-442701431"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1374"
+      }
+    },
+    "submitted_at": "2020-07-05T19:39:18Z",
+    "commit_id": "e79ebe13b5a1f1ec21c3fb54952be467211b75b6"
+  },
+  {
+    "id": 442702580,
+    "node_id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDQyNzAyNTgw",
+    "user": null,
+    "body": "Some more small changes.\r\nWe still have some modules where the call to the specific program is not computed inside of the format statement. Which means that if someone disables the `version` variable the version is still computed.\r\nI will open a PR to solve that.",
+    "state": "CHANGES_REQUESTED",
+    "html_url": "https://github.com/starship/starship/pull/1374#pullrequestreview-442702580",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1374",
+    "author_association": "NONE",
+    "_links": {
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1374#pullrequestreview-442702580"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1374"
+      }
+    },
+    "submitted_at": "2020-07-05T20:46:11Z",
+    "commit_id": "e79ebe13b5a1f1ec21c3fb54952be467211b75b6"
+  },
+  {
+    "id": 442705383,
+    "node_id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NDQyNzA1Mzgz",
+    "user": null,
+    "body": "",
+    "state": "COMMENTED",
+    "html_url": "https://github.com/starship/starship/pull/1374#pullrequestreview-442705383",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1374",
+    "author_association": "NONE",
+    "_links": {
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1374#pullrequestreview-442705383"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1374"
+      }
+    },
+    "submitted_at": "2020-07-05T20:48:56Z",
+    "commit_id": "e79ebe13b5a1f1ec21c3fb54952be467211b75b6"
+  }
+]

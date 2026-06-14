@@ -1,0 +1,488 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/623816169",
+    "pull_request_review_id": 649135353,
+    "id": 623816169,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYyMzgxNjE2OQ==",
+    "diff_hunk": "@@ -16,6 +16,44 @@ use crate::module::ALL_MODULES;\n use crate::modules;\n use crate::segment::Segment;\n \n+pub struct Grapheme<'a>(&'a str);\n+\n+pub trait UnicodeWidthGraphemes {\n+    fn width_graphemes(&self, is_extended: bool) -> usize;\n+}\n+\n+// Assume that graphemes have width of the first character in the grapheme\n+impl<'a> UnicodeWidthGraphemes for Grapheme<'a> {\n+    #[inline]\n+    fn width_graphemes(&self, _is_extended: bool) -> usize {\n+        self.0.chars().next().and_then(|c| c.width()).unwrap_or(0)",
+    "path": "src/print.rs",
+    "commit_id": "3776262af4e4aa5fea5c3c1f8a55640e84c3f94c",
+    "original_commit_id": "491a454df34aedba8d46136edab1993c75d46dce",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think might `max` be slightly more correct:\r\n```suggestion\r\n        self.0.chars().max(|c| c.width()).unwrap_or(0)\r\n```\r\n",
+    "created_at": "2021-04-30T11:47:27Z",
+    "updated_at": "2021-04-30T20:24:52Z",
+    "html_url": "https://github.com/starship/starship/pull/2670#discussion_r623816169",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2670",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/623816169"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2670#discussion_r623816169"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2670"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/623816169/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 29,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 14,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/624043071",
+    "pull_request_review_id": 649431688,
+    "id": 624043071,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYyNDA0MzA3MQ==",
+    "diff_hunk": "@@ -16,6 +16,43 @@ use crate::module::ALL_MODULES;\n use crate::modules;\n use crate::segment::Segment;\n \n+pub struct Grapheme<'a>(&'a str);\n+\n+impl<'a> Grapheme<'a> {\n+    pub fn width(&self) -> usize {\n+        self.0.chars().flat_map(|c| c.width()).max().unwrap_or(0)\n+    }\n+}\n+\n+pub trait UnicodeWidthGraphemes {\n+    fn width_graphemes(&self, is_extended: bool) -> usize;\n+}\n+\n+impl UnicodeWidthGraphemes for str {\n+    #[inline]\n+    fn width_graphemes(&self, is_extended: bool) -> usize {\n+        self.graphemes(is_extended)\n+            .map(Grapheme)\n+            .map(|g| g.width())\n+            .sum()\n+    }\n+}\n+\n+impl UnicodeWidthGraphemes for String {\n+    #[inline]\n+    fn width_graphemes(&self, is_extended: bool) -> usize {\n+        self.as_str().width_graphemes(is_extended)",
+    "path": "src/print.rs",
+    "commit_id": "3776262af4e4aa5fea5c3c1f8a55640e84c3f94c",
+    "original_commit_id": "a6f3aaba86708a9aa579944514dd6715ec56099e",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think `is_extended` can just be set to `true` everywhere?",
+    "created_at": "2021-04-30T17:26:16Z",
+    "updated_at": "2021-04-30T20:24:52Z",
+    "html_url": "https://github.com/starship/starship/pull/2670#discussion_r624043071",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2670",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/624043071"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2670#discussion_r624043071"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2670"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/624043071/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 43,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 44,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 29,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/624043454",
+    "pull_request_review_id": 649431688,
+    "id": 624043454,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYyNDA0MzQ1NA==",
+    "diff_hunk": "@@ -16,6 +16,43 @@ use crate::module::ALL_MODULES;\n use crate::modules;\n use crate::segment::Segment;\n \n+pub struct Grapheme<'a>(&'a str);\n+\n+impl<'a> Grapheme<'a> {\n+    pub fn width(&self) -> usize {\n+        self.0.chars().flat_map(|c| c.width()).max().unwrap_or(0)",
+    "path": "src/print.rs",
+    "commit_id": "3776262af4e4aa5fea5c3c1f8a55640e84c3f94c",
+    "original_commit_id": "a6f3aaba86708a9aa579944514dd6715ec56099e",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this gets the point across better:\r\n```suggestion\r\n        self.0.chars().filter_map(|c| c.width()).max().unwrap_or(0)\r\n```",
+    "created_at": "2021-04-30T17:26:56Z",
+    "updated_at": "2021-04-30T20:24:52Z",
+    "html_url": "https://github.com/starship/starship/pull/2670#discussion_r624043454",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2670",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/624043454"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2670#discussion_r624043454"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2670"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/624043454/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 23,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/624141186",
+    "pull_request_review_id": 649431688,
+    "id": 624141186,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYyNDE0MTE4Ng==",
+    "diff_hunk": "@@ -16,6 +16,43 @@ use crate::module::ALL_MODULES;\n use crate::modules;\n use crate::segment::Segment;\n \n+pub struct Grapheme<'a>(&'a str);\n+\n+impl<'a> Grapheme<'a> {\n+    pub fn width(&self) -> usize {\n+        self.0.chars().flat_map(|c| c.width()).max().unwrap_or(0)\n+    }\n+}\n+\n+pub trait UnicodeWidthGraphemes {\n+    fn width_graphemes(&self, is_extended: bool) -> usize;\n+}\n+\n+impl UnicodeWidthGraphemes for str {\n+    #[inline]\n+    fn width_graphemes(&self, is_extended: bool) -> usize {\n+        self.graphemes(is_extended)\n+            .map(Grapheme)\n+            .map(|g| g.width())\n+            .sum()\n+    }\n+}\n+\n+impl UnicodeWidthGraphemes for String {",
+    "path": "src/print.rs",
+    "commit_id": "3776262af4e4aa5fea5c3c1f8a55640e84c3f94c",
+    "original_commit_id": "a6f3aaba86708a9aa579944514dd6715ec56099e",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "If you implement `UnicodeWidthGraphemes` for `AsRef<str>` instead, you should be able to get rid of the extra `impl` here.",
+    "created_at": "2021-04-30T19:28:49Z",
+    "updated_at": "2021-04-30T20:24:52Z",
+    "html_url": "https://github.com/starship/starship/pull/2670#discussion_r624141186",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2670",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/624141186"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2670#discussion_r624141186"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2670"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/624141186/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 41,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 26,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/624147807",
+    "pull_request_review_id": 649564477,
+    "id": 624147807,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYyNDE0NzgwNw==",
+    "diff_hunk": "@@ -16,6 +16,43 @@ use crate::module::ALL_MODULES;\n use crate::modules;\n use crate::segment::Segment;\n \n+pub struct Grapheme<'a>(&'a str);\n+\n+impl<'a> Grapheme<'a> {\n+    pub fn width(&self) -> usize {\n+        self.0.chars().flat_map(|c| c.width()).max().unwrap_or(0)\n+    }\n+}\n+\n+pub trait UnicodeWidthGraphemes {\n+    fn width_graphemes(&self, is_extended: bool) -> usize;\n+}\n+\n+impl UnicodeWidthGraphemes for str {\n+    #[inline]\n+    fn width_graphemes(&self, is_extended: bool) -> usize {\n+        self.graphemes(is_extended)\n+            .map(Grapheme)\n+            .map(|g| g.width())\n+            .sum()\n+    }\n+}\n+\n+impl UnicodeWidthGraphemes for String {",
+    "path": "src/print.rs",
+    "commit_id": "3776262af4e4aa5fea5c3c1f8a55640e84c3f94c",
+    "original_commit_id": "a6f3aaba86708a9aa579944514dd6715ec56099e",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I was looking for that! Thank you!",
+    "created_at": "2021-04-30T19:38:34Z",
+    "updated_at": "2021-04-30T20:24:52Z",
+    "html_url": "https://github.com/starship/starship/pull/2670#discussion_r624147807",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2670",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/624147807"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2670#discussion_r624147807"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2670"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/624147807/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 41,
+    "side": "RIGHT",
+    "in_reply_to_id": 624141186,
+    "author_association": "MEMBER",
+    "original_position": 26,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/624147881",
+    "pull_request_review_id": 649564564,
+    "id": 624147881,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYyNDE0Nzg4MQ==",
+    "diff_hunk": "@@ -16,6 +16,43 @@ use crate::module::ALL_MODULES;\n use crate::modules;\n use crate::segment::Segment;\n \n+pub struct Grapheme<'a>(&'a str);\n+\n+impl<'a> Grapheme<'a> {\n+    pub fn width(&self) -> usize {\n+        self.0.chars().flat_map(|c| c.width()).max().unwrap_or(0)",
+    "path": "src/print.rs",
+    "commit_id": "3776262af4e4aa5fea5c3c1f8a55640e84c3f94c",
+    "original_commit_id": "a6f3aaba86708a9aa579944514dd6715ec56099e",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Indeed :+1: ",
+    "created_at": "2021-04-30T19:38:42Z",
+    "updated_at": "2021-04-30T20:24:52Z",
+    "html_url": "https://github.com/starship/starship/pull/2670#discussion_r624147881",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2670",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/624147881"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2670#discussion_r624147881"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2670"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/624147881/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 23,
+    "side": "RIGHT",
+    "in_reply_to_id": 624043454,
+    "author_association": "MEMBER",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/624149446",
+    "pull_request_review_id": 649566563,
+    "id": 624149446,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYyNDE0OTQ0Ng==",
+    "diff_hunk": "@@ -16,6 +16,43 @@ use crate::module::ALL_MODULES;\n use crate::modules;\n use crate::segment::Segment;\n \n+pub struct Grapheme<'a>(&'a str);\n+\n+impl<'a> Grapheme<'a> {\n+    pub fn width(&self) -> usize {\n+        self.0.chars().flat_map(|c| c.width()).max().unwrap_or(0)\n+    }\n+}\n+\n+pub trait UnicodeWidthGraphemes {\n+    fn width_graphemes(&self, is_extended: bool) -> usize;\n+}\n+\n+impl UnicodeWidthGraphemes for str {\n+    #[inline]\n+    fn width_graphemes(&self, is_extended: bool) -> usize {\n+        self.graphemes(is_extended)\n+            .map(Grapheme)\n+            .map(|g| g.width())\n+            .sum()\n+    }\n+}\n+\n+impl UnicodeWidthGraphemes for String {\n+    #[inline]\n+    fn width_graphemes(&self, is_extended: bool) -> usize {\n+        self.as_str().width_graphemes(is_extended)",
+    "path": "src/print.rs",
+    "commit_id": "3776262af4e4aa5fea5c3c1f8a55640e84c3f94c",
+    "original_commit_id": "a6f3aaba86708a9aa579944514dd6715ec56099e",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I wanted to leave it configurable but you are probably right, we only use extended anyway.",
+    "created_at": "2021-04-30T19:42:07Z",
+    "updated_at": "2021-04-30T20:24:52Z",
+    "html_url": "https://github.com/starship/starship/pull/2670#discussion_r624149446",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2670",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/624149446"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2670#discussion_r624149446"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2670"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/624149446/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 43,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 44,
+    "side": "RIGHT",
+    "in_reply_to_id": 624043071,
+    "author_association": "MEMBER",
+    "original_position": 29,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

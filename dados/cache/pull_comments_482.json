@@ -1,0 +1,697 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/331740026",
+    "pull_request_review_id": 297783456,
+    "id": 331740026,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMTc0MDAyNg==",
+    "diff_hunk": "@@ -1,15 +1,72 @@\n use std::env;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader};\n+use std::path::PathBuf;\n+use std::str::FromStr;\n+\n+use dirs::home_dir;\n \n use super::{Context, Module};\n \n-use crate::config::RootModuleConfig;\n+use crate::config::{RootModuleConfig, SegmentConfig};\n use crate::configs::aws::AwsConfig;\n \n+fn get_aws_region_from_config(aws_profile: &Option<String>) -> Option<String> {\n+    let config_location = env::var(\"AWS_CONFIG_FILE\")\n+        .ok()\n+        .and_then(|path| PathBuf::from_str(&path).ok())\n+        .or_else(|| {\n+            let mut home = home_dir()?;\n+            home.push(\".aws/config\");\n+            Some(home)\n+        })?;\n+\n+    let file = File::open(&config_location).ok()?;\n+    let reader = BufReader::new(file);\n+    let lines = reader.lines().filter_map(Result::ok);\n+\n+    let region_line = if let Some(ref aws_profile) = aws_profile {\n+        lines\n+            .skip_while(|line| line != &format!(\"[profile {}]\", aws_profile))\n+            .skip(1)\n+            .take_while(|line| !line.starts_with('['))\n+            .find(|line| line.starts_with(\"region\"))\n+    } else {\n+        lines\n+            .skip_while(|line| line != \"[default]\")\n+            .skip(1)\n+            .take_while(|line| !line.starts_with('['))\n+            .find(|line| line.starts_with(\"region\"))\n+    }?;\n+\n+    let region = region_line.split('=').nth(1)?;\n+    let region = region.trim();\n+\n+    Some(region.to_string())\n+}\n+\n+fn get_aws_region() -> Option<String> {\n+    env::var(\"AWS_DEFAULT_REGION\")\n+        .or_else(|_| env::var(\"AWS_REGION\"))",
+    "path": "src/modules/aws.rs",
+    "commit_id": "14e6b87bda8b0801d1e250ab9dcbcf0ad1d93256",
+    "original_commit_id": "f6fefa3bfc93a2ca0115930e0c39093ae88f172d",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Is the precedent here correct? Should `AWS_REGION` not be prefered if both `AWS_REGION` and `AWS_DEFAULT_REGION` are both set?",
+    "created_at": "2019-10-05T09:14:36Z",
+    "updated_at": "2019-10-14T14:54:00Z",
+    "html_url": "https://github.com/starship/starship/pull/482#discussion_r331740026",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/482",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/331740026"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/482#discussion_r331740026"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/482"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/331740026/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 49,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 50,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 51,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/331740719",
+    "pull_request_review_id": 297783456,
+    "id": 331740719,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMTc0MDcxOQ==",
+    "diff_hunk": "@@ -21,7 +78,13 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     module.get_prefix().set_value(AWS_PREFIX);\n \n     module.create_segment(\"symbol\", &config.symbol);\n-    module.create_segment(\"profile\", &config.profile.with_value(&aws_profile));\n+    module.create_segment(\n+        \"region\",\n+        &SegmentConfig {\n+            value: &aws_region,\n+            style: None,\n+        },\n+    );",
+    "path": "src/modules/aws.rs",
+    "commit_id": "14e6b87bda8b0801d1e250ab9dcbcf0ad1d93256",
+    "original_commit_id": "f6fefa3bfc93a2ca0115930e0c39093ae88f172d",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Would it be better to have separate segments for the `profile` and the `region`?",
+    "created_at": "2019-10-05T09:36:37Z",
+    "updated_at": "2019-10-14T14:54:00Z",
+    "html_url": "https://github.com/starship/starship/pull/482#discussion_r331740719",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/482",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/331740719"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/482#discussion_r331740719"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/482"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/331740719/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 24,
+    "start_side": "LEFT",
+    "line": null,
+    "original_line": 87,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 87,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/331740773",
+    "pull_request_review_id": 297784268,
+    "id": 331740773,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMTc0MDc3Mw==",
+    "diff_hunk": "@@ -1,15 +1,72 @@\n use std::env;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader};\n+use std::path::PathBuf;\n+use std::str::FromStr;\n+\n+use dirs::home_dir;\n \n use super::{Context, Module};\n \n-use crate::config::RootModuleConfig;\n+use crate::config::{RootModuleConfig, SegmentConfig};\n use crate::configs::aws::AwsConfig;\n \n+fn get_aws_region_from_config(aws_profile: &Option<String>) -> Option<String> {\n+    let config_location = env::var(\"AWS_CONFIG_FILE\")\n+        .ok()\n+        .and_then(|path| PathBuf::from_str(&path).ok())\n+        .or_else(|| {\n+            let mut home = home_dir()?;\n+            home.push(\".aws/config\");\n+            Some(home)\n+        })?;\n+\n+    let file = File::open(&config_location).ok()?;\n+    let reader = BufReader::new(file);\n+    let lines = reader.lines().filter_map(Result::ok);\n+\n+    let region_line = if let Some(ref aws_profile) = aws_profile {\n+        lines\n+            .skip_while(|line| line != &format!(\"[profile {}]\", aws_profile))\n+            .skip(1)\n+            .take_while(|line| !line.starts_with('['))\n+            .find(|line| line.starts_with(\"region\"))\n+    } else {\n+        lines\n+            .skip_while(|line| line != \"[default]\")\n+            .skip(1)\n+            .take_while(|line| !line.starts_with('['))\n+            .find(|line| line.starts_with(\"region\"))\n+    }?;\n+\n+    let region = region_line.split('=').nth(1)?;\n+    let region = region.trim();\n+\n+    Some(region.to_string())\n+}\n+\n+fn get_aws_region() -> Option<String> {\n+    env::var(\"AWS_DEFAULT_REGION\")\n+        .or_else(|_| env::var(\"AWS_REGION\"))\n+        .ok()\n+        .or_else(|| {\n+            let aws_profile = env::var(\"AWS_PROFILE\").ok();\n+            let aws_region = get_aws_region_from_config(&aws_profile);\n+\n+            match (aws_profile, aws_region) {\n+                (Some(profile), Some(region)) => Some(format!(\"{}({})\", region, profile)),",
+    "path": "src/modules/aws.rs",
+    "commit_id": "14e6b87bda8b0801d1e250ab9dcbcf0ad1d93256",
+    "original_commit_id": "f6fefa3bfc93a2ca0115930e0c39093ae88f172d",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "My personal preference would be to have the profile then the region rather than the region then the profile.\r\n\r\n```suggestion\r\n                (Some(profile), Some(region)) => Some(format!(\"{}({})\", profile, region)),\r\n```",
+    "created_at": "2019-10-05T09:38:36Z",
+    "updated_at": "2019-10-14T14:54:00Z",
+    "html_url": "https://github.com/starship/starship/pull/482#discussion_r331740773",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/482",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/331740773"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/482#discussion_r331740773"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/482"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/331740773/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 57,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 58,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/331771197",
+    "pull_request_review_id": 297819341,
+    "id": 331771197,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMTc3MTE5Nw==",
+    "diff_hunk": "@@ -1,15 +1,72 @@\n use std::env;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader};\n+use std::path::PathBuf;\n+use std::str::FromStr;\n+\n+use dirs::home_dir;\n \n use super::{Context, Module};\n \n-use crate::config::RootModuleConfig;\n+use crate::config::{RootModuleConfig, SegmentConfig};\n use crate::configs::aws::AwsConfig;\n \n+fn get_aws_region_from_config(aws_profile: &Option<String>) -> Option<String> {\n+    let config_location = env::var(\"AWS_CONFIG_FILE\")\n+        .ok()\n+        .and_then(|path| PathBuf::from_str(&path).ok())\n+        .or_else(|| {\n+            let mut home = home_dir()?;\n+            home.push(\".aws/config\");\n+            Some(home)\n+        })?;\n+\n+    let file = File::open(&config_location).ok()?;\n+    let reader = BufReader::new(file);\n+    let lines = reader.lines().filter_map(Result::ok);\n+\n+    let region_line = if let Some(ref aws_profile) = aws_profile {\n+        lines\n+            .skip_while(|line| line != &format!(\"[profile {}]\", aws_profile))\n+            .skip(1)\n+            .take_while(|line| !line.starts_with('['))\n+            .find(|line| line.starts_with(\"region\"))\n+    } else {\n+        lines\n+            .skip_while(|line| line != \"[default]\")\n+            .skip(1)\n+            .take_while(|line| !line.starts_with('['))\n+            .find(|line| line.starts_with(\"region\"))\n+    }?;\n+\n+    let region = region_line.split('=').nth(1)?;\n+    let region = region.trim();\n+\n+    Some(region.to_string())\n+}\n+\n+fn get_aws_region() -> Option<String> {\n+    env::var(\"AWS_DEFAULT_REGION\")\n+        .or_else(|_| env::var(\"AWS_REGION\"))",
+    "path": "src/modules/aws.rs",
+    "commit_id": "14e6b87bda8b0801d1e250ab9dcbcf0ad1d93256",
+    "original_commit_id": "f6fefa3bfc93a2ca0115930e0c39093ae88f172d",
+    "user": {
+      "login": "pbzweihander",
+      "id": 15262528,
+      "node_id": "MDQ6VXNlcjE1MjYyNTI4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15262528?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/pbzweihander",
+      "html_url": "https://github.com/pbzweihander",
+      "followers_url": "https://api.github.com/users/pbzweihander/followers",
+      "following_url": "https://api.github.com/users/pbzweihander/following{/other_user}",
+      "gists_url": "https://api.github.com/users/pbzweihander/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/pbzweihander/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/pbzweihander/subscriptions",
+      "organizations_url": "https://api.github.com/users/pbzweihander/orgs",
+      "repos_url": "https://api.github.com/users/pbzweihander/repos",
+      "events_url": "https://api.github.com/users/pbzweihander/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/pbzweihander/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Actually, referring to https://github.com/aws/aws-cli/issues/735, `aws-cli` does not use `AWS_REGION` at all.",
+    "created_at": "2019-10-06T05:01:20Z",
+    "updated_at": "2019-10-14T14:54:00Z",
+    "html_url": "https://github.com/starship/starship/pull/482#discussion_r331771197",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/482",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/331771197"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/482#discussion_r331771197"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/482"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/331771197/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 49,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 50,
+    "side": "RIGHT",
+    "in_reply_to_id": 331740026,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 51,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/331771312",
+    "pull_request_review_id": 297819447,
+    "id": 331771312,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMTc3MTMxMg==",
+    "diff_hunk": "@@ -1,15 +1,72 @@\n use std::env;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader};\n+use std::path::PathBuf;\n+use std::str::FromStr;\n+\n+use dirs::home_dir;\n \n use super::{Context, Module};\n \n-use crate::config::RootModuleConfig;\n+use crate::config::{RootModuleConfig, SegmentConfig};\n use crate::configs::aws::AwsConfig;\n \n+fn get_aws_region_from_config(aws_profile: &Option<String>) -> Option<String> {\n+    let config_location = env::var(\"AWS_CONFIG_FILE\")\n+        .ok()\n+        .and_then(|path| PathBuf::from_str(&path).ok())\n+        .or_else(|| {\n+            let mut home = home_dir()?;\n+            home.push(\".aws/config\");\n+            Some(home)\n+        })?;\n+\n+    let file = File::open(&config_location).ok()?;\n+    let reader = BufReader::new(file);\n+    let lines = reader.lines().filter_map(Result::ok);\n+\n+    let region_line = if let Some(ref aws_profile) = aws_profile {\n+        lines\n+            .skip_while(|line| line != &format!(\"[profile {}]\", aws_profile))\n+            .skip(1)\n+            .take_while(|line| !line.starts_with('['))\n+            .find(|line| line.starts_with(\"region\"))\n+    } else {\n+        lines\n+            .skip_while(|line| line != \"[default]\")\n+            .skip(1)\n+            .take_while(|line| !line.starts_with('['))\n+            .find(|line| line.starts_with(\"region\"))\n+    }?;\n+\n+    let region = region_line.split('=').nth(1)?;\n+    let region = region.trim();\n+\n+    Some(region.to_string())\n+}\n+\n+fn get_aws_region() -> Option<String> {\n+    env::var(\"AWS_DEFAULT_REGION\")\n+        .or_else(|_| env::var(\"AWS_REGION\"))",
+    "path": "src/modules/aws.rs",
+    "commit_id": "14e6b87bda8b0801d1e250ab9dcbcf0ad1d93256",
+    "original_commit_id": "f6fefa3bfc93a2ca0115930e0c39093ae88f172d",
+    "user": {
+      "login": "pbzweihander",
+      "id": 15262528,
+      "node_id": "MDQ6VXNlcjE1MjYyNTI4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15262528?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/pbzweihander",
+      "html_url": "https://github.com/pbzweihander",
+      "followers_url": "https://api.github.com/users/pbzweihander/followers",
+      "following_url": "https://api.github.com/users/pbzweihander/following{/other_user}",
+      "gists_url": "https://api.github.com/users/pbzweihander/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/pbzweihander/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/pbzweihander/subscriptions",
+      "organizations_url": "https://api.github.com/users/pbzweihander/orgs",
+      "repos_url": "https://api.github.com/users/pbzweihander/repos",
+      "events_url": "https://api.github.com/users/pbzweihander/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/pbzweihander/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "But I will keep `AWS_REGION` at lowest precedence because I heard some of the AWS-related programs are still using `AWS_REGION` env var.",
+    "created_at": "2019-10-06T05:06:18Z",
+    "updated_at": "2019-10-14T14:54:00Z",
+    "html_url": "https://github.com/starship/starship/pull/482#discussion_r331771312",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/482",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/331771312"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/482#discussion_r331771312"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/482"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/331771312/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 49,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 50,
+    "side": "RIGHT",
+    "in_reply_to_id": 331740026,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 51,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/331937856",
+    "pull_request_review_id": 298021983,
+    "id": 331937856,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMTkzNzg1Ng==",
+    "diff_hunk": "@@ -1,16 +1,85 @@\n use std::env;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader};\n+use std::path::PathBuf;\n+use std::str::FromStr;\n+\n+use dirs::home_dir;\n \n use super::{Context, Module, RootModuleConfig};\n \n use crate::configs::aws::AwsConfig;\n \n+fn get_aws_region_from_config(aws_profile: &Option<String>) -> Option<String> {\n+    let config_location = env::var(\"AWS_CONFIG_FILE\")\n+        .ok()\n+        .and_then(|path| PathBuf::from_str(&path).ok())\n+        .or_else(|| {\n+            let mut home = home_dir()?;\n+            home.push(\".aws/config\");\n+            Some(home)\n+        })?;\n+\n+    let file = File::open(&config_location).ok()?;\n+    let reader = BufReader::new(file);\n+    let lines = reader.lines().filter_map(Result::ok);\n+\n+    let region_line = if let Some(ref aws_profile) = aws_profile {\n+        lines\n+            .skip_while(|line| line != &format!(\"[profile {}]\", aws_profile))\n+            .skip(1)\n+            .take_while(|line| !line.starts_with('['))\n+            .find(|line| line.starts_with(\"region\"))\n+    } else {\n+        lines\n+            .skip_while(|line| line != \"[default]\")\n+            .skip(1)\n+            .take_while(|line| !line.starts_with('['))\n+            .find(|line| line.starts_with(\"region\"))\n+    }?;\n+\n+    let region = region_line.split('=').nth(1)?;\n+    let region = region.trim();\n+\n+    Some(region.to_string())\n+}\n+\n+fn get_aws_region() -> Option<(String, String)> {\n+    env::var(\"AWS_DEFAULT_REGION\")\n+        .ok()\n+        .map(|region| (String::new(), region))\n+        .or_else(|| {\n+            let aws_profile = env::var(\"AWS_PROFILE\").ok();\n+            let aws_region = get_aws_region_from_config(&aws_profile);\n+\n+            if aws_profile.is_none() && aws_region.is_none() {",
+    "path": "src/modules/aws.rs",
+    "commit_id": "14e6b87bda8b0801d1e250ab9dcbcf0ad1d93256",
+    "original_commit_id": "d7158c58779212981c04e6803f343de75ea4eee2",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This whole `if` can be replaced if you use the `?` operator on lines 52 & 53:\r\n\r\n```\r\nlet aws_profile = env::var(\"AWS_PROFILE\").ok()?;\r\nlet aws_region = get_aws_region_from_config(&aws_profile)?;\r\nSome((aws_profile, aws_region))\r\n```\r\n\r\n(Note I didn't try to compile this, but it should be fairly close)",
+    "created_at": "2019-10-07T10:04:03Z",
+    "updated_at": "2019-10-14T14:54:00Z",
+    "html_url": "https://github.com/starship/starship/pull/482#discussion_r331937856",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/482",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/331937856"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/482#discussion_r331937856"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/482"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/331937856/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 55,
+    "original_line": 55,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 55,
+    "position": 55,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/331940092",
+    "pull_request_review_id": 298021983,
+    "id": 331940092,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMTk0MDA5Mg==",
+    "diff_hunk": "@@ -1,16 +1,85 @@\n use std::env;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader};\n+use std::path::PathBuf;\n+use std::str::FromStr;\n+\n+use dirs::home_dir;\n \n use super::{Context, Module, RootModuleConfig};\n \n use crate::configs::aws::AwsConfig;\n \n+fn get_aws_region_from_config(aws_profile: &Option<String>) -> Option<String> {\n+    let config_location = env::var(\"AWS_CONFIG_FILE\")\n+        .ok()\n+        .and_then(|path| PathBuf::from_str(&path).ok())\n+        .or_else(|| {\n+            let mut home = home_dir()?;\n+            home.push(\".aws/config\");\n+            Some(home)\n+        })?;\n+\n+    let file = File::open(&config_location).ok()?;\n+    let reader = BufReader::new(file);\n+    let lines = reader.lines().filter_map(Result::ok);\n+\n+    let region_line = if let Some(ref aws_profile) = aws_profile {\n+        lines\n+            .skip_while(|line| line != &format!(\"[profile {}]\", aws_profile))\n+            .skip(1)\n+            .take_while(|line| !line.starts_with('['))\n+            .find(|line| line.starts_with(\"region\"))\n+    } else {\n+        lines\n+            .skip_while(|line| line != \"[default]\")\n+            .skip(1)\n+            .take_while(|line| !line.starts_with('['))\n+            .find(|line| line.starts_with(\"region\"))\n+    }?;\n+\n+    let region = region_line.split('=').nth(1)?;\n+    let region = region.trim();\n+\n+    Some(region.to_string())\n+}\n+\n+fn get_aws_region() -> Option<(String, String)> {\n+    env::var(\"AWS_DEFAULT_REGION\")\n+        .ok()\n+        .map(|region| (String::new(), region))\n+        .or_else(|| {\n+            let aws_profile = env::var(\"AWS_PROFILE\").ok();\n+            let aws_region = get_aws_region_from_config(&aws_profile);\n+\n+            if aws_profile.is_none() && aws_region.is_none() {\n+                None\n+            } else {\n+                Some((\n+                    aws_profile.unwrap_or_default(),\n+                    aws_region.unwrap_or_default(),\n+                ))\n+            }\n+        })\n+        .or_else(|| {\n+            env::var(\"AWS_REGION\")\n+                .ok()\n+                .map(|region| (String::new(), region))",
+    "path": "src/modules/aws.rs",
+    "commit_id": "14e6b87bda8b0801d1e250ab9dcbcf0ad1d93256",
+    "original_commit_id": "d7158c58779212981c04e6803f343de75ea4eee2",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This is a bit of a hint that your return type is wrong. It seems like profile should be an `Option`.\r\n\r\nI suspect you could neaten the whole module up with a struct:\r\n```\r\nstruct AwsStatus {\r\n    profile: Option<String>,\r\n    region: Option<String>,\r\n}\r\n```",
+    "created_at": "2019-10-07T10:09:45Z",
+    "updated_at": "2019-10-14T14:54:00Z",
+    "html_url": "https://github.com/starship/starship/pull/482#discussion_r331940092",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/482",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/331940092"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/482#discussion_r331940092"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/482"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/331940092/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 67,
+    "original_line": 67,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 67,
+    "position": 67,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/331973667",
+    "pull_request_review_id": 298068572,
+    "id": 331973667,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMTk3MzY2Nw==",
+    "diff_hunk": "@@ -1,16 +1,85 @@\n use std::env;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader};\n+use std::path::PathBuf;\n+use std::str::FromStr;\n+\n+use dirs::home_dir;\n \n use super::{Context, Module, RootModuleConfig};\n \n use crate::configs::aws::AwsConfig;\n \n+fn get_aws_region_from_config(aws_profile: &Option<String>) -> Option<String> {\n+    let config_location = env::var(\"AWS_CONFIG_FILE\")\n+        .ok()\n+        .and_then(|path| PathBuf::from_str(&path).ok())\n+        .or_else(|| {\n+            let mut home = home_dir()?;\n+            home.push(\".aws/config\");\n+            Some(home)\n+        })?;\n+\n+    let file = File::open(&config_location).ok()?;\n+    let reader = BufReader::new(file);\n+    let lines = reader.lines().filter_map(Result::ok);\n+\n+    let region_line = if let Some(ref aws_profile) = aws_profile {\n+        lines\n+            .skip_while(|line| line != &format!(\"[profile {}]\", aws_profile))\n+            .skip(1)\n+            .take_while(|line| !line.starts_with('['))\n+            .find(|line| line.starts_with(\"region\"))\n+    } else {\n+        lines\n+            .skip_while(|line| line != \"[default]\")\n+            .skip(1)\n+            .take_while(|line| !line.starts_with('['))\n+            .find(|line| line.starts_with(\"region\"))\n+    }?;\n+\n+    let region = region_line.split('=').nth(1)?;\n+    let region = region.trim();\n+\n+    Some(region.to_string())\n+}\n+\n+fn get_aws_region() -> Option<(String, String)> {\n+    env::var(\"AWS_DEFAULT_REGION\")\n+        .ok()\n+        .map(|region| (String::new(), region))\n+        .or_else(|| {\n+            let aws_profile = env::var(\"AWS_PROFILE\").ok();\n+            let aws_region = get_aws_region_from_config(&aws_profile);\n+\n+            if aws_profile.is_none() && aws_region.is_none() {",
+    "path": "src/modules/aws.rs",
+    "commit_id": "14e6b87bda8b0801d1e250ab9dcbcf0ad1d93256",
+    "original_commit_id": "d7158c58779212981c04e6803f343de75ea4eee2",
+    "user": {
+      "login": "pbzweihander",
+      "id": 15262528,
+      "node_id": "MDQ6VXNlcjE1MjYyNTI4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15262528?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/pbzweihander",
+      "html_url": "https://github.com/pbzweihander",
+      "followers_url": "https://api.github.com/users/pbzweihander/followers",
+      "following_url": "https://api.github.com/users/pbzweihander/following{/other_user}",
+      "gists_url": "https://api.github.com/users/pbzweihander/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/pbzweihander/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/pbzweihander/subscriptions",
+      "organizations_url": "https://api.github.com/users/pbzweihander/orgs",
+      "repos_url": "https://api.github.com/users/pbzweihander/repos",
+      "events_url": "https://api.github.com/users/pbzweihander/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/pbzweihander/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This is different semantic. I meant to return None when `aws_region` AND `aws_region` is both None.",
+    "created_at": "2019-10-07T11:45:16Z",
+    "updated_at": "2019-10-14T14:54:00Z",
+    "html_url": "https://github.com/starship/starship/pull/482#discussion_r331973667",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/482",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/331973667"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/482#discussion_r331973667"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/482"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/331973667/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 55,
+    "original_line": 55,
+    "side": "RIGHT",
+    "in_reply_to_id": 331937856,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 55,
+    "position": 55,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/331974946",
+    "pull_request_review_id": 298070191,
+    "id": 331974946,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMTk3NDk0Ng==",
+    "diff_hunk": "@@ -1,16 +1,85 @@\n use std::env;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader};\n+use std::path::PathBuf;\n+use std::str::FromStr;\n+\n+use dirs::home_dir;\n \n use super::{Context, Module, RootModuleConfig};\n \n use crate::configs::aws::AwsConfig;\n \n+fn get_aws_region_from_config(aws_profile: &Option<String>) -> Option<String> {\n+    let config_location = env::var(\"AWS_CONFIG_FILE\")\n+        .ok()\n+        .and_then(|path| PathBuf::from_str(&path).ok())\n+        .or_else(|| {\n+            let mut home = home_dir()?;\n+            home.push(\".aws/config\");\n+            Some(home)\n+        })?;\n+\n+    let file = File::open(&config_location).ok()?;\n+    let reader = BufReader::new(file);\n+    let lines = reader.lines().filter_map(Result::ok);\n+\n+    let region_line = if let Some(ref aws_profile) = aws_profile {\n+        lines\n+            .skip_while(|line| line != &format!(\"[profile {}]\", aws_profile))\n+            .skip(1)\n+            .take_while(|line| !line.starts_with('['))\n+            .find(|line| line.starts_with(\"region\"))\n+    } else {\n+        lines\n+            .skip_while(|line| line != \"[default]\")\n+            .skip(1)\n+            .take_while(|line| !line.starts_with('['))\n+            .find(|line| line.starts_with(\"region\"))\n+    }?;\n+\n+    let region = region_line.split('=').nth(1)?;\n+    let region = region.trim();\n+\n+    Some(region.to_string())\n+}\n+\n+fn get_aws_region() -> Option<(String, String)> {\n+    env::var(\"AWS_DEFAULT_REGION\")\n+        .ok()\n+        .map(|region| (String::new(), region))\n+        .or_else(|| {\n+            let aws_profile = env::var(\"AWS_PROFILE\").ok();\n+            let aws_region = get_aws_region_from_config(&aws_profile);\n+\n+            if aws_profile.is_none() && aws_region.is_none() {\n+                None\n+            } else {\n+                Some((\n+                    aws_profile.unwrap_or_default(),\n+                    aws_region.unwrap_or_default(),\n+                ))\n+            }\n+        })\n+        .or_else(|| {\n+            env::var(\"AWS_REGION\")\n+                .ok()\n+                .map(|region| (String::new(), region))",
+    "path": "src/modules/aws.rs",
+    "commit_id": "14e6b87bda8b0801d1e250ab9dcbcf0ad1d93256",
+    "original_commit_id": "d7158c58779212981c04e6803f343de75ea4eee2",
+    "user": {
+      "login": "pbzweihander",
+      "id": 15262528,
+      "node_id": "MDQ6VXNlcjE1MjYyNTI4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15262528?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/pbzweihander",
+      "html_url": "https://github.com/pbzweihander",
+      "followers_url": "https://api.github.com/users/pbzweihander/followers",
+      "following_url": "https://api.github.com/users/pbzweihander/following{/other_user}",
+      "gists_url": "https://api.github.com/users/pbzweihander/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/pbzweihander/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/pbzweihander/subscriptions",
+      "organizations_url": "https://api.github.com/users/pbzweihander/orgs",
+      "repos_url": "https://api.github.com/users/pbzweihander/repos",
+      "events_url": "https://api.github.com/users/pbzweihander/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/pbzweihander/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "In line 92 and 93, we need to make `SegmentConfig` which takes `&str`. If it is Option, we need to `unwrap_or_default` anyway.",
+    "created_at": "2019-10-07T11:48:53Z",
+    "updated_at": "2019-10-14T14:54:00Z",
+    "html_url": "https://github.com/starship/starship/pull/482#discussion_r331974946",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/482",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/331974946"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/482#discussion_r331974946"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/482"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/331974946/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 67,
+    "original_line": 67,
+    "side": "RIGHT",
+    "in_reply_to_id": 331940092,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 67,
+    "position": 67,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/334326572",
+    "pull_request_review_id": 301104458,
+    "id": 334326572,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzNDMyNjU3Mg==",
+    "diff_hunk": "@@ -1,16 +1,85 @@\n use std::env;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader};\n+use std::path::PathBuf;\n+use std::str::FromStr;\n+\n+use dirs::home_dir;\n \n use super::{Context, Module, RootModuleConfig};\n \n use crate::configs::aws::AwsConfig;\n \n+fn get_aws_region_from_config(aws_profile: &Option<String>) -> Option<String> {\n+    let config_location = env::var(\"AWS_CONFIG_FILE\")\n+        .ok()\n+        .and_then(|path| PathBuf::from_str(&path).ok())\n+        .or_else(|| {\n+            let mut home = home_dir()?;\n+            home.push(\".aws/config\");\n+            Some(home)\n+        })?;\n+\n+    let file = File::open(&config_location).ok()?;\n+    let reader = BufReader::new(file);\n+    let lines = reader.lines().filter_map(Result::ok);\n+\n+    let region_line = if let Some(ref aws_profile) = aws_profile {\n+        lines\n+            .skip_while(|line| line != &format!(\"[profile {}]\", aws_profile))\n+            .skip(1)\n+            .take_while(|line| !line.starts_with('['))\n+            .find(|line| line.starts_with(\"region\"))\n+    } else {\n+        lines\n+            .skip_while(|line| line != \"[default]\")\n+            .skip(1)\n+            .take_while(|line| !line.starts_with('['))\n+            .find(|line| line.starts_with(\"region\"))\n+    }?;\n+\n+    let region = region_line.split('=').nth(1)?;\n+    let region = region.trim();\n+\n+    Some(region.to_string())\n+}\n+\n+fn get_aws_region() -> Option<(String, String)> {\n+    env::var(\"AWS_DEFAULT_REGION\")\n+        .ok()\n+        .map(|region| (String::new(), region))\n+        .or_else(|| {\n+            let aws_profile = env::var(\"AWS_PROFILE\").ok();\n+            let aws_region = get_aws_region_from_config(&aws_profile);\n+\n+            if aws_profile.is_none() && aws_region.is_none() {",
+    "path": "src/modules/aws.rs",
+    "commit_id": "14e6b87bda8b0801d1e250ab9dcbcf0ad1d93256",
+    "original_commit_id": "d7158c58779212981c04e6803f343de75ea4eee2",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ok, yes - I see there is a slight difference. If you think the distinction is important, then you can leave it as-is.",
+    "created_at": "2019-10-14T04:58:52Z",
+    "updated_at": "2019-10-14T14:54:00Z",
+    "html_url": "https://github.com/starship/starship/pull/482#discussion_r334326572",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/482",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/334326572"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/482#discussion_r334326572"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/482"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/334326572/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 55,
+    "original_line": 55,
+    "side": "RIGHT",
+    "in_reply_to_id": 331937856,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 55,
+    "position": 55,
+    "subject_type": "line"
+  }
+]

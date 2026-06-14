@@ -1,0 +1,280 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/610221077",
+    "pull_request_review_id": 631929884,
+    "id": 610221077,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxMDIyMTA3Nw==",
+    "diff_hunk": "@@ -74,19 +71,24 @@ fn get_java_version(context: &Context, config: &JavaConfig) -> Option<String> {\n         output.stdout\n     };\n \n-    parse_java_version(config.version_format, &java_version)\n+    format_java_version(&java_version, config.version_format)\n }\n \n-fn parse_java_version(version_format: &str, java_version: &str) -> Option<String> {\n+fn format_java_version(java_version: &str, version_format: &str) -> Option<String> {\n     let re = Regex::new(JAVA_VERSION_PATTERN).ok()?;\n     let captures = re.captures(java_version)?;\n     let version = &captures[\"version\"];\n \n-    Some(\n-        VersionFormatter::new(version_format)\n-            .ok()?\n-            .format_version(version),\n-    )\n+    let formatted = VersionFormatter::new(version_format)\n+        .and_then(|formatter| formatter.format_version(version));\n+\n+    match formatted {\n+        Ok(formatted) => Some(formatted),\n+        Err(error) => {",
+    "path": "src/modules/java.rs",
+    "commit_id": "6326be6632a5734e4844eff715a6b646a8117326",
+    "original_commit_id": "b01679edef07c089a13f7bc6a927a66b504384dd",
+    "user": {
+      "login": "offbyone",
+      "id": 181693,
+      "node_id": "MDQ6VXNlcjE4MTY5Mw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/181693?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/offbyone",
+      "html_url": "https://github.com/offbyone",
+      "followers_url": "https://api.github.com/users/offbyone/followers",
+      "following_url": "https://api.github.com/users/offbyone/following{/other_user}",
+      "gists_url": "https://api.github.com/users/offbyone/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/offbyone/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/offbyone/subscriptions",
+      "organizations_url": "https://api.github.com/users/offbyone/orgs",
+      "repos_url": "https://api.github.com/users/offbyone/repos",
+      "events_url": "https://api.github.com/users/offbyone/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/offbyone/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": true
+    },
+    "body": "What conditions would lead to this warning? I would rather just silently format the raw version than log a warning when this happens.",
+    "created_at": "2021-04-09T00:12:00Z",
+    "updated_at": "2021-04-10T15:24:48Z",
+    "html_url": "https://github.com/starship/starship/pull/2566#discussion_r610221077",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2566",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/610221077"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2566#discussion_r610221077"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2566"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/610221077/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 84,
+    "original_line": 87,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 36,
+    "position": 33,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/610245095",
+    "pull_request_review_id": 631956012,
+    "id": 610245095,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxMDI0NTA5NQ==",
+    "diff_hunk": "@@ -74,19 +71,24 @@ fn get_java_version(context: &Context, config: &JavaConfig) -> Option<String> {\n         output.stdout\n     };\n \n-    parse_java_version(config.version_format, &java_version)\n+    format_java_version(&java_version, config.version_format)\n }\n \n-fn parse_java_version(version_format: &str, java_version: &str) -> Option<String> {\n+fn format_java_version(java_version: &str, version_format: &str) -> Option<String> {\n     let re = Regex::new(JAVA_VERSION_PATTERN).ok()?;\n     let captures = re.captures(java_version)?;\n     let version = &captures[\"version\"];\n \n-    Some(\n-        VersionFormatter::new(version_format)\n-            .ok()?\n-            .format_version(version),\n-    )\n+    let formatted = VersionFormatter::new(version_format)\n+        .and_then(|formatter| formatter.format_version(version));\n+\n+    match formatted {\n+        Ok(formatted) => Some(formatted),\n+        Err(error) => {",
+    "path": "src/modules/java.rs",
+    "commit_id": "6326be6632a5734e4844eff715a6b646a8117326",
+    "original_commit_id": "b01679edef07c089a13f7bc6a927a66b504384dd",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "> I would rather just silently format the raw version than log a warning when this happens.\r\n\r\n~This is _silent_ unless you explicitly opt-in by setting `STARSHIP_LOG` environment variable to the `warn` level.~\r\n\r\n**EDIT:** `warn` is default log level so it gets print always but that is actually a good thing if you ask me\r\n\r\n> What conditions would lead to this warning?\r\n\r\nThe simplest case that would cause an error is a malformed version format like:\r\n```toml\r\nversion = \"v${raw\" # missing right curly\r\n```\r\n\r\nThis results in (with logging enabled):\r\n```\r\n[WARN] - (starship::modules::java): Error formating `java` version:\r\n --> 1:3\r\n  |\r\n1 | v${raw\r\n  |   ^---\r\n  |\r\n  = expected variable_name\r\n```",
+    "created_at": "2021-04-09T00:53:25Z",
+    "updated_at": "2021-04-10T15:24:48Z",
+    "html_url": "https://github.com/starship/starship/pull/2566#discussion_r610245095",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2566",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/610245095"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2566#discussion_r610245095"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2566"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/610245095/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 84,
+    "original_line": 87,
+    "side": "RIGHT",
+    "in_reply_to_id": 610221077,
+    "author_association": "MEMBER",
+    "original_position": 36,
+    "position": 33,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/610872379",
+    "pull_request_review_id": 632742936,
+    "id": 610872379,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxMDg3MjM3OQ==",
+    "diff_hunk": "@@ -17,81 +19,85 @@ impl<'a> VersionFormatter<'a> {\n         Ok(Self { formatter })\n     }\n \n+    /// Format version string using provided format\n+    pub fn format_version(\n+        version: &'a str,\n+        format: &'a str,\n+    ) -> Result<String, StringFormatterError> {\n+        Self::new(format).and_then(|formatter| formatter.format(version))\n+    }\n+\n     /// Formats a version structure into a readable string\n-    ///\n-    /// No matter what comes in, this will return some usable string\n-    pub fn format_version(self, version: &str) -> String {\n-        let parsed = Versioning::new(version);\n+    pub fn format(self, version: &'a str) -> Result<String, StringFormatterError> {\n+        let parsed = Lazy::new(|| Versioning::new(version));\n         let formatted = self\n             .formatter\n             .map(|variable| match variable {\n                 \"raw\" => Some(Ok(version.to_string())),\n-                \"major\" => match parsed.as_ref() {\n+                \"major\" => match parsed.deref().as_ref() {\n                     Some(Versioning::Ideal(v)) => Some(Ok(v.major.to_string())),\n                     Some(Versioning::General(v)) => Some(Ok(v.nth_lenient(0)?.to_string())),\n                     _ => None,\n                 },\n-                \"minor\" => match parsed.as_ref() {\n+                \"minor\" => match parsed.deref().as_ref() {\n                     Some(Versioning::Ideal(v)) => Some(Ok(v.minor.to_string())),\n                     Some(Versioning::General(v)) => Some(Ok(v.nth_lenient(1)?.to_string())),\n                     _ => None,\n                 },\n-                \"patch\" => match parsed.as_ref() {\n+                \"patch\" => match parsed.deref().as_ref() {\n                     Some(Versioning::Ideal(v)) => Some(Ok(v.patch.to_string())),\n                     Some(Versioning::General(v)) => Some(Ok(v.nth_lenient(2)?.to_string())),\n                     _ => None,\n                 },\n                 _ => None,\n             })\n             .parse(None);\n-        match formatted {\n-            Ok(segments) => segments\n+\n+        formatted.map(|segments| {\n+            segments\n                 .iter()\n                 .map(|segment| segment.value.as_str())\n                 .collect::<Vec<&str>>()\n-                .join(\"\"),\n-            Err(_) => version.to_string(),\n-        }\n+                .join(\"\")",
+    "path": "src/formatter/version.rs",
+    "commit_id": "6326be6632a5734e4844eff715a6b646a8117326",
+    "original_commit_id": "bcb37d417fbaf476410fbf26143858bc6d31e331",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think you can just collect this as a `String`? `.collect::<String>()`",
+    "created_at": "2021-04-09T19:53:44Z",
+    "updated_at": "2021-04-10T15:24:48Z",
+    "html_url": "https://github.com/starship/starship/pull/2566#discussion_r610872379",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2566",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/610872379"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2566#discussion_r610872379"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2566"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/610872379/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 60,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 61,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 63,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/611057878",
+    "pull_request_review_id": 632929609,
+    "id": 611057878,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxMTA1Nzg3OA==",
+    "diff_hunk": "@@ -17,81 +19,85 @@ impl<'a> VersionFormatter<'a> {\n         Ok(Self { formatter })\n     }\n \n+    /// Format version string using provided format\n+    pub fn format_version(\n+        version: &'a str,\n+        format: &'a str,\n+    ) -> Result<String, StringFormatterError> {\n+        Self::new(format).and_then(|formatter| formatter.format(version))\n+    }\n+\n     /// Formats a version structure into a readable string\n-    ///\n-    /// No matter what comes in, this will return some usable string\n-    pub fn format_version(self, version: &str) -> String {\n-        let parsed = Versioning::new(version);\n+    pub fn format(self, version: &'a str) -> Result<String, StringFormatterError> {\n+        let parsed = Lazy::new(|| Versioning::new(version));\n         let formatted = self\n             .formatter\n             .map(|variable| match variable {\n                 \"raw\" => Some(Ok(version.to_string())),\n-                \"major\" => match parsed.as_ref() {\n+                \"major\" => match parsed.deref().as_ref() {\n                     Some(Versioning::Ideal(v)) => Some(Ok(v.major.to_string())),\n                     Some(Versioning::General(v)) => Some(Ok(v.nth_lenient(0)?.to_string())),\n                     _ => None,\n                 },\n-                \"minor\" => match parsed.as_ref() {\n+                \"minor\" => match parsed.deref().as_ref() {\n                     Some(Versioning::Ideal(v)) => Some(Ok(v.minor.to_string())),\n                     Some(Versioning::General(v)) => Some(Ok(v.nth_lenient(1)?.to_string())),\n                     _ => None,\n                 },\n-                \"patch\" => match parsed.as_ref() {\n+                \"patch\" => match parsed.deref().as_ref() {\n                     Some(Versioning::Ideal(v)) => Some(Ok(v.patch.to_string())),\n                     Some(Versioning::General(v)) => Some(Ok(v.nth_lenient(2)?.to_string())),\n                     _ => None,\n                 },\n                 _ => None,\n             })\n             .parse(None);\n-        match formatted {\n-            Ok(segments) => segments\n+\n+        formatted.map(|segments| {\n+            segments\n                 .iter()\n                 .map(|segment| segment.value.as_str())\n                 .collect::<Vec<&str>>()\n-                .join(\"\"),\n-            Err(_) => version.to_string(),\n-        }\n+                .join(\"\")",
+    "path": "src/formatter/version.rs",
+    "commit_id": "6326be6632a5734e4844eff715a6b646a8117326",
+    "original_commit_id": "bcb37d417fbaf476410fbf26143858bc6d31e331",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Done, thanks for the tip! :+1: ",
+    "created_at": "2021-04-10T15:25:19Z",
+    "updated_at": "2021-04-10T15:25:19Z",
+    "html_url": "https://github.com/starship/starship/pull/2566#discussion_r611057878",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2566",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/611057878"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2566#discussion_r611057878"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2566"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/611057878/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 60,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 61,
+    "side": "RIGHT",
+    "in_reply_to_id": 610872379,
+    "author_association": "MEMBER",
+    "original_position": 63,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

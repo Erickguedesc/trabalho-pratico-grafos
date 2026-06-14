@@ -1,0 +1,141 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/684387584",
+    "pull_request_review_id": 724560633,
+    "id": 684387584,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY4NDM4NzU4NA==",
+    "diff_hunk": "@@ -184,80 +168,88 @@ fn extract_maven_version(file_contents: &str) -> Option<String> {\n     None\n }\n \n-fn extract_meson_version(file_contents: &str) -> Option<String> {\n-    let file_contents = file_contents.split_ascii_whitespace().collect::<String>();\n+fn get_meson_version(context: &Context, config: &PackageConfig) -> Option<String> {\n+    let file_contents = utils::read_file(context.current_dir.join(\"meson.build\"))\n+        .ok()?\n+        .split_ascii_whitespace()\n+        .collect::<String>();\n \n     let re = Regex::new(r#\"project\\([^())]*,version:'(?P<version>[^']+)'[^())]*\\)\"#).unwrap();\n     let caps = re.captures(&file_contents)?;\n \n-    let formatted_version = format_version(&caps[\"version\"]);\n-    Some(formatted_version)\n+    format_version(&caps[\"version\"], config.version_format)\n }\n \n-fn extract_vmod_version(file_contents: &str) -> Option<String> {\n+fn get_vmod_version(context: &Context, config: &PackageConfig) -> Option<String> {\n+    let file_contents = utils::read_file(context.current_dir.join(\"v.mod\")).ok()?;\n     let re = Regex::new(r\"(?m)^\\s*version\\s*:\\s*'(?P<version>[^']+)'\").unwrap();\n-    let caps = re.captures(file_contents)?;\n-    let formatted_version = format_version(&caps[\"version\"]);\n-    Some(formatted_version)\n+    let caps = re.captures(&file_contents)?;\n+    format_version(&caps[\"version\"], config.version_format)\n }\n \n-fn extract_vpkg_version(file_contents: &str) -> Option<String> {\n-    let vpkg_json: json::Value = json::from_str(file_contents).ok()?;\n-    let version = vpkg_json.get(\"version\")?.as_str()?;\n-    if version == \"null\" {\n-        return None;\n-    }\n-    let formatted_version = format_version(version);\n-    Some(formatted_version)\n+fn get_vpkg_version(context: &Context, config: &PackageConfig) -> Option<String> {\n+    let file_contents = utils::read_file(context.current_dir.join(\"vpkg.json\")).ok()?;\n+    let vpkg_json: json::Value = json::from_str(&file_contents).ok()?;\n+    let raw_version = vpkg_json.get(\"version\")?.as_str()?;\n+\n+    format_version(raw_version, config.version_format)\n }\n \n-fn get_package_version(context: &Context, config: &PackageConfig) -> Option<String> {\n-    let base_dir = &context.current_dir;\n+fn get_cargo_version(context: &Context, config: &PackageConfig) -> Option<String> {\n+    let file_contents = utils::read_file(&context.current_dir.join(\"Cargo.toml\")).ok()?;\n \n-    if let Ok(cargo_toml) = utils::read_file(base_dir.join(\"Cargo.toml\")) {\n-        extract_cargo_version(&cargo_toml)\n-    } else if context\n+    let cargo_toml: toml::Value = toml::from_str(&file_contents).ok()?;\n+    let raw_version = cargo_toml.get(\"package\")?.get(\"version\")?.as_str()?;\n+\n+    format_version(raw_version, config.version_format)\n+}\n+\n+fn get_nimble_version(context: &Context, config: &PackageConfig) -> Option<String> {\n+    if !context\n         .try_begin_scan()?\n         .set_extensions(&[\"nimble\"])\n         .is_match()\n     {\n-        extract_nimble_version(context)\n-    } else if let Ok(package_json) = utils::read_file(base_dir.join(\"package.json\")) {\n-        extract_package_version(&package_json, config.display_private)\n-    } else if let Ok(poetry_toml) = utils::read_file(base_dir.join(\"pyproject.toml\")) {\n-        extract_poetry_version(&poetry_toml)\n-    } else if let Ok(setup_cfg) = utils::read_file(base_dir.join(\"setup.cfg\")) {\n-        extract_setup_cfg_version(&setup_cfg)\n-    } else if let Ok(composer_json) = utils::read_file(base_dir.join(\"composer.json\")) {\n-        extract_composer_version(&composer_json)\n-    } else if let Ok(build_gradle) = utils::read_file(base_dir.join(\"build.gradle\")) {\n-        extract_gradle_version(&build_gradle)\n-    } else if let Ok(project_toml) = utils::read_file(base_dir.join(\"Project.toml\")) {\n-        extract_project_version(&project_toml)\n-    } else if let Ok(mix_file) = utils::read_file(base_dir.join(\"mix.exs\")) {\n-        extract_mix_version(&mix_file)\n-    } else if let Ok(chart_file) = utils::read_file(base_dir.join(\"Chart.yaml\")) {\n-        extract_helm_package_version(&chart_file)\n-    } else if let Ok(pom_file) = utils::read_file(base_dir.join(\"pom.xml\")) {\n-        extract_maven_version(&pom_file)\n-    } else if let Ok(meson_build) = utils::read_file(base_dir.join(\"meson.build\")) {\n-        extract_meson_version(&meson_build)\n-    } else if let Ok(vlang_mod) = utils::read_file(base_dir.join(\"v.mod\")) {\n-        extract_vmod_version(&vlang_mod)\n-    } else if let Ok(vlang_vpkg) = utils::read_file(base_dir.join(\"vpkg.json\")) {\n-        extract_vpkg_version(&vlang_vpkg)\n-    } else {\n-        None\n-    }\n+        return None;\n+    };\n+\n+    let cmd_output = context.exec_cmd(\"nimble\", &[\"dump\", \"--json\"])?;\n+    let nimble_json: json::Value = json::from_str(&cmd_output.stdout).ok()?;\n+\n+    let raw_version = nimble_json.get(\"version\")?.as_str()?;\n+\n+    format_version(raw_version, config.version_format)\n }\n \n-fn format_version(version: &str) -> String {\n-    let cleaned = version.replace('\"', \"\").trim().to_string();\n-    if cleaned.starts_with('v') {\n-        cleaned\n-    } else {\n-        format!(\"v{}\", cleaned)\n-    }\n+fn get_version(context: &Context, config: &PackageConfig) -> Option<String> {\n+    let package_version_fn: Vec<fn(&Context, &PackageConfig) -> Option<String>> = vec![\n+        get_cargo_version,\n+        get_nimble_version,\n+        get_node_package_version,\n+        get_poetry_version,\n+        get_setup_cfg_version,\n+        get_composer_version,\n+        get_gradle_version,\n+        get_julia_project_version,\n+        get_mix_version,\n+        get_helm_package_version,\n+        get_maven_version,\n+        get_meson_version,\n+        get_vmod_version,\n+        get_vpkg_version,\n+    ];\n+\n+    package_version_fn.iter().find_map(|f| f(context, config))",
+    "path": "src/modules/package.rs",
+    "commit_id": "5b314fd88d4a5420f4ffd947cf449d2f9418ff4d",
+    "original_commit_id": "5b314fd88d4a5420f4ffd947cf449d2f9418ff4d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Is there a reason `format_version` is called in each function instead of here? Beyond this LGTM.",
+    "created_at": "2021-08-06T17:15:05Z",
+    "updated_at": "2021-08-06T17:15:05Z",
+    "html_url": "https://github.com/starship/starship/pull/2959#discussion_r684387584",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2959",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/684387584"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2959#discussion_r684387584"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2959"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/684387584/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 242,
+    "original_line": 242,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 302,
+    "position": 302,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/684412086",
+    "pull_request_review_id": 724592094,
+    "id": 684412086,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY4NDQxMjA4Ng==",
+    "diff_hunk": "@@ -184,80 +168,88 @@ fn extract_maven_version(file_contents: &str) -> Option<String> {\n     None\n }\n \n-fn extract_meson_version(file_contents: &str) -> Option<String> {\n-    let file_contents = file_contents.split_ascii_whitespace().collect::<String>();\n+fn get_meson_version(context: &Context, config: &PackageConfig) -> Option<String> {\n+    let file_contents = utils::read_file(context.current_dir.join(\"meson.build\"))\n+        .ok()?\n+        .split_ascii_whitespace()\n+        .collect::<String>();\n \n     let re = Regex::new(r#\"project\\([^())]*,version:'(?P<version>[^']+)'[^())]*\\)\"#).unwrap();\n     let caps = re.captures(&file_contents)?;\n \n-    let formatted_version = format_version(&caps[\"version\"]);\n-    Some(formatted_version)\n+    format_version(&caps[\"version\"], config.version_format)\n }\n \n-fn extract_vmod_version(file_contents: &str) -> Option<String> {\n+fn get_vmod_version(context: &Context, config: &PackageConfig) -> Option<String> {\n+    let file_contents = utils::read_file(context.current_dir.join(\"v.mod\")).ok()?;\n     let re = Regex::new(r\"(?m)^\\s*version\\s*:\\s*'(?P<version>[^']+)'\").unwrap();\n-    let caps = re.captures(file_contents)?;\n-    let formatted_version = format_version(&caps[\"version\"]);\n-    Some(formatted_version)\n+    let caps = re.captures(&file_contents)?;\n+    format_version(&caps[\"version\"], config.version_format)\n }\n \n-fn extract_vpkg_version(file_contents: &str) -> Option<String> {\n-    let vpkg_json: json::Value = json::from_str(file_contents).ok()?;\n-    let version = vpkg_json.get(\"version\")?.as_str()?;\n-    if version == \"null\" {\n-        return None;\n-    }\n-    let formatted_version = format_version(version);\n-    Some(formatted_version)\n+fn get_vpkg_version(context: &Context, config: &PackageConfig) -> Option<String> {\n+    let file_contents = utils::read_file(context.current_dir.join(\"vpkg.json\")).ok()?;\n+    let vpkg_json: json::Value = json::from_str(&file_contents).ok()?;\n+    let raw_version = vpkg_json.get(\"version\")?.as_str()?;\n+\n+    format_version(raw_version, config.version_format)\n }\n \n-fn get_package_version(context: &Context, config: &PackageConfig) -> Option<String> {\n-    let base_dir = &context.current_dir;\n+fn get_cargo_version(context: &Context, config: &PackageConfig) -> Option<String> {\n+    let file_contents = utils::read_file(&context.current_dir.join(\"Cargo.toml\")).ok()?;\n \n-    if let Ok(cargo_toml) = utils::read_file(base_dir.join(\"Cargo.toml\")) {\n-        extract_cargo_version(&cargo_toml)\n-    } else if context\n+    let cargo_toml: toml::Value = toml::from_str(&file_contents).ok()?;\n+    let raw_version = cargo_toml.get(\"package\")?.get(\"version\")?.as_str()?;\n+\n+    format_version(raw_version, config.version_format)\n+}\n+\n+fn get_nimble_version(context: &Context, config: &PackageConfig) -> Option<String> {\n+    if !context\n         .try_begin_scan()?\n         .set_extensions(&[\"nimble\"])\n         .is_match()\n     {\n-        extract_nimble_version(context)\n-    } else if let Ok(package_json) = utils::read_file(base_dir.join(\"package.json\")) {\n-        extract_package_version(&package_json, config.display_private)\n-    } else if let Ok(poetry_toml) = utils::read_file(base_dir.join(\"pyproject.toml\")) {\n-        extract_poetry_version(&poetry_toml)\n-    } else if let Ok(setup_cfg) = utils::read_file(base_dir.join(\"setup.cfg\")) {\n-        extract_setup_cfg_version(&setup_cfg)\n-    } else if let Ok(composer_json) = utils::read_file(base_dir.join(\"composer.json\")) {\n-        extract_composer_version(&composer_json)\n-    } else if let Ok(build_gradle) = utils::read_file(base_dir.join(\"build.gradle\")) {\n-        extract_gradle_version(&build_gradle)\n-    } else if let Ok(project_toml) = utils::read_file(base_dir.join(\"Project.toml\")) {\n-        extract_project_version(&project_toml)\n-    } else if let Ok(mix_file) = utils::read_file(base_dir.join(\"mix.exs\")) {\n-        extract_mix_version(&mix_file)\n-    } else if let Ok(chart_file) = utils::read_file(base_dir.join(\"Chart.yaml\")) {\n-        extract_helm_package_version(&chart_file)\n-    } else if let Ok(pom_file) = utils::read_file(base_dir.join(\"pom.xml\")) {\n-        extract_maven_version(&pom_file)\n-    } else if let Ok(meson_build) = utils::read_file(base_dir.join(\"meson.build\")) {\n-        extract_meson_version(&meson_build)\n-    } else if let Ok(vlang_mod) = utils::read_file(base_dir.join(\"v.mod\")) {\n-        extract_vmod_version(&vlang_mod)\n-    } else if let Ok(vlang_vpkg) = utils::read_file(base_dir.join(\"vpkg.json\")) {\n-        extract_vpkg_version(&vlang_vpkg)\n-    } else {\n-        None\n-    }\n+        return None;\n+    };\n+\n+    let cmd_output = context.exec_cmd(\"nimble\", &[\"dump\", \"--json\"])?;\n+    let nimble_json: json::Value = json::from_str(&cmd_output.stdout).ok()?;\n+\n+    let raw_version = nimble_json.get(\"version\")?.as_str()?;\n+\n+    format_version(raw_version, config.version_format)\n }\n \n-fn format_version(version: &str) -> String {\n-    let cleaned = version.replace('\"', \"\").trim().to_string();\n-    if cleaned.starts_with('v') {\n-        cleaned\n-    } else {\n-        format!(\"v{}\", cleaned)\n-    }\n+fn get_version(context: &Context, config: &PackageConfig) -> Option<String> {\n+    let package_version_fn: Vec<fn(&Context, &PackageConfig) -> Option<String>> = vec![\n+        get_cargo_version,\n+        get_nimble_version,\n+        get_node_package_version,\n+        get_poetry_version,\n+        get_setup_cfg_version,\n+        get_composer_version,\n+        get_gradle_version,\n+        get_julia_project_version,\n+        get_mix_version,\n+        get_helm_package_version,\n+        get_maven_version,\n+        get_meson_version,\n+        get_vmod_version,\n+        get_vpkg_version,\n+    ];\n+\n+    package_version_fn.iter().find_map(|f| f(context, config))",
+    "path": "src/modules/package.rs",
+    "commit_id": "5b314fd88d4a5420f4ffd947cf449d2f9418ff4d",
+    "original_commit_id": "5b314fd88d4a5420f4ffd947cf449d2f9418ff4d",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "We do some matching on the parsed string when getting the version from the npm package.json and I couldn't come up with a way to make it work nicely. ",
+    "created_at": "2021-08-06T17:58:19Z",
+    "updated_at": "2021-08-06T17:58:19Z",
+    "html_url": "https://github.com/starship/starship/pull/2959#discussion_r684412086",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2959",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/684412086"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2959#discussion_r684412086"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2959"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/684412086/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 242,
+    "original_line": 242,
+    "side": "RIGHT",
+    "in_reply_to_id": 684387584,
+    "author_association": "MEMBER",
+    "original_position": 302,
+    "position": 302,
+    "subject_type": "line"
+  }
+]

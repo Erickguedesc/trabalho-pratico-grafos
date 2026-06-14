@@ -1,0 +1,42 @@
+[
+  {
+    "id": 2392044746,
+    "node_id": "PRR_kwDOCqswNs6Ok7TK",
+    "user": {
+      "login": "jankatins",
+      "id": 890156,
+      "node_id": "MDQ6VXNlcjg5MDE1Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/890156?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jankatins",
+      "html_url": "https://github.com/jankatins",
+      "followers_url": "https://api.github.com/users/jankatins/followers",
+      "following_url": "https://api.github.com/users/jankatins/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jankatins/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jankatins/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jankatins/subscriptions",
+      "organizations_url": "https://api.github.com/users/jankatins/orgs",
+      "repos_url": "https://api.github.com/users/jankatins/repos",
+      "events_url": "https://api.github.com/users/jankatins/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jankatins/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "LGTM (but I'm not a maintainer), I do the same in my zshrc\r\n\r\nI just went through the rabbit hole why vscode would need this and an not-exported env var is not enough: apparently it opens a shell and in that shell runs a python process which dumps the envionment to stdout which vscode then intpretes and sets it config from. My interpretation is tat the non-exported env var does not reach the python process and therefore it doesn't show up and gets act upon by vscode.\r\n\r\n- Where the python interpreter is spun up to print stuff: https://github.com/microsoft/vscode-python/blob/main/src/client/interpreter/activation/service.ts#L191 -> https://github.com/microsoft/vscode-python/blob/main/src/client/common/process/internal/scripts/index.ts#L74-L83\r\n- Where the prompt is disabled based on that (PR which introduced that): https://github.com/microsoft/vscode-python/pull/22053/files \r\n\r\nOn the other hand, fish does not set -x which seems to indicate an exported env var: https://fishshell.com/docs/current/cmds/set.html and bash doesn't even have this set. Might maybe a good idea to add that feature to all init scripts?\r\n",
+    "state": "APPROVED",
+    "html_url": "https://github.com/starship/starship/pull/6350#pullrequestreview-2392044746",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6350",
+    "author_association": "CONTRIBUTOR",
+    "_links": {
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6350#pullrequestreview-2392044746"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6350"
+      }
+    },
+    "submitted_at": "2024-10-24T10:23:11Z",
+    "commit_id": "153aec38db097632263cf8b3aea7b1700186ea97"
+  }
+]

@@ -1,0 +1,279 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/331720772",
+    "pull_request_review_id": 297761410,
+    "id": 331720772,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMTcyMDc3Mg==",
+    "diff_hunk": "@@ -0,0 +1,28 @@\n+use crate::config::{ModuleConfig, RootModuleConfig, SegmentConfig};\n+\n+use ansi_term::{Color, Style};\n+use starship_module_config_derive::ModuleConfig;\n+\n+#[derive(Clone, ModuleConfig)]\n+pub struct TimeConfig<'a> {\n+    pub time: SegmentConfig<'a>,\n+    pub use_12hr: bool,\n+    pub format: Option<&'a str>,\n+    pub style: Style,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> RootModuleConfig<'a> for TimeConfig<'a> {\n+    fn new() -> Self {\n+        TimeConfig {\n+            time: SegmentConfig {\n+                value: \"\",\n+                style: None,\n+            },",
+    "path": "src/configs/time.rs",
+    "commit_id": "1e547446ed6b1c719237c2a73e429c4de6f46216",
+    "original_commit_id": "3fc420feec40f32975890e7c77f6dc51a37804fb",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Sorry for the inconvenience but styling an undocumented segment is currently under discussion in #472. This syntax shouldn't be used until we get that issue resolved.\r\n\r\nYou can refer to b0bf17277e868026efe678d81915cc4941aa9e50 to drop it.",
+    "created_at": "2019-10-05T00:01:49Z",
+    "updated_at": "2019-10-05T14:15:45Z",
+    "html_url": "https://github.com/starship/starship/pull/483#discussion_r331720772",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/483",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/331720772"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/483#discussion_r331720772"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/483"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/331720772/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 18,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 21,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 21,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/331721277",
+    "pull_request_review_id": 297761410,
+    "id": 331721277,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMTcyMTI3Nw==",
+    "diff_hunk": "@@ -1,39 +1,33 @@\n-use ansi_term::Color;\n use chrono::{DateTime, Local};\n \n use super::{Context, Module};\n \n+use crate::config::RootModuleConfig;\n+use crate::configs::time::TimeConfig;\n+\n /// Outputs the current time\n pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n-    let mut module = context.new_module(\"time\");\n-\n-    if module.config_value_bool(\"disabled\").unwrap_or(true) {\n-        return None;\n-    }\n-\n-    let module_style = module\n-        .config_value_style(\"style\")\n-        .unwrap_or_else(|| Color::Yellow.bold());\n-    module.set_style(module_style);\n+    const TIME_PREFIX: &str = \"at \";\n \n-    // Load module settings\n-    let is_12hr = module.config_value_bool(\"12hr\").unwrap_or(false);\n+    let mut module = context.new_module(\"time\");\n+    let config: TimeConfig = TimeConfig::try_load(module.config);\n \n-    let default_format = if is_12hr { \"%r\" } else { \"%T\" };\n-    let time_format = module\n-        .config_value_str(\"format\")\n-        .unwrap_or(default_format)\n-        .to_owned();\n+    let default_format = if config.use_12hr { \"%r\" } else { \"%T\" };\n+    let time_format = config.format.unwrap_or(default_format);",
+    "path": "src/modules/time.rs",
+    "commit_id": "1e547446ed6b1c719237c2a73e429c4de6f46216",
+    "original_commit_id": "3fc420feec40f32975890e7c77f6dc51a37804fb",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Instead of using `format: Option<&str>` in the struct, you can use `format: &str` and provide a default format in `fn new()`, so that we can store all default value in the same place. What do you think?",
+    "created_at": "2019-10-05T00:06:20Z",
+    "updated_at": "2019-10-05T14:15:45Z",
+    "html_url": "https://github.com/starship/starship/pull/483#discussion_r331721277",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/483",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/331721277"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/483#discussion_r331721277"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/483"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/331721277/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 19,
+    "original_line": 16,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 34,
+    "position": 36,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/331724955",
+    "pull_request_review_id": 297761410,
+    "id": 331724955,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMTcyNDk1NQ==",
+    "diff_hunk": "@@ -1,39 +1,33 @@\n-use ansi_term::Color;\n use chrono::{DateTime, Local};\n \n use super::{Context, Module};\n \n+use crate::config::RootModuleConfig;\n+use crate::configs::time::TimeConfig;\n+\n /// Outputs the current time\n pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n-    let mut module = context.new_module(\"time\");\n-\n-    if module.config_value_bool(\"disabled\").unwrap_or(true) {\n-        return None;\n-    }\n-\n-    let module_style = module\n-        .config_value_style(\"style\")\n-        .unwrap_or_else(|| Color::Yellow.bold());\n-    module.set_style(module_style);\n+    const TIME_PREFIX: &str = \"at \";\n \n-    // Load module settings\n-    let is_12hr = module.config_value_bool(\"12hr\").unwrap_or(false);\n+    let mut module = context.new_module(\"time\");\n+    let config: TimeConfig = TimeConfig::try_load(module.config);\n \n-    let default_format = if is_12hr { \"%r\" } else { \"%T\" };\n-    let time_format = module\n-        .config_value_str(\"format\")\n-        .unwrap_or(default_format)\n-        .to_owned();\n+    let default_format = if config.use_12hr { \"%r\" } else { \"%T\" };\n+    let time_format = config.format.unwrap_or(default_format);",
+    "path": "src/modules/time.rs",
+    "commit_id": "1e547446ed6b1c719237c2a73e429c4de6f46216",
+    "original_commit_id": "3fc420feec40f32975890e7c77f6dc51a37804fb",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "OK, my bad. It seems that default format depends on `use_12hr`.",
+    "created_at": "2019-10-05T00:52:01Z",
+    "updated_at": "2019-10-05T14:15:45Z",
+    "html_url": "https://github.com/starship/starship/pull/483#discussion_r331724955",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/483",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/331724955"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/483#discussion_r331724955"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/483"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/331724955/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 19,
+    "original_line": 16,
+    "side": "RIGHT",
+    "in_reply_to_id": 331721277,
+    "author_association": "MEMBER",
+    "original_position": 34,
+    "position": 36,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/331746195",
+    "pull_request_review_id": 297791013,
+    "id": 331746195,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMTc0NjE5NQ==",
+    "diff_hunk": "@@ -1,39 +1,39 @@\n-use ansi_term::Color;\n use chrono::{DateTime, Local};\n \n use super::{Context, Module};\n \n+use crate::config::{RootModuleConfig, SegmentConfig};\n+use crate::configs::time::TimeConfig;\n+\n /// Outputs the current time\n pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n-    let mut module = context.new_module(\"time\");\n-\n-    if module.config_value_bool(\"disabled\").unwrap_or(true) {\n-        return None;\n-    }",
+    "path": "src/modules/time.rs",
+    "commit_id": "1e547446ed6b1c719237c2a73e429c4de6f46216",
+    "original_commit_id": "638974fcbd48561203b4fe66589a65365a2fcfb9",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this (or something similar) will be needed for now see #491.",
+    "created_at": "2019-10-05T13:11:52Z",
+    "updated_at": "2019-10-05T14:15:45Z",
+    "html_url": "https://github.com/starship/starship/pull/483#discussion_r331746195",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/483",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/331746195"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/483#discussion_r331746195"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/483"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/331746195/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 10,
+    "original_start_line": 10,
+    "start_side": "LEFT",
+    "line": null,
+    "original_line": 12,
+    "side": "LEFT",
+    "author_association": "MEMBER",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

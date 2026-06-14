@@ -1,0 +1,836 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/777119582",
+    "pull_request_review_id": 842345477,
+    "id": 777119582,
+    "node_id": "PRRC_kwDOCqswNs4uUede",
+    "diff_hunk": "@@ -343,13 +343,40 @@ impl StarshipConfig {\n         module_config\n     }\n \n+    /// Get the subset of the table for a env_var module by its name\n+    pub fn get_env_var_module_config(&self, module_name: &str) -> Option<&Value> {\n+        let config_path = if !module_name.is_empty() {\n+            vec![\"env_var\", module_name]\n+        } else {\n+            vec![\"env_var\"]\n+        };\n+        let module_config = self.get_config(&config_path);\n+        if module_config.is_some() {\n+            log::debug!(\n+                \"env_var config found for \\\"{}\\\": {:?}\",\n+                &module_name,\n+                &module_config\n+            );\n+        }\n+        module_config\n+    }\n+\n     /// Get the table of all the registered custom modules, if any\n     pub fn get_custom_modules(&self) -> Option<&toml::value::Table> {\n         self.get_config(&[\"custom\"])?.as_table()\n     }\n     /// Get the table of all the registered env_var modules, if any\n-    pub fn get_env_var_modules(&self) -> Option<&toml::value::Table> {\n-        self.get_config(&[\"env_var\"])?.as_table()\n+    pub fn get_env_var_modules(&self) -> Option<toml::value::Table> {\n+        let config_table = self.get_config(&[\"env_var\"])?.as_table()?;\n+\n+        // Old configuration is present in starship configuration",
+    "path": "src/config.rs",
+    "commit_id": "bec7237b9ea3d97706b510541db16baece646fd4",
+    "original_commit_id": "5ebf0b7563a9e617a7791b1d53b2c2ebc6059044",
+    "user": {
+      "login": "segevfiner",
+      "id": 24731903,
+      "node_id": "MDQ6VXNlcjI0NzMxOTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24731903?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/segevfiner",
+      "html_url": "https://github.com/segevfiner",
+      "followers_url": "https://api.github.com/users/segevfiner/followers",
+      "following_url": "https://api.github.com/users/segevfiner/following{/other_user}",
+      "gists_url": "https://api.github.com/users/segevfiner/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/segevfiner/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/segevfiner/subscriptions",
+      "organizations_url": "https://api.github.com/users/segevfiner/orgs",
+      "repos_url": "https://api.github.com/users/segevfiner/repos",
+      "events_url": "https://api.github.com/users/segevfiner/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/segevfiner/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This basically transforms:\r\n```\r\n{\"env_var\": ...}\r\n```\r\nTo:\r\n```\r\n{\"\": {\"env_var\"}}\r\n```\r\n\r\nNot sure if this is the best way to handle this.",
+    "created_at": "2022-01-01T16:10:59Z",
+    "updated_at": "2022-01-01T16:32:42Z",
+    "html_url": "https://github.com/starship/starship/pull/3375#discussion_r777119582",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3375",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/777119582"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3375#discussion_r777119582"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3375"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/777119582/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 372,
+    "original_line": 372,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 32,
+    "position": 32,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/777119675",
+    "pull_request_review_id": 842345477,
+    "id": 777119675,
+    "node_id": "PRRC_kwDOCqswNs4uUee7",
+    "diff_hunk": "@@ -23,6 +24,7 @@ impl<'a> Default for EnvVarConfig<'a> {\n             variable: None,\n             default: None,\n             format: \"with [$env_value]($style) \",\n+            description: \"<env_var module>\",",
+    "path": "src/configs/env_var.rs",
+    "commit_id": "bec7237b9ea3d97706b510541db16baece646fd4",
+    "original_commit_id": "5ebf0b7563a9e617a7791b1d53b2c2ebc6059044",
+    "user": {
+      "login": "segevfiner",
+      "id": 24731903,
+      "node_id": "MDQ6VXNlcjI0NzMxOTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24731903?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/segevfiner",
+      "html_url": "https://github.com/segevfiner",
+      "followers_url": "https://api.github.com/users/segevfiner/followers",
+      "following_url": "https://api.github.com/users/segevfiner/following{/other_user}",
+      "gists_url": "https://api.github.com/users/segevfiner/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/segevfiner/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/segevfiner/subscriptions",
+      "organizations_url": "https://api.github.com/users/segevfiner/orgs",
+      "repos_url": "https://api.github.com/users/segevfiner/repos",
+      "events_url": "https://api.github.com/users/segevfiner/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/segevfiner/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Is this good? There is still also the previously used static description. Technically we could try generating a better one if the description is unset since unlike a custom module, we do know the variable name unlike an arbitrary shell command, for example to print something more descriptive.",
+    "created_at": "2022-01-01T16:12:01Z",
+    "updated_at": "2022-01-01T16:32:42Z",
+    "html_url": "https://github.com/starship/starship/pull/3375#discussion_r777119675",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3375",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/777119675"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3375#discussion_r777119675"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3375"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/777119675/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 27,
+    "original_line": 27,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 12,
+    "position": 12,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/777119757",
+    "pull_request_review_id": 842345477,
+    "id": 777119757,
+    "node_id": "PRRC_kwDOCqswNs4uUegN",
+    "diff_hunk": "@@ -142,7 +142,13 @@ pub fn module(module_name: &str, args: ArgMatches) {\n }\n \n pub fn get_module(module_name: &str, context: Context) -> Option<String> {\n-    modules::handle(module_name, &context).map(|m| m.to_string())\n+    Some(",
+    "path": "src/print.rs",
+    "commit_id": "bec7237b9ea3d97706b510541db16baece646fd4",
+    "original_commit_id": "5ebf0b7563a9e617a7791b1d53b2c2ebc6059044",
+    "user": {
+      "login": "segevfiner",
+      "id": 24731903,
+      "node_id": "MDQ6VXNlcjI0NzMxOTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24731903?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/segevfiner",
+      "html_url": "https://github.com/segevfiner",
+      "followers_url": "https://api.github.com/users/segevfiner/followers",
+      "following_url": "https://api.github.com/users/segevfiner/following{/other_user}",
+      "gists_url": "https://api.github.com/users/segevfiner/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/segevfiner/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/segevfiner/subscriptions",
+      "organizations_url": "https://api.github.com/users/segevfiner/orgs",
+      "repos_url": "https://api.github.com/users/segevfiner/repos",
+      "events_url": "https://api.github.com/users/segevfiner/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/segevfiner/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "<img src=\"https://user-images.githubusercontent.com/24731903/147854851-f9322f70-4e48-45ac-ae93-2ea29ffa0a28.png\" alt=\"image\" width=\"200\" style=\"max-width: 100%\">\r\n\r\n`get_module` used to call `modules::handle` but the handling for `custom`/`env_var` is only in `handle_prompt`, which caused tests using `ModuleRenderer` to fail. So I made a hack to have it go through `handle_prompt` but there might be a cleaner way.\r\n\r\nChanging it here might also make it work with the `module` subcommand.\r\n\r\nBut still, this feels like a hack... With the whole recursion thing going on and the join...",
+    "created_at": "2022-01-01T16:13:43Z",
+    "updated_at": "2022-01-02T09:38:18Z",
+    "html_url": "https://github.com/starship/starship/pull/3375#discussion_r777119757",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3375",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/777119757"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3375#discussion_r777119757"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3375"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/777119757/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 144,
+    "original_line": 145,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 5,
+    "position": 5,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/777119932",
+    "pull_request_review_id": 842345477,
+    "id": 777119932,
+    "node_id": "PRRC_kwDOCqswNs4uUei8",
+    "diff_hunk": "@@ -142,7 +142,13 @@ pub fn module(module_name: &str, args: ArgMatches) {\n }\n \n pub fn get_module(module_name: &str, context: Context) -> Option<String> {\n-    modules::handle(module_name, &context).map(|m| m.to_string())\n+    Some(\n+        handle_module(module_name, &context, &BTreeSet::new())\n+            .iter()\n+            .map(|m| m.to_string())\n+            .collect::<Vec<String>>()",
+    "path": "src/print.rs",
+    "commit_id": "bec7237b9ea3d97706b510541db16baece646fd4",
+    "original_commit_id": "5ebf0b7563a9e617a7791b1d53b2c2ebc6059044",
+    "user": {
+      "login": "segevfiner",
+      "id": 24731903,
+      "node_id": "MDQ6VXNlcjI0NzMxOTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24731903?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/segevfiner",
+      "html_url": "https://github.com/segevfiner",
+      "followers_url": "https://api.github.com/users/segevfiner/followers",
+      "following_url": "https://api.github.com/users/segevfiner/following{/other_user}",
+      "gists_url": "https://api.github.com/users/segevfiner/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/segevfiner/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/segevfiner/subscriptions",
+      "organizations_url": "https://api.github.com/users/segevfiner/orgs",
+      "repos_url": "https://api.github.com/users/segevfiner/repos",
+      "events_url": "https://api.github.com/users/segevfiner/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/segevfiner/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This allocated a Vec that we immediately drop after joining, it doesn't seem like there is a way in std to join an `Iterator` of `String`.",
+    "created_at": "2022-01-01T16:16:24Z",
+    "updated_at": "2022-01-01T16:32:42Z",
+    "html_url": "https://github.com/starship/starship/pull/3375#discussion_r777119932",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3375",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/777119932"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3375#discussion_r777119932"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3375"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/777119932/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 148,
+    "original_line": 149,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 9,
+    "position": 9,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/777120015",
+    "pull_request_review_id": 842345477,
+    "id": 777120015,
+    "node_id": "PRRC_kwDOCqswNs4uUekP",
+    "diff_hunk": "@@ -389,6 +433,28 @@ fn should_add_implicit_custom_module(\n         .unwrap_or(false)\n }\n \n+fn should_add_implicit_env_var_module(",
+    "path": "src/print.rs",
+    "commit_id": "bec7237b9ea3d97706b510541db16baece646fd4",
+    "original_commit_id": "5ebf0b7563a9e617a7791b1d53b2c2ebc6059044",
+    "user": {
+      "login": "segevfiner",
+      "id": 24731903,
+      "node_id": "MDQ6VXNlcjI0NzMxOTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24731903?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/segevfiner",
+      "html_url": "https://github.com/segevfiner",
+      "followers_url": "https://api.github.com/users/segevfiner/followers",
+      "following_url": "https://api.github.com/users/segevfiner/following{/other_user}",
+      "gists_url": "https://api.github.com/users/segevfiner/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/segevfiner/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/segevfiner/subscriptions",
+      "organizations_url": "https://api.github.com/users/segevfiner/orgs",
+      "repos_url": "https://api.github.com/users/segevfiner/repos",
+      "events_url": "https://api.github.com/users/segevfiner/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/segevfiner/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "As you might have noticed, there is a bit of code duplication from the `custom` module, should another module with this behavior be added, we might want to consider refactoring, or maybe even refactor some/all of it now, though it was complicated enough getting it to work as it is.",
+    "created_at": "2022-01-01T16:17:29Z",
+    "updated_at": "2022-01-01T16:34:17Z",
+    "html_url": "https://github.com/starship/starship/pull/3375#discussion_r777120015",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3375",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/777120015"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3375#discussion_r777120015"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3375"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/777120015/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 435,
+    "original_line": 436,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 78,
+    "position": 78,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/777120974",
+    "pull_request_review_id": 842345477,
+    "id": 777120974,
+    "node_id": "PRRC_kwDOCqswNs4uUezO",
+    "diff_hunk": "@@ -253,6 +223,21 @@ mod test {\n         assert_eq!(expected, actual);\n     }\n \n+    #[test]\n+    fn display_single_with_multiple_defined() {",
+    "path": "src/modules/env_var.rs",
+    "commit_id": "bec7237b9ea3d97706b510541db16baece646fd4",
+    "original_commit_id": "33d1c1a83b5a285413e38cd3aaee6e9e35b043bc",
+    "user": {
+      "login": "segevfiner",
+      "id": 24731903,
+      "node_id": "MDQ6VXNlcjI0NzMxOTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24731903?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/segevfiner",
+      "html_url": "https://github.com/segevfiner",
+      "followers_url": "https://api.github.com/users/segevfiner/followers",
+      "following_url": "https://api.github.com/users/segevfiner/following{/other_user}",
+      "gists_url": "https://api.github.com/users/segevfiner/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/segevfiner/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/segevfiner/subscriptions",
+      "organizations_url": "https://api.github.com/users/segevfiner/orgs",
+      "repos_url": "https://api.github.com/users/segevfiner/repos",
+      "events_url": "https://api.github.com/users/segevfiner/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/segevfiner/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "We probably also want a test that tests this using the top-level `format` key. Is there any similar kind of test somewhere?",
+    "created_at": "2022-01-01T16:32:01Z",
+    "updated_at": "2022-01-01T16:32:42Z",
+    "html_url": "https://github.com/starship/starship/pull/3375#discussion_r777120974",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3375",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/777120974"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3375#discussion_r777120974"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3375"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/777120974/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 227,
+    "original_line": 227,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 81,
+    "position": 81,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/840606571",
+    "pull_request_review_id": 928959963,
+    "id": 840606571,
+    "node_id": "PRRC_kwDOCqswNs4yGqNr",
+    "diff_hunk": "@@ -343,13 +343,40 @@ impl StarshipConfig {\n         module_config\n     }\n \n+    /// Get the subset of the table for a env_var module by its name\n+    pub fn get_env_var_module_config(&self, module_name: &str) -> Option<&Value> {\n+        let config_path = if !module_name.is_empty() {\n+            vec![\"env_var\", module_name]\n+        } else {\n+            vec![\"env_var\"]\n+        };\n+        let module_config = self.get_config(&config_path);\n+        if module_config.is_some() {\n+            log::debug!(\n+                \"env_var config found for \\\"{}\\\": {:?}\",\n+                &module_name,\n+                &module_config\n+            );\n+        }\n+        module_config\n+    }\n+\n     /// Get the table of all the registered custom modules, if any\n     pub fn get_custom_modules(&self) -> Option<&toml::value::Table> {\n         self.get_config(&[\"custom\"])?.as_table()\n     }\n     /// Get the table of all the registered env_var modules, if any\n-    pub fn get_env_var_modules(&self) -> Option<&toml::value::Table> {\n-        self.get_config(&[\"env_var\"])?.as_table()\n+    pub fn get_env_var_modules(&self) -> Option<toml::value::Table> {\n+        let config_table = self.get_config(&[\"env_var\"])?.as_table()?;\n+\n+        // Old configuration is present in starship configuration",
+    "path": "src/config.rs",
+    "commit_id": "bec7237b9ea3d97706b510541db16baece646fd4",
+    "original_commit_id": "5ebf0b7563a9e617a7791b1d53b2c2ebc6059044",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think it makes sense to remove support for old-style env var modules outright and include this PR in the next breaking change. Also, I feel like all the error messages might be broken for the old module style with your changes.",
+    "created_at": "2022-04-01T13:51:35Z",
+    "updated_at": "2022-04-01T15:08:52Z",
+    "html_url": "https://github.com/starship/starship/pull/3375#discussion_r840606571",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3375",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/840606571"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3375#discussion_r840606571"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3375"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/840606571/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 372,
+    "original_line": 372,
+    "side": "RIGHT",
+    "in_reply_to_id": 777119582,
+    "author_association": "MEMBER",
+    "original_position": 32,
+    "position": 32,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/840606848",
+    "pull_request_review_id": 928959963,
+    "id": 840606848,
+    "node_id": "PRRC_kwDOCqswNs4yGqSA",
+    "diff_hunk": "@@ -23,6 +24,7 @@ impl<'a> Default for EnvVarConfig<'a> {\n             variable: None,\n             default: None,\n             format: \"with [$env_value]($style) \",\n+            description: \"<env_var module>\",",
+    "path": "src/configs/env_var.rs",
+    "commit_id": "bec7237b9ea3d97706b510541db16baece646fd4",
+    "original_commit_id": "5ebf0b7563a9e617a7791b1d53b2c2ebc6059044",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It's fine!",
+    "created_at": "2022-04-01T13:51:53Z",
+    "updated_at": "2022-04-01T15:08:52Z",
+    "html_url": "https://github.com/starship/starship/pull/3375#discussion_r840606848",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3375",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/840606848"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3375#discussion_r840606848"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3375"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/840606848/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 27,
+    "original_line": 27,
+    "side": "RIGHT",
+    "in_reply_to_id": 777119675,
+    "author_association": "MEMBER",
+    "original_position": 12,
+    "position": 12,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/840608699",
+    "pull_request_review_id": 928959963,
+    "id": 840608699,
+    "node_id": "PRRC_kwDOCqswNs4yGqu7",
+    "diff_hunk": "@@ -253,6 +223,21 @@ mod test {\n         assert_eq!(expected, actual);\n     }\n \n+    #[test]\n+    fn display_single_with_multiple_defined() {",
+    "path": "src/modules/env_var.rs",
+    "commit_id": "bec7237b9ea3d97706b510541db16baece646fd4",
+    "original_commit_id": "33d1c1a83b5a285413e38cd3aaee6e9e35b043bc",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I don't think there's a test like that. Maybe add something in `print.rs`?",
+    "created_at": "2022-04-01T13:53:50Z",
+    "updated_at": "2022-04-01T15:08:52Z",
+    "html_url": "https://github.com/starship/starship/pull/3375#discussion_r840608699",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3375",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/840608699"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3375#discussion_r840608699"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3375"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/840608699/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 227,
+    "original_line": 227,
+    "side": "RIGHT",
+    "in_reply_to_id": 777120974,
+    "author_association": "MEMBER",
+    "original_position": 81,
+    "position": 81,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/840610178",
+    "pull_request_review_id": 928959963,
+    "id": 840610178,
+    "node_id": "PRRC_kwDOCqswNs4yGrGC",
+    "diff_hunk": "@@ -142,7 +142,13 @@ pub fn module(module_name: &str, args: ArgMatches) {\n }\n \n pub fn get_module(module_name: &str, context: Context) -> Option<String> {\n-    modules::handle(module_name, &context).map(|m| m.to_string())\n+    Some(",
+    "path": "src/print.rs",
+    "commit_id": "bec7237b9ea3d97706b510541db16baece646fd4",
+    "original_commit_id": "5ebf0b7563a9e617a7791b1d53b2c2ebc6059044",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "If this always returns `Some`, just skip the `Option<_>`. As an alternative approach, I would prefer something like this: https://github.com/starship/starship/blob/da7336585103619861c9943e84ca8bfccb3f400e/src/modules/mod.rs#L164-L169",
+    "created_at": "2022-04-01T13:55:22Z",
+    "updated_at": "2022-04-01T15:08:52Z",
+    "html_url": "https://github.com/starship/starship/pull/3375#discussion_r840610178",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3375",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/840610178"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3375#discussion_r840610178"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3375"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/840610178/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 144,
+    "original_line": 145,
+    "side": "RIGHT",
+    "in_reply_to_id": 777119757,
+    "author_association": "MEMBER",
+    "original_position": 5,
+    "position": 5,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/840613455",
+    "pull_request_review_id": 928959963,
+    "id": 840613455,
+    "node_id": "PRRC_kwDOCqswNs4yGr5P",
+    "diff_hunk": "@@ -142,7 +142,13 @@ pub fn module(module_name: &str, args: ArgMatches) {\n }\n \n pub fn get_module(module_name: &str, context: Context) -> Option<String> {\n-    modules::handle(module_name, &context).map(|m| m.to_string())\n+    Some(\n+        handle_module(module_name, &context, &BTreeSet::new())\n+            .iter()\n+            .map(|m| m.to_string())\n+            .collect::<Vec<String>>()",
+    "path": "src/print.rs",
+    "commit_id": "bec7237b9ea3d97706b510541db16baece646fd4",
+    "original_commit_id": "5ebf0b7563a9e617a7791b1d53b2c2ebc6059044",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think I prefer handling this in `modules::handle`, but `collect::<String>()` should work.",
+    "created_at": "2022-04-01T13:58:43Z",
+    "updated_at": "2022-04-01T15:08:52Z",
+    "html_url": "https://github.com/starship/starship/pull/3375#discussion_r840613455",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3375",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/840613455"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3375#discussion_r840613455"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3375"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/840613455/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 148,
+    "original_line": 149,
+    "side": "RIGHT",
+    "in_reply_to_id": 777119932,
+    "author_association": "MEMBER",
+    "original_position": 9,
+    "position": 9,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/840677195",
+    "pull_request_review_id": 928959963,
+    "id": 840677195,
+    "node_id": "PRRC_kwDOCqswNs4yG7dL",
+    "diff_hunk": "@@ -389,6 +433,28 @@ fn should_add_implicit_custom_module(\n         .unwrap_or(false)\n }\n \n+fn should_add_implicit_env_var_module(",
+    "path": "src/print.rs",
+    "commit_id": "bec7237b9ea3d97706b510541db16baece646fd4",
+    "original_commit_id": "5ebf0b7563a9e617a7791b1d53b2c2ebc6059044",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Shouldn't it be possible to make this particular function work for both by using `let explicit_module_name = format!(\"{parent_module}.{child_module}\");`?",
+    "created_at": "2022-04-01T15:04:10Z",
+    "updated_at": "2022-04-01T15:08:52Z",
+    "html_url": "https://github.com/starship/starship/pull/3375#discussion_r840677195",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3375",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/840677195"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3375#discussion_r840677195"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3375"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/840677195/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 435,
+    "original_line": 436,
+    "side": "RIGHT",
+    "in_reply_to_id": 777120015,
+    "author_association": "MEMBER",
+    "original_position": 78,
+    "position": 78,
+    "subject_type": "line"
+  }
+]

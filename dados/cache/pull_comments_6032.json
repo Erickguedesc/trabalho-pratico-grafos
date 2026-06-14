@@ -1,0 +1,767 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1635165251",
+    "pull_request_review_id": 2110926540,
+    "id": 1635165251,
+    "node_id": "PRRC_kwDOCqswNs5hdqRD",
+    "diff_hunk": "@@ -17,50 +17,65 @@ struct KubeCtxComponents {\n     cluster: Option<String>,\n }\n \n-fn get_current_kube_context_name(filename: path::PathBuf) -> Option<String> {\n-    let contents = utils::read_file(filename).ok()?;\n-\n-    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n-    let conf = yaml_docs.first()?;\n-    conf[\"current-context\"]\n-        .as_str()\n-        .filter(|s| !s.is_empty())\n-        .map(String::from)\n-}\n-\n-fn get_kube_ctx_components(\n-    filename: path::PathBuf,\n-    current_ctx_name: &str,\n-) -> Option<KubeCtxComponents> {\n-    let contents = utils::read_file(filename).ok()?;\n-\n-    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n-    let conf = yaml_docs.first()?;\n-    let contexts = conf[\"contexts\"].as_vec()?;\n-\n-    // Find the context with the name we're looking for\n-    // or return None if we can't find it\n-    let (ctx_yaml, _) = contexts\n-        .iter()\n-        .filter_map(|ctx| Some((ctx, ctx[\"name\"].as_str()?)))\n-        .find(|(_, name)| name == &current_ctx_name)?;\n-\n-    let ctx_components = KubeCtxComponents {\n-        user: ctx_yaml[\"context\"][\"user\"]\n-            .as_str()\n-            .filter(|s| !s.is_empty())\n-            .map(String::from),\n-        namespace: ctx_yaml[\"context\"][\"namespace\"]\n-            .as_str()\n+fn get_current_kube_context_name(document: &JsonOrYaml) -> Option<String> {",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "789c5eb6da4df1c3be71faba1c1b9a2d9cf8c3d2",
+    "original_commit_id": "461f9315f875fd2ddb2f0eabee0dbaed0bbe8856",
+    "user": {
+      "login": "alexpovel",
+      "id": 48824213,
+      "node_id": "MDQ6VXNlcjQ4ODI0MjEz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48824213?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/alexpovel",
+      "html_url": "https://github.com/alexpovel",
+      "followers_url": "https://api.github.com/users/alexpovel/followers",
+      "following_url": "https://api.github.com/users/alexpovel/following{/other_user}",
+      "gists_url": "https://api.github.com/users/alexpovel/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/alexpovel/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/alexpovel/subscriptions",
+      "organizations_url": "https://api.github.com/users/alexpovel/orgs",
+      "repos_url": "https://api.github.com/users/alexpovel/repos",
+      "events_url": "https://api.github.com/users/alexpovel/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/alexpovel/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\nfn get_current_kube_context_name(document: &JsonOrYaml) -> Option<&str> {\r\n```\r\n\r\nThis avoids cloning, and thanks to lifetime elision, there's no need to specify lifetime annotations (Rust infers that the return value borrows from `document`, as there's no other option). The function return value seems to be used in places where read-only access/`&str` suffices (except for one place, where you then need to clone).\r\n\r\nSo this change doesn't improve performance in the sense of avoiding clones (before: 1, after: 1), but it's neat to lean on the side of 'least capability necessary'. The effect would start kicking in if this function were called more than once.",
+    "created_at": "2024-06-11T16:21:39Z",
+    "updated_at": "2024-06-11T17:05:54Z",
+    "html_url": "https://github.com/starship/starship/pull/6032#discussion_r1635165251",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6032",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1635165251"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6032#discussion_r1635165251"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6032"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1635165251/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 20,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 50,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1635177514",
+    "pull_request_review_id": 2110926540,
+    "id": 1635177514,
+    "node_id": "PRRC_kwDOCqswNs5hdtQq",
+    "diff_hunk": "@@ -97,6 +112,11 @@ fn get_aliased_name<'a>(\n     }\n }\n \n+enum JsonOrYaml {\n+    Json(JsonValue),\n+    Yaml(Yaml),\n+}",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "789c5eb6da4df1c3be71faba1c1b9a2d9cf8c3d2",
+    "original_commit_id": "461f9315f875fd2ddb2f0eabee0dbaed0bbe8856",
+    "user": {
+      "login": "alexpovel",
+      "id": 48824213,
+      "node_id": "MDQ6VXNlcjQ4ODI0MjEz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48824213?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/alexpovel",
+      "html_url": "https://github.com/alexpovel",
+      "followers_url": "https://api.github.com/users/alexpovel/followers",
+      "following_url": "https://api.github.com/users/alexpovel/following{/other_user}",
+      "gists_url": "https://api.github.com/users/alexpovel/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/alexpovel/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/alexpovel/subscriptions",
+      "organizations_url": "https://api.github.com/users/alexpovel/orgs",
+      "repos_url": "https://api.github.com/users/alexpovel/repos",
+      "events_url": "https://api.github.com/users/alexpovel/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/alexpovel/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n#[derive(Debug, Clone)]\r\nenum Document {\r\n    Json(JsonValue),\r\n    Yaml(Yaml),\r\n}\r\n```\r\n\r\n- `AorB` is not a great abstraction, I feel like `Document` is a better name; the variable bound to this value is often called `document` in this file as well, makes sense!\r\n- it's good practice to derive the most common traits. Downstream crates wouldn't be able to otherwise. `Debug` is important for a baseline string representation (for logging, ...). Cloning is convenient. More is possible, but better to implement as-needed (this is subjective). More context: https://rust-lang.github.io/api-guidelines/interoperability.html#types-eagerly-implement-common-traits-c-common-traits (that book is a great resource anyway)",
+    "created_at": "2024-06-11T16:31:21Z",
+    "updated_at": "2024-06-11T17:04:59Z",
+    "html_url": "https://github.com/starship/starship/pull/6032#discussion_r1635177514",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6032",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1635177514"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6032#discussion_r1635177514"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6032"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1635177514/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 115,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 93,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 122,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1635212660",
+    "pull_request_review_id": 2110926540,
+    "id": 1635212660,
+    "node_id": "PRRC_kwDOCqswNs5hd110",
+    "diff_hunk": "@@ -17,50 +17,65 @@ struct KubeCtxComponents {\n     cluster: Option<String>,\n }\n \n-fn get_current_kube_context_name(filename: path::PathBuf) -> Option<String> {\n-    let contents = utils::read_file(filename).ok()?;\n-\n-    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n-    let conf = yaml_docs.first()?;\n-    conf[\"current-context\"]\n-        .as_str()\n-        .filter(|s| !s.is_empty())\n-        .map(String::from)\n-}\n-\n-fn get_kube_ctx_components(\n-    filename: path::PathBuf,\n-    current_ctx_name: &str,\n-) -> Option<KubeCtxComponents> {\n-    let contents = utils::read_file(filename).ok()?;\n-\n-    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n-    let conf = yaml_docs.first()?;\n-    let contexts = conf[\"contexts\"].as_vec()?;\n-\n-    // Find the context with the name we're looking for\n-    // or return None if we can't find it\n-    let (ctx_yaml, _) = contexts\n-        .iter()\n-        .filter_map(|ctx| Some((ctx, ctx[\"name\"].as_str()?)))\n-        .find(|(_, name)| name == &current_ctx_name)?;\n-\n-    let ctx_components = KubeCtxComponents {\n-        user: ctx_yaml[\"context\"][\"user\"]\n-            .as_str()\n-            .filter(|s| !s.is_empty())\n-            .map(String::from),\n-        namespace: ctx_yaml[\"context\"][\"namespace\"]\n-            .as_str()\n+fn get_current_kube_context_name(document: &JsonOrYaml) -> Option<String> {\n+    match document {\n+        JsonOrYaml::Json(json) => json\n+            .get(\"current-context\")\n+            .and_then(JsonValue::as_str)\n             .filter(|s| !s.is_empty())\n             .map(String::from),\n-        cluster: ctx_yaml[\"context\"][\"cluster\"]\n+        JsonOrYaml::Yaml(yaml) => yaml[\"current-context\"]\n             .as_str()\n             .filter(|s| !s.is_empty())\n             .map(String::from),\n-    };\n+    }\n+}\n \n-    Some(ctx_components)\n+fn get_kube_ctx_components(\n+    document: &JsonOrYaml,\n+    current_ctx_name: &str,\n+) -> Option<KubeCtxComponents> {",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "789c5eb6da4df1c3be71faba1c1b9a2d9cf8c3d2",
+    "original_commit_id": "461f9315f875fd2ddb2f0eabee0dbaed0bbe8856",
+    "user": {
+      "login": "alexpovel",
+      "id": 48824213,
+      "node_id": "MDQ6VXNlcjQ4ODI0MjEz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48824213?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/alexpovel",
+      "html_url": "https://github.com/alexpovel",
+      "followers_url": "https://api.github.com/users/alexpovel/followers",
+      "following_url": "https://api.github.com/users/alexpovel/following{/other_user}",
+      "gists_url": "https://api.github.com/users/alexpovel/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/alexpovel/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/alexpovel/subscriptions",
+      "organizations_url": "https://api.github.com/users/alexpovel/orgs",
+      "repos_url": "https://api.github.com/users/alexpovel/repos",
+      "events_url": "https://api.github.com/users/alexpovel/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/alexpovel/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This is also a great candidate for borrowing. Something along the lines of... (just as an example)\r\n\r\n```suggestion\r\nfn get_kube_ctx_components<'doc>(\r\n    document: &'doc Document,\r\n    current_ctx_name: &str,\r\n) -> Option<KubeCtxComponents<'doc>> {\r\n```\r\n\r\nwith something like\r\n\r\n```rust\r\n#[derive(Default)]\r\nstruct KubeCtxComponents<'doc> {\r\n    user: Option<&'doc str>,\r\n    namespace: Option<&'doc str>,\r\n    cluster: Option<&'doc str>,\r\n}\r\n```\r\n\r\nThis:\r\n\r\n- gets rid of clones (`String::from`)\r\n- is unlikely to improve performance in meaningful ways, while complicating (== adding more constraints to) the code... but if this PR is about performance, why not give it a shot...\r\n- might not work (depending on how this change affects other parts of the code)",
+    "created_at": "2024-06-11T16:58:44Z",
+    "updated_at": "2024-06-11T17:04:59Z",
+    "html_url": "https://github.com/starship/starship/pull/6032#discussion_r1635212660",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6032",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1635212660"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6032#discussion_r1635212660"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6032"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1635212660/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 34,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 30,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 70,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1635651553",
+    "pull_request_review_id": 2111704813,
+    "id": 1635651553,
+    "node_id": "PRRC_kwDOCqswNs5hfg_h",
+    "diff_hunk": "@@ -97,6 +112,11 @@ fn get_aliased_name<'a>(\n     }\n }\n \n+enum JsonOrYaml {\n+    Json(JsonValue),\n+    Yaml(Yaml),\n+}",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "789c5eb6da4df1c3be71faba1c1b9a2d9cf8c3d2",
+    "original_commit_id": "461f9315f875fd2ddb2f0eabee0dbaed0bbe8856",
+    "user": {
+      "login": "alvaroaleman",
+      "id": 6496100,
+      "node_id": "MDQ6VXNlcjY0OTYxMDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6496100?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/alvaroaleman",
+      "html_url": "https://github.com/alvaroaleman",
+      "followers_url": "https://api.github.com/users/alvaroaleman/followers",
+      "following_url": "https://api.github.com/users/alvaroaleman/following{/other_user}",
+      "gists_url": "https://api.github.com/users/alvaroaleman/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/alvaroaleman/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/alvaroaleman/subscriptions",
+      "organizations_url": "https://api.github.com/users/alvaroaleman/orgs",
+      "repos_url": "https://api.github.com/users/alvaroaleman/repos",
+      "events_url": "https://api.github.com/users/alvaroaleman/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/alvaroaleman/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Done",
+    "created_at": "2024-06-12T01:07:38Z",
+    "updated_at": "2024-06-12T01:07:38Z",
+    "html_url": "https://github.com/starship/starship/pull/6032#discussion_r1635651553",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6032",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1635651553"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6032#discussion_r1635651553"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6032"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1635651553/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 115,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 93,
+    "side": "RIGHT",
+    "in_reply_to_id": 1635177514,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 122,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1635651645",
+    "pull_request_review_id": 2111704948,
+    "id": 1635651645,
+    "node_id": "PRRC_kwDOCqswNs5hfhA9",
+    "diff_hunk": "@@ -17,50 +17,65 @@ struct KubeCtxComponents {\n     cluster: Option<String>,\n }\n \n-fn get_current_kube_context_name(filename: path::PathBuf) -> Option<String> {\n-    let contents = utils::read_file(filename).ok()?;\n-\n-    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n-    let conf = yaml_docs.first()?;\n-    conf[\"current-context\"]\n-        .as_str()\n-        .filter(|s| !s.is_empty())\n-        .map(String::from)\n-}\n-\n-fn get_kube_ctx_components(\n-    filename: path::PathBuf,\n-    current_ctx_name: &str,\n-) -> Option<KubeCtxComponents> {\n-    let contents = utils::read_file(filename).ok()?;\n-\n-    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n-    let conf = yaml_docs.first()?;\n-    let contexts = conf[\"contexts\"].as_vec()?;\n-\n-    // Find the context with the name we're looking for\n-    // or return None if we can't find it\n-    let (ctx_yaml, _) = contexts\n-        .iter()\n-        .filter_map(|ctx| Some((ctx, ctx[\"name\"].as_str()?)))\n-        .find(|(_, name)| name == &current_ctx_name)?;\n-\n-    let ctx_components = KubeCtxComponents {\n-        user: ctx_yaml[\"context\"][\"user\"]\n-            .as_str()\n-            .filter(|s| !s.is_empty())\n-            .map(String::from),\n-        namespace: ctx_yaml[\"context\"][\"namespace\"]\n-            .as_str()\n+fn get_current_kube_context_name(document: &JsonOrYaml) -> Option<String> {",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "789c5eb6da4df1c3be71faba1c1b9a2d9cf8c3d2",
+    "original_commit_id": "461f9315f875fd2ddb2f0eabee0dbaed0bbe8856",
+    "user": {
+      "login": "alvaroaleman",
+      "id": 6496100,
+      "node_id": "MDQ6VXNlcjY0OTYxMDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6496100?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/alvaroaleman",
+      "html_url": "https://github.com/alvaroaleman",
+      "followers_url": "https://api.github.com/users/alvaroaleman/followers",
+      "following_url": "https://api.github.com/users/alvaroaleman/following{/other_user}",
+      "gists_url": "https://api.github.com/users/alvaroaleman/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/alvaroaleman/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/alvaroaleman/subscriptions",
+      "organizations_url": "https://api.github.com/users/alvaroaleman/orgs",
+      "repos_url": "https://api.github.com/users/alvaroaleman/repos",
+      "events_url": "https://api.github.com/users/alvaroaleman/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/alvaroaleman/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Done",
+    "created_at": "2024-06-12T01:07:49Z",
+    "updated_at": "2024-06-12T01:07:49Z",
+    "html_url": "https://github.com/starship/starship/pull/6032#discussion_r1635651645",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6032",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1635651645"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6032#discussion_r1635651645"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6032"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1635651645/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 20,
+    "side": "RIGHT",
+    "in_reply_to_id": 1635165251,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 50,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1635651883",
+    "pull_request_review_id": 2111705281,
+    "id": 1635651883,
+    "node_id": "PRRC_kwDOCqswNs5hfhEr",
+    "diff_hunk": "@@ -17,50 +17,65 @@ struct KubeCtxComponents {\n     cluster: Option<String>,\n }\n \n-fn get_current_kube_context_name(filename: path::PathBuf) -> Option<String> {\n-    let contents = utils::read_file(filename).ok()?;\n-\n-    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n-    let conf = yaml_docs.first()?;\n-    conf[\"current-context\"]\n-        .as_str()\n-        .filter(|s| !s.is_empty())\n-        .map(String::from)\n-}\n-\n-fn get_kube_ctx_components(\n-    filename: path::PathBuf,\n-    current_ctx_name: &str,\n-) -> Option<KubeCtxComponents> {\n-    let contents = utils::read_file(filename).ok()?;\n-\n-    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n-    let conf = yaml_docs.first()?;\n-    let contexts = conf[\"contexts\"].as_vec()?;\n-\n-    // Find the context with the name we're looking for\n-    // or return None if we can't find it\n-    let (ctx_yaml, _) = contexts\n-        .iter()\n-        .filter_map(|ctx| Some((ctx, ctx[\"name\"].as_str()?)))\n-        .find(|(_, name)| name == &current_ctx_name)?;\n-\n-    let ctx_components = KubeCtxComponents {\n-        user: ctx_yaml[\"context\"][\"user\"]\n-            .as_str()\n-            .filter(|s| !s.is_empty())\n-            .map(String::from),\n-        namespace: ctx_yaml[\"context\"][\"namespace\"]\n-            .as_str()\n+fn get_current_kube_context_name(document: &JsonOrYaml) -> Option<String> {\n+    match document {\n+        JsonOrYaml::Json(json) => json\n+            .get(\"current-context\")\n+            .and_then(JsonValue::as_str)\n             .filter(|s| !s.is_empty())\n             .map(String::from),\n-        cluster: ctx_yaml[\"context\"][\"cluster\"]\n+        JsonOrYaml::Yaml(yaml) => yaml[\"current-context\"]\n             .as_str()\n             .filter(|s| !s.is_empty())\n             .map(String::from),\n-    };\n+    }\n+}\n \n-    Some(ctx_components)\n+fn get_kube_ctx_components(\n+    document: &JsonOrYaml,\n+    current_ctx_name: &str,\n+) -> Option<KubeCtxComponents> {",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "789c5eb6da4df1c3be71faba1c1b9a2d9cf8c3d2",
+    "original_commit_id": "461f9315f875fd2ddb2f0eabee0dbaed0bbe8856",
+    "user": {
+      "login": "alvaroaleman",
+      "id": 6496100,
+      "node_id": "MDQ6VXNlcjY0OTYxMDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6496100?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/alvaroaleman",
+      "html_url": "https://github.com/alvaroaleman",
+      "followers_url": "https://api.github.com/users/alvaroaleman/followers",
+      "following_url": "https://api.github.com/users/alvaroaleman/following{/other_user}",
+      "gists_url": "https://api.github.com/users/alvaroaleman/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/alvaroaleman/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/alvaroaleman/subscriptions",
+      "organizations_url": "https://api.github.com/users/alvaroaleman/orgs",
+      "repos_url": "https://api.github.com/users/alvaroaleman/repos",
+      "events_url": "https://api.github.com/users/alvaroaleman/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/alvaroaleman/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I don't think the tiny, likely not even measurable performance improvement is worth the added complexity",
+    "created_at": "2024-06-12T01:08:17Z",
+    "updated_at": "2024-06-12T01:08:17Z",
+    "html_url": "https://github.com/starship/starship/pull/6032#discussion_r1635651883",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6032",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1635651883"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6032#discussion_r1635651883"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6032"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1635651883/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 34,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 30,
+    "side": "RIGHT",
+    "in_reply_to_id": 1635212660,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 70,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1636980431",
+    "pull_request_review_id": 2114014286,
+    "id": 1636980431,
+    "node_id": "PRRC_kwDOCqswNs5hklbP",
+    "diff_hunk": "@@ -97,6 +108,12 @@ fn get_aliased_name<'a>(\n     }\n }\n \n+#[derive(Debug)]\n+enum Document {",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "789c5eb6da4df1c3be71faba1c1b9a2d9cf8c3d2",
+    "original_commit_id": "0c462816edbac7a675416a08bee071e74b921920",
+    "user": {
+      "login": "jankatins",
+      "id": 890156,
+      "node_id": "MDQ6VXNlcjg5MDE1Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/890156?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jankatins",
+      "html_url": "https://github.com/jankatins",
+      "followers_url": "https://api.github.com/users/jankatins/followers",
+      "following_url": "https://api.github.com/users/jankatins/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jankatins/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jankatins/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jankatins/subscriptions",
+      "organizations_url": "https://api.github.com/users/jankatins/orgs",
+      "repos_url": "https://api.github.com/users/jankatins/repos",
+      "events_url": "https://api.github.com/users/jankatins/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jankatins/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'm not really happy that this ends up in two different codepath everywhere, just to get a bit more speed in an edge case (That's at least how I perceive this: how often do you have such big kube configs?) :-(\r\n\r\nPersonally, I would also have expected to get a common data structure from both parser.\r\n\r\nIf this is acceptable, then I would expect an explanation in the code why this solution was chosen, so one does not have to look up the original commits to understand why two different parsers are used, either here where the data structure is defined or in the parser function.",
+    "created_at": "2024-06-12T19:31:31Z",
+    "updated_at": "2024-06-12T19:34:37Z",
+    "html_url": "https://github.com/starship/starship/pull/6032#discussion_r1636980431",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6032",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1636980431"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6032#discussion_r1636980431"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6032"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1636980431/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 90,
+    "original_line": 90,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 117,
+    "position": 94,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1637012352",
+    "pull_request_review_id": 2114109960,
+    "id": 1637012352,
+    "node_id": "PRRC_kwDOCqswNs5hktOA",
+    "diff_hunk": "@@ -97,6 +108,12 @@ fn get_aliased_name<'a>(\n     }\n }\n \n+#[derive(Debug)]\n+enum Document {",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "789c5eb6da4df1c3be71faba1c1b9a2d9cf8c3d2",
+    "original_commit_id": "0c462816edbac7a675416a08bee071e74b921920",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Sadly, the yaml-rust2 crate doesn't support serde yet and serde-yaml is unmaintained, but [there are plans](https://www.github.com/saphyr-rs/saphyr/issues/1) for this at the more actively developed branch of yaml-rust2.\r\n\r\nNevertheless, it might be possible to reduce duplication a bit with `macro_rules!` at least.",
+    "created_at": "2024-06-12T20:03:45Z",
+    "updated_at": "2024-06-12T20:03:45Z",
+    "html_url": "https://github.com/starship/starship/pull/6032#discussion_r1637012352",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6032",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1637012352"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6032#discussion_r1637012352"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6032"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1637012352/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 90,
+    "original_line": 90,
+    "side": "RIGHT",
+    "in_reply_to_id": 1636980431,
+    "author_association": "MEMBER",
+    "original_position": 117,
+    "position": 94,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1637200335",
+    "pull_request_review_id": 2114345926,
+    "id": 1637200335,
+    "node_id": "PRRC_kwDOCqswNs5hlbHP",
+    "diff_hunk": "@@ -97,6 +108,12 @@ fn get_aliased_name<'a>(\n     }\n }\n \n+#[derive(Debug)]\n+enum Document {",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "789c5eb6da4df1c3be71faba1c1b9a2d9cf8c3d2",
+    "original_commit_id": "0c462816edbac7a675416a08bee071e74b921920",
+    "user": {
+      "login": "alvaroaleman",
+      "id": 6496100,
+      "node_id": "MDQ6VXNlcjY0OTYxMDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6496100?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/alvaroaleman",
+      "html_url": "https://github.com/alvaroaleman",
+      "followers_url": "https://api.github.com/users/alvaroaleman/followers",
+      "following_url": "https://api.github.com/users/alvaroaleman/following{/other_user}",
+      "gists_url": "https://api.github.com/users/alvaroaleman/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/alvaroaleman/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/alvaroaleman/subscriptions",
+      "organizations_url": "https://api.github.com/users/alvaroaleman/orgs",
+      "repos_url": "https://api.github.com/users/alvaroaleman/repos",
+      "events_url": "https://api.github.com/users/alvaroaleman/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/alvaroaleman/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I've tried to make this better by using generics to not need to duplicate the logic that finds the relevant fields for the yaml and json case and also left a comment as to why to have the two codepaths.\r\n\r\nI do agree kubeconfigs of this size are unusual but it is not \"a bit\" more speed, its about 77% faster so this makes a really huge difference once you do have such a kubeconfig.",
+    "created_at": "2024-06-12T22:44:09Z",
+    "updated_at": "2024-06-12T22:44:09Z",
+    "html_url": "https://github.com/starship/starship/pull/6032#discussion_r1637200335",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6032",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1637200335"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6032#discussion_r1637200335"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6032"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1637200335/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 90,
+    "original_line": 90,
+    "side": "RIGHT",
+    "in_reply_to_id": 1636980431,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 117,
+    "position": 94,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1637639363",
+    "pull_request_review_id": 2114847257,
+    "id": 1637639363,
+    "node_id": "PRRC_kwDOCqswNs5hnGTD",
+    "diff_hunk": "@@ -239,6 +280,26 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     Some(module)\n }\n \n+fn parse_kubeconfigs<I>(raw_kubeconfigs: I) -> Vec<Document>\n+where\n+    I: Iterator<Item = Option<String>>,\n+{\n+    raw_kubeconfigs\n+        .filter_map(|content| match content {\n+            Some(value) => match value.chars().next() {\n+                // Parsing as json is about an order of magnitude faster than parsing\n+                // as yaml, so do that if possible.\n+                Some('{') => serde_json::from_str(&value).ok().map(Document::Json),",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "789c5eb6da4df1c3be71faba1c1b9a2d9cf8c3d2",
+    "original_commit_id": "f9b9f908a2bed5a8c80980217a6610029825fa73",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I would prefer to fall back to `YamlLoader::load_from_str` if `serde_json::from_str` fails, even if the first character is `{`.",
+    "created_at": "2024-06-13T06:43:58Z",
+    "updated_at": "2024-06-13T06:43:59Z",
+    "html_url": "https://github.com/starship/starship/pull/6032#discussion_r1637639363",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6032",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1637639363"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6032#discussion_r1637639363"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6032"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1637639363/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 292,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 194,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1638866360",
+    "pull_request_review_id": 2116896342,
+    "id": 1638866360,
+    "node_id": "PRRC_kwDOCqswNs5hrx24",
+    "diff_hunk": "@@ -239,6 +280,26 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     Some(module)\n }\n \n+fn parse_kubeconfigs<I>(raw_kubeconfigs: I) -> Vec<Document>\n+where\n+    I: Iterator<Item = Option<String>>,\n+{\n+    raw_kubeconfigs\n+        .filter_map(|content| match content {\n+            Some(value) => match value.chars().next() {\n+                // Parsing as json is about an order of magnitude faster than parsing\n+                // as yaml, so do that if possible.\n+                Some('{') => serde_json::from_str(&value).ok().map(Document::Json),",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "789c5eb6da4df1c3be71faba1c1b9a2d9cf8c3d2",
+    "original_commit_id": "f9b9f908a2bed5a8c80980217a6610029825fa73",
+    "user": {
+      "login": "alvaroaleman",
+      "id": 6496100,
+      "node_id": "MDQ6VXNlcjY0OTYxMDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6496100?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/alvaroaleman",
+      "html_url": "https://github.com/alvaroaleman",
+      "followers_url": "https://api.github.com/users/alvaroaleman/followers",
+      "following_url": "https://api.github.com/users/alvaroaleman/following{/other_user}",
+      "gists_url": "https://api.github.com/users/alvaroaleman/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/alvaroaleman/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/alvaroaleman/subscriptions",
+      "organizations_url": "https://api.github.com/users/alvaroaleman/orgs",
+      "repos_url": "https://api.github.com/users/alvaroaleman/repos",
+      "events_url": "https://api.github.com/users/alvaroaleman/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/alvaroaleman/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Added a fallback and test, ptal",
+    "created_at": "2024-06-13T20:41:32Z",
+    "updated_at": "2024-06-13T20:41:32Z",
+    "html_url": "https://github.com/starship/starship/pull/6032#discussion_r1638866360",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6032",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1638866360"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6032#discussion_r1638866360"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6032"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1638866360/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 292,
+    "side": "RIGHT",
+    "in_reply_to_id": 1637639363,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 194,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

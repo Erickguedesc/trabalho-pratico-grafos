@@ -1,0 +1,140 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/331932766",
+    "pull_request_review_id": 298015403,
+    "id": 331932766,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMTkzMjc2Ng==",
+    "diff_hunk": "@@ -77,14 +78,18 @@ impl<'a> Context<'a> {\n         Module::new(name, config)\n     }\n \n-    /// Check if `disabled` option of the module is true in configuration file.\n-    pub fn is_module_disabled_in_config(&self, name: &str) -> bool {\n+    /// Check the `disabled` configuration of the module\n+    pub fn is_module_enabled(&self, name: &str) -> bool {\n         let config = self.config.get_module_config(name);\n \n-        // If the segment has \"disabled\" set to \"true\", don't show it\n-        let disabled = config.and_then(|table| table.as_table()?.get(\"disabled\")?.as_bool());\n+        // Check the disabled option in the config\n+        let config_disabled = config.and_then(|table| table.as_table()?.get(\"disabled\")?.as_bool());\n \n-        disabled == Some(true)\n+        if let Some(disabled) = config_disabled {\n+            disabled",
+    "path": "src/context.rs",
+    "commit_id": "ca0e643dbdde136f1b8842c4011e366f18a8e490",
+    "original_commit_id": "ca0e643dbdde136f1b8842c4011e366f18a8e490",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This seems inverted to me. When `disabled = true`, we return `true` for `is_module_enabled`",
+    "created_at": "2019-10-07T09:52:00Z",
+    "updated_at": "2019-10-07T09:55:19Z",
+    "html_url": "https://github.com/starship/starship/pull/497#discussion_r331932766",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/497",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/331932766"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/497#discussion_r331932766"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/497"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/331932766/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 89,
+    "original_line": 89,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 23,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/331933111",
+    "pull_request_review_id": 298015403,
+    "id": 331933111,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMTkzMzExMQ==",
+    "diff_hunk": "@@ -59,3 +59,18 @@ impl<'a> RootModuleConfig<'a> for StarshipRootConfig<'a> {\n         }\n     }\n }\n+\n+/// Get the default disabled option in a module by name\n+pub fn is_module_disabled_by_default(name: &str) -> bool {\n+    match name {\n+        \"aws\" => aws::AwsConfig::new().disabled,\n+        \"battery\" => battery::BatteryConfig::new().disabled,\n+        \"character\" => character::CharacterConfig::new().disabled,\n+        \"conda\" => conda::CondaConfig::new().disabled,\n+        \"dotnet\" => dotnet::DotnetConfig::new().disabled,\n+        \"kubernetes\" => kubernetes::KubernetesConfig::new().disabled,\n+        \"rust\" => rust::RustConfig::new().disabled,\n+        \"time\" => time::TimeConfig::new().disabled,\n+        _ => true,",
+    "path": "src/configs/mod.rs",
+    "commit_id": "ca0e643dbdde136f1b8842c4011e366f18a8e490",
+    "original_commit_id": "ca0e643dbdde136f1b8842c4011e366f18a8e490",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Defaults to true? That seems incorrect to me.",
+    "created_at": "2019-10-07T09:52:49Z",
+    "updated_at": "2019-10-07T09:55:19Z",
+    "html_url": "https://github.com/starship/starship/pull/497#discussion_r331933111",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/497",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/331933111"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/497#discussion_r331933111"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/497"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/331933111/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 74,
+    "original_line": 74,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 16,
+    "position": 16,
+    "subject_type": "line"
+  }
+]

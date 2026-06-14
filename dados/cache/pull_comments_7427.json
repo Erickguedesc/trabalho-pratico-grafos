@@ -1,0 +1,209 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3145214058",
+    "pull_request_review_id": 4178518062,
+    "id": 3145214058,
+    "node_id": "PRRC_kwDOCqswNs67eChq",
+    "diff_hunk": "@@ -1611,6 +1617,58 @@ pub(crate) mod tests {\n         Ok(())\n     }\n \n+    #[test]\n+    fn shows_staged_deleted_file_with_count() -> io::Result<()> {\n+        let repo_dir = fixture_repo(FixtureProvider::Git)?;\n+\n+        create_indexed_deleted(repo_dir.path())?;\n+\n+        let actual = ModuleRenderer::new(\"git_status\")\n+            .config(toml::toml! {\n+                [git_status]\n+                staged = \"+[$count](green)\"\n+            })\n+            .path(repo_dir.path())\n+            .collect();\n+        let expected = Some(format!(\n+            \"{} \",\n+            AnsiStrings(&[\n+                Color::Red.bold().paint(\"[✘+\"),\n+                Color::Green.paint(\"1\"),\n+                Color::Red.bold().paint(\"]\"),\n+            ])\n+        ));",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "79439a9d3b936d9d34bce690da5b01a0163d077e",
+    "original_commit_id": "79439a9d3b936d9d34bce690da5b01a0163d077e",
+    "user": {
+      "login": "mkrasnitski",
+      "id": 42564254,
+      "node_id": "MDQ6VXNlcjQyNTY0MjU0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/42564254?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mkrasnitski",
+      "html_url": "https://github.com/mkrasnitski",
+      "followers_url": "https://api.github.com/users/mkrasnitski/followers",
+      "following_url": "https://api.github.com/users/mkrasnitski/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mkrasnitski/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mkrasnitski/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mkrasnitski/subscriptions",
+      "organizations_url": "https://api.github.com/users/mkrasnitski/orgs",
+      "repos_url": "https://api.github.com/users/mkrasnitski/repos",
+      "events_url": "https://api.github.com/users/mkrasnitski/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mkrasnitski/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\n        let actual = ModuleRenderer::new(\"git_status\")\n            .config(toml::toml! {\n                [git_status]\n                staged = \"+$count\"\n            })\n            .path(repo_dir.path())\n            .collect();\n        let expected = format_output(\"✘+1\");\n```\nThe color of the output isn't relevant to the behavior.",
+    "created_at": "2026-04-27T06:21:23Z",
+    "updated_at": "2026-04-27T18:24:42Z",
+    "html_url": "https://github.com/starship/starship/pull/7427#discussion_r3145214058",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7427",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3145214058"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7427#discussion_r3145214058"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7427"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3145214058/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 1626,
+    "original_start_line": 1626,
+    "start_side": "RIGHT",
+    "line": 1640,
+    "original_line": 1640,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 53,
+    "position": 53,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3145217142",
+    "pull_request_review_id": 4178518062,
+    "id": 3145217142,
+    "node_id": "PRRC_kwDOCqswNs67eDR2",
+    "diff_hunk": "@@ -1611,6 +1617,58 @@ pub(crate) mod tests {\n         Ok(())\n     }\n \n+    #[test]\n+    fn shows_staged_deleted_file_with_count() -> io::Result<()> {\n+        let repo_dir = fixture_repo(FixtureProvider::Git)?;\n+\n+        create_indexed_deleted(repo_dir.path())?;\n+\n+        let actual = ModuleRenderer::new(\"git_status\")\n+            .config(toml::toml! {\n+                [git_status]\n+                staged = \"+[$count](green)\"\n+            })\n+            .path(repo_dir.path())\n+            .collect();\n+        let expected = Some(format!(\n+            \"{} \",\n+            AnsiStrings(&[\n+                Color::Red.bold().paint(\"[✘+\"),\n+                Color::Green.paint(\"1\"),\n+                Color::Red.bold().paint(\"]\"),\n+            ])\n+        ));\n+\n+        assert_eq!(expected, actual);\n+        repo_dir.close()\n+    }\n+\n+    #[test]\n+    fn shows_staged_renamed_file_with_count() -> io::Result<()> {\n+        let repo_dir = fixture_repo(FixtureProvider::Git)?;\n+\n+        create_renamed(repo_dir.path())?;\n+\n+        let actual = ModuleRenderer::new(\"git_status\")\n+            .config(toml::toml! {\n+                [git_status]\n+                staged = \"+[$count](green)\"\n+            })\n+            .path(repo_dir.path())\n+            .collect();\n+        let expected = Some(format!(\n+            \"{} \",\n+            AnsiStrings(&[\n+                Color::Red.bold().paint(\"[»+\"),\n+                Color::Green.paint(\"1\"),\n+                Color::Red.bold().paint(\"]\"),\n+            ])\n+        ));",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "79439a9d3b936d9d34bce690da5b01a0163d077e",
+    "original_commit_id": "79439a9d3b936d9d34bce690da5b01a0163d077e",
+    "user": {
+      "login": "mkrasnitski",
+      "id": 42564254,
+      "node_id": "MDQ6VXNlcjQyNTY0MjU0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/42564254?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mkrasnitski",
+      "html_url": "https://github.com/mkrasnitski",
+      "followers_url": "https://api.github.com/users/mkrasnitski/followers",
+      "following_url": "https://api.github.com/users/mkrasnitski/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mkrasnitski/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mkrasnitski/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mkrasnitski/subscriptions",
+      "organizations_url": "https://api.github.com/users/mkrasnitski/orgs",
+      "repos_url": "https://api.github.com/users/mkrasnitski/repos",
+      "events_url": "https://api.github.com/users/mkrasnitski/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mkrasnitski/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\n        let actual = ModuleRenderer::new(\"git_status\")\n            .config(toml::toml! {\n                [git_status]\n                staged = \"+$count\"\n            })\n            .path(repo_dir.path())\n            .collect();\n        let expected = format_output(\"»+1\");\n```\nSame as above.",
+    "created_at": "2026-04-27T06:22:00Z",
+    "updated_at": "2026-04-27T18:24:42Z",
+    "html_url": "https://github.com/starship/starship/pull/7427#discussion_r3145217142",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7427",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3145217142"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7427#discussion_r3145217142"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7427"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3145217142/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 1652,
+    "original_start_line": 1652,
+    "start_side": "RIGHT",
+    "line": 1666,
+    "original_line": 1666,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 79,
+    "position": 79,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3145227067",
+    "pull_request_review_id": 4178518062,
+    "id": 3145227067,
+    "node_id": "PRRC_kwDOCqswNs67eFs7",
+    "diff_hunk": "@@ -476,6 +476,7 @@ fn get_repo_status(\n                             repo_status.index_added += 1;\n                         }\n                         Change::Deletion { .. } => {\n+                            repo_status.staged += 1;",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "79439a9d3b936d9d34bce690da5b01a0163d077e",
+    "original_commit_id": "79439a9d3b936d9d34bce690da5b01a0163d077e",
+    "user": {
+      "login": "mkrasnitski",
+      "id": 42564254,
+      "node_id": "MDQ6VXNlcjQyNTY0MjU0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/42564254?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mkrasnitski",
+      "html_url": "https://github.com/mkrasnitski",
+      "followers_url": "https://api.github.com/users/mkrasnitski/followers",
+      "following_url": "https://api.github.com/users/mkrasnitski/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mkrasnitski/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mkrasnitski/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mkrasnitski/subscriptions",
+      "organizations_url": "https://api.github.com/users/mkrasnitski/orgs",
+      "repos_url": "https://api.github.com/users/mkrasnitski/repos",
+      "events_url": "https://api.github.com/users/mkrasnitski/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mkrasnitski/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Every branch of this match statement now contains `repo_status.staged += 1`. Maybe it makes sense to move it outside the match?",
+    "created_at": "2026-04-27T06:23:47Z",
+    "updated_at": "2026-04-27T18:24:42Z",
+    "html_url": "https://github.com/starship/starship/pull/7427#discussion_r3145227067",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7427",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3145227067"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7427#discussion_r3145227067"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7427"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3145227067/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 479,
+    "original_line": 479,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 4,
+    "position": 4,
+    "subject_type": "line"
+  }
+]

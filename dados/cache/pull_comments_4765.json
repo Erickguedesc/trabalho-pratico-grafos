@@ -1,0 +1,976 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1057763609",
+    "pull_request_review_id": 1230801866,
+    "id": 1057763609,
+    "node_id": "PRRC_kwDOCqswNs4_DDEZ",
+    "diff_hunk": "@@ -0,0 +1,251 @@\n+use unicode_segmentation::UnicodeSegmentation;\n+\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::pijul::PijulConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the Pijul channel in the current directory\n+///\n+/// Will display the channel lame if the current directory is a pijul repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_repo = context\n+        .try_begin_scan()?\n+        .set_folders(&[\".pijul\"])\n+        .is_match();\n+\n+    if !is_repo {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"pijul\");\n+    let config: PijulConfig = PijulConfig::try_load(module.config);\n+\n+    // We default to disabled=true, so we have to check after loading our config module.\n+    if config.disabled {\n+        return None;\n+    };\n+",
+    "path": "src/modules/pijul.rs",
+    "commit_id": "e833a6a0c76988488e19bc578afacfa611039b7b",
+    "original_commit_id": "5301faf7010d3287cd2b7f1d4b64c129ffc17902",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "For truncation, please follow the approach in the meson module, using the functions from `crate::utils::truncate`.",
+    "created_at": "2022-12-27T16:06:57Z",
+    "updated_at": "2022-12-27T16:13:02Z",
+    "html_url": "https://github.com/starship/starship/pull/4765#discussion_r1057763609",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4765",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1057763609"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4765#discussion_r1057763609"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4765"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1057763609/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 27,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 28,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1057764876",
+    "pull_request_review_id": 1230801866,
+    "id": 1057764876,
+    "node_id": "PRRC_kwDOCqswNs4_DDYM",
+    "diff_hunk": "@@ -207,6 +207,38 @@ jobs:\n         if: matrix.os == 'macOS-latest'\n         run: brew install mercurial\n \n+      # Install Pijul deps\n+      - name: Setup | Pijul deps (linux)\n+        if: matrix.os == 'ubuntu-latest'\n+        run: sudo apt install make libsodium-dev libclang-dev pkg-config libssl-dev libxxhash-dev libzstd-dev clang\n+\n+      - name: Setup | Pijul deps (macos)\n+        if: matrix.os == 'macOS-latest'\n+        run: brew install llvm libsodium openssl xxhash zstd\n+\n+      - name: Install vcpkg deps\n+        if: matrix.os == 'windows-latest'\n+        shell: bash\n+        run: |\n+          $VCPKG_INSTALLATION_ROOT/vcpkg.exe install --triplet=x64-windows-static-md xxhash zstd openssl openssl-windows\n+          cd $VCPKG_INSTALLATION_ROOT/installed/x64-windows-static-md/lib\n+          cp zstd_static.lib zstd.lib\n+\n+      # Install Pijul\n+      - name: Setup | Pijul (windows)\n+        if: matrix.os == 'windows-latest'\n+        shell: bash\n+        run: |\n+          export VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT\n+          export LIB=$VCPKG_ROOT/installed/x64-windows-static-md/lib\n+          export OPENSSL_DIR=$VCPKG_ROOT/installed/x64-windows-static-md\n+          cargo install pijul --version \"~1.0.0-beta\" --locked\n+\n+\n+      - name: Setup | Pijul\n+        if: matrix.os == 'macOS-latest' || matrix.os == 'ubuntu-latest'\n+        run: cargo install pijul --version \"~1.0.0-beta\" --locked",
+    "path": ".github/workflows/workflow.yml",
+    "commit_id": "e833a6a0c76988488e19bc578afacfa611039b7b",
+    "original_commit_id": "5301faf7010d3287cd2b7f1d4b64c129ffc17902",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "In think this much set-up code and compilation time isn't worth it to test this one module more thoroughly. Please either switch to using a compiled binary or please remove testing with real binaries completely.",
+    "created_at": "2022-12-27T16:09:13Z",
+    "updated_at": "2022-12-28T11:19:26Z",
+    "html_url": "https://github.com/starship/starship/pull/4765#discussion_r1057764876",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4765",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1057764876"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4765#discussion_r1057764876"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4765"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1057764876/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 210,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 240,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 34,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1058373588",
+    "pull_request_review_id": 1231643007,
+    "id": 1058373588,
+    "node_id": "PRRC_kwDOCqswNs4_FX_U",
+    "diff_hunk": "@@ -0,0 +1,251 @@\n+use unicode_segmentation::UnicodeSegmentation;\n+\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::pijul::PijulConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the Pijul channel in the current directory\n+///\n+/// Will display the channel lame if the current directory is a pijul repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_repo = context\n+        .try_begin_scan()?\n+        .set_folders(&[\".pijul\"])\n+        .is_match();\n+\n+    if !is_repo {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"pijul\");\n+    let config: PijulConfig = PijulConfig::try_load(module.config);\n+\n+    // We default to disabled=true, so we have to check after loading our config module.\n+    if config.disabled {\n+        return None;\n+    };\n+",
+    "path": "src/modules/pijul.rs",
+    "commit_id": "e833a6a0c76988488e19bc578afacfa611039b7b",
+    "original_commit_id": "5301faf7010d3287cd2b7f1d4b64c129ffc17902",
+    "user": {
+      "login": "IslandUsurper",
+      "id": 17701,
+      "node_id": "MDQ6VXNlcjE3NzAx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17701?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/IslandUsurper",
+      "html_url": "https://github.com/IslandUsurper",
+      "followers_url": "https://api.github.com/users/IslandUsurper/followers",
+      "following_url": "https://api.github.com/users/IslandUsurper/following{/other_user}",
+      "gists_url": "https://api.github.com/users/IslandUsurper/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/IslandUsurper/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/IslandUsurper/subscriptions",
+      "organizations_url": "https://api.github.com/users/IslandUsurper/orgs",
+      "repos_url": "https://api.github.com/users/IslandUsurper/repos",
+      "events_url": "https://api.github.com/users/IslandUsurper/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/IslandUsurper/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I thought there ought to have been a better way, but I didn't look much outside the hg_branch module to find it.",
+    "created_at": "2022-12-28T14:11:32Z",
+    "updated_at": "2022-12-28T14:11:32Z",
+    "html_url": "https://github.com/starship/starship/pull/4765#discussion_r1058373588",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4765",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1058373588"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4765#discussion_r1058373588"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4765"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1058373588/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 27,
+    "side": "RIGHT",
+    "in_reply_to_id": 1057763609,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 28,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1058918013",
+    "pull_request_review_id": 1232442378,
+    "id": 1058918013,
+    "node_id": "PRRC_kwDOCqswNs4_Hc59",
+    "diff_hunk": "@@ -3162,6 +3163,21 @@ By default the module will be shown if any of the following conditions are met:\n format = 'via [🔹 $version](147 bold) '\n ```\n \n+## Pijul Channel\n+\n+The `pijul` module shows the active channel of the repo in your current directory.\n+\n+### Options\n+\n+| Option              | Default                           | Description                                                                          |\n+| ------------------- | --------------------------------- | ------------------------------------------------------------------------------------ |\n+| `symbol`            | `' '`                            | The symbol used before the pijul channel name of the repo in your current directory. |\n+| `style`             | `'bold purple'`                   | The style for the module.                                                            |\n+| `format`            | `'on [$symbol$channel]($style) '` | The format for the module.                                                           |\n+| `truncation_length` | `2^63 - 1`                        | Truncates the pijul channel name to `N` graphemes                                    |",
+    "path": "docs/config/README.md",
+    "commit_id": "e833a6a0c76988488e19bc578afacfa611039b7b",
+    "original_commit_id": "bc951825e11eb5c5955e3db84bf8a31df66e3b1a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "To be more compatible with 32-bit systems:\r\n```suggestion\r\n| `truncation_length` | `2^32 - 1`                        | Truncates the pijul channel name to `N` graphemes                                    |\r\n```",
+    "created_at": "2022-12-29T12:13:03Z",
+    "updated_at": "2022-12-29T12:38:44Z",
+    "html_url": "https://github.com/starship/starship/pull/4765#discussion_r1058918013",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4765",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1058918013"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4765#discussion_r1058918013"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4765"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1058918013/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 3177,
+    "original_line": 3177,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 23,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1058918427",
+    "pull_request_review_id": 1232442378,
+    "id": 1058918427,
+    "node_id": "PRRC_kwDOCqswNs4_HdAb",
+    "diff_hunk": "@@ -0,0 +1,30 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct PijulConfig<'a> {\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub format: &'a str,\n+    pub truncation_length: i64,",
+    "path": "src/configs/pijul.rs",
+    "commit_id": "e833a6a0c76988488e19bc578afacfa611039b7b",
+    "original_commit_id": "bc951825e11eb5c5955e3db84bf8a31df66e3b1a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n    pub truncation_length: u32,\r\n```",
+    "created_at": "2022-12-29T12:14:01Z",
+    "updated_at": "2022-12-29T12:38:44Z",
+    "html_url": "https://github.com/starship/starship/pull/4765#discussion_r1058918427",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4765",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1058918427"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4765#discussion_r1058918427"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4765"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1058918427/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 14,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 14,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1058918533",
+    "pull_request_review_id": 1232442378,
+    "id": 1058918533,
+    "node_id": "PRRC_kwDOCqswNs4_HdCF",
+    "diff_hunk": "@@ -0,0 +1,30 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct PijulConfig<'a> {\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub format: &'a str,\n+    pub truncation_length: i64,\n+    pub truncation_symbol: &'a str,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> Default for PijulConfig<'a> {\n+    fn default() -> Self {\n+        PijulConfig {\n+            symbol: \" \",\n+            style: \"bold purple\",\n+            format: \"on [$symbol$channel]($style) \",\n+            truncation_length: std::i64::MAX,",
+    "path": "src/configs/pijul.rs",
+    "commit_id": "e833a6a0c76988488e19bc578afacfa611039b7b",
+    "original_commit_id": "bc951825e11eb5c5955e3db84bf8a31df66e3b1a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n            truncation_length: u32::MAX,\r\n```",
+    "created_at": "2022-12-29T12:14:20Z",
+    "updated_at": "2022-12-29T12:38:44Z",
+    "html_url": "https://github.com/starship/starship/pull/4765#discussion_r1058918533",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4765",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1058918533"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4765#discussion_r1058918533"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4765"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1058918533/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 25,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 25,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1058928693",
+    "pull_request_review_id": 1232442378,
+    "id": 1058928693,
+    "node_id": "PRRC_kwDOCqswNs4_Hfg1",
+    "diff_hunk": "@@ -273,6 +275,7 @@ pub fn description(module: &str) -> &'static str {\n         \"package\" => \"The package version of the current directory's project\",\n         \"perl\" => \"The currently installed version of Perl\",\n         \"php\" => \"The currently installed version of PHP\",\n+        \"pijul\" => \"The current channel of the repo in the current directory\",",
+    "path": "src/modules/mod.rs",
+    "commit_id": "e833a6a0c76988488e19bc578afacfa611039b7b",
+    "original_commit_id": "bc951825e11eb5c5955e3db84bf8a31df66e3b1a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Maybe it should be called `pijul_branch` in case someone wants to do a `status` module in the future.",
+    "created_at": "2022-12-29T12:36:58Z",
+    "updated_at": "2022-12-29T12:38:44Z",
+    "html_url": "https://github.com/starship/starship/pull/4765#discussion_r1058928693",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4765",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1058928693"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4765#discussion_r1058928693"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4765"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1058928693/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 278,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 20,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1058961773",
+    "pull_request_review_id": 1232504312,
+    "id": 1058961773,
+    "node_id": "PRRC_kwDOCqswNs4_Hnlt",
+    "diff_hunk": "@@ -3162,6 +3163,21 @@ By default the module will be shown if any of the following conditions are met:\n format = 'via [🔹 $version](147 bold) '\n ```\n \n+## Pijul Channel\n+\n+The `pijul` module shows the active channel of the repo in your current directory.\n+\n+### Options\n+\n+| Option              | Default                           | Description                                                                          |\n+| ------------------- | --------------------------------- | ------------------------------------------------------------------------------------ |\n+| `symbol`            | `' '`                            | The symbol used before the pijul channel name of the repo in your current directory. |\n+| `style`             | `'bold purple'`                   | The style for the module.                                                            |\n+| `format`            | `'on [$symbol$channel]($style) '` | The format for the module.                                                           |\n+| `truncation_length` | `2^63 - 1`                        | Truncates the pijul channel name to `N` graphemes                                    |",
+    "path": "docs/config/README.md",
+    "commit_id": "e833a6a0c76988488e19bc578afacfa611039b7b",
+    "original_commit_id": "bc951825e11eb5c5955e3db84bf8a31df66e3b1a",
+    "user": {
+      "login": "IslandUsurper",
+      "id": 17701,
+      "node_id": "MDQ6VXNlcjE3NzAx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17701?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/IslandUsurper",
+      "html_url": "https://github.com/IslandUsurper",
+      "followers_url": "https://api.github.com/users/IslandUsurper/followers",
+      "following_url": "https://api.github.com/users/IslandUsurper/following{/other_user}",
+      "gists_url": "https://api.github.com/users/IslandUsurper/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/IslandUsurper/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/IslandUsurper/subscriptions",
+      "organizations_url": "https://api.github.com/users/IslandUsurper/orgs",
+      "repos_url": "https://api.github.com/users/IslandUsurper/repos",
+      "events_url": "https://api.github.com/users/IslandUsurper/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/IslandUsurper/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Both `git_branch` and `hg_branch` take `i64` for `truncation_length`. While I agree that this is an easy change for 32-bit compatibility, I think consistency is more important. All of the modules that use truncation need to be using `usize` instead of `i64`.",
+    "created_at": "2022-12-29T13:45:09Z",
+    "updated_at": "2022-12-29T13:45:09Z",
+    "html_url": "https://github.com/starship/starship/pull/4765#discussion_r1058961773",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4765",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1058961773"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4765#discussion_r1058961773"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4765"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1058961773/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 3177,
+    "original_line": 3177,
+    "side": "RIGHT",
+    "in_reply_to_id": 1058918013,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 23,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1058976704",
+    "pull_request_review_id": 1232526086,
+    "id": 1058976704,
+    "node_id": "PRRC_kwDOCqswNs4_HrPA",
+    "diff_hunk": "@@ -3162,6 +3163,21 @@ By default the module will be shown if any of the following conditions are met:\n format = 'via [🔹 $version](147 bold) '\n ```\n \n+## Pijul Channel\n+\n+The `pijul` module shows the active channel of the repo in your current directory.\n+\n+### Options\n+\n+| Option              | Default                           | Description                                                                          |\n+| ------------------- | --------------------------------- | ------------------------------------------------------------------------------------ |\n+| `symbol`            | `' '`                            | The symbol used before the pijul channel name of the repo in your current directory. |\n+| `style`             | `'bold purple'`                   | The style for the module.                                                            |\n+| `format`            | `'on [$symbol$channel]($style) '` | The format for the module.                                                           |\n+| `truncation_length` | `2^63 - 1`                        | Truncates the pijul channel name to `N` graphemes                                    |",
+    "path": "docs/config/README.md",
+    "commit_id": "e833a6a0c76988488e19bc578afacfa611039b7b",
+    "original_commit_id": "bc951825e11eb5c5955e3db84bf8a31df66e3b1a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Either way, I feel like an unsigned integer type should be preferred and meson also uses `u32`.",
+    "created_at": "2022-12-29T14:14:34Z",
+    "updated_at": "2022-12-29T14:14:35Z",
+    "html_url": "https://github.com/starship/starship/pull/4765#discussion_r1058976704",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4765",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1058976704"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4765#discussion_r1058976704"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4765"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1058976704/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 3177,
+    "original_line": 3177,
+    "side": "RIGHT",
+    "in_reply_to_id": 1058918013,
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 23,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1058980474",
+    "pull_request_review_id": 1232531540,
+    "id": 1058980474,
+    "node_id": "PRRC_kwDOCqswNs4_HsJ6",
+    "diff_hunk": "@@ -3162,6 +3163,21 @@ By default the module will be shown if any of the following conditions are met:\n format = 'via [🔹 $version](147 bold) '\n ```\n \n+## Pijul Channel\n+\n+The `pijul` module shows the active channel of the repo in your current directory.\n+\n+### Options\n+\n+| Option              | Default                           | Description                                                                          |\n+| ------------------- | --------------------------------- | ------------------------------------------------------------------------------------ |\n+| `symbol`            | `' '`                            | The symbol used before the pijul channel name of the repo in your current directory. |\n+| `style`             | `'bold purple'`                   | The style for the module.                                                            |\n+| `format`            | `'on [$symbol$channel]($style) '` | The format for the module.                                                           |\n+| `truncation_length` | `2^63 - 1`                        | Truncates the pijul channel name to `N` graphemes                                    |",
+    "path": "docs/config/README.md",
+    "commit_id": "e833a6a0c76988488e19bc578afacfa611039b7b",
+    "original_commit_id": "bc951825e11eb5c5955e3db84bf8a31df66e3b1a",
+    "user": {
+      "login": "IslandUsurper",
+      "id": 17701,
+      "node_id": "MDQ6VXNlcjE3NzAx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17701?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/IslandUsurper",
+      "html_url": "https://github.com/IslandUsurper",
+      "followers_url": "https://api.github.com/users/IslandUsurper/followers",
+      "following_url": "https://api.github.com/users/IslandUsurper/following{/other_user}",
+      "gists_url": "https://api.github.com/users/IslandUsurper/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/IslandUsurper/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/IslandUsurper/subscriptions",
+      "organizations_url": "https://api.github.com/users/IslandUsurper/orgs",
+      "repos_url": "https://api.github.com/users/IslandUsurper/repos",
+      "events_url": "https://api.github.com/users/IslandUsurper/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/IslandUsurper/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Sure, but let's do a follow-up change to handle all of the affected modules, instead of just polishing this one.",
+    "created_at": "2022-12-29T14:22:02Z",
+    "updated_at": "2022-12-29T14:22:03Z",
+    "html_url": "https://github.com/starship/starship/pull/4765#discussion_r1058980474",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4765",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1058980474"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4765#discussion_r1058980474"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4765"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1058980474/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 3177,
+    "original_line": 3177,
+    "side": "RIGHT",
+    "in_reply_to_id": 1058918013,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 23,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1059041147",
+    "pull_request_review_id": 1232618244,
+    "id": 1059041147,
+    "node_id": "PRRC_kwDOCqswNs4_H697",
+    "diff_hunk": "@@ -3162,6 +3163,21 @@ By default the module will be shown if any of the following conditions are met:\n format = 'via [🔹 $version](147 bold) '\n ```\n \n+## Pijul Channel\n+\n+The `pijul` module shows the active channel of the repo in your current directory.\n+\n+### Options\n+\n+| Option              | Default                           | Description                                                                          |\n+| ------------------- | --------------------------------- | ------------------------------------------------------------------------------------ |\n+| `symbol`            | `' '`                            | The symbol used before the pijul channel name of the repo in your current directory. |\n+| `style`             | `'bold purple'`                   | The style for the module.                                                            |\n+| `format`            | `'on [$symbol$channel]($style) '` | The format for the module.                                                           |\n+| `truncation_length` | `2^63 - 1`                        | Truncates the pijul channel name to `N` graphemes                                    |",
+    "path": "docs/config/README.md",
+    "commit_id": "e833a6a0c76988488e19bc578afacfa611039b7b",
+    "original_commit_id": "bc951825e11eb5c5955e3db84bf8a31df66e3b1a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I've avoided doing this, because it could be a breaking change. If for instance they are switched to `u32` the former default would be outside the accepted value range, and negative values would lead to errors instead of warnings.",
+    "created_at": "2022-12-29T16:17:48Z",
+    "updated_at": "2022-12-29T16:17:48Z",
+    "html_url": "https://github.com/starship/starship/pull/4765#discussion_r1059041147",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4765",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1059041147"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4765#discussion_r1059041147"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4765"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1059041147/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 3177,
+    "original_line": 3177,
+    "side": "RIGHT",
+    "in_reply_to_id": 1058918013,
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 23,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1059091114",
+    "pull_request_review_id": 1232686344,
+    "id": 1059091114,
+    "node_id": "PRRC_kwDOCqswNs4_IHKq",
+    "diff_hunk": "@@ -3162,6 +3163,21 @@ By default the module will be shown if any of the following conditions are met:\n format = 'via [🔹 $version](147 bold) '\n ```\n \n+## Pijul Channel\n+\n+The `pijul` module shows the active channel of the repo in your current directory.\n+\n+### Options\n+\n+| Option              | Default                           | Description                                                                          |\n+| ------------------- | --------------------------------- | ------------------------------------------------------------------------------------ |\n+| `symbol`            | `' '`                            | The symbol used before the pijul channel name of the repo in your current directory. |\n+| `style`             | `'bold purple'`                   | The style for the module.                                                            |\n+| `format`            | `'on [$symbol$channel]($style) '` | The format for the module.                                                           |\n+| `truncation_length` | `2^63 - 1`                        | Truncates the pijul channel name to `N` graphemes                                    |",
+    "path": "docs/config/README.md",
+    "commit_id": "e833a6a0c76988488e19bc578afacfa611039b7b",
+    "original_commit_id": "bc951825e11eb5c5955e3db84bf8a31df66e3b1a",
+    "user": {
+      "login": "IslandUsurper",
+      "id": 17701,
+      "node_id": "MDQ6VXNlcjE3NzAx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17701?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/IslandUsurper",
+      "html_url": "https://github.com/IslandUsurper",
+      "followers_url": "https://api.github.com/users/IslandUsurper/followers",
+      "following_url": "https://api.github.com/users/IslandUsurper/following{/other_user}",
+      "gists_url": "https://api.github.com/users/IslandUsurper/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/IslandUsurper/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/IslandUsurper/subscriptions",
+      "organizations_url": "https://api.github.com/users/IslandUsurper/orgs",
+      "repos_url": "https://api.github.com/users/IslandUsurper/repos",
+      "events_url": "https://api.github.com/users/IslandUsurper/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/IslandUsurper/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "At the risk of causing [XKCD 1172](https://xkcd.com/1172/), I doubt anything would _actually_ break. Defaults shouldn't be stored in any TOML files, and anyone who actually sets `truncation_length` for any module is most likely to set it less than 200. As for handling negative values, I wonder if there's a way to adjust the deserializer to emit warnings with defaults instead of hard errors. Possibly we could make the default `0` instead of `INT_MAX`, as at these sizes, there's no practical difference.",
+    "created_at": "2022-12-29T18:15:23Z",
+    "updated_at": "2022-12-29T18:15:23Z",
+    "html_url": "https://github.com/starship/starship/pull/4765#discussion_r1059091114",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4765",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1059091114"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4765#discussion_r1059091114"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4765"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1059091114/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 3177,
+    "original_line": 3177,
+    "side": "RIGHT",
+    "in_reply_to_id": 1058918013,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 23,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1059092097",
+    "pull_request_review_id": 1232687721,
+    "id": 1059092097,
+    "node_id": "PRRC_kwDOCqswNs4_IHaB",
+    "diff_hunk": "@@ -3162,6 +3163,21 @@ By default the module will be shown if any of the following conditions are met:\n format = 'via [🔹 $version](147 bold) '\n ```\n \n+## Pijul Channel\n+\n+The `pijul` module shows the active channel of the repo in your current directory.\n+\n+### Options\n+\n+| Option              | Default                           | Description                                                                          |\n+| ------------------- | --------------------------------- | ------------------------------------------------------------------------------------ |\n+| `symbol`            | `' '`                            | The symbol used before the pijul channel name of the repo in your current directory. |\n+| `style`             | `'bold purple'`                   | The style for the module.                                                            |\n+| `format`            | `'on [$symbol$channel]($style) '` | The format for the module.                                                           |\n+| `truncation_length` | `2^63 - 1`                        | Truncates the pijul channel name to `N` graphemes                                    |",
+    "path": "docs/config/README.md",
+    "commit_id": "e833a6a0c76988488e19bc578afacfa611039b7b",
+    "original_commit_id": "bc951825e11eb5c5955e3db84bf8a31df66e3b1a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think some people will have based their config-file on `starship print-config --default`, it was even recommended in the docs for a few weeks.",
+    "created_at": "2022-12-29T18:18:00Z",
+    "updated_at": "2022-12-29T18:18:01Z",
+    "html_url": "https://github.com/starship/starship/pull/4765#discussion_r1059092097",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4765",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1059092097"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4765#discussion_r1059092097"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4765"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1059092097/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 3177,
+    "original_line": 3177,
+    "side": "RIGHT",
+    "in_reply_to_id": 1058918013,
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 23,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1059129514",
+    "pull_request_review_id": 1232738594,
+    "id": 1059129514,
+    "node_id": "PRRC_kwDOCqswNs4_IQiq",
+    "diff_hunk": "@@ -3162,6 +3163,21 @@ By default the module will be shown if any of the following conditions are met:\n format = 'via [🔹 $version](147 bold) '\n ```\n \n+## Pijul Channel\n+\n+The `pijul` module shows the active channel of the repo in your current directory.\n+\n+### Options\n+\n+| Option              | Default                           | Description                                                                          |\n+| ------------------- | --------------------------------- | ------------------------------------------------------------------------------------ |\n+| `symbol`            | `' '`                            | The symbol used before the pijul channel name of the repo in your current directory. |\n+| `style`             | `'bold purple'`                   | The style for the module.                                                            |\n+| `format`            | `'on [$symbol$channel]($style) '` | The format for the module.                                                           |\n+| `truncation_length` | `2^63 - 1`                        | Truncates the pijul channel name to `N` graphemes                                    |",
+    "path": "docs/config/README.md",
+    "commit_id": "e833a6a0c76988488e19bc578afacfa611039b7b",
+    "original_commit_id": "bc951825e11eb5c5955e3db84bf8a31df66e3b1a",
+    "user": {
+      "login": "IslandUsurper",
+      "id": 17701,
+      "node_id": "MDQ6VXNlcjE3NzAx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17701?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/IslandUsurper",
+      "html_url": "https://github.com/IslandUsurper",
+      "followers_url": "https://api.github.com/users/IslandUsurper/followers",
+      "following_url": "https://api.github.com/users/IslandUsurper/following{/other_user}",
+      "gists_url": "https://api.github.com/users/IslandUsurper/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/IslandUsurper/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/IslandUsurper/subscriptions",
+      "organizations_url": "https://api.github.com/users/IslandUsurper/orgs",
+      "repos_url": "https://api.github.com/users/IslandUsurper/repos",
+      "events_url": "https://api.github.com/users/IslandUsurper/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/IslandUsurper/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Oof. That does make a mess of things then.",
+    "created_at": "2022-12-29T20:03:42Z",
+    "updated_at": "2022-12-29T20:03:42Z",
+    "html_url": "https://github.com/starship/starship/pull/4765#discussion_r1059129514",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4765",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1059129514"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4765#discussion_r1059129514"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4765"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1059129514/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 3177,
+    "original_line": 3177,
+    "side": "RIGHT",
+    "in_reply_to_id": 1058918013,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 23,
+    "subject_type": "line"
+  }
+]

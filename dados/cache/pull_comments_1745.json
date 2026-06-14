@@ -1,0 +1,767 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/500588418",
+    "pull_request_review_id": 503349147,
+    "id": 500588418,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUwMDU4ODQxOA==",
+    "diff_hunk": "@@ -14,9 +14,30 @@ function global:prompt {\n     $current_directory = (Convert-Path -LiteralPath $PWD)\n     \n     # If an external command has not been executed, then the $LASTEXITCODE will be $null.\n-    # For the purposes of the prompt, replace this with a 0 exit code so that the prompt\n-    # doesn't show the last command as a failure (because it had a non-zero exit code).\n-    $lastExitCodeForPrompt = if ($origLastExitCode) { $origLastExitCode } else { 0 }\n+    # it isn't populated or modified until you execute a Powershell task that returns an exit\n+    # code e.g. On a fresh Powershell console:\n+    # > $LASTEXITCODE -eq $null\n+    # True\n+    # In the same console after running a Powershell cmdlet:\n+    # > gci ~/non_existing_folder\n+    # ...\n+    # > $LASTEXITCODE -eq $null\n+    # True\n+    # It only gets populated when running an external executable that returns an exit code, e. g.\n+    # > bash -c 'exit 5'\n+    # > $LASTEXITCODE -eq $null\n+    # False\n+    # > $LASTEXITCODE\n+    # 5\n+    # Therefore, for the purpose of the prompt, to avoid coloring the prompt wrongly we should rely\n+    # rather on the dollar hook ($?) to check for success/failure of the previous execution.\n+    # There's some edge cases like iex where the execution is successful even when the command passed\n+    # as parameter returns a failure exit code or fails to execute.\n+    # As of Powershell 7 we can leaverage the ternary operator as follows:\n+    # $lastExitCodeForPrompt = $origDollarQuestion ? 0 : 1\n+    # But for backwards compatibility sake, we can get away with:\n+\n+    $lastExitCodeForPrompt = @({1}, {0})[$origDollarQuestion]",
+    "path": "src/init/starship.ps1",
+    "commit_id": "5832cd4e5cb75cf63efe9e92877d3e4c2e6dfdbc",
+    "original_commit_id": "56eabed26ff0a53946414ef34dd5c4694567e6bd",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n    $lastExitCodeForPrompt = 0\r\n    if (-not $origDollarQuestion) {\r\n         $lastExitCodeForPrompt = 1\r\n         if ($origLastExitCode -neq $null) {\r\n             $lastExitCodeForPrompt = $origLastExitCode\r\n         }\r\n    }\r\n```\r\n(I haven't tested this code yet)\r\nI'd prefer something like this that preserves the exit code when it's available.",
+    "created_at": "2020-10-06T20:52:11Z",
+    "updated_at": "2020-10-10T20:27:22Z",
+    "html_url": "https://github.com/starship/starship/pull/1745#discussion_r500588418",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1745",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/500588418"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1745#discussion_r500588418"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1745"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/500588418/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 40,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 30,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/500992733",
+    "pull_request_review_id": 503852525,
+    "id": 500992733,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUwMDk5MjczMw==",
+    "diff_hunk": "@@ -14,9 +14,30 @@ function global:prompt {\n     $current_directory = (Convert-Path -LiteralPath $PWD)\n     \n     # If an external command has not been executed, then the $LASTEXITCODE will be $null.\n-    # For the purposes of the prompt, replace this with a 0 exit code so that the prompt\n-    # doesn't show the last command as a failure (because it had a non-zero exit code).\n-    $lastExitCodeForPrompt = if ($origLastExitCode) { $origLastExitCode } else { 0 }\n+    # it isn't populated or modified until you execute a Powershell task that returns an exit\n+    # code e.g. On a fresh Powershell console:\n+    # > $LASTEXITCODE -eq $null\n+    # True\n+    # In the same console after running a Powershell cmdlet:\n+    # > gci ~/non_existing_folder\n+    # ...\n+    # > $LASTEXITCODE -eq $null\n+    # True\n+    # It only gets populated when running an external executable that returns an exit code, e. g.\n+    # > bash -c 'exit 5'\n+    # > $LASTEXITCODE -eq $null\n+    # False\n+    # > $LASTEXITCODE\n+    # 5\n+    # Therefore, for the purpose of the prompt, to avoid coloring the prompt wrongly we should rely\n+    # rather on the dollar hook ($?) to check for success/failure of the previous execution.\n+    # There's some edge cases like iex where the execution is successful even when the command passed\n+    # as parameter returns a failure exit code or fails to execute.\n+    # As of Powershell 7 we can leaverage the ternary operator as follows:\n+    # $lastExitCodeForPrompt = $origDollarQuestion ? 0 : 1\n+    # But for backwards compatibility sake, we can get away with:\n+\n+    $lastExitCodeForPrompt = @({1}, {0})[$origDollarQuestion]",
+    "path": "src/init/starship.ps1",
+    "commit_id": "5832cd4e5cb75cf63efe9e92877d3e4c2e6dfdbc",
+    "original_commit_id": "56eabed26ff0a53946414ef34dd5c4694567e6bd",
+    "user": {
+      "login": "marcos-quezada",
+      "id": 34238856,
+      "node_id": "MDQ6VXNlcjM0MjM4ODU2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/34238856?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/marcos-quezada",
+      "html_url": "https://github.com/marcos-quezada",
+      "followers_url": "https://api.github.com/users/marcos-quezada/followers",
+      "following_url": "https://api.github.com/users/marcos-quezada/following{/other_user}",
+      "gists_url": "https://api.github.com/users/marcos-quezada/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/marcos-quezada/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/marcos-quezada/subscriptions",
+      "organizations_url": "https://api.github.com/users/marcos-quezada/orgs",
+      "repos_url": "https://api.github.com/users/marcos-quezada/repos",
+      "events_url": "https://api.github.com/users/marcos-quezada/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/marcos-quezada/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The only issue I see about the extra effort to preserve the exit code is that we can get to this problem:\r\n```\r\n> bash -c 'exit 5'\r\n> $Global:LASTEXITCODE\r\n5\r\n> gci inexistentfolder\r\nGet-ChildItem: Cannot find path '/home/my-user/inexistentfolder' because it does not exist\r\n> $Global:LASTEXITCODE\r\n5\r\n``` \r\nI would check it myself later, but it would be easier if you can point me to a place in the Rust code where the exit code is relevant for some process, then I would totally agree that it is necessary to find to preserve the exit code and a way to tell apart whether the last command was an internal Powershell (exit code is irrelevant) command or an external one (exit code is relevant), if the exit code is only used in the `starship` command to define the color/symbol of the prompt I would argue that a simple 0 or 1 is enough.",
+    "created_at": "2020-10-07T13:01:44Z",
+    "updated_at": "2020-10-10T20:27:22Z",
+    "html_url": "https://github.com/starship/starship/pull/1745#discussion_r500992733",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1745",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/500992733"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1745#discussion_r500992733"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1745"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/500992733/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 40,
+    "side": "RIGHT",
+    "in_reply_to_id": 500588418,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 30,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/501055625",
+    "pull_request_review_id": 503937324,
+    "id": 501055625,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUwMTA1NTYyNQ==",
+    "diff_hunk": "@@ -14,9 +14,30 @@ function global:prompt {\n     $current_directory = (Convert-Path -LiteralPath $PWD)\n     \n     # If an external command has not been executed, then the $LASTEXITCODE will be $null.\n-    # For the purposes of the prompt, replace this with a 0 exit code so that the prompt\n-    # doesn't show the last command as a failure (because it had a non-zero exit code).\n-    $lastExitCodeForPrompt = if ($origLastExitCode) { $origLastExitCode } else { 0 }\n+    # it isn't populated or modified until you execute a Powershell task that returns an exit\n+    # code e.g. On a fresh Powershell console:\n+    # > $LASTEXITCODE -eq $null\n+    # True\n+    # In the same console after running a Powershell cmdlet:\n+    # > gci ~/non_existing_folder\n+    # ...\n+    # > $LASTEXITCODE -eq $null\n+    # True\n+    # It only gets populated when running an external executable that returns an exit code, e. g.\n+    # > bash -c 'exit 5'\n+    # > $LASTEXITCODE -eq $null\n+    # False\n+    # > $LASTEXITCODE\n+    # 5\n+    # Therefore, for the purpose of the prompt, to avoid coloring the prompt wrongly we should rely\n+    # rather on the dollar hook ($?) to check for success/failure of the previous execution.\n+    # There's some edge cases like iex where the execution is successful even when the command passed\n+    # as parameter returns a failure exit code or fails to execute.\n+    # As of Powershell 7 we can leaverage the ternary operator as follows:\n+    # $lastExitCodeForPrompt = $origDollarQuestion ? 0 : 1\n+    # But for backwards compatibility sake, we can get away with:\n+\n+    $lastExitCodeForPrompt = @({1}, {0})[$origDollarQuestion]",
+    "path": "src/init/starship.ps1",
+    "commit_id": "5832cd4e5cb75cf63efe9e92877d3e4c2e6dfdbc",
+    "original_commit_id": "56eabed26ff0a53946414ef34dd5c4694567e6bd",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The exit code value is needed for displaying it in the [`status`  module](https://starship.rs/config/#status).",
+    "created_at": "2020-10-07T14:24:42Z",
+    "updated_at": "2020-10-10T20:27:22Z",
+    "html_url": "https://github.com/starship/starship/pull/1745#discussion_r501055625",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1745",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/501055625"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1745#discussion_r501055625"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1745"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/501055625/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 40,
+    "side": "RIGHT",
+    "in_reply_to_id": 500588418,
+    "author_association": "MEMBER",
+    "original_position": 30,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/502627045",
+    "pull_request_review_id": 505931874,
+    "id": 502627045,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUwMjYyNzA0NQ==",
+    "diff_hunk": "@@ -14,9 +16,38 @@ function global:prompt {\n     $current_directory = (Convert-Path -LiteralPath $PWD)\n     \n     # If an external command has not been executed, then the $LASTEXITCODE will be $null.\n-    # For the purposes of the prompt, replace this with a 0 exit code so that the prompt\n-    # doesn't show the last command as a failure (because it had a non-zero exit code).\n-    $lastExitCodeForPrompt = if ($origLastExitCode) { $origLastExitCode } else { 0 }\n+    # it isn't populated or modified until you execute a Powershell task that returns an exit\n+    # code e.g. On a fresh Powershell console:\n+    # > $LASTEXITCODE -eq $null\n+    # True\n+    # In the same console after running a Powershell cmdlet:\n+    # > gci ~/non_existing_folder\n+    # ...\n+    # > $LASTEXITCODE -eq $null\n+    # True\n+    # It only gets populated when running an external executable that returns an exit code, e. g.\n+    # > bash -c 'exit 5'\n+    # > $LASTEXITCODE -eq $null\n+    # False\n+    # > $LASTEXITCODE\n+    # 5\n+    # Whe start from the premise that the command executed correctly, which covers also the fresh console.\n+    $lastExitCodeForPrompt = 0\n+\n+    # In case we have a False on the Dollar hook, we know there's an error.\n+    if( -not $origDollarQuestion){",
+    "path": "src/init/starship.ps1",
+    "commit_id": "5832cd4e5cb75cf63efe9e92877d3e4c2e6dfdbc",
+    "original_commit_id": "10fff9a4bd792e710069fc16d2d17aa476c0ffcc",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Could this reuse ` if ($lastCmd = Get-History -Count 1) {` from below?",
+    "created_at": "2020-10-09T19:17:49Z",
+    "updated_at": "2020-10-10T20:27:22Z",
+    "html_url": "https://github.com/starship/starship/pull/1745#discussion_r502627045",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1745",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/502627045"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1745#discussion_r502627045"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1745"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/502627045/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 38,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 35,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/502627245",
+    "pull_request_review_id": 505932143,
+    "id": 502627245,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUwMjYyNzI0NQ==",
+    "diff_hunk": "@@ -5,6 +5,8 @@\n function global:prompt {\n     $origDollarQuestion = $global:?\n     $origLastExitCode = $global:LASTEXITCODE\n+    $origCaretValue = ${global:^}\n+    $origLastErrorCmdletName = Get-Error |  Where-Object {$_ -ne $null} | Select-Object -expand InvocationInfo | Where-Object {$_.InvocationName -ne $null} | Select-Object -expand InvocationName",
+    "path": "src/init/starship.ps1",
+    "commit_id": "5832cd4e5cb75cf63efe9e92877d3e4c2e6dfdbc",
+    "original_commit_id": "10fff9a4bd792e710069fc16d2d17aa476c0ffcc",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I ist possible to initialize this when it's needed?",
+    "created_at": "2020-10-09T19:18:17Z",
+    "updated_at": "2020-10-10T20:27:22Z",
+    "html_url": "https://github.com/starship/starship/pull/1745#discussion_r502627245",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1745",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/502627245"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1745#discussion_r502627245"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1745"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/502627245/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 9,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 5,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/502628067",
+    "pull_request_review_id": 505933180,
+    "id": 502628067,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUwMjYyODA2Nw==",
+    "diff_hunk": "@@ -14,9 +16,38 @@ function global:prompt {\n     $current_directory = (Convert-Path -LiteralPath $PWD)\n     \n     # If an external command has not been executed, then the $LASTEXITCODE will be $null.\n-    # For the purposes of the prompt, replace this with a 0 exit code so that the prompt\n-    # doesn't show the last command as a failure (because it had a non-zero exit code).\n-    $lastExitCodeForPrompt = if ($origLastExitCode) { $origLastExitCode } else { 0 }\n+    # it isn't populated or modified until you execute a Powershell task that returns an exit\n+    # code e.g. On a fresh Powershell console:\n+    # > $LASTEXITCODE -eq $null\n+    # True\n+    # In the same console after running a Powershell cmdlet:\n+    # > gci ~/non_existing_folder\n+    # ...\n+    # > $LASTEXITCODE -eq $null\n+    # True\n+    # It only gets populated when running an external executable that returns an exit code, e. g.\n+    # > bash -c 'exit 5'\n+    # > $LASTEXITCODE -eq $null\n+    # False\n+    # > $LASTEXITCODE\n+    # 5\n+    # Whe start from the premise that the command executed correctly, which covers also the fresh console.\n+    $lastExitCodeForPrompt = 0\n+\n+    # In case we have a False on the Dollar hook, we know there's an error.\n+    if( -not $origDollarQuestion){\n+    # We check if the caret (^) original value is null aka. this is the first command executed.\n+      if ($origCaretValue -eq $null){\n+    # If there's a $LASTEXITCODE we use it, otherwise, we can safely return the standard error.\n+        $lastExitCodeForPrompt = @($origLastExitCode,{1})[$origLastExitCode -eq $null]",
+    "path": "src/init/starship.ps1",
+    "commit_id": "5832cd4e5cb75cf63efe9e92877d3e4c2e6dfdbc",
+    "original_commit_id": "10fff9a4bd792e710069fc16d2d17aa476c0ffcc",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please use `if/else` instead\r\n```suggestion\r\n        $lastExitCodeForPrompt = if ($origLastExitCode -eq $null) { 1 } else { $origLastExitCode } \r\n```",
+    "created_at": "2020-10-09T19:20:05Z",
+    "updated_at": "2020-10-10T20:27:22Z",
+    "html_url": "https://github.com/starship/starship/pull/1745#discussion_r502628067",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1745",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/502628067"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1745#discussion_r502628067"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1745"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/502628067/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 42,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 39,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/502628634",
+    "pull_request_review_id": 505933934,
+    "id": 502628634,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUwMjYyODYzNA==",
+    "diff_hunk": "@@ -14,9 +16,38 @@ function global:prompt {\n     $current_directory = (Convert-Path -LiteralPath $PWD)\n     \n     # If an external command has not been executed, then the $LASTEXITCODE will be $null.\n-    # For the purposes of the prompt, replace this with a 0 exit code so that the prompt\n-    # doesn't show the last command as a failure (because it had a non-zero exit code).\n-    $lastExitCodeForPrompt = if ($origLastExitCode) { $origLastExitCode } else { 0 }\n+    # it isn't populated or modified until you execute a Powershell task that returns an exit\n+    # code e.g. On a fresh Powershell console:\n+    # > $LASTEXITCODE -eq $null\n+    # True\n+    # In the same console after running a Powershell cmdlet:\n+    # > gci ~/non_existing_folder\n+    # ...\n+    # > $LASTEXITCODE -eq $null\n+    # True\n+    # It only gets populated when running an external executable that returns an exit code, e. g.\n+    # > bash -c 'exit 5'\n+    # > $LASTEXITCODE -eq $null\n+    # False\n+    # > $LASTEXITCODE\n+    # 5\n+    # Whe start from the premise that the command executed correctly, which covers also the fresh console.\n+    $lastExitCodeForPrompt = 0\n+\n+    # In case we have a False on the Dollar hook, we know there's an error.\n+    if( -not $origDollarQuestion){\n+    # We check if the caret (^) original value is null aka. this is the first command executed.\n+      if ($origCaretValue -eq $null){\n+    # If there's a $LASTEXITCODE we use it, otherwise, we can safely return the standard error.\n+        $lastExitCodeForPrompt = @($origLastExitCode,{1})[$origLastExitCode -eq $null]\n+      }else{\n+    # Finally if the last error origin is the same as the last command run, we know it was an internal\n+    # Powershell command and we can return 1, otherwise, we use the $LASTEXITCODE\n+        $lastExitCodeForPrompt = @({1},$origLastExitCode)[$origCaretValue -eq $origLastErrorCmdletName]",
+    "path": "src/init/starship.ps1",
+    "commit_id": "5832cd4e5cb75cf63efe9e92877d3e4c2e6dfdbc",
+    "original_commit_id": "10fff9a4bd792e710069fc16d2d17aa476c0ffcc",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "please use `if` here too.",
+    "created_at": "2020-10-09T19:21:30Z",
+    "updated_at": "2020-10-10T20:27:22Z",
+    "html_url": "https://github.com/starship/starship/pull/1745#discussion_r502628634",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1745",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/502628634"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1745#discussion_r502628634"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1745"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/502628634/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 46,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 43,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/502829284",
+    "pull_request_review_id": 506124484,
+    "id": 502829284,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUwMjgyOTI4NA==",
+    "diff_hunk": "@@ -5,6 +5,8 @@\n function global:prompt {\n     $origDollarQuestion = $global:?\n     $origLastExitCode = $global:LASTEXITCODE\n+    $origCaretValue = ${global:^}\n+    $origLastErrorCmdletName = Get-Error |  Where-Object {$_ -ne $null} | Select-Object -expand InvocationInfo | Where-Object {$_.InvocationName -ne $null} | Select-Object -expand InvocationName",
+    "path": "src/init/starship.ps1",
+    "commit_id": "5832cd4e5cb75cf63efe9e92877d3e4c2e6dfdbc",
+    "original_commit_id": "10fff9a4bd792e710069fc16d2d17aa476c0ffcc",
+    "user": {
+      "login": "marcos-quezada",
+      "id": 34238856,
+      "node_id": "MDQ6VXNlcjM0MjM4ODU2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/34238856?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/marcos-quezada",
+      "html_url": "https://github.com/marcos-quezada",
+      "followers_url": "https://api.github.com/users/marcos-quezada/followers",
+      "following_url": "https://api.github.com/users/marcos-quezada/following{/other_user}",
+      "gists_url": "https://api.github.com/users/marcos-quezada/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/marcos-quezada/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/marcos-quezada/subscriptions",
+      "organizations_url": "https://api.github.com/users/marcos-quezada/orgs",
+      "repos_url": "https://api.github.com/users/marcos-quezada/repos",
+      "events_url": "https://api.github.com/users/marcos-quezada/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/marcos-quezada/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Done, also check previous comment for clarification about moving this login to $lastCmd if block.",
+    "created_at": "2020-10-10T20:30:12Z",
+    "updated_at": "2020-10-10T20:30:12Z",
+    "html_url": "https://github.com/starship/starship/pull/1745#discussion_r502829284",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1745",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/502829284"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1745#discussion_r502829284"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1745"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/502829284/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 9,
+    "side": "RIGHT",
+    "in_reply_to_id": 502627245,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 5,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/502829405",
+    "pull_request_review_id": 506124553,
+    "id": 502829405,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUwMjgyOTQwNQ==",
+    "diff_hunk": "@@ -14,9 +16,38 @@ function global:prompt {\n     $current_directory = (Convert-Path -LiteralPath $PWD)\n     \n     # If an external command has not been executed, then the $LASTEXITCODE will be $null.\n-    # For the purposes of the prompt, replace this with a 0 exit code so that the prompt\n-    # doesn't show the last command as a failure (because it had a non-zero exit code).\n-    $lastExitCodeForPrompt = if ($origLastExitCode) { $origLastExitCode } else { 0 }\n+    # it isn't populated or modified until you execute a Powershell task that returns an exit\n+    # code e.g. On a fresh Powershell console:\n+    # > $LASTEXITCODE -eq $null\n+    # True\n+    # In the same console after running a Powershell cmdlet:\n+    # > gci ~/non_existing_folder\n+    # ...\n+    # > $LASTEXITCODE -eq $null\n+    # True\n+    # It only gets populated when running an external executable that returns an exit code, e. g.\n+    # > bash -c 'exit 5'\n+    # > $LASTEXITCODE -eq $null\n+    # False\n+    # > $LASTEXITCODE\n+    # 5\n+    # Whe start from the premise that the command executed correctly, which covers also the fresh console.\n+    $lastExitCodeForPrompt = 0\n+\n+    # In case we have a False on the Dollar hook, we know there's an error.\n+    if( -not $origDollarQuestion){",
+    "path": "src/init/starship.ps1",
+    "commit_id": "5832cd4e5cb75cf63efe9e92877d3e4c2e6dfdbc",
+    "original_commit_id": "10fff9a4bd792e710069fc16d2d17aa476c0ffcc",
+    "user": {
+      "login": "marcos-quezada",
+      "id": 34238856,
+      "node_id": "MDQ6VXNlcjM0MjM4ODU2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/34238856?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/marcos-quezada",
+      "html_url": "https://github.com/marcos-quezada",
+      "followers_url": "https://api.github.com/users/marcos-quezada/followers",
+      "following_url": "https://api.github.com/users/marcos-quezada/following{/other_user}",
+      "gists_url": "https://api.github.com/users/marcos-quezada/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/marcos-quezada/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/marcos-quezada/subscriptions",
+      "organizations_url": "https://api.github.com/users/marcos-quezada/orgs",
+      "repos_url": "https://api.github.com/users/marcos-quezada/repos",
+      "events_url": "https://api.github.com/users/marcos-quezada/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/marcos-quezada/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Moved the logic to andle $LASTEXITCODE inside the $lastCmd if block as suggested to take advantage of that variable.",
+    "created_at": "2020-10-10T20:31:28Z",
+    "updated_at": "2020-10-10T20:31:28Z",
+    "html_url": "https://github.com/starship/starship/pull/1745#discussion_r502829405",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1745",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/502829405"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1745#discussion_r502829405"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1745"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/502829405/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 38,
+    "side": "RIGHT",
+    "in_reply_to_id": 502627045,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 35,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/502829448",
+    "pull_request_review_id": 506124582,
+    "id": 502829448,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUwMjgyOTQ0OA==",
+    "diff_hunk": "@@ -14,9 +16,38 @@ function global:prompt {\n     $current_directory = (Convert-Path -LiteralPath $PWD)\n     \n     # If an external command has not been executed, then the $LASTEXITCODE will be $null.\n-    # For the purposes of the prompt, replace this with a 0 exit code so that the prompt\n-    # doesn't show the last command as a failure (because it had a non-zero exit code).\n-    $lastExitCodeForPrompt = if ($origLastExitCode) { $origLastExitCode } else { 0 }\n+    # it isn't populated or modified until you execute a Powershell task that returns an exit\n+    # code e.g. On a fresh Powershell console:\n+    # > $LASTEXITCODE -eq $null\n+    # True\n+    # In the same console after running a Powershell cmdlet:\n+    # > gci ~/non_existing_folder\n+    # ...\n+    # > $LASTEXITCODE -eq $null\n+    # True\n+    # It only gets populated when running an external executable that returns an exit code, e. g.\n+    # > bash -c 'exit 5'\n+    # > $LASTEXITCODE -eq $null\n+    # False\n+    # > $LASTEXITCODE\n+    # 5\n+    # Whe start from the premise that the command executed correctly, which covers also the fresh console.\n+    $lastExitCodeForPrompt = 0\n+\n+    # In case we have a False on the Dollar hook, we know there's an error.\n+    if( -not $origDollarQuestion){\n+    # We check if the caret (^) original value is null aka. this is the first command executed.\n+      if ($origCaretValue -eq $null){\n+    # If there's a $LASTEXITCODE we use it, otherwise, we can safely return the standard error.\n+        $lastExitCodeForPrompt = @($origLastExitCode,{1})[$origLastExitCode -eq $null]",
+    "path": "src/init/starship.ps1",
+    "commit_id": "5832cd4e5cb75cf63efe9e92877d3e4c2e6dfdbc",
+    "original_commit_id": "10fff9a4bd792e710069fc16d2d17aa476c0ffcc",
+    "user": {
+      "login": "marcos-quezada",
+      "id": 34238856,
+      "node_id": "MDQ6VXNlcjM0MjM4ODU2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/34238856?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/marcos-quezada",
+      "html_url": "https://github.com/marcos-quezada",
+      "followers_url": "https://api.github.com/users/marcos-quezada/followers",
+      "following_url": "https://api.github.com/users/marcos-quezada/following{/other_user}",
+      "gists_url": "https://api.github.com/users/marcos-quezada/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/marcos-quezada/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/marcos-quezada/subscriptions",
+      "organizations_url": "https://api.github.com/users/marcos-quezada/orgs",
+      "repos_url": "https://api.github.com/users/marcos-quezada/repos",
+      "events_url": "https://api.github.com/users/marcos-quezada/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/marcos-quezada/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Done, see previous comment as this logic was moved inside $lastCmd if block.",
+    "created_at": "2020-10-10T20:32:06Z",
+    "updated_at": "2020-10-10T20:32:06Z",
+    "html_url": "https://github.com/starship/starship/pull/1745#discussion_r502829448",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1745",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/502829448"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1745#discussion_r502829448"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1745"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/502829448/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 42,
+    "side": "RIGHT",
+    "in_reply_to_id": 502628067,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 39,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/502829494",
+    "pull_request_review_id": 506124610,
+    "id": 502829494,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUwMjgyOTQ5NA==",
+    "diff_hunk": "@@ -14,9 +16,38 @@ function global:prompt {\n     $current_directory = (Convert-Path -LiteralPath $PWD)\n     \n     # If an external command has not been executed, then the $LASTEXITCODE will be $null.\n-    # For the purposes of the prompt, replace this with a 0 exit code so that the prompt\n-    # doesn't show the last command as a failure (because it had a non-zero exit code).\n-    $lastExitCodeForPrompt = if ($origLastExitCode) { $origLastExitCode } else { 0 }\n+    # it isn't populated or modified until you execute a Powershell task that returns an exit\n+    # code e.g. On a fresh Powershell console:\n+    # > $LASTEXITCODE -eq $null\n+    # True\n+    # In the same console after running a Powershell cmdlet:\n+    # > gci ~/non_existing_folder\n+    # ...\n+    # > $LASTEXITCODE -eq $null\n+    # True\n+    # It only gets populated when running an external executable that returns an exit code, e. g.\n+    # > bash -c 'exit 5'\n+    # > $LASTEXITCODE -eq $null\n+    # False\n+    # > $LASTEXITCODE\n+    # 5\n+    # Whe start from the premise that the command executed correctly, which covers also the fresh console.\n+    $lastExitCodeForPrompt = 0\n+\n+    # In case we have a False on the Dollar hook, we know there's an error.\n+    if( -not $origDollarQuestion){\n+    # We check if the caret (^) original value is null aka. this is the first command executed.\n+      if ($origCaretValue -eq $null){\n+    # If there's a $LASTEXITCODE we use it, otherwise, we can safely return the standard error.\n+        $lastExitCodeForPrompt = @($origLastExitCode,{1})[$origLastExitCode -eq $null]\n+      }else{\n+    # Finally if the last error origin is the same as the last command run, we know it was an internal\n+    # Powershell command and we can return 1, otherwise, we use the $LASTEXITCODE\n+        $lastExitCodeForPrompt = @({1},$origLastExitCode)[$origCaretValue -eq $origLastErrorCmdletName]",
+    "path": "src/init/starship.ps1",
+    "commit_id": "5832cd4e5cb75cf63efe9e92877d3e4c2e6dfdbc",
+    "original_commit_id": "10fff9a4bd792e710069fc16d2d17aa476c0ffcc",
+    "user": {
+      "login": "marcos-quezada",
+      "id": 34238856,
+      "node_id": "MDQ6VXNlcjM0MjM4ODU2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/34238856?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/marcos-quezada",
+      "html_url": "https://github.com/marcos-quezada",
+      "followers_url": "https://api.github.com/users/marcos-quezada/followers",
+      "following_url": "https://api.github.com/users/marcos-quezada/following{/other_user}",
+      "gists_url": "https://api.github.com/users/marcos-quezada/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/marcos-quezada/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/marcos-quezada/subscriptions",
+      "organizations_url": "https://api.github.com/users/marcos-quezada/orgs",
+      "repos_url": "https://api.github.com/users/marcos-quezada/repos",
+      "events_url": "https://api.github.com/users/marcos-quezada/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/marcos-quezada/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Done, also see previous comments of the relocation of this logic inside the $lastCmd if block.",
+    "created_at": "2020-10-10T20:32:39Z",
+    "updated_at": "2020-10-10T20:32:39Z",
+    "html_url": "https://github.com/starship/starship/pull/1745#discussion_r502829494",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1745",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/502829494"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1745#discussion_r502829494"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1745"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/502829494/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 46,
+    "side": "RIGHT",
+    "in_reply_to_id": 502628634,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 43,
+    "position": 1,
+    "subject_type": "line"
+  }
+]
