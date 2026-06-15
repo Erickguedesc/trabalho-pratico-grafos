@@ -1,0 +1,1189 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/373720878",
+    "pull_request_review_id": 351823301,
+    "id": 373720878,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM3MzcyMDg3OA==",
+    "diff_hunk": "@@ -125,7 +127,20 @@ fn main() {\n             .subcommand(\n                 SubCommand::with_name(\"explain\").about(\"Explains the currently showing modules\"),\n             )\n-            .get_matches();\n+            .subcommand(\n+                SubCommand::with_name(\"completions\")\n+                    .about(\"Generate starship shell completions for your shell to stdout\")\n+                    .arg(\n+                        Arg::with_name(\"shell\")\n+                            .takes_value(true)\n+                            .possible_values(&Shell::variants())\n+                            .help(\"the shell to generate completions for\")\n+                            .value_name(\"SHELL\")\n+                            .required(true),",
+    "path": "src/main.rs",
+    "commit_id": "fe3e935bfe4e98021a551ccca6b6d3105c85b1c9",
+    "original_commit_id": "c87e7968d707219068682a859741bbf8f574af78",
+    "user": {
+      "login": "jonstodle",
+      "id": 1719761,
+      "node_id": "MDQ6VXNlcjE3MTk3NjE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1719761?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jonstodle",
+      "html_url": "https://github.com/jonstodle",
+      "followers_url": "https://api.github.com/users/jonstodle/followers",
+      "following_url": "https://api.github.com/users/jonstodle/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jonstodle/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jonstodle/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jonstodle/subscriptions",
+      "organizations_url": "https://api.github.com/users/jonstodle/orgs",
+      "repos_url": "https://api.github.com/users/jonstodle/repos",
+      "events_url": "https://api.github.com/users/jonstodle/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jonstodle/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "We could get around this requirement by reading the `STARSHIP_SHELL` env variable by default, and let the user override by explicitly specifying.",
+    "created_at": "2020-01-31T22:54:33Z",
+    "updated_at": "2020-06-03T06:11:04Z",
+    "html_url": "https://github.com/starship/starship/pull/881#discussion_r373720878",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/373720878"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/881#discussion_r373720878"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/373720878/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 139,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 38,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/373721132",
+    "pull_request_review_id": 351823301,
+    "id": 373721132,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM3MzcyMTEzMg==",
+    "diff_hunk": "@@ -161,6 +176,12 @@ fn main() {\n             }\n         }\n         (\"explain\", Some(sub_m)) => print::explain(sub_m.clone()),\n-        _ => {}\n+        (\"completions\", Some(sub_m)) => {\n+            let shell_name = sub_m.value_of(\"shell\").expect(\"Shell name missing.\");\n+            let shell = Shell::from_str(shell_name).expect(\"Invalid shell\");\n+\n+            app.gen_completions_to(\"starship\", shell, &mut io::stdout().lock());\n+        }\n+        (command, _) => panic!(\"Invalid subcommand: {}\", command),",
+    "path": "src/main.rs",
+    "commit_id": "fe3e935bfe4e98021a551ccca6b6d3105c85b1c9",
+    "original_commit_id": "c87e7968d707219068682a859741bbf8f574af78",
+    "user": {
+      "login": "jonstodle",
+      "id": 1719761,
+      "node_id": "MDQ6VXNlcjE3MTk3NjE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1719761?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jonstodle",
+      "html_url": "https://github.com/jonstodle",
+      "followers_url": "https://api.github.com/users/jonstodle/followers",
+      "following_url": "https://api.github.com/users/jonstodle/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jonstodle/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jonstodle/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jonstodle/subscriptions",
+      "organizations_url": "https://api.github.com/users/jonstodle/orgs",
+      "repos_url": "https://api.github.com/users/jonstodle/repos",
+      "events_url": "https://api.github.com/users/jonstodle/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jonstodle/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Is there a reason we'd want to add this? It seems it's not used as _clap_ will catch any invalid sub commands.",
+    "created_at": "2020-01-31T22:55:30Z",
+    "updated_at": "2020-06-03T06:11:04Z",
+    "html_url": "https://github.com/starship/starship/pull/881#discussion_r373721132",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/373721132"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/881#discussion_r373721132"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/373721132/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 185,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/373759211",
+    "pull_request_review_id": 351866579,
+    "id": 373759211,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM3Mzc1OTIxMQ==",
+    "diff_hunk": "@@ -161,6 +176,12 @@ fn main() {\n             }\n         }\n         (\"explain\", Some(sub_m)) => print::explain(sub_m.clone()),\n-        _ => {}\n+        (\"completions\", Some(sub_m)) => {\n+            let shell_name = sub_m.value_of(\"shell\").expect(\"Shell name missing.\");\n+            let shell = Shell::from_str(shell_name).expect(\"Invalid shell\");",
+    "path": "src/main.rs",
+    "commit_id": "fe3e935bfe4e98021a551ccca6b6d3105c85b1c9",
+    "original_commit_id": "c87e7968d707219068682a859741bbf8f574af78",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Is it safe to let clap generate completions for an unknown shell? (I tried looking this up, but I can't seem to find a quick answer)",
+    "created_at": "2020-02-01T05:19:39Z",
+    "updated_at": "2020-06-03T06:11:04Z",
+    "html_url": "https://github.com/starship/starship/pull/881#discussion_r373759211",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/373759211"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/881#discussion_r373759211"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/373759211/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 181,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 53,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/373760764",
+    "pull_request_review_id": 351867976,
+    "id": 373760764,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM3Mzc2MDc2NA==",
+    "diff_hunk": "@@ -161,6 +176,12 @@ fn main() {\n             }\n         }\n         (\"explain\", Some(sub_m)) => print::explain(sub_m.clone()),\n-        _ => {}\n+        (\"completions\", Some(sub_m)) => {\n+            let shell_name = sub_m.value_of(\"shell\").expect(\"Shell name missing.\");\n+            let shell = Shell::from_str(shell_name).expect(\"Invalid shell\");\n+\n+            app.gen_completions_to(\"starship\", shell, &mut io::stdout().lock());\n+        }\n+        (command, _) => panic!(\"Invalid subcommand: {}\", command),",
+    "path": "src/main.rs",
+    "commit_id": "fe3e935bfe4e98021a551ccca6b6d3105c85b1c9",
+    "original_commit_id": "c87e7968d707219068682a859741bbf8f574af78",
+    "user": {
+      "login": "Lucretiel",
+      "id": 1823405,
+      "node_id": "MDQ6VXNlcjE4MjM0MDU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1823405?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Lucretiel",
+      "html_url": "https://github.com/Lucretiel",
+      "followers_url": "https://api.github.com/users/Lucretiel/followers",
+      "following_url": "https://api.github.com/users/Lucretiel/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Lucretiel/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Lucretiel/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Lucretiel/subscriptions",
+      "organizations_url": "https://api.github.com/users/Lucretiel/orgs",
+      "repos_url": "https://api.github.com/users/Lucretiel/repos",
+      "events_url": "https://api.github.com/users/Lucretiel/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Lucretiel/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Better correct than sorry, right? It's better to have a panic that'll never happen than have incorrect logic that relies on a check at-a-distance.",
+    "created_at": "2020-02-01T06:01:15Z",
+    "updated_at": "2020-06-03T06:11:04Z",
+    "html_url": "https://github.com/starship/starship/pull/881#discussion_r373760764",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/373760764"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/881#discussion_r373760764"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/373760764/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 185,
+    "side": "RIGHT",
+    "in_reply_to_id": 373721132,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/373760804",
+    "pull_request_review_id": 351868002,
+    "id": 373760804,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM3Mzc2MDgwNA==",
+    "diff_hunk": "@@ -161,6 +176,12 @@ fn main() {\n             }\n         }\n         (\"explain\", Some(sub_m)) => print::explain(sub_m.clone()),\n-        _ => {}\n+        (\"completions\", Some(sub_m)) => {\n+            let shell_name = sub_m.value_of(\"shell\").expect(\"Shell name missing.\");\n+            let shell = Shell::from_str(shell_name).expect(\"Invalid shell\");\n+\n+            app.gen_completions_to(\"starship\", shell, &mut io::stdout().lock());\n+        }\n+        (command, _) => panic!(\"Invalid subcommand: {}\", command),",
+    "path": "src/main.rs",
+    "commit_id": "fe3e935bfe4e98021a551ccca6b6d3105c85b1c9",
+    "original_commit_id": "c87e7968d707219068682a859741bbf8f574af78",
+    "user": {
+      "login": "Lucretiel",
+      "id": 1823405,
+      "node_id": "MDQ6VXNlcjE4MjM0MDU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1823405?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Lucretiel",
+      "html_url": "https://github.com/Lucretiel",
+      "followers_url": "https://api.github.com/users/Lucretiel/followers",
+      "following_url": "https://api.github.com/users/Lucretiel/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Lucretiel/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Lucretiel/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Lucretiel/subscriptions",
+      "organizations_url": "https://api.github.com/users/Lucretiel/orgs",
+      "repos_url": "https://api.github.com/users/Lucretiel/repos",
+      "events_url": "https://api.github.com/users/Lucretiel/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Lucretiel/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The obvious protection here is that if someone adds a subcommand but doesn't update this `match`, it'll break loudly instead of silently doing the wrong thing.",
+    "created_at": "2020-02-01T06:01:58Z",
+    "updated_at": "2020-06-03T06:11:04Z",
+    "html_url": "https://github.com/starship/starship/pull/881#discussion_r373760804",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/373760804"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/881#discussion_r373760804"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/373760804/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 185,
+    "side": "RIGHT",
+    "in_reply_to_id": 373721132,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/373760846",
+    "pull_request_review_id": 351868044,
+    "id": 373760846,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM3Mzc2MDg0Ng==",
+    "diff_hunk": "@@ -161,6 +176,12 @@ fn main() {\n             }\n         }\n         (\"explain\", Some(sub_m)) => print::explain(sub_m.clone()),\n-        _ => {}\n+        (\"completions\", Some(sub_m)) => {\n+            let shell_name = sub_m.value_of(\"shell\").expect(\"Shell name missing.\");\n+            let shell = Shell::from_str(shell_name).expect(\"Invalid shell\");",
+    "path": "src/main.rs",
+    "commit_id": "fe3e935bfe4e98021a551ccca6b6d3105c85b1c9",
+    "original_commit_id": "c87e7968d707219068682a859741bbf8f574af78",
+    "user": {
+      "login": "Lucretiel",
+      "id": 1823405,
+      "node_id": "MDQ6VXNlcjE4MjM0MDU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1823405?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Lucretiel",
+      "html_url": "https://github.com/Lucretiel",
+      "followers_url": "https://api.github.com/users/Lucretiel/followers",
+      "following_url": "https://api.github.com/users/Lucretiel/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Lucretiel/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Lucretiel/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Lucretiel/subscriptions",
+      "organizations_url": "https://api.github.com/users/Lucretiel/orgs",
+      "repos_url": "https://api.github.com/users/Lucretiel/repos",
+      "events_url": "https://api.github.com/users/Lucretiel/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Lucretiel/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Clap won't generate completions for an unknown shell. The valid shells are in the [`clap::Shell`](https://docs.rs/clap/2.33.0/clap/enum.Shell.html) enum; anything else will trigger an error.",
+    "created_at": "2020-02-01T06:03:03Z",
+    "updated_at": "2020-06-03T06:11:04Z",
+    "html_url": "https://github.com/starship/starship/pull/881#discussion_r373760846",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/373760846"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/881#discussion_r373760846"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/373760846/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 181,
+    "side": "RIGHT",
+    "in_reply_to_id": 373759211,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 53,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/373781455",
+    "pull_request_review_id": 351885675,
+    "id": 373781455,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM3Mzc4MTQ1NQ==",
+    "diff_hunk": "@@ -161,6 +176,12 @@ fn main() {\n             }\n         }\n         (\"explain\", Some(sub_m)) => print::explain(sub_m.clone()),\n-        _ => {}\n+        (\"completions\", Some(sub_m)) => {\n+            let shell_name = sub_m.value_of(\"shell\").expect(\"Shell name missing.\");\n+            let shell = Shell::from_str(shell_name).expect(\"Invalid shell\");\n+\n+            app.gen_completions_to(\"starship\", shell, &mut io::stdout().lock());\n+        }\n+        (command, _) => panic!(\"Invalid subcommand: {}\", command),",
+    "path": "src/main.rs",
+    "commit_id": "fe3e935bfe4e98021a551ccca6b6d3105c85b1c9",
+    "original_commit_id": "c87e7968d707219068682a859741bbf8f574af78",
+    "user": {
+      "login": "jonstodle",
+      "id": 1719761,
+      "node_id": "MDQ6VXNlcjE3MTk3NjE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1719761?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jonstodle",
+      "html_url": "https://github.com/jonstodle",
+      "followers_url": "https://api.github.com/users/jonstodle/followers",
+      "following_url": "https://api.github.com/users/jonstodle/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jonstodle/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jonstodle/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jonstodle/subscriptions",
+      "organizations_url": "https://api.github.com/users/jonstodle/orgs",
+      "repos_url": "https://api.github.com/users/jonstodle/repos",
+      "events_url": "https://api.github.com/users/jonstodle/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jonstodle/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Makes sense.\r\n\r\nJust want to mention that `unreachable!()` might be more expressive, in that we don't actually expect it to be reached.",
+    "created_at": "2020-02-01T14:00:11Z",
+    "updated_at": "2020-06-03T06:11:04Z",
+    "html_url": "https://github.com/starship/starship/pull/881#discussion_r373781455",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/373781455"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/881#discussion_r373781455"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/373781455/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 185,
+    "side": "RIGHT",
+    "in_reply_to_id": 373721132,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/373796658",
+    "pull_request_review_id": 351899543,
+    "id": 373796658,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM3Mzc5NjY1OA==",
+    "diff_hunk": "@@ -161,6 +176,12 @@ fn main() {\n             }\n         }\n         (\"explain\", Some(sub_m)) => print::explain(sub_m.clone()),\n-        _ => {}\n+        (\"completions\", Some(sub_m)) => {\n+            let shell_name = sub_m.value_of(\"shell\").expect(\"Shell name missing.\");\n+            let shell = Shell::from_str(shell_name).expect(\"Invalid shell\");\n+\n+            app.gen_completions_to(\"starship\", shell, &mut io::stdout().lock());\n+        }\n+        (command, _) => panic!(\"Invalid subcommand: {}\", command),",
+    "path": "src/main.rs",
+    "commit_id": "fe3e935bfe4e98021a551ccca6b6d3105c85b1c9",
+    "original_commit_id": "c87e7968d707219068682a859741bbf8f574af78",
+    "user": {
+      "login": "Lucretiel",
+      "id": 1823405,
+      "node_id": "MDQ6VXNlcjE4MjM0MDU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1823405?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Lucretiel",
+      "html_url": "https://github.com/Lucretiel",
+      "followers_url": "https://api.github.com/users/Lucretiel/followers",
+      "following_url": "https://api.github.com/users/Lucretiel/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Lucretiel/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Lucretiel/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Lucretiel/subscriptions",
+      "organizations_url": "https://api.github.com/users/Lucretiel/orgs",
+      "repos_url": "https://api.github.com/users/Lucretiel/repos",
+      "events_url": "https://api.github.com/users/Lucretiel/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Lucretiel/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Sure, that makes sense; I'll make the.change\r\n",
+    "created_at": "2020-02-01T19:11:45Z",
+    "updated_at": "2020-06-03T06:11:04Z",
+    "html_url": "https://github.com/starship/starship/pull/881#discussion_r373796658",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/373796658"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/881#discussion_r373796658"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/373796658/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 185,
+    "side": "RIGHT",
+    "in_reply_to_id": 373721132,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/434242846",
+    "pull_request_review_id": 423139677,
+    "id": 434242846,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzNDI0Mjg0Ng==",
+    "diff_hunk": "@@ -161,6 +176,12 @@ fn main() {\n             }\n         }\n         (\"explain\", Some(sub_m)) => print::explain(sub_m.clone()),\n-        _ => {}\n+        (\"completions\", Some(sub_m)) => {\n+            let shell_name = sub_m.value_of(\"shell\").expect(\"Shell name missing.\");\n+            let shell = Shell::from_str(shell_name).expect(\"Invalid shell\");\n+\n+            app.gen_completions_to(\"starship\", shell, &mut io::stdout().lock());\n+        }\n+        (command, _) => panic!(\"Invalid subcommand: {}\", command),",
+    "path": "src/main.rs",
+    "commit_id": "fe3e935bfe4e98021a551ccca6b6d3105c85b1c9",
+    "original_commit_id": "c87e7968d707219068682a859741bbf8f574af78",
+    "user": {
+      "login": "Lucretiel",
+      "id": 1823405,
+      "node_id": "MDQ6VXNlcjE4MjM0MDU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1823405?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Lucretiel",
+      "html_url": "https://github.com/Lucretiel",
+      "followers_url": "https://api.github.com/users/Lucretiel/followers",
+      "following_url": "https://api.github.com/users/Lucretiel/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Lucretiel/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Lucretiel/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Lucretiel/subscriptions",
+      "organizations_url": "https://api.github.com/users/Lucretiel/orgs",
+      "repos_url": "https://api.github.com/users/Lucretiel/repos",
+      "events_url": "https://api.github.com/users/Lucretiel/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Lucretiel/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Done",
+    "created_at": "2020-06-03T00:18:39Z",
+    "updated_at": "2020-06-03T06:11:04Z",
+    "html_url": "https://github.com/starship/starship/pull/881#discussion_r434242846",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/434242846"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/881#discussion_r434242846"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/434242846/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 185,
+    "side": "RIGHT",
+    "in_reply_to_id": 373721132,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/434245108",
+    "pull_request_review_id": 423142404,
+    "id": 434245108,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzNDI0NTEwOA==",
+    "diff_hunk": "@@ -125,7 +127,20 @@ fn main() {\n             .subcommand(\n                 SubCommand::with_name(\"explain\").about(\"Explains the currently showing modules\"),\n             )\n-            .get_matches();\n+            .subcommand(\n+                SubCommand::with_name(\"completions\")\n+                    .about(\"Generate starship shell completions for your shell to stdout\")\n+                    .arg(\n+                        Arg::with_name(\"shell\")\n+                            .takes_value(true)\n+                            .possible_values(&Shell::variants())\n+                            .help(\"the shell to generate completions for\")\n+                            .value_name(\"SHELL\")\n+                            .required(true),",
+    "path": "src/main.rs",
+    "commit_id": "fe3e935bfe4e98021a551ccca6b6d3105c85b1c9",
+    "original_commit_id": "c87e7968d707219068682a859741bbf8f574af78",
+    "user": {
+      "login": "Lucretiel",
+      "id": 1823405,
+      "node_id": "MDQ6VXNlcjE4MjM0MDU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1823405?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Lucretiel",
+      "html_url": "https://github.com/Lucretiel",
+      "followers_url": "https://api.github.com/users/Lucretiel/followers",
+      "following_url": "https://api.github.com/users/Lucretiel/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Lucretiel/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Lucretiel/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Lucretiel/subscriptions",
+      "organizations_url": "https://api.github.com/users/Lucretiel/orgs",
+      "repos_url": "https://api.github.com/users/Lucretiel/repos",
+      "events_url": "https://api.github.com/users/Lucretiel/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Lucretiel/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Is that actually preferable? It doesn't seem like the requirement is bad, and it does seem like the only other place `STARSHIP_SHELL` used is in \"custom command\", where it's used for something unrelated (specifying the shell to run the custom command in). Typically that would be `sh`, even if I'm using something like `fish` as my interactive shell.",
+    "created_at": "2020-06-03T00:27:34Z",
+    "updated_at": "2020-06-03T06:11:04Z",
+    "html_url": "https://github.com/starship/starship/pull/881#discussion_r434245108",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/434245108"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/881#discussion_r434245108"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/434245108/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 139,
+    "side": "RIGHT",
+    "in_reply_to_id": 373720878,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 38,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/434270266",
+    "pull_request_review_id": 423172637,
+    "id": 434270266,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzNDI3MDI2Ng==",
+    "diff_hunk": "@@ -125,7 +127,20 @@ fn main() {\n             .subcommand(\n                 SubCommand::with_name(\"explain\").about(\"Explains the currently showing modules\"),\n             )\n-            .get_matches();\n+            .subcommand(\n+                SubCommand::with_name(\"completions\")\n+                    .about(\"Generate starship shell completions for your shell to stdout\")\n+                    .arg(\n+                        Arg::with_name(\"shell\")\n+                            .takes_value(true)\n+                            .possible_values(&Shell::variants())\n+                            .help(\"the shell to generate completions for\")\n+                            .value_name(\"SHELL\")\n+                            .required(true),",
+    "path": "src/main.rs",
+    "commit_id": "fe3e935bfe4e98021a551ccca6b6d3105c85b1c9",
+    "original_commit_id": "c87e7968d707219068682a859741bbf8f574af78",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It's used in a few places, including our bug-report mechanism. I'd be in favor of having the default behavior be to generate shell completions for the current shell.",
+    "created_at": "2020-06-03T02:12:29Z",
+    "updated_at": "2020-06-03T06:11:04Z",
+    "html_url": "https://github.com/starship/starship/pull/881#discussion_r434270266",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/434270266"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/881#discussion_r434270266"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/434270266/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 139,
+    "side": "RIGHT",
+    "in_reply_to_id": 373720878,
+    "author_association": "MEMBER",
+    "original_position": 38,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/434285903",
+    "pull_request_review_id": 423191798,
+    "id": 434285903,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzNDI4NTkwMw==",
+    "diff_hunk": "@@ -125,7 +127,20 @@ fn main() {\n             .subcommand(\n                 SubCommand::with_name(\"explain\").about(\"Explains the currently showing modules\"),\n             )\n-            .get_matches();\n+            .subcommand(\n+                SubCommand::with_name(\"completions\")\n+                    .about(\"Generate starship shell completions for your shell to stdout\")\n+                    .arg(\n+                        Arg::with_name(\"shell\")\n+                            .takes_value(true)\n+                            .possible_values(&Shell::variants())\n+                            .help(\"the shell to generate completions for\")\n+                            .value_name(\"SHELL\")\n+                            .required(true),",
+    "path": "src/main.rs",
+    "commit_id": "fe3e935bfe4e98021a551ccca6b6d3105c85b1c9",
+    "original_commit_id": "c87e7968d707219068682a859741bbf8f574af78",
+    "user": {
+      "login": "Lucretiel",
+      "id": 1823405,
+      "node_id": "MDQ6VXNlcjE4MjM0MDU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1823405?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Lucretiel",
+      "html_url": "https://github.com/Lucretiel",
+      "followers_url": "https://api.github.com/users/Lucretiel/followers",
+      "following_url": "https://api.github.com/users/Lucretiel/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Lucretiel/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Lucretiel/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Lucretiel/subscriptions",
+      "organizations_url": "https://api.github.com/users/Lucretiel/orgs",
+      "repos_url": "https://api.github.com/users/Lucretiel/repos",
+      "events_url": "https://api.github.com/users/Lucretiel/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Lucretiel/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I agree, but its use in \"custom command\" implies that `STARSHIP_SHELL` isn't necessarily your current shell? Since it's used to specify the shell that those commands are run in, which is nearly always going to be something like `sh` instead of `fish` or whatever",
+    "created_at": "2020-06-03T03:20:16Z",
+    "updated_at": "2020-06-03T06:11:04Z",
+    "html_url": "https://github.com/starship/starship/pull/881#discussion_r434285903",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/434285903"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/881#discussion_r434285903"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/434285903/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 139,
+    "side": "RIGHT",
+    "in_reply_to_id": 373720878,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 38,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/434301043",
+    "pull_request_review_id": 423209985,
+    "id": 434301043,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzNDMwMTA0Mw==",
+    "diff_hunk": "@@ -125,7 +127,20 @@ fn main() {\n             .subcommand(\n                 SubCommand::with_name(\"explain\").about(\"Explains the currently showing modules\"),\n             )\n-            .get_matches();\n+            .subcommand(\n+                SubCommand::with_name(\"completions\")\n+                    .about(\"Generate starship shell completions for your shell to stdout\")\n+                    .arg(\n+                        Arg::with_name(\"shell\")\n+                            .takes_value(true)\n+                            .possible_values(&Shell::variants())\n+                            .help(\"the shell to generate completions for\")\n+                            .value_name(\"SHELL\")\n+                            .required(true),",
+    "path": "src/main.rs",
+    "commit_id": "fe3e935bfe4e98021a551ccca6b6d3105c85b1c9",
+    "original_commit_id": "c87e7968d707219068682a859741bbf8f574af78",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Custom commands accept a `shell` value, which will fallback to `STARSHIP_SHELL` if unset. That is because we set `STARSHIP_SHELL` in the Starship initialization script; we don't expect it to be set by the user. It is assumed to be the currently running shell.",
+    "created_at": "2020-06-03T04:29:01Z",
+    "updated_at": "2020-06-03T06:11:04Z",
+    "html_url": "https://github.com/starship/starship/pull/881#discussion_r434301043",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/434301043"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/881#discussion_r434301043"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/434301043/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 139,
+    "side": "RIGHT",
+    "in_reply_to_id": 373720878,
+    "author_association": "MEMBER",
+    "original_position": 38,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/434301991",
+    "pull_request_review_id": 423211153,
+    "id": 434301991,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzNDMwMTk5MQ==",
+    "diff_hunk": "@@ -125,7 +127,20 @@ fn main() {\n             .subcommand(\n                 SubCommand::with_name(\"explain\").about(\"Explains the currently showing modules\"),\n             )\n-            .get_matches();\n+            .subcommand(\n+                SubCommand::with_name(\"completions\")\n+                    .about(\"Generate starship shell completions for your shell to stdout\")\n+                    .arg(\n+                        Arg::with_name(\"shell\")\n+                            .takes_value(true)\n+                            .possible_values(&Shell::variants())\n+                            .help(\"the shell to generate completions for\")\n+                            .value_name(\"SHELL\")\n+                            .required(true),",
+    "path": "src/main.rs",
+    "commit_id": "fe3e935bfe4e98021a551ccca6b6d3105c85b1c9",
+    "original_commit_id": "c87e7968d707219068682a859741bbf8f574af78",
+    "user": {
+      "login": "Lucretiel",
+      "id": 1823405,
+      "node_id": "MDQ6VXNlcjE4MjM0MDU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1823405?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Lucretiel",
+      "html_url": "https://github.com/Lucretiel",
+      "followers_url": "https://api.github.com/users/Lucretiel/followers",
+      "following_url": "https://api.github.com/users/Lucretiel/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Lucretiel/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Lucretiel/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Lucretiel/subscriptions",
+      "organizations_url": "https://api.github.com/users/Lucretiel/orgs",
+      "repos_url": "https://api.github.com/users/Lucretiel/repos",
+      "events_url": "https://api.github.com/users/Lucretiel/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Lucretiel/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ahh, I see that. I wasn't looking at the init scripts. Very well, will update.",
+    "created_at": "2020-06-03T04:33:16Z",
+    "updated_at": "2020-06-03T06:11:04Z",
+    "html_url": "https://github.com/starship/starship/pull/881#discussion_r434301991",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/434301991"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/881#discussion_r434301991"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/434301991/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 139,
+    "side": "RIGHT",
+    "in_reply_to_id": 373720878,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 38,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/434303076",
+    "pull_request_review_id": 423212423,
+    "id": 434303076,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzNDMwMzA3Ng==",
+    "diff_hunk": "@@ -125,7 +127,20 @@ fn main() {\n             .subcommand(\n                 SubCommand::with_name(\"explain\").about(\"Explains the currently showing modules\"),\n             )\n-            .get_matches();\n+            .subcommand(\n+                SubCommand::with_name(\"completions\")\n+                    .about(\"Generate starship shell completions for your shell to stdout\")\n+                    .arg(\n+                        Arg::with_name(\"shell\")\n+                            .takes_value(true)\n+                            .possible_values(&Shell::variants())\n+                            .help(\"the shell to generate completions for\")\n+                            .value_name(\"SHELL\")\n+                            .required(true),",
+    "path": "src/main.rs",
+    "commit_id": "fe3e935bfe4e98021a551ccca6b6d3105c85b1c9",
+    "original_commit_id": "c87e7968d707219068682a859741bbf8f574af78",
+    "user": {
+      "login": "Lucretiel",
+      "id": 1823405,
+      "node_id": "MDQ6VXNlcjE4MjM0MDU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1823405?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Lucretiel",
+      "html_url": "https://github.com/Lucretiel",
+      "followers_url": "https://api.github.com/users/Lucretiel/followers",
+      "following_url": "https://api.github.com/users/Lucretiel/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Lucretiel/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Lucretiel/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Lucretiel/subscriptions",
+      "organizations_url": "https://api.github.com/users/Lucretiel/orgs",
+      "repos_url": "https://api.github.com/users/Lucretiel/repos",
+      "events_url": "https://api.github.com/users/Lucretiel/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Lucretiel/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Probably this means that `starship init` should be updated too, right? For consistency?",
+    "created_at": "2020-06-03T04:38:02Z",
+    "updated_at": "2020-06-03T06:11:04Z",
+    "html_url": "https://github.com/starship/starship/pull/881#discussion_r434303076",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/434303076"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/881#discussion_r434303076"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/434303076/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 139,
+    "side": "RIGHT",
+    "in_reply_to_id": 373720878,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 38,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/434306881",
+    "pull_request_review_id": 423216932,
+    "id": 434306881,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzNDMwNjg4MQ==",
+    "diff_hunk": "@@ -125,7 +127,20 @@ fn main() {\n             .subcommand(\n                 SubCommand::with_name(\"explain\").about(\"Explains the currently showing modules\"),\n             )\n-            .get_matches();\n+            .subcommand(\n+                SubCommand::with_name(\"completions\")\n+                    .about(\"Generate starship shell completions for your shell to stdout\")\n+                    .arg(\n+                        Arg::with_name(\"shell\")\n+                            .takes_value(true)\n+                            .possible_values(&Shell::variants())\n+                            .help(\"the shell to generate completions for\")\n+                            .value_name(\"SHELL\")\n+                            .required(true),",
+    "path": "src/main.rs",
+    "commit_id": "fe3e935bfe4e98021a551ccca6b6d3105c85b1c9",
+    "original_commit_id": "c87e7968d707219068682a859741bbf8f574af78",
+    "user": {
+      "login": "Lucretiel",
+      "id": 1823405,
+      "node_id": "MDQ6VXNlcjE4MjM0MDU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1823405?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Lucretiel",
+      "html_url": "https://github.com/Lucretiel",
+      "followers_url": "https://api.github.com/users/Lucretiel/followers",
+      "following_url": "https://api.github.com/users/Lucretiel/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Lucretiel/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Lucretiel/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Lucretiel/subscriptions",
+      "organizations_url": "https://api.github.com/users/Lucretiel/orgs",
+      "repos_url": "https://api.github.com/users/Lucretiel/repos",
+      "events_url": "https://api.github.com/users/Lucretiel/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Lucretiel/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Fixed",
+    "created_at": "2020-06-03T04:53:43Z",
+    "updated_at": "2020-06-03T06:11:04Z",
+    "html_url": "https://github.com/starship/starship/pull/881#discussion_r434306881",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/434306881"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/881#discussion_r434306881"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/434306881/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 139,
+    "side": "RIGHT",
+    "in_reply_to_id": 373720878,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 38,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/434326355",
+    "pull_request_review_id": 423240507,
+    "id": 434326355,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzNDMyNjM1NQ==",
+    "diff_hunk": "@@ -125,7 +127,20 @@ fn main() {\n             .subcommand(\n                 SubCommand::with_name(\"explain\").about(\"Explains the currently showing modules\"),\n             )\n-            .get_matches();\n+            .subcommand(\n+                SubCommand::with_name(\"completions\")\n+                    .about(\"Generate starship shell completions for your shell to stdout\")\n+                    .arg(\n+                        Arg::with_name(\"shell\")\n+                            .takes_value(true)\n+                            .possible_values(&Shell::variants())\n+                            .help(\"the shell to generate completions for\")\n+                            .value_name(\"SHELL\")\n+                            .required(true),",
+    "path": "src/main.rs",
+    "commit_id": "fe3e935bfe4e98021a551ccca6b6d3105c85b1c9",
+    "original_commit_id": "c87e7968d707219068682a859741bbf8f574af78",
+    "user": {
+      "login": "Lucretiel",
+      "id": 1823405,
+      "node_id": "MDQ6VXNlcjE4MjM0MDU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1823405?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Lucretiel",
+      "html_url": "https://github.com/Lucretiel",
+      "followers_url": "https://api.github.com/users/Lucretiel/followers",
+      "following_url": "https://api.github.com/users/Lucretiel/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Lucretiel/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Lucretiel/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Lucretiel/subscriptions",
+      "organizations_url": "https://api.github.com/users/Lucretiel/orgs",
+      "repos_url": "https://api.github.com/users/Lucretiel/repos",
+      "events_url": "https://api.github.com/users/Lucretiel/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Lucretiel/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I confirmed that the `env()` and `required()` interaction is correct; the argument is accepted at the command line or via env var. It's an error if both are absent, or if the input doesn't match one of the possible choices.",
+    "created_at": "2020-06-03T06:03:09Z",
+    "updated_at": "2020-06-03T06:11:04Z",
+    "html_url": "https://github.com/starship/starship/pull/881#discussion_r434326355",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/434326355"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/881#discussion_r434326355"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/434326355/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 139,
+    "side": "RIGHT",
+    "in_reply_to_id": 373720878,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 38,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

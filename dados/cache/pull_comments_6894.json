@@ -1,0 +1,2503 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2275718841",
+    "pull_request_review_id": 3119332815,
+    "id": 2275718841,
+    "node_id": "PRRC_kwDOCqswNs6HpLa5",
+    "diff_hunk": "@@ -462,20 +463,30 @@ impl Default for Context<'_> {\n     }\n }\n \n+/// Checks if a config string contains multiple files\n fn home_dir(env: &Env) -> Option<PathBuf> {\n-    if cfg!(test) {\n-        if let Some(home) = env.get_env(\"HOME\") {\n-            return Some(PathBuf::from(home));\n-        }\n+    // Try to get HOME from environment first (mocked or real)\n+    if let Some(home) = env.get_env(\"HOME\") {\n+        return Some(PathBuf::from(home));\n     }\n-    utils::home_dir()\n+    // If HOME is not set, fallback to system home directory\n+    crate::utils::home_dir()\n }\n \n fn get_config_path_os(env: &Env) -> Option<OsString> {\n-    if let Some(config_path) = env.get_env_os(\"STARSHIP_CONFIG\") {\n-        return Some(config_path);\n+    if let Some(config_line) = env.get_env_os(\"STARSHIP_CONFIG\") {\n+        let config_str = config_line.to_str()?;\n+        if config_str.is_empty() {\n+            let default_path = home_dir(env)?.join(\".config\").join(\"starship.toml\");\n+            return Some(default_path.into_os_string());\n+        }\n+        // Devuelve siempre el valor de STARSHIP_CONFIG, sea uno o varios paths",
+    "path": "src/context.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "55aae8d5a154095588db7c9bfb3a960390cd47dc",
+    "user": {
+      "login": "cappyzawa",
+      "id": 12455284,
+      "node_id": "MDQ6VXNlcjEyNDU1Mjg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12455284?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cappyzawa",
+      "html_url": "https://github.com/cappyzawa",
+      "followers_url": "https://api.github.com/users/cappyzawa/followers",
+      "following_url": "https://api.github.com/users/cappyzawa/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cappyzawa/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cappyzawa/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cappyzawa/subscriptions",
+      "organizations_url": "https://api.github.com/users/cappyzawa/orgs",
+      "repos_url": "https://api.github.com/users/cappyzawa/repos",
+      "events_url": "https://api.github.com/users/cappyzawa/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cappyzawa/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Could you please update this comment to English for consistency with the rest of the codebase?",
+    "created_at": "2025-08-14T07:24:59Z",
+    "updated_at": "2025-08-14T07:24:59Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2275718841",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2275718841"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2275718841"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2275718841/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 483,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 36,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2275728605",
+    "pull_request_review_id": 3119346361,
+    "id": 2275728605,
+    "node_id": "PRRC_kwDOCqswNs6HpNzd",
+    "diff_hunk": "@@ -462,20 +463,30 @@ impl Default for Context<'_> {\n     }\n }\n \n+/// Checks if a config string contains multiple files",
+    "path": "src/context.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "55aae8d5a154095588db7c9bfb3a960390cd47dc",
+    "user": {
+      "login": "cappyzawa",
+      "id": 12455284,
+      "node_id": "MDQ6VXNlcjEyNDU1Mjg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12455284?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cappyzawa",
+      "html_url": "https://github.com/cappyzawa",
+      "followers_url": "https://api.github.com/users/cappyzawa/followers",
+      "following_url": "https://api.github.com/users/cappyzawa/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cappyzawa/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cappyzawa/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cappyzawa/subscriptions",
+      "organizations_url": "https://api.github.com/users/cappyzawa/orgs",
+      "repos_url": "https://api.github.com/users/cappyzawa/repos",
+      "events_url": "https://api.github.com/users/cappyzawa/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cappyzawa/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The comment doesn't match the function. This function gets the home directory, not config files.\r\n\r\n```suggestion\r\n/// Get the home directory from environment or system\r\n```",
+    "created_at": "2025-08-14T07:29:09Z",
+    "updated_at": "2025-08-14T07:36:38Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2275728605",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2275728605"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2275728605"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2275728605/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 466,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 12,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2275730912",
+    "pull_request_review_id": 3119346361,
+    "id": 2275730912,
+    "node_id": "PRRC_kwDOCqswNs6HpOXg",
+    "diff_hunk": "@@ -135,45 +135,132 @@ impl StarshipConfig {\n     /// Create a config from a starship configuration file\n     fn config_from_file(config_file_path: &Option<OsString>) -> Option<toml::Table> {\n         let toml_content = Self::read_config_content_as_str(config_file_path)?;\n-\n         match toml::from_str(&toml_content) {\n-            Ok(parsed) => {\n-                log::debug!(\"Config parsed: {:?}\", &parsed);\n-                Some(parsed)\n-            }\n+            Ok(parsed) => Some(parsed),\n             Err(error) => {\n                 log::error!(\"Unable to parse the config file: {error}\");\n                 None\n             }\n         }\n     }\n \n+    /// Checks if a config string contains multiple files\n+    pub fn has_multiple_files(config_str: &str) -> bool {\n+        std::env::split_paths(config_str).count() > 1\n+    }\n+\n+    /// Parses input line to extract and expand file paths using std::env::split_paths\n+    pub fn parse_input_paths(line: &str) -> Vec<std::path::PathBuf> {\n+        std::env::split_paths(line)\n+            .map(crate::context::Context::expand_tilde)\n+            .collect()\n+    }\n+\n     pub fn read_config_content_as_str(config_file_path: &Option<OsString>) -> Option<String> {\n-        if config_file_path.is_none() {\n-            log::debug!(\n-                \"Unable to determine `config_file_path`. Perhaps `utils::home_dir` is not defined on your platform?\"\n-            );\n+        Self::read_config_content_as_str_with_context(config_file_path, None)\n+    }\n+\n+    pub fn read_config_content_as_str_with_context(\n+        config_file_path: &Option<OsString>,\n+        context: Option<&Context>,\n+    ) -> Option<String> {\n+        let config_file_path = config_file_path.as_ref()?;\n+        let config_path_str = config_file_path.to_str()?;\n+\n+        if Self::has_multiple_files(config_path_str) {\n+            Self::merge_config_files_runtime(config_path_str).or_else(|| {\n+                let default_path = context\n+                    .and_then(|ctx| ctx.get_home())\n+                    .or_else(crate::utils::home_dir)\n+                    .map(|mut home| {\n+                        home.push(\".config/starship.toml\");\n+                        home\n+                    })?;\n+                utils::read_file(&default_path).ok()\n+            })\n+        } else {\n+            utils::read_file(config_file_path).ok().or_else(|| {\n+                log::error!(\"Unable to read config file content\");\n+                None\n+            })\n+        }\n+    }\n+\n+    /// Initialize the Config struct with context for proper home directory resolution  ",
+    "path": "src/config.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "55aae8d5a154095588db7c9bfb3a960390cd47dc",
+    "user": {
+      "login": "cappyzawa",
+      "id": 12455284,
+      "node_id": "MDQ6VXNlcjEyNDU1Mjg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12455284?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cappyzawa",
+      "html_url": "https://github.com/cappyzawa",
+      "followers_url": "https://api.github.com/users/cappyzawa/followers",
+      "following_url": "https://api.github.com/users/cappyzawa/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cappyzawa/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cappyzawa/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cappyzawa/subscriptions",
+      "organizations_url": "https://api.github.com/users/cappyzawa/orgs",
+      "repos_url": "https://api.github.com/users/cappyzawa/repos",
+      "events_url": "https://api.github.com/users/cappyzawa/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cappyzawa/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Remove trailing whitespace\r\n\r\n```suggestion\r\n    /// Initialize the Config struct with context for proper home directory resolution\r\n```",
+    "created_at": "2025-08-14T07:30:09Z",
+    "updated_at": "2025-08-14T07:36:38Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2275730912",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2275730912"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2275730912"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2275730912/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 189,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 73,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2275738133",
+    "pull_request_review_id": 3119346361,
+    "id": 2275738133,
+    "node_id": "PRRC_kwDOCqswNs6HpQIV",
+    "diff_hunk": "@@ -1068,4 +1155,186 @@ mod tests {\n             \"if the platform doesn't have utils::home_dir(), it should return None\"\n         );\n     }\n+\n+    #[test]\n+    fn test_merge_config_files_runtime() {\n+        // Test the main merge functionality\n+        let config1 = r#\"\n+[character]\n+success_symbol = \"[>](green)\"\n+\n+[directory]\n+truncation_length = 3\n+\"#;\n+\n+        let config2 = r#\"\n+[character]\n+error_symbol = \"[X](red)\"\n+\n+[git_branch]\n+symbol = \" \"\n+\"#;\n+\n+        let table1: toml::Table = toml::from_str(config1).unwrap();\n+        let table2: toml::Table = toml::from_str(config2).unwrap();\n+\n+        let mut base = table1;\n+        StarshipConfig::deep_merge_tables(&mut base, table2);\n+\n+        // Verify merge results\n+        assert_eq!(base.len(), 3);\n+        assert!(base.contains_key(\"character\"));\n+        assert!(base.contains_key(\"directory\"));\n+        assert!(base.contains_key(\"git_branch\"));\n+\n+        let character = base.get(\"character\").unwrap().as_table().unwrap();\n+        assert_eq!(character.len(), 2);\n+        assert!(character.contains_key(\"success_symbol\"));\n+        assert!(character.contains_key(\"error_symbol\"));\n+    }\n+\n+    #[test]\n+    fn test_deep_merge_tables_arrays() {\n+        // Test array replacement behavior\n+        let config1 = r#\"\n+[python]\n+detect_files = [\"pyproject.toml\", \"requirements.txt\"]\n+symbol = \"🐍\"\n+\"#;\n+\n+        let config2 = r#\"\n+[python]\n+detect_files = [\"setup.py\"]\n+python_binary = [\"python3\"]\n+\"#;\n+\n+        let table1: toml::Table = toml::from_str(config1).unwrap();\n+        let table2: toml::Table = toml::from_str(config2).unwrap();\n+\n+        let mut base = table1;\n+        StarshipConfig::deep_merge_tables(&mut base, table2);\n+\n+        let python = base.get(\"python\").unwrap().as_table().unwrap();\n+        let files = python.get(\"detect_files\").unwrap().as_array().unwrap();\n+\n+        // Arrays should be replaced, not merged\n+        assert_eq!(files.len(), 1);\n+        assert_eq!(files[0].as_str().unwrap(), \"setup.py\");\n+\n+        // Other properties should be preserved or added\n+        assert_eq!(python.get(\"symbol\").unwrap().as_str().unwrap(), \"🐍\");\n+        assert!(python.contains_key(\"python_binary\"));\n+    }\n+\n+    #[test]\n+    fn test_deep_merge_tables_nested() {\n+        // Test nested table merging\n+        let config1 = r#\"\n+[git_status]\n+conflicted = \"=\"\n+ahead = \"⇡\"\n+\n+[git_status.count]\n+enabled = true\n+\"#;\n+\n+        let config2 = r#\"\n+[git_status]\n+behind = \"⇣\"\n+\n+[git_status.count]\n+style = \"red bold\"\n+\"#;\n+\n+        let table1: toml::Table = toml::from_str(config1).unwrap();\n+        let table2: toml::Table = toml::from_str(config2).unwrap();\n+\n+        let mut base = table1;\n+        StarshipConfig::deep_merge_tables(&mut base, table2);\n+\n+        let git_status = base.get(\"git_status\").unwrap().as_table().unwrap();\n+        assert_eq!(git_status.len(), 4); // conflicted, ahead, behind, count\n+\n+        let count = git_status.get(\"count\").unwrap().as_table().unwrap();\n+        assert_eq!(count.len(), 2); // enabled, style\n+        assert!(count.contains_key(\"enabled\"));\n+        assert!(count.contains_key(\"style\"));\n+    }\n+\n+    #[test]\n+    fn test_deep_merge_tables_value_overwrite() {\n+        // Test value overwriting behavior\n+        let config1 = r#\"\n+format = \"$all\"\n+add_newline = true\n+\n+[character]\n+success_symbol = \"[>](green)\"\n+\"#;\n+\n+        let config2 = r#\"\n+format = \"$directory$git_branch$character\"\n+add_newline = false\n+\n+[character]\n+success_symbol = \"[✓](bold green)\"\n+\"#;\n+\n+        let table1: toml::Table = toml::from_str(config1).unwrap();\n+        let table2: toml::Table = toml::from_str(config2).unwrap();\n+\n+        let mut base = table1;\n+        StarshipConfig::deep_merge_tables(&mut base, table2);\n+\n+        // Values should be overwritten\n+        assert_eq!(\n+            base.get(\"format\").unwrap().as_str().unwrap(),\n+            \"$directory$git_branch$character\"\n+        );\n+        assert!(!base.get(\"add_newline\").unwrap().as_bool().unwrap());\n+\n+        let character = base.get(\"character\").unwrap().as_table().unwrap();\n+        assert_eq!(\n+            character.get(\"success_symbol\").unwrap().as_str().unwrap(),\n+            \"[✓](bold green)\"\n+        );\n+    }\n+\n+    #[test]\n+    fn test_merge_toml_tables_empty_input() {\n+        // Test edge case with empty input\n+        let empty_paths: Vec<&std::path::PathBuf> = vec![];\n+        let result = StarshipConfig::merge_toml_tables(&empty_paths);\n+        assert!(result.is_none());\n+    }\n+\n+    #[test]\n+    fn test_read_config_content_as_str_with_context_single_file() {\n+        // Test single file reading (existing functionality)\n+        use std::ffi::OsString;\n+\n+        let non_existent_path = OsString::from(\"non_existent_config.toml\");\n+        let result =\n+            StarshipConfig::read_config_content_as_str_with_context(&Some(non_existent_path), None);\n+        assert!(result.is_none());\n+    }\n+    #[test]\n+    fn test_merge_toml_tables_with_invalid_and_missing_files() {\n+        use std::fs::File;\n+        use std::io::Write;\n+        use std::path::PathBuf;\n+\n+        let missing = PathBuf::from(\"no_existe.toml\");\n+\n+        let invalid = PathBuf::from(\"invalid.toml\");\n+        let mut file = File::create(&invalid).unwrap();\n+        writeln!(file, \"esto no es toml\").unwrap();",
+    "path": "src/config.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "55aae8d5a154095588db7c9bfb3a960390cd47dc",
+    "user": {
+      "login": "cappyzawa",
+      "id": 12455284,
+      "node_id": "MDQ6VXNlcjEyNDU1Mjg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12455284?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cappyzawa",
+      "html_url": "https://github.com/cappyzawa",
+      "followers_url": "https://api.github.com/users/cappyzawa/followers",
+      "following_url": "https://api.github.com/users/cappyzawa/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cappyzawa/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cappyzawa/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cappyzawa/subscriptions",
+      "organizations_url": "https://api.github.com/users/cappyzawa/orgs",
+      "repos_url": "https://api.github.com/users/cappyzawa/repos",
+      "events_url": "https://api.github.com/users/cappyzawa/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cappyzawa/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Consider adding a comment to clarify this is intentionally invalid TOML for testing error handling, and using English for consistency:\r\n\r\n```suggestion\r\n        writeln!(file, \"this is invalid toml\").unwrap();\r\n```",
+    "created_at": "2025-08-14T07:33:00Z",
+    "updated_at": "2025-08-14T07:36:38Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2275738133",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2275738133"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2275738133"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2275738133/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1331,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 341,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2275745100",
+    "pull_request_review_id": 3119371287,
+    "id": 2275745100,
+    "node_id": "PRRC_kwDOCqswNs6HpR1M",
+    "diff_hunk": "@@ -462,20 +463,30 @@ impl Default for Context<'_> {\n     }\n }\n \n+/// Checks if a config string contains multiple files\n fn home_dir(env: &Env) -> Option<PathBuf> {\n-    if cfg!(test) {\n-        if let Some(home) = env.get_env(\"HOME\") {\n-            return Some(PathBuf::from(home));\n-        }\n+    // Try to get HOME from environment first (mocked or real)\n+    if let Some(home) = env.get_env(\"HOME\") {\n+        return Some(PathBuf::from(home));\n     }\n-    utils::home_dir()\n+    // If HOME is not set, fallback to system home directory\n+    crate::utils::home_dir()\n }\n \n fn get_config_path_os(env: &Env) -> Option<OsString> {\n-    if let Some(config_path) = env.get_env_os(\"STARSHIP_CONFIG\") {\n-        return Some(config_path);\n+    if let Some(config_line) = env.get_env_os(\"STARSHIP_CONFIG\") {\n+        let config_str = config_line.to_str()?;\n+        if config_str.is_empty() {\n+            let default_path = home_dir(env)?.join(\".config\").join(\"starship.toml\");\n+            return Some(default_path.into_os_string());\n+        }\n+        // Devuelve siempre el valor de STARSHIP_CONFIG, sea uno o varios paths",
+    "path": "src/context.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "55aae8d5a154095588db7c9bfb3a960390cd47dc",
+    "user": {
+      "login": "Daniel-Escamilla",
+      "id": 73858568,
+      "node_id": "MDQ6VXNlcjczODU4NTY4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73858568?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Daniel-Escamilla",
+      "html_url": "https://github.com/Daniel-Escamilla",
+      "followers_url": "https://api.github.com/users/Daniel-Escamilla/followers",
+      "following_url": "https://api.github.com/users/Daniel-Escamilla/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Daniel-Escamilla/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Daniel-Escamilla/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Daniel-Escamilla/subscriptions",
+      "organizations_url": "https://api.github.com/users/Daniel-Escamilla/orgs",
+      "repos_url": "https://api.github.com/users/Daniel-Escamilla/repos",
+      "events_url": "https://api.github.com/users/Daniel-Escamilla/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Daniel-Escamilla/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Sure, thanks",
+    "created_at": "2025-08-14T07:35:54Z",
+    "updated_at": "2025-08-14T07:35:55Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2275745100",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2275745100"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2275745100"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2275745100/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 483,
+    "side": "RIGHT",
+    "in_reply_to_id": 2275718841,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 36,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2312375640",
+    "pull_request_review_id": 3171538788,
+    "id": 2312375640,
+    "node_id": "PRRC_kwDOCqswNs6J1A1Y",
+    "diff_hunk": "@@ -462,20 +463,30 @@ impl Default for Context<'_> {\n     }\n }\n \n+/// Get the home directory from environment or system\n fn home_dir(env: &Env) -> Option<PathBuf> {\n-    if cfg!(test) {\n-        if let Some(home) = env.get_env(\"HOME\") {\n-            return Some(PathBuf::from(home));\n-        }\n+    // Try to get HOME from environment first (mocked or real)\n+    if let Some(home) = env.get_env(\"HOME\") {\n+        return Some(PathBuf::from(home));\n     }",
+    "path": "src/context.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Why was this changed?",
+    "created_at": "2025-08-31T09:49:26Z",
+    "updated_at": "2025-09-07T15:50:38Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2312375640",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2312375640"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2312375640"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2312375640/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 468,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 471,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 21,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2312386035",
+    "pull_request_review_id": 3171538788,
+    "id": 2312386035,
+    "node_id": "PRRC_kwDOCqswNs6J1DXz",
+    "diff_hunk": "@@ -135,45 +135,132 @@ impl StarshipConfig {\n     /// Create a config from a starship configuration file\n     fn config_from_file(config_file_path: Option<&OsStr>) -> Option<toml::Table> {\n         let toml_content = Self::read_config_content_as_str(config_file_path)?;\n-\n         match toml::from_str(&toml_content) {\n-            Ok(parsed) => {\n-                log::debug!(\"Config parsed: {:?}\", &parsed);\n-                Some(parsed)\n-            }\n+            Ok(parsed) => Some(parsed),\n             Err(error) => {\n                 log::error!(\"Unable to parse the config file: {error}\");\n                 None\n             }\n         }\n     }\n \n+    /// Checks if a config string contains multiple files\n+    pub fn has_multiple_files(config_str: &str) -> bool {\n+        std::env::split_paths(config_str).count() > 1\n+    }\n+\n+    /// Parses input line to extract and expand file paths using std::env::split_paths\n+    pub fn parse_input_paths(line: &str) -> Vec<std::path::PathBuf> {\n+        std::env::split_paths(line)\n+            .map(crate::context::Context::expand_tilde)\n+            .collect()\n+    }\n+\n     pub fn read_config_content_as_str(config_file_path: Option<&OsStr>) -> Option<String> {\n-        if config_file_path.is_none() {\n-            log::debug!(\n-                \"Unable to determine `config_file_path`. Perhaps `utils::home_dir` is not defined on your platform?\"\n-            );\n+        Self::read_config_content_as_str_with_context(config_file_path, None)\n+    }\n+\n+    pub fn read_config_content_as_str_with_context(\n+        config_file_path: Option<&OsStr>,\n+        context: Option<&Context>,\n+    ) -> Option<String> {\n+        let config_file_path = config_file_path?;\n+        let config_path_str = config_file_path.to_str()?;\n+\n+        if Self::has_multiple_files(config_path_str) {\n+            Self::merge_config_files_runtime(config_path_str).or_else(|| {\n+                let default_path = context\n+                    .and_then(|ctx| {\n+                        ctx.get_home().and_then(|home| {\n+                            utils::default_starship_config_path(Some(home.as_path()))\n+                        })\n+                    })\n+                    .or_else(|| utils::default_starship_config_path(None))?;\n+                utils::read_file(&default_path).ok()\n+            })\n+        } else {\n+            utils::read_file(config_file_path).ok().or_else(|| {\n+                log::error!(\"Unable to read config file content\");\n+                None\n+            })\n+        }\n+    }\n+\n+    /// Initialize the Config struct with context for proper home directory resolution\n+    pub fn initialize_with_context(config_file_path: Option<&OsStr>, context: &Context) -> Self {\n+        let config = Self::read_config_content_as_str_with_context(config_file_path, Some(context))\n+            .and_then(|toml_content| match toml::from_str(&toml_content) {\n+                Ok(parsed) => Some(parsed),\n+                Err(error) => {\n+                    log::error!(\"Unable to parse the config file: {error}\");\n+                    None\n+                }\n+            });\n+        Self { config }\n+    }\n+\n+    /// Merge multiple configuration files using proper TOML table merging\n+    /// Supports complex TOML structures including arrays, nested tables, and matrices\n+    pub fn merge_config_files_runtime(config_paths: &str) -> Option<String> {\n+        let paths = Self::parse_input_paths(config_paths);\n+        let existing_paths: Vec<_> = paths.iter().filter(|p| p.exists()).collect();\n+        if existing_paths.is_empty() {\n+            log::warn!(\"No configuration files found for merging\");\n             return None;\n         }",
+    "path": "src/config.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Just try to read the files:\n```suggestion\n```",
+    "created_at": "2025-08-31T10:05:26Z",
+    "updated_at": "2025-09-07T15:50:38Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2312386035",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2312386035"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2312386035"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2312386035/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 208,
+    "original_start_line": 206,
+    "start_side": "RIGHT",
+    "line": 214,
+    "original_line": 210,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 94,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2312386189",
+    "pull_request_review_id": 3171538788,
+    "id": 2312386189,
+    "node_id": "PRRC_kwDOCqswNs6J1DaN",
+    "diff_hunk": "@@ -135,45 +135,132 @@ impl StarshipConfig {\n     /// Create a config from a starship configuration file\n     fn config_from_file(config_file_path: Option<&OsStr>) -> Option<toml::Table> {\n         let toml_content = Self::read_config_content_as_str(config_file_path)?;\n-\n         match toml::from_str(&toml_content) {\n-            Ok(parsed) => {\n-                log::debug!(\"Config parsed: {:?}\", &parsed);\n-                Some(parsed)\n-            }\n+            Ok(parsed) => Some(parsed),\n             Err(error) => {\n                 log::error!(\"Unable to parse the config file: {error}\");\n                 None\n             }\n         }\n     }\n \n+    /// Checks if a config string contains multiple files\n+    pub fn has_multiple_files(config_str: &str) -> bool {\n+        std::env::split_paths(config_str).count() > 1\n+    }\n+\n+    /// Parses input line to extract and expand file paths using std::env::split_paths\n+    pub fn parse_input_paths(line: &str) -> Vec<std::path::PathBuf> {\n+        std::env::split_paths(line)\n+            .map(crate::context::Context::expand_tilde)\n+            .collect()\n+    }\n+\n     pub fn read_config_content_as_str(config_file_path: Option<&OsStr>) -> Option<String> {\n-        if config_file_path.is_none() {\n-            log::debug!(\n-                \"Unable to determine `config_file_path`. Perhaps `utils::home_dir` is not defined on your platform?\"\n-            );\n+        Self::read_config_content_as_str_with_context(config_file_path, None)\n+    }\n+\n+    pub fn read_config_content_as_str_with_context(\n+        config_file_path: Option<&OsStr>,\n+        context: Option<&Context>,\n+    ) -> Option<String> {\n+        let config_file_path = config_file_path?;\n+        let config_path_str = config_file_path.to_str()?;\n+\n+        if Self::has_multiple_files(config_path_str) {\n+            Self::merge_config_files_runtime(config_path_str).or_else(|| {\n+                let default_path = context\n+                    .and_then(|ctx| {\n+                        ctx.get_home().and_then(|home| {\n+                            utils::default_starship_config_path(Some(home.as_path()))\n+                        })\n+                    })\n+                    .or_else(|| utils::default_starship_config_path(None))?;\n+                utils::read_file(&default_path).ok()\n+            })\n+        } else {\n+            utils::read_file(config_file_path).ok().or_else(|| {\n+                log::error!(\"Unable to read config file content\");\n+                None\n+            })\n+        }\n+    }\n+\n+    /// Initialize the Config struct with context for proper home directory resolution\n+    pub fn initialize_with_context(config_file_path: Option<&OsStr>, context: &Context) -> Self {\n+        let config = Self::read_config_content_as_str_with_context(config_file_path, Some(context))\n+            .and_then(|toml_content| match toml::from_str(&toml_content) {\n+                Ok(parsed) => Some(parsed),\n+                Err(error) => {\n+                    log::error!(\"Unable to parse the config file: {error}\");\n+                    None\n+                }\n+            });\n+        Self { config }\n+    }\n+\n+    /// Merge multiple configuration files using proper TOML table merging\n+    /// Supports complex TOML structures including arrays, nested tables, and matrices\n+    pub fn merge_config_files_runtime(config_paths: &str) -> Option<String> {\n+        let paths = Self::parse_input_paths(config_paths);\n+        let existing_paths: Vec<_> = paths.iter().filter(|p| p.exists()).collect();\n+        if existing_paths.is_empty() {\n+            log::warn!(\"No configuration files found for merging\");\n             return None;\n         }\n-        let config_file_path = config_file_path.as_ref().unwrap();\n-        match utils::read_file(config_file_path) {\n-            Ok(content) => {\n-                log::trace!(\"Config file content: \\\"\\n{}\\\"\", &content);\n-                Some(content)\n-            }\n+        let merged_table = Self::merge_toml_tables(&existing_paths)?;\n+        match toml::to_string(&merged_table) {\n+            Ok(content) => Some(content),\n             Err(e) => {\n-                let level = if e.kind() == ErrorKind::NotFound {\n-                    log::Level::Debug\n-                } else {\n-                    log::Level::Error\n-                };\n-\n-                log::log!(level, \"Unable to read config file content: {}\", &e);\n+                log::error!(\"Failed to serialize merged configuration: {}\", e);",
+    "path": "src/config.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Was there a specific reason to change the error handling?\n```suggestion\n                let level = if e.kind() == ErrorKind::NotFound {\n                    log::Level::Debug\n                } else {\n                    log::Level::Error\n                };\n\n                log::log!(level, \"Unable to read config file content: {}\", &e);\n```",
+    "created_at": "2025-08-31T10:05:51Z",
+    "updated_at": "2025-09-07T15:50:38Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2312386189",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2312386189"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2312386189"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2312386189/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 215,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 112,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328735573",
+    "pull_request_review_id": 3171538788,
+    "id": 2328735573,
+    "node_id": "PRRC_kwDOCqswNs6Kza9V",
+    "diff_hunk": "@@ -462,20 +463,30 @@ impl Default for Context<'_> {\n     }\n }\n \n+/// Get the home directory from environment or system\n fn home_dir(env: &Env) -> Option<PathBuf> {\n-    if cfg!(test) {\n-        if let Some(home) = env.get_env(\"HOME\") {\n-            return Some(PathBuf::from(home));\n-        }\n+    // Try to get HOME from environment first (mocked or real)\n+    if let Some(home) = env.get_env(\"HOME\") {\n+        return Some(PathBuf::from(home));\n     }\n-    utils::home_dir()\n+    // If HOME is not set, fallback to system home directory\n+    crate::utils::home_dir()\n }\n \n fn get_config_path_os(env: &Env) -> Option<OsString> {",
+    "path": "src/context.rs",
+    "commit_id": "b55f2d902d47c1bc04bf0dcde2ddc23fb0423b2e",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think things could be simplified by returning `Vec<PathBuf>` here.",
+    "created_at": "2025-09-07T15:40:49Z",
+    "updated_at": "2025-09-07T15:50:38Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2328735573",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2328735573"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2328735573"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328735573/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 512,
+    "original_line": 476,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 27,
+    "position": 22,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328736671",
+    "pull_request_review_id": 3171538788,
+    "id": 2328736671,
+    "node_id": "PRRC_kwDOCqswNs6KzbOf",
+    "diff_hunk": "@@ -135,45 +135,132 @@ impl StarshipConfig {\n     /// Create a config from a starship configuration file\n     fn config_from_file(config_file_path: Option<&OsStr>) -> Option<toml::Table> {\n         let toml_content = Self::read_config_content_as_str(config_file_path)?;\n-\n         match toml::from_str(&toml_content) {\n-            Ok(parsed) => {\n-                log::debug!(\"Config parsed: {:?}\", &parsed);\n-                Some(parsed)\n-            }\n+            Ok(parsed) => Some(parsed),\n             Err(error) => {\n                 log::error!(\"Unable to parse the config file: {error}\");\n                 None\n             }\n         }\n     }\n \n+    /// Checks if a config string contains multiple files\n+    pub fn has_multiple_files(config_str: &str) -> bool {\n+        std::env::split_paths(config_str).count() > 1\n+    }\n+\n+    /// Parses input line to extract and expand file paths using std::env::split_paths\n+    pub fn parse_input_paths(line: &str) -> Vec<std::path::PathBuf> {\n+        std::env::split_paths(line)\n+            .map(crate::context::Context::expand_tilde)\n+            .collect()\n+    }\n+\n     pub fn read_config_content_as_str(config_file_path: Option<&OsStr>) -> Option<String> {\n-        if config_file_path.is_none() {\n-            log::debug!(\n-                \"Unable to determine `config_file_path`. Perhaps `utils::home_dir` is not defined on your platform?\"\n-            );\n+        Self::read_config_content_as_str_with_context(config_file_path, None)\n+    }\n+\n+    pub fn read_config_content_as_str_with_context(\n+        config_file_path: Option<&OsStr>,\n+        context: Option<&Context>,\n+    ) -> Option<String> {\n+        let config_file_path = config_file_path?;\n+        let config_path_str = config_file_path.to_str()?;",
+    "path": "src/config.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "If an option is not optional for the function at hand, please don't pass it as `Option<_>` and instead handle this sort of thing in the caller.\n\nThis is less likely to be an issue with env vars, but I would prefer not to stringily the variable and instead keep it as `OsString` or `Path` throughout.\n\n",
+    "created_at": "2025-09-07T15:43:46Z",
+    "updated_at": "2025-09-07T15:50:38Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2328736671",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2328736671"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2328736671"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328736671/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 163,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 168,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 52,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328737260",
+    "pull_request_review_id": 3171538788,
+    "id": 2328737260,
+    "node_id": "PRRC_kwDOCqswNs6KzbXs",
+    "diff_hunk": "@@ -135,45 +135,132 @@ impl StarshipConfig {\n     /// Create a config from a starship configuration file\n     fn config_from_file(config_file_path: Option<&OsStr>) -> Option<toml::Table> {\n         let toml_content = Self::read_config_content_as_str(config_file_path)?;\n-\n         match toml::from_str(&toml_content) {\n-            Ok(parsed) => {\n-                log::debug!(\"Config parsed: {:?}\", &parsed);\n-                Some(parsed)\n-            }\n+            Ok(parsed) => Some(parsed),\n             Err(error) => {\n                 log::error!(\"Unable to parse the config file: {error}\");\n                 None\n             }\n         }\n     }\n \n+    /// Checks if a config string contains multiple files\n+    pub fn has_multiple_files(config_str: &str) -> bool {\n+        std::env::split_paths(config_str).count() > 1\n+    }\n+\n+    /// Parses input line to extract and expand file paths using std::env::split_paths\n+    pub fn parse_input_paths(line: &str) -> Vec<std::path::PathBuf> {\n+        std::env::split_paths(line)\n+            .map(crate::context::Context::expand_tilde)\n+            .collect()\n+    }\n+\n     pub fn read_config_content_as_str(config_file_path: Option<&OsStr>) -> Option<String> {\n-        if config_file_path.is_none() {\n-            log::debug!(\n-                \"Unable to determine `config_file_path`. Perhaps `utils::home_dir` is not defined on your platform?\"\n-            );\n+        Self::read_config_content_as_str_with_context(config_file_path, None)\n+    }\n+\n+    pub fn read_config_content_as_str_with_context(\n+        config_file_path: Option<&OsStr>,\n+        context: Option<&Context>,\n+    ) -> Option<String> {\n+        let config_file_path = config_file_path?;\n+        let config_path_str = config_file_path.to_str()?;\n+\n+        if Self::has_multiple_files(config_path_str) {\n+            Self::merge_config_files_runtime(config_path_str).or_else(|| {\n+                let default_path = context\n+                    .and_then(|ctx| {\n+                        ctx.get_home().and_then(|home| {\n+                            utils::default_starship_config_path(Some(home.as_path()))\n+                        })\n+                    })\n+                    .or_else(|| utils::default_starship_config_path(None))?;\n+                utils::read_file(&default_path).ok()\n+            })",
+    "path": "src/config.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Why is the error handling on this branch different? In general I think we can always use `merge_config_files_runtime` regardless of the file count.",
+    "created_at": "2025-09-07T15:45:16Z",
+    "updated_at": "2025-09-07T15:50:38Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2328737260",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2328737260"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2328737260"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328737260/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 171,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 180,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 64,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328737479",
+    "pull_request_review_id": 3171538788,
+    "id": 2328737479,
+    "node_id": "PRRC_kwDOCqswNs6KzbbH",
+    "diff_hunk": "",
+    "path": "src/modules/custom.rs",
+    "commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "If you want to make these changes please handle them in a separate PR.",
+    "created_at": "2025-09-07T15:45:50Z",
+    "updated_at": "2025-09-07T15:50:38Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2328737479",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2328737479"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2328737479"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328737479/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1,
+    "original_line": 1,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 1,
+    "position": 1,
+    "subject_type": "file"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328738052",
+    "pull_request_review_id": 3171538788,
+    "id": 2328738052,
+    "node_id": "PRRC_kwDOCqswNs6KzbkE",
+    "diff_hunk": "@@ -236,16 +234,51 @@ fn get_config_path(shell: &str) -> Option<PathBuf> {\n }\n \n fn get_starship_config() -> String {",
+    "path": "src/bug_report.rs",
+    "commit_id": "b55f2d902d47c1bc04bf0dcde2ddc23fb0423b2e",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This should use shared facilities to acquire the combined configuration file, since it won't preserve comments etc anyway.",
+    "created_at": "2025-09-07T15:47:44Z",
+    "updated_at": "2025-09-07T15:50:38Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2328738052",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2328738052"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2328738052"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328738052/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 236,
+    "original_line": 236,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 14,
+    "position": 14,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328738560",
+    "pull_request_review_id": 3171538788,
+    "id": 2328738560,
+    "node_id": "PRRC_kwDOCqswNs6KzbsA",
+    "diff_hunk": "@@ -462,20 +463,30 @@ impl Default for Context<'_> {\n     }\n }\n \n+/// Get the home directory from environment or system\n fn home_dir(env: &Env) -> Option<PathBuf> {\n-    if cfg!(test) {\n-        if let Some(home) = env.get_env(\"HOME\") {\n-            return Some(PathBuf::from(home));\n-        }\n+    // Try to get HOME from environment first (mocked or real)\n+    if let Some(home) = env.get_env(\"HOME\") {\n+        return Some(PathBuf::from(home));\n     }\n-    utils::home_dir()\n+    // If HOME is not set, fallback to system home directory\n+    crate::utils::home_dir()\n }\n \n fn get_config_path_os(env: &Env) -> Option<OsString> {\n-    if let Some(config_path) = env.get_env_os(\"STARSHIP_CONFIG\") {\n-        return Some(config_path);\n+    if let Some(config_line) = env.get_env_os(\"STARSHIP_CONFIG\") {\n+        let config_str = config_line.to_str()?;\n+        if config_str.is_empty() {\n+            let default_path = home_dir(env)?.join(\".config\").join(\"starship.toml\");\n+            return Some(default_path.into_os_string());\n+        }",
+    "path": "src/context.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "In the past extra handling for this was not necessary, has that changed?",
+    "created_at": "2025-09-07T15:49:19Z",
+    "updated_at": "2025-09-07T15:50:38Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2328738560",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2328738560"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2328738560"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2328738560/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 479,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 482,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 35,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2334307678",
+    "pull_request_review_id": 3202598117,
+    "id": 2334307678,
+    "node_id": "PRRC_kwDOCqswNs6LIrVe",
+    "diff_hunk": "@@ -462,20 +463,30 @@ impl Default for Context<'_> {\n     }\n }\n \n+/// Get the home directory from environment or system\n fn home_dir(env: &Env) -> Option<PathBuf> {\n-    if cfg!(test) {\n-        if let Some(home) = env.get_env(\"HOME\") {\n-            return Some(PathBuf::from(home));\n-        }\n+    // Try to get HOME from environment first (mocked or real)\n+    if let Some(home) = env.get_env(\"HOME\") {\n+        return Some(PathBuf::from(home));\n     }",
+    "path": "src/context.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "Daniel-Escamilla",
+      "id": 73858568,
+      "node_id": "MDQ6VXNlcjczODU4NTY4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73858568?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Daniel-Escamilla",
+      "html_url": "https://github.com/Daniel-Escamilla",
+      "followers_url": "https://api.github.com/users/Daniel-Escamilla/followers",
+      "following_url": "https://api.github.com/users/Daniel-Escamilla/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Daniel-Escamilla/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Daniel-Escamilla/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Daniel-Escamilla/subscriptions",
+      "organizations_url": "https://api.github.com/users/Daniel-Escamilla/orgs",
+      "repos_url": "https://api.github.com/users/Daniel-Escamilla/repos",
+      "events_url": "https://api.github.com/users/Daniel-Escamilla/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Daniel-Escamilla/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "To unify behavior: home_dir now always consults Env::get_env(\"HOME\") so tests and runtime resolve HOME the same way.",
+    "created_at": "2025-09-09T17:28:52Z",
+    "updated_at": "2025-09-09T17:28:52Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2334307678",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2334307678"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2334307678"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2334307678/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 468,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 471,
+    "side": "RIGHT",
+    "in_reply_to_id": 2312375640,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 21,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2334308483",
+    "pull_request_review_id": 3202599349,
+    "id": 2334308483,
+    "node_id": "PRRC_kwDOCqswNs6LIriD",
+    "diff_hunk": "@@ -135,45 +135,132 @@ impl StarshipConfig {\n     /// Create a config from a starship configuration file\n     fn config_from_file(config_file_path: Option<&OsStr>) -> Option<toml::Table> {\n         let toml_content = Self::read_config_content_as_str(config_file_path)?;\n-\n         match toml::from_str(&toml_content) {\n-            Ok(parsed) => {\n-                log::debug!(\"Config parsed: {:?}\", &parsed);\n-                Some(parsed)\n-            }\n+            Ok(parsed) => Some(parsed),\n             Err(error) => {\n                 log::error!(\"Unable to parse the config file: {error}\");\n                 None\n             }\n         }\n     }\n \n+    /// Checks if a config string contains multiple files\n+    pub fn has_multiple_files(config_str: &str) -> bool {\n+        std::env::split_paths(config_str).count() > 1\n+    }\n+\n+    /// Parses input line to extract and expand file paths using std::env::split_paths\n+    pub fn parse_input_paths(line: &str) -> Vec<std::path::PathBuf> {\n+        std::env::split_paths(line)\n+            .map(crate::context::Context::expand_tilde)\n+            .collect()\n+    }\n+\n     pub fn read_config_content_as_str(config_file_path: Option<&OsStr>) -> Option<String> {\n-        if config_file_path.is_none() {\n-            log::debug!(\n-                \"Unable to determine `config_file_path`. Perhaps `utils::home_dir` is not defined on your platform?\"\n-            );\n+        Self::read_config_content_as_str_with_context(config_file_path, None)\n+    }\n+\n+    pub fn read_config_content_as_str_with_context(\n+        config_file_path: Option<&OsStr>,\n+        context: Option<&Context>,\n+    ) -> Option<String> {\n+        let config_file_path = config_file_path?;\n+        let config_path_str = config_file_path.to_str()?;\n+\n+        if Self::has_multiple_files(config_path_str) {\n+            Self::merge_config_files_runtime(config_path_str).or_else(|| {\n+                let default_path = context\n+                    .and_then(|ctx| {\n+                        ctx.get_home().and_then(|home| {\n+                            utils::default_starship_config_path(Some(home.as_path()))\n+                        })\n+                    })\n+                    .or_else(|| utils::default_starship_config_path(None))?;\n+                utils::read_file(&default_path).ok()\n+            })\n+        } else {\n+            utils::read_file(config_file_path).ok().or_else(|| {\n+                log::error!(\"Unable to read config file content\");\n+                None\n+            })\n+        }\n+    }\n+\n+    /// Initialize the Config struct with context for proper home directory resolution\n+    pub fn initialize_with_context(config_file_path: Option<&OsStr>, context: &Context) -> Self {\n+        let config = Self::read_config_content_as_str_with_context(config_file_path, Some(context))\n+            .and_then(|toml_content| match toml::from_str(&toml_content) {\n+                Ok(parsed) => Some(parsed),\n+                Err(error) => {\n+                    log::error!(\"Unable to parse the config file: {error}\");\n+                    None\n+                }\n+            });\n+        Self { config }\n+    }\n+\n+    /// Merge multiple configuration files using proper TOML table merging\n+    /// Supports complex TOML structures including arrays, nested tables, and matrices\n+    pub fn merge_config_files_runtime(config_paths: &str) -> Option<String> {\n+        let paths = Self::parse_input_paths(config_paths);\n+        let existing_paths: Vec<_> = paths.iter().filter(|p| p.exists()).collect();\n+        if existing_paths.is_empty() {\n+            log::warn!(\"No configuration files found for merging\");\n             return None;\n         }",
+    "path": "src/config.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "Daniel-Escamilla",
+      "id": 73858568,
+      "node_id": "MDQ6VXNlcjczODU4NTY4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73858568?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Daniel-Escamilla",
+      "html_url": "https://github.com/Daniel-Escamilla",
+      "followers_url": "https://api.github.com/users/Daniel-Escamilla/followers",
+      "following_url": "https://api.github.com/users/Daniel-Escamilla/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Daniel-Escamilla/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Daniel-Escamilla/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Daniel-Escamilla/subscriptions",
+      "organizations_url": "https://api.github.com/users/Daniel-Escamilla/orgs",
+      "repos_url": "https://api.github.com/users/Daniel-Escamilla/repos",
+      "events_url": "https://api.github.com/users/Daniel-Escamilla/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Daniel-Escamilla/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I see your point. The reason I kept the existence check is to avoid misleading warnings.\r\nWithout it, when files don’t exist the message becomes:\r\n``` bash\r\n[WARN] - No valid TOML content found in any configuration file\r\n```\r\nwhich looks like a parsing issue.\r\n\r\nWith the check, the log is:\r\n``` bash\r\n[WARN] - No configuration files found for merging\r\n```\r\nwhich better reflects the situation.",
+    "created_at": "2025-09-09T17:29:17Z",
+    "updated_at": "2025-09-09T17:29:18Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2334308483",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2334308483"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2334308483"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2334308483/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 208,
+    "original_start_line": 206,
+    "start_side": "RIGHT",
+    "line": 214,
+    "original_line": 210,
+    "side": "RIGHT",
+    "in_reply_to_id": 2312386035,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 94,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2334308987",
+    "pull_request_review_id": 3202600098,
+    "id": 2334308987,
+    "node_id": "PRRC_kwDOCqswNs6LIrp7",
+    "diff_hunk": "@@ -135,45 +135,132 @@ impl StarshipConfig {\n     /// Create a config from a starship configuration file\n     fn config_from_file(config_file_path: Option<&OsStr>) -> Option<toml::Table> {\n         let toml_content = Self::read_config_content_as_str(config_file_path)?;\n-\n         match toml::from_str(&toml_content) {\n-            Ok(parsed) => {\n-                log::debug!(\"Config parsed: {:?}\", &parsed);\n-                Some(parsed)\n-            }\n+            Ok(parsed) => Some(parsed),\n             Err(error) => {\n                 log::error!(\"Unable to parse the config file: {error}\");\n                 None\n             }\n         }\n     }\n \n+    /// Checks if a config string contains multiple files\n+    pub fn has_multiple_files(config_str: &str) -> bool {\n+        std::env::split_paths(config_str).count() > 1\n+    }\n+\n+    /// Parses input line to extract and expand file paths using std::env::split_paths\n+    pub fn parse_input_paths(line: &str) -> Vec<std::path::PathBuf> {\n+        std::env::split_paths(line)\n+            .map(crate::context::Context::expand_tilde)\n+            .collect()\n+    }\n+\n     pub fn read_config_content_as_str(config_file_path: Option<&OsStr>) -> Option<String> {\n-        if config_file_path.is_none() {\n-            log::debug!(\n-                \"Unable to determine `config_file_path`. Perhaps `utils::home_dir` is not defined on your platform?\"\n-            );\n+        Self::read_config_content_as_str_with_context(config_file_path, None)\n+    }\n+\n+    pub fn read_config_content_as_str_with_context(\n+        config_file_path: Option<&OsStr>,\n+        context: Option<&Context>,\n+    ) -> Option<String> {\n+        let config_file_path = config_file_path?;\n+        let config_path_str = config_file_path.to_str()?;\n+\n+        if Self::has_multiple_files(config_path_str) {\n+            Self::merge_config_files_runtime(config_path_str).or_else(|| {\n+                let default_path = context\n+                    .and_then(|ctx| {\n+                        ctx.get_home().and_then(|home| {\n+                            utils::default_starship_config_path(Some(home.as_path()))\n+                        })\n+                    })\n+                    .or_else(|| utils::default_starship_config_path(None))?;\n+                utils::read_file(&default_path).ok()\n+            })\n+        } else {\n+            utils::read_file(config_file_path).ok().or_else(|| {\n+                log::error!(\"Unable to read config file content\");\n+                None\n+            })\n+        }\n+    }\n+\n+    /// Initialize the Config struct with context for proper home directory resolution\n+    pub fn initialize_with_context(config_file_path: Option<&OsStr>, context: &Context) -> Self {\n+        let config = Self::read_config_content_as_str_with_context(config_file_path, Some(context))\n+            .and_then(|toml_content| match toml::from_str(&toml_content) {\n+                Ok(parsed) => Some(parsed),\n+                Err(error) => {\n+                    log::error!(\"Unable to parse the config file: {error}\");\n+                    None\n+                }\n+            });\n+        Self { config }\n+    }\n+\n+    /// Merge multiple configuration files using proper TOML table merging\n+    /// Supports complex TOML structures including arrays, nested tables, and matrices\n+    pub fn merge_config_files_runtime(config_paths: &str) -> Option<String> {\n+        let paths = Self::parse_input_paths(config_paths);\n+        let existing_paths: Vec<_> = paths.iter().filter(|p| p.exists()).collect();\n+        if existing_paths.is_empty() {\n+            log::warn!(\"No configuration files found for merging\");\n             return None;\n         }\n-        let config_file_path = config_file_path.as_ref().unwrap();\n-        match utils::read_file(config_file_path) {\n-            Ok(content) => {\n-                log::trace!(\"Config file content: \\\"\\n{}\\\"\", &content);\n-                Some(content)\n-            }\n+        let merged_table = Self::merge_toml_tables(&existing_paths)?;\n+        match toml::to_string(&merged_table) {\n+            Ok(content) => Some(content),\n             Err(e) => {\n-                let level = if e.kind() == ErrorKind::NotFound {\n-                    log::Level::Debug\n-                } else {\n-                    log::Level::Error\n-                };\n-\n-                log::log!(level, \"Unable to read config file content: {}\", &e);\n+                log::error!(\"Failed to serialize merged configuration: {}\", e);",
+    "path": "src/config.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "Daniel-Escamilla",
+      "id": 73858568,
+      "node_id": "MDQ6VXNlcjczODU4NTY4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73858568?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Daniel-Escamilla",
+      "html_url": "https://github.com/Daniel-Escamilla",
+      "followers_url": "https://api.github.com/users/Daniel-Escamilla/followers",
+      "following_url": "https://api.github.com/users/Daniel-Escamilla/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Daniel-Escamilla/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Daniel-Escamilla/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Daniel-Escamilla/subscriptions",
+      "organizations_url": "https://api.github.com/users/Daniel-Escamilla/orgs",
+      "repos_url": "https://api.github.com/users/Daniel-Escamilla/repos",
+      "events_url": "https://api.github.com/users/Daniel-Escamilla/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Daniel-Escamilla/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Yes, this was necessary because the refactor changed from utils::read_file() (which returns std::io::Error with .kind()) to toml::to_string() (which returns toml::ser::Error without .kind()). Had to remove the differentiated error handling to avoid compilation errors.",
+    "created_at": "2025-09-09T17:29:34Z",
+    "updated_at": "2025-09-09T17:29:34Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2334308987",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2334308987"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2334308987"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2334308987/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 215,
+    "side": "RIGHT",
+    "in_reply_to_id": 2312386189,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 112,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2334309526",
+    "pull_request_review_id": 3202600970,
+    "id": 2334309526,
+    "node_id": "PRRC_kwDOCqswNs6LIryW",
+    "diff_hunk": "@@ -462,20 +463,30 @@ impl Default for Context<'_> {\n     }\n }\n \n+/// Get the home directory from environment or system\n fn home_dir(env: &Env) -> Option<PathBuf> {\n-    if cfg!(test) {\n-        if let Some(home) = env.get_env(\"HOME\") {\n-            return Some(PathBuf::from(home));\n-        }\n+    // Try to get HOME from environment first (mocked or real)\n+    if let Some(home) = env.get_env(\"HOME\") {\n+        return Some(PathBuf::from(home));\n     }\n-    utils::home_dir()\n+    // If HOME is not set, fallback to system home directory\n+    crate::utils::home_dir()\n }\n \n fn get_config_path_os(env: &Env) -> Option<OsString> {",
+    "path": "src/context.rs",
+    "commit_id": "b55f2d902d47c1bc04bf0dcde2ddc23fb0423b2e",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "Daniel-Escamilla",
+      "id": 73858568,
+      "node_id": "MDQ6VXNlcjczODU4NTY4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73858568?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Daniel-Escamilla",
+      "html_url": "https://github.com/Daniel-Escamilla",
+      "followers_url": "https://api.github.com/users/Daniel-Escamilla/followers",
+      "following_url": "https://api.github.com/users/Daniel-Escamilla/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Daniel-Escamilla/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Daniel-Escamilla/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Daniel-Escamilla/subscriptions",
+      "organizations_url": "https://api.github.com/users/Daniel-Escamilla/orgs",
+      "repos_url": "https://api.github.com/users/Daniel-Escamilla/repos",
+      "events_url": "https://api.github.com/users/Daniel-Escamilla/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Daniel-Escamilla/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "That's a good point. I agree returning a Vec could make things cleaner. At the moment this function is used in about 7 places, and most call sites only need the first config path. To avoid a larger refactor in this PR, I’d suggest keeping the current return type and revisiting the change in a separate cleanup PR.",
+    "created_at": "2025-09-09T17:29:50Z",
+    "updated_at": "2025-09-09T17:29:50Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2334309526",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2334309526"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2334309526"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2334309526/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 512,
+    "original_line": 476,
+    "side": "RIGHT",
+    "in_reply_to_id": 2328735573,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 27,
+    "position": 22,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2334309929",
+    "pull_request_review_id": 3202601899,
+    "id": 2334309929,
+    "node_id": "PRRC_kwDOCqswNs6LIr4p",
+    "diff_hunk": "@@ -135,45 +135,132 @@ impl StarshipConfig {\n     /// Create a config from a starship configuration file\n     fn config_from_file(config_file_path: Option<&OsStr>) -> Option<toml::Table> {\n         let toml_content = Self::read_config_content_as_str(config_file_path)?;\n-\n         match toml::from_str(&toml_content) {\n-            Ok(parsed) => {\n-                log::debug!(\"Config parsed: {:?}\", &parsed);\n-                Some(parsed)\n-            }\n+            Ok(parsed) => Some(parsed),\n             Err(error) => {\n                 log::error!(\"Unable to parse the config file: {error}\");\n                 None\n             }\n         }\n     }\n \n+    /// Checks if a config string contains multiple files\n+    pub fn has_multiple_files(config_str: &str) -> bool {\n+        std::env::split_paths(config_str).count() > 1\n+    }\n+\n+    /// Parses input line to extract and expand file paths using std::env::split_paths\n+    pub fn parse_input_paths(line: &str) -> Vec<std::path::PathBuf> {\n+        std::env::split_paths(line)\n+            .map(crate::context::Context::expand_tilde)\n+            .collect()\n+    }\n+\n     pub fn read_config_content_as_str(config_file_path: Option<&OsStr>) -> Option<String> {\n-        if config_file_path.is_none() {\n-            log::debug!(\n-                \"Unable to determine `config_file_path`. Perhaps `utils::home_dir` is not defined on your platform?\"\n-            );\n+        Self::read_config_content_as_str_with_context(config_file_path, None)\n+    }\n+\n+    pub fn read_config_content_as_str_with_context(\n+        config_file_path: Option<&OsStr>,\n+        context: Option<&Context>,\n+    ) -> Option<String> {\n+        let config_file_path = config_file_path?;\n+        let config_path_str = config_file_path.to_str()?;",
+    "path": "src/config.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "Daniel-Escamilla",
+      "id": 73858568,
+      "node_id": "MDQ6VXNlcjczODU4NTY4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73858568?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Daniel-Escamilla",
+      "html_url": "https://github.com/Daniel-Escamilla",
+      "followers_url": "https://api.github.com/users/Daniel-Escamilla/followers",
+      "following_url": "https://api.github.com/users/Daniel-Escamilla/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Daniel-Escamilla/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Daniel-Escamilla/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Daniel-Escamilla/subscriptions",
+      "organizations_url": "https://api.github.com/users/Daniel-Escamilla/orgs",
+      "repos_url": "https://api.github.com/users/Daniel-Escamilla/repos",
+      "events_url": "https://api.github.com/users/Daniel-Escamilla/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Daniel-Escamilla/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "You're absolutely right — using Option<&OsStr> here is unnecessary since the parameter isn’t actually optional. I’ll update the function to take &OsStr directly and move the Option handling into the callers.",
+    "created_at": "2025-09-09T17:30:00Z",
+    "updated_at": "2025-09-09T17:30:01Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2334309929",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2334309929"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2334309929"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2334309929/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 163,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 168,
+    "side": "RIGHT",
+    "in_reply_to_id": 2328736671,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 52,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2334310398",
+    "pull_request_review_id": 3202602578,
+    "id": 2334310398,
+    "node_id": "PRRC_kwDOCqswNs6LIr_-",
+    "diff_hunk": "@@ -135,45 +135,132 @@ impl StarshipConfig {\n     /// Create a config from a starship configuration file\n     fn config_from_file(config_file_path: Option<&OsStr>) -> Option<toml::Table> {\n         let toml_content = Self::read_config_content_as_str(config_file_path)?;\n-\n         match toml::from_str(&toml_content) {\n-            Ok(parsed) => {\n-                log::debug!(\"Config parsed: {:?}\", &parsed);\n-                Some(parsed)\n-            }\n+            Ok(parsed) => Some(parsed),\n             Err(error) => {\n                 log::error!(\"Unable to parse the config file: {error}\");\n                 None\n             }\n         }\n     }\n \n+    /// Checks if a config string contains multiple files\n+    pub fn has_multiple_files(config_str: &str) -> bool {\n+        std::env::split_paths(config_str).count() > 1\n+    }\n+\n+    /// Parses input line to extract and expand file paths using std::env::split_paths\n+    pub fn parse_input_paths(line: &str) -> Vec<std::path::PathBuf> {\n+        std::env::split_paths(line)\n+            .map(crate::context::Context::expand_tilde)\n+            .collect()\n+    }\n+\n     pub fn read_config_content_as_str(config_file_path: Option<&OsStr>) -> Option<String> {\n-        if config_file_path.is_none() {\n-            log::debug!(\n-                \"Unable to determine `config_file_path`. Perhaps `utils::home_dir` is not defined on your platform?\"\n-            );\n+        Self::read_config_content_as_str_with_context(config_file_path, None)\n+    }\n+\n+    pub fn read_config_content_as_str_with_context(\n+        config_file_path: Option<&OsStr>,\n+        context: Option<&Context>,\n+    ) -> Option<String> {\n+        let config_file_path = config_file_path?;\n+        let config_path_str = config_file_path.to_str()?;\n+\n+        if Self::has_multiple_files(config_path_str) {\n+            Self::merge_config_files_runtime(config_path_str).or_else(|| {\n+                let default_path = context\n+                    .and_then(|ctx| {\n+                        ctx.get_home().and_then(|home| {\n+                            utils::default_starship_config_path(Some(home.as_path()))\n+                        })\n+                    })\n+                    .or_else(|| utils::default_starship_config_path(None))?;\n+                utils::read_file(&default_path).ok()\n+            })",
+    "path": "src/config.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "Daniel-Escamilla",
+      "id": 73858568,
+      "node_id": "MDQ6VXNlcjczODU4NTY4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73858568?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Daniel-Escamilla",
+      "html_url": "https://github.com/Daniel-Escamilla",
+      "followers_url": "https://api.github.com/users/Daniel-Escamilla/followers",
+      "following_url": "https://api.github.com/users/Daniel-Escamilla/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Daniel-Escamilla/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Daniel-Escamilla/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Daniel-Escamilla/subscriptions",
+      "organizations_url": "https://api.github.com/users/Daniel-Escamilla/orgs",
+      "repos_url": "https://api.github.com/users/Daniel-Escamilla/repos",
+      "events_url": "https://api.github.com/users/Daniel-Escamilla/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Daniel-Escamilla/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "You're right. I'll refactor this to use merge_config_files_runtime for both cases, which will simplify the code and make the behavior more predictable.",
+    "created_at": "2025-09-09T17:30:15Z",
+    "updated_at": "2025-09-09T17:30:15Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2334310398",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2334310398"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2334310398"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2334310398/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 171,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 180,
+    "side": "RIGHT",
+    "in_reply_to_id": 2328737260,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 64,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2334310852",
+    "pull_request_review_id": 3202603441,
+    "id": 2334310852,
+    "node_id": "PRRC_kwDOCqswNs6LIsHE",
+    "diff_hunk": "",
+    "path": "src/modules/custom.rs",
+    "commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "Daniel-Escamilla",
+      "id": 73858568,
+      "node_id": "MDQ6VXNlcjczODU4NTY4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73858568?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Daniel-Escamilla",
+      "html_url": "https://github.com/Daniel-Escamilla",
+      "followers_url": "https://api.github.com/users/Daniel-Escamilla/followers",
+      "following_url": "https://api.github.com/users/Daniel-Escamilla/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Daniel-Escamilla/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Daniel-Escamilla/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Daniel-Escamilla/subscriptions",
+      "organizations_url": "https://api.github.com/users/Daniel-Escamilla/orgs",
+      "repos_url": "https://api.github.com/users/Daniel-Escamilla/repos",
+      "events_url": "https://api.github.com/users/Daniel-Escamilla/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Daniel-Escamilla/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ok. I'll handle the Windows-specific changes in a separate PR to keep this one focused on its original purpose.",
+    "created_at": "2025-09-09T17:30:27Z",
+    "updated_at": "2025-09-09T17:30:27Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2334310852",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2334310852"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2334310852"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2334310852/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1,
+    "original_line": 1,
+    "side": "RIGHT",
+    "in_reply_to_id": 2328737479,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 1,
+    "position": 1,
+    "subject_type": "file"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2334311246",
+    "pull_request_review_id": 3202604041,
+    "id": 2334311246,
+    "node_id": "PRRC_kwDOCqswNs6LIsNO",
+    "diff_hunk": "@@ -236,16 +234,51 @@ fn get_config_path(shell: &str) -> Option<PathBuf> {\n }\n \n fn get_starship_config() -> String {",
+    "path": "src/bug_report.rs",
+    "commit_id": "b55f2d902d47c1bc04bf0dcde2ddc23fb0423b2e",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "Daniel-Escamilla",
+      "id": 73858568,
+      "node_id": "MDQ6VXNlcjczODU4NTY4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73858568?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Daniel-Escamilla",
+      "html_url": "https://github.com/Daniel-Escamilla",
+      "followers_url": "https://api.github.com/users/Daniel-Escamilla/followers",
+      "following_url": "https://api.github.com/users/Daniel-Escamilla/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Daniel-Escamilla/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Daniel-Escamilla/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Daniel-Escamilla/subscriptions",
+      "organizations_url": "https://api.github.com/users/Daniel-Escamilla/orgs",
+      "repos_url": "https://api.github.com/users/Daniel-Escamilla/repos",
+      "events_url": "https://api.github.com/users/Daniel-Escamilla/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Daniel-Escamilla/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Good point — I agree. I'll use the shared helper to obtain the combined configuration instead of duplicating the logic here. I'll make a small, incremental change to delegate to the central helper.",
+    "created_at": "2025-09-09T17:30:39Z",
+    "updated_at": "2025-09-09T17:30:39Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2334311246",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2334311246"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2334311246"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2334311246/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 236,
+    "original_line": 236,
+    "side": "RIGHT",
+    "in_reply_to_id": 2328738052,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 14,
+    "position": 14,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2334312636",
+    "pull_request_review_id": 3202606521,
+    "id": 2334312636,
+    "node_id": "PRRC_kwDOCqswNs6LIsi8",
+    "diff_hunk": "@@ -462,20 +463,30 @@ impl Default for Context<'_> {\n     }\n }\n \n+/// Get the home directory from environment or system\n fn home_dir(env: &Env) -> Option<PathBuf> {\n-    if cfg!(test) {\n-        if let Some(home) = env.get_env(\"HOME\") {\n-            return Some(PathBuf::from(home));\n-        }\n+    // Try to get HOME from environment first (mocked or real)\n+    if let Some(home) = env.get_env(\"HOME\") {\n+        return Some(PathBuf::from(home));\n     }\n-    utils::home_dir()\n+    // If HOME is not set, fallback to system home directory\n+    crate::utils::home_dir()\n }\n \n fn get_config_path_os(env: &Env) -> Option<OsString> {\n-    if let Some(config_path) = env.get_env_os(\"STARSHIP_CONFIG\") {\n-        return Some(config_path);\n+    if let Some(config_line) = env.get_env_os(\"STARSHIP_CONFIG\") {\n+        let config_str = config_line.to_str()?;\n+        if config_str.is_empty() {\n+            let default_path = home_dir(env)?.join(\".config\").join(\"starship.toml\");\n+            return Some(default_path.into_os_string());\n+        }",
+    "path": "src/context.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "Daniel-Escamilla",
+      "id": 73858568,
+      "node_id": "MDQ6VXNlcjczODU4NTY4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73858568?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Daniel-Escamilla",
+      "html_url": "https://github.com/Daniel-Escamilla",
+      "followers_url": "https://api.github.com/users/Daniel-Escamilla/followers",
+      "following_url": "https://api.github.com/users/Daniel-Escamilla/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Daniel-Escamilla/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Daniel-Escamilla/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Daniel-Escamilla/subscriptions",
+      "organizations_url": "https://api.github.com/users/Daniel-Escamilla/orgs",
+      "repos_url": "https://api.github.com/users/Daniel-Escamilla/repos",
+      "events_url": "https://api.github.com/users/Daniel-Escamilla/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Daniel-Escamilla/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This check was added because the previous implementation was incomplete and didn't properly handle the case where:\r\n``` bash\r\nexport STARSHIP_CONFIG=\"\"\r\n```",
+    "created_at": "2025-09-09T17:31:24Z",
+    "updated_at": "2025-09-09T17:31:24Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2334312636",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2334312636"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2334312636"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2334312636/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 479,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 482,
+    "side": "RIGHT",
+    "in_reply_to_id": 2328738560,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 35,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2336558320",
+    "pull_request_review_id": 3205872456,
+    "id": 2336558320,
+    "node_id": "PRRC_kwDOCqswNs6LRQzw",
+    "diff_hunk": "@@ -135,45 +135,132 @@ impl StarshipConfig {\n     /// Create a config from a starship configuration file\n     fn config_from_file(config_file_path: Option<&OsStr>) -> Option<toml::Table> {\n         let toml_content = Self::read_config_content_as_str(config_file_path)?;\n-\n         match toml::from_str(&toml_content) {\n-            Ok(parsed) => {\n-                log::debug!(\"Config parsed: {:?}\", &parsed);\n-                Some(parsed)\n-            }\n+            Ok(parsed) => Some(parsed),\n             Err(error) => {\n                 log::error!(\"Unable to parse the config file: {error}\");\n                 None\n             }\n         }\n     }\n \n+    /// Checks if a config string contains multiple files\n+    pub fn has_multiple_files(config_str: &str) -> bool {\n+        std::env::split_paths(config_str).count() > 1\n+    }\n+\n+    /// Parses input line to extract and expand file paths using std::env::split_paths\n+    pub fn parse_input_paths(line: &str) -> Vec<std::path::PathBuf> {\n+        std::env::split_paths(line)\n+            .map(crate::context::Context::expand_tilde)\n+            .collect()\n+    }\n+\n     pub fn read_config_content_as_str(config_file_path: Option<&OsStr>) -> Option<String> {\n-        if config_file_path.is_none() {\n-            log::debug!(\n-                \"Unable to determine `config_file_path`. Perhaps `utils::home_dir` is not defined on your platform?\"\n-            );\n+        Self::read_config_content_as_str_with_context(config_file_path, None)\n+    }\n+\n+    pub fn read_config_content_as_str_with_context(\n+        config_file_path: Option<&OsStr>,\n+        context: Option<&Context>,\n+    ) -> Option<String> {\n+        let config_file_path = config_file_path?;\n+        let config_path_str = config_file_path.to_str()?;\n+\n+        if Self::has_multiple_files(config_path_str) {\n+            Self::merge_config_files_runtime(config_path_str).or_else(|| {\n+                let default_path = context\n+                    .and_then(|ctx| {\n+                        ctx.get_home().and_then(|home| {\n+                            utils::default_starship_config_path(Some(home.as_path()))\n+                        })\n+                    })\n+                    .or_else(|| utils::default_starship_config_path(None))?;\n+                utils::read_file(&default_path).ok()\n+            })\n+        } else {\n+            utils::read_file(config_file_path).ok().or_else(|| {\n+                log::error!(\"Unable to read config file content\");\n+                None\n+            })\n+        }\n+    }\n+\n+    /// Initialize the Config struct with context for proper home directory resolution\n+    pub fn initialize_with_context(config_file_path: Option<&OsStr>, context: &Context) -> Self {\n+        let config = Self::read_config_content_as_str_with_context(config_file_path, Some(context))\n+            .and_then(|toml_content| match toml::from_str(&toml_content) {\n+                Ok(parsed) => Some(parsed),\n+                Err(error) => {\n+                    log::error!(\"Unable to parse the config file: {error}\");\n+                    None\n+                }\n+            });\n+        Self { config }\n+    }\n+\n+    /// Merge multiple configuration files using proper TOML table merging\n+    /// Supports complex TOML structures including arrays, nested tables, and matrices\n+    pub fn merge_config_files_runtime(config_paths: &str) -> Option<String> {\n+        let paths = Self::parse_input_paths(config_paths);\n+        let existing_paths: Vec<_> = paths.iter().filter(|p| p.exists()).collect();\n+        if existing_paths.is_empty() {\n+            log::warn!(\"No configuration files found for merging\");\n             return None;\n         }",
+    "path": "src/config.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "dzuelke",
+      "id": 27900,
+      "node_id": "MDQ6VXNlcjI3OTAw",
+      "avatar_url": "https://avatars.githubusercontent.com/u/27900?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dzuelke",
+      "html_url": "https://github.com/dzuelke",
+      "followers_url": "https://api.github.com/users/dzuelke/followers",
+      "following_url": "https://api.github.com/users/dzuelke/following{/other_user}",
+      "gists_url": "https://api.github.com/users/dzuelke/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/dzuelke/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/dzuelke/subscriptions",
+      "organizations_url": "https://api.github.com/users/dzuelke/orgs",
+      "repos_url": "https://api.github.com/users/dzuelke/repos",
+      "events_url": "https://api.github.com/users/dzuelke/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/dzuelke/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "But should that case produce a warning? I'd argue that\r\n1. if `STARSHIP_CONFIG` is intentionally empty, then no warning should be produced;\r\n2. if the default config location is used but the file doesn't exist, no warning should be produced (or maybe just an `INFO` level message?);\r\n3. if a file specified in `STARSHIP_CONFIG` doesn't exist, it'd be useful to print the path in the warning message",
+    "created_at": "2025-09-10T12:14:26Z",
+    "updated_at": "2025-09-10T12:14:26Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2336558320",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2336558320"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2336558320"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2336558320/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 208,
+    "original_start_line": 206,
+    "start_side": "RIGHT",
+    "line": 214,
+    "original_line": 210,
+    "side": "RIGHT",
+    "in_reply_to_id": 2312386035,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 94,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2336562756",
+    "pull_request_review_id": 3205878703,
+    "id": 2336562756,
+    "node_id": "PRRC_kwDOCqswNs6LRR5E",
+    "diff_hunk": "@@ -134,46 +134,129 @@ impl StarshipConfig {\n \n     /// Create a config from a starship configuration file\n     fn config_from_file(config_file_path: Option<&OsStr>) -> Option<toml::Table> {\n+        let config_file_path = config_file_path?;\n         let toml_content = Self::read_config_content_as_str(config_file_path)?;\n-\n         match toml::from_str(&toml_content) {\n-            Ok(parsed) => {\n-                log::debug!(\"Config parsed: {:?}\", &parsed);\n-                Some(parsed)\n-            }\n+            Ok(parsed) => Some(parsed),\n             Err(error) => {\n                 log::error!(\"Unable to parse the config file: {error}\");\n                 None\n             }\n         }\n     }\n \n-    pub fn read_config_content_as_str(config_file_path: Option<&OsStr>) -> Option<String> {\n-        if config_file_path.is_none() {\n-            log::debug!(\n-                \"Unable to determine `config_file_path`. Perhaps `utils::home_dir` is not defined on your platform?\"\n-            );\n+    /// Checks if a config string contains multiple files\n+    pub fn has_multiple_files(config_str: &str) -> bool {\n+        std::env::split_paths(config_str).count() > 1\n+    }\n+\n+    /// Checks if a config path contains multiple files (OsStr version)\n+    pub fn has_multiple_files_os(config_path: &OsStr) -> bool {\n+        Self::has_multiple_files(config_path.to_str().unwrap_or(\"\"))\n+    }\n+\n+    /// Parses input line to extract and expand file paths using std::env::split_paths\n+    pub fn parse_input_paths(line: &str) -> Vec<std::path::PathBuf> {\n+        std::env::split_paths(line)\n+            .map(crate::context::Context::expand_tilde)\n+            .collect()\n+    }\n+\n+    pub fn read_config_content_as_str(config_file_path: &OsStr) -> Option<String> {\n+        Self::read_config_content_as_str_with_context(config_file_path, None)\n+    }\n+\n+    pub fn read_config_content_as_str_with_context(\n+        config_file_path: &OsStr,\n+        context: Option<&Context>,\n+    ) -> Option<String> {\n+        Self::merge_config_files_runtime(config_file_path).or_else(|| {\n+            let default_path = context\n+                .and_then(|ctx| {\n+                    ctx.get_home()\n+                        .and_then(|home| utils::default_starship_config_path(Some(home.as_path())))\n+                })\n+                .or_else(|| utils::default_starship_config_path(None))?;\n+            utils::read_file(&default_path).ok()\n+        })\n+    }\n+\n+    /// Initialize the Config struct with context for proper home directory resolution\n+    pub fn initialize_with_context(config_file_path: Option<&OsStr>, context: &Context) -> Self {\n+        let config = config_file_path\n+            .and_then(|path| Self::read_config_content_as_str_with_context(path, Some(context)))\n+            .and_then(|toml_content| match toml::from_str(&toml_content) {\n+                Ok(parsed) => Some(parsed),\n+                Err(error) => {\n+                    log::error!(\"Unable to parse the config file: {error}\");\n+                    None\n+                }\n+            });\n+        Self { config }\n+    }\n+\n+    /// Merge multiple configuration files using proper TOML table merging\n+    /// Supports complex TOML structures including arrays, nested tables, and matrices\n+    pub fn merge_config_files_runtime(config_paths: &OsStr) -> Option<String> {\n+        let paths = Self::parse_input_paths(config_paths.to_str().unwrap_or(\"\"));\n+        let existing_paths: Vec<_> = paths.iter().filter(|p| p.exists()).collect();\n+        if existing_paths.is_empty() {\n+            log::warn!(\"No configuration files found for merging\");\n             return None;\n         }\n-        let config_file_path = config_file_path.as_ref().unwrap();\n-        match utils::read_file(config_file_path) {\n-            Ok(content) => {\n-                log::trace!(\"Config file content: \\\"\\n{}\\\"\", &content);\n-                Some(content)\n-            }\n+        let merged_table = Self::merge_toml_tables(&existing_paths)?;\n+        match toml::to_string(&merged_table) {\n+            Ok(content) => Some(content),\n             Err(e) => {\n-                let level = if e.kind() == ErrorKind::NotFound {\n-                    log::Level::Debug\n-                } else {\n-                    log::Level::Error\n-                };\n-\n-                log::log!(level, \"Unable to read config file content: {}\", &e);\n+                log::error!(\"Failed to serialize merged configuration: {}\", e);\n                 None\n             }\n         }\n     }\n \n+    /// Merge multiple TOML files into a single table with proper type preservation\n+    fn merge_toml_tables(file_paths: &[&std::path::PathBuf]) -> Option<toml::Table> {",
+    "path": "src/config.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "192ddf4d326f4f8ee70d100006130b6fcbe903f7",
+    "user": {
+      "login": "dzuelke",
+      "id": 27900,
+      "node_id": "MDQ6VXNlcjI3OTAw",
+      "avatar_url": "https://avatars.githubusercontent.com/u/27900?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dzuelke",
+      "html_url": "https://github.com/dzuelke",
+      "followers_url": "https://api.github.com/users/dzuelke/followers",
+      "following_url": "https://api.github.com/users/dzuelke/following{/other_user}",
+      "gists_url": "https://api.github.com/users/dzuelke/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/dzuelke/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/dzuelke/subscriptions",
+      "organizations_url": "https://api.github.com/users/dzuelke/orgs",
+      "repos_url": "https://api.github.com/users/dzuelke/repos",
+      "events_url": "https://api.github.com/users/dzuelke/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/dzuelke/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Wouldn't it be easier to use https://crates.io/crates/serde-toml-merge instead for this?",
+    "created_at": "2025-09-10T12:16:17Z",
+    "updated_at": "2025-09-10T12:16:17Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2336562756",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2336562756"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2336562756"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2336562756/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 218,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 117,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2336955138",
+    "pull_request_review_id": 3206441375,
+    "id": 2336955138,
+    "node_id": "PRRC_kwDOCqswNs6LSxsC",
+    "diff_hunk": "@@ -134,46 +134,129 @@ impl StarshipConfig {\n \n     /// Create a config from a starship configuration file\n     fn config_from_file(config_file_path: Option<&OsStr>) -> Option<toml::Table> {\n+        let config_file_path = config_file_path?;\n         let toml_content = Self::read_config_content_as_str(config_file_path)?;\n-\n         match toml::from_str(&toml_content) {\n-            Ok(parsed) => {\n-                log::debug!(\"Config parsed: {:?}\", &parsed);\n-                Some(parsed)\n-            }\n+            Ok(parsed) => Some(parsed),\n             Err(error) => {\n                 log::error!(\"Unable to parse the config file: {error}\");\n                 None\n             }\n         }\n     }\n \n-    pub fn read_config_content_as_str(config_file_path: Option<&OsStr>) -> Option<String> {\n-        if config_file_path.is_none() {\n-            log::debug!(\n-                \"Unable to determine `config_file_path`. Perhaps `utils::home_dir` is not defined on your platform?\"\n-            );\n+    /// Checks if a config string contains multiple files\n+    pub fn has_multiple_files(config_str: &str) -> bool {\n+        std::env::split_paths(config_str).count() > 1\n+    }\n+\n+    /// Checks if a config path contains multiple files (OsStr version)\n+    pub fn has_multiple_files_os(config_path: &OsStr) -> bool {\n+        Self::has_multiple_files(config_path.to_str().unwrap_or(\"\"))\n+    }\n+\n+    /// Parses input line to extract and expand file paths using std::env::split_paths\n+    pub fn parse_input_paths(line: &str) -> Vec<std::path::PathBuf> {\n+        std::env::split_paths(line)\n+            .map(crate::context::Context::expand_tilde)\n+            .collect()\n+    }\n+\n+    pub fn read_config_content_as_str(config_file_path: &OsStr) -> Option<String> {\n+        Self::read_config_content_as_str_with_context(config_file_path, None)\n+    }\n+\n+    pub fn read_config_content_as_str_with_context(\n+        config_file_path: &OsStr,\n+        context: Option<&Context>,\n+    ) -> Option<String> {\n+        Self::merge_config_files_runtime(config_file_path).or_else(|| {\n+            let default_path = context\n+                .and_then(|ctx| {\n+                    ctx.get_home()\n+                        .and_then(|home| utils::default_starship_config_path(Some(home.as_path())))\n+                })\n+                .or_else(|| utils::default_starship_config_path(None))?;\n+            utils::read_file(&default_path).ok()\n+        })\n+    }\n+\n+    /// Initialize the Config struct with context for proper home directory resolution\n+    pub fn initialize_with_context(config_file_path: Option<&OsStr>, context: &Context) -> Self {\n+        let config = config_file_path\n+            .and_then(|path| Self::read_config_content_as_str_with_context(path, Some(context)))\n+            .and_then(|toml_content| match toml::from_str(&toml_content) {\n+                Ok(parsed) => Some(parsed),\n+                Err(error) => {\n+                    log::error!(\"Unable to parse the config file: {error}\");\n+                    None\n+                }\n+            });\n+        Self { config }\n+    }\n+\n+    /// Merge multiple configuration files using proper TOML table merging\n+    /// Supports complex TOML structures including arrays, nested tables, and matrices\n+    pub fn merge_config_files_runtime(config_paths: &OsStr) -> Option<String> {\n+        let paths = Self::parse_input_paths(config_paths.to_str().unwrap_or(\"\"));\n+        let existing_paths: Vec<_> = paths.iter().filter(|p| p.exists()).collect();\n+        if existing_paths.is_empty() {\n+            log::warn!(\"No configuration files found for merging\");\n             return None;\n         }\n-        let config_file_path = config_file_path.as_ref().unwrap();\n-        match utils::read_file(config_file_path) {\n-            Ok(content) => {\n-                log::trace!(\"Config file content: \\\"\\n{}\\\"\", &content);\n-                Some(content)\n-            }\n+        let merged_table = Self::merge_toml_tables(&existing_paths)?;\n+        match toml::to_string(&merged_table) {\n+            Ok(content) => Some(content),\n             Err(e) => {\n-                let level = if e.kind() == ErrorKind::NotFound {\n-                    log::Level::Debug\n-                } else {\n-                    log::Level::Error\n-                };\n-\n-                log::log!(level, \"Unable to read config file content: {}\", &e);\n+                log::error!(\"Failed to serialize merged configuration: {}\", e);\n                 None\n             }\n         }\n     }\n \n+    /// Merge multiple TOML files into a single table with proper type preservation\n+    fn merge_toml_tables(file_paths: &[&std::path::PathBuf]) -> Option<toml::Table> {",
+    "path": "src/config.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "192ddf4d326f4f8ee70d100006130b6fcbe903f7",
+    "user": {
+      "login": "Daniel-Escamilla",
+      "id": 73858568,
+      "node_id": "MDQ6VXNlcjczODU4NTY4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73858568?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Daniel-Escamilla",
+      "html_url": "https://github.com/Daniel-Escamilla",
+      "followers_url": "https://api.github.com/users/Daniel-Escamilla/followers",
+      "following_url": "https://api.github.com/users/Daniel-Escamilla/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Daniel-Escamilla/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Daniel-Escamilla/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Daniel-Escamilla/subscriptions",
+      "organizations_url": "https://api.github.com/users/Daniel-Escamilla/orgs",
+      "repos_url": "https://api.github.com/users/Daniel-Escamilla/repos",
+      "events_url": "https://api.github.com/users/Daniel-Escamilla/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Daniel-Escamilla/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I had no idea this function existed, but after testing it, I realized that `serde-toml-merge` does pure concatenation without deduplication, which causes its key problem: **duplicates**.\r\n\r\nMy function uses **replacement-based merge** (cleaner, more efficient) vs serde-toml-merge's **additive approach**.\r\n\r\n\r\n### Quick comparison:\r\n```toml\r\n# Base: python_binary = [\"python3\", \"python\"]\r\n# User: python_binary = [\"python3.11\", \"python3.10\", \"python3\"]\r\n\r\n# My function: [\"python3.11\", \"python3.10\", \"python3\"] \r\n# serde-toml-merge: [\"python3\", \"python\", \"python3.11\", \"python3.10\", \"python3\"] \r\n```\r\n```toml\r\n# Base: 3 [[custom.commands]]\r\n# User: 1 [[custom.commands]]\r\n\r\n# My function: Only user command (loses 3 base commands)\r\n# serde-toml-merge: All 4 commands preserved \r\n```\r\n```toml\r\n# Base: ports = [[\"web\", \"80\", \"443\"], [\"api\", \"8080\"]]\r\n# User: ports = [[\"web\", \"8080\", \"8443\"], [\"admin\", \"9000\"]]\r\n\r\n# My function: [[\"web\", \"8080\", \"8443\"], [\"admin\", \"9000\"]]\r\n# serde-toml-merge: [[\"web\", \"80\", \"443\"], [\"api\", \"8080\"], [\"web\", \"8080\", \"8443\"], [\"admin\", \"9000\"]]\r\n```\r\n\r\n**Question:**\r\n**Arrays**: Replacement (clean) or concatenation (duplicates)? Which one do you want for Starship?",
+    "created_at": "2025-09-10T14:25:23Z",
+    "updated_at": "2025-09-10T14:25:24Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2336955138",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2336955138"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2336955138"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2336955138/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 218,
+    "side": "RIGHT",
+    "in_reply_to_id": 2336562756,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 117,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2341280035",
+    "pull_request_review_id": 3212144795,
+    "id": 2341280035,
+    "node_id": "PRRC_kwDOCqswNs6LjRkj",
+    "diff_hunk": "@@ -134,46 +134,129 @@ impl StarshipConfig {\n \n     /// Create a config from a starship configuration file\n     fn config_from_file(config_file_path: Option<&OsStr>) -> Option<toml::Table> {\n+        let config_file_path = config_file_path?;\n         let toml_content = Self::read_config_content_as_str(config_file_path)?;\n-\n         match toml::from_str(&toml_content) {\n-            Ok(parsed) => {\n-                log::debug!(\"Config parsed: {:?}\", &parsed);\n-                Some(parsed)\n-            }\n+            Ok(parsed) => Some(parsed),\n             Err(error) => {\n                 log::error!(\"Unable to parse the config file: {error}\");\n                 None\n             }\n         }\n     }\n \n-    pub fn read_config_content_as_str(config_file_path: Option<&OsStr>) -> Option<String> {\n-        if config_file_path.is_none() {\n-            log::debug!(\n-                \"Unable to determine `config_file_path`. Perhaps `utils::home_dir` is not defined on your platform?\"\n-            );\n+    /// Checks if a config string contains multiple files\n+    pub fn has_multiple_files(config_str: &str) -> bool {\n+        std::env::split_paths(config_str).count() > 1\n+    }\n+\n+    /// Checks if a config path contains multiple files (OsStr version)\n+    pub fn has_multiple_files_os(config_path: &OsStr) -> bool {\n+        Self::has_multiple_files(config_path.to_str().unwrap_or(\"\"))\n+    }\n+\n+    /// Parses input line to extract and expand file paths using std::env::split_paths\n+    pub fn parse_input_paths(line: &str) -> Vec<std::path::PathBuf> {\n+        std::env::split_paths(line)\n+            .map(crate::context::Context::expand_tilde)\n+            .collect()\n+    }\n+\n+    pub fn read_config_content_as_str(config_file_path: &OsStr) -> Option<String> {\n+        Self::read_config_content_as_str_with_context(config_file_path, None)\n+    }\n+\n+    pub fn read_config_content_as_str_with_context(\n+        config_file_path: &OsStr,\n+        context: Option<&Context>,\n+    ) -> Option<String> {\n+        Self::merge_config_files_runtime(config_file_path).or_else(|| {\n+            let default_path = context\n+                .and_then(|ctx| {\n+                    ctx.get_home()\n+                        .and_then(|home| utils::default_starship_config_path(Some(home.as_path())))\n+                })\n+                .or_else(|| utils::default_starship_config_path(None))?;\n+            utils::read_file(&default_path).ok()\n+        })\n+    }\n+\n+    /// Initialize the Config struct with context for proper home directory resolution\n+    pub fn initialize_with_context(config_file_path: Option<&OsStr>, context: &Context) -> Self {\n+        let config = config_file_path\n+            .and_then(|path| Self::read_config_content_as_str_with_context(path, Some(context)))\n+            .and_then(|toml_content| match toml::from_str(&toml_content) {\n+                Ok(parsed) => Some(parsed),\n+                Err(error) => {\n+                    log::error!(\"Unable to parse the config file: {error}\");\n+                    None\n+                }\n+            });\n+        Self { config }\n+    }\n+\n+    /// Merge multiple configuration files using proper TOML table merging\n+    /// Supports complex TOML structures including arrays, nested tables, and matrices\n+    pub fn merge_config_files_runtime(config_paths: &OsStr) -> Option<String> {\n+        let paths = Self::parse_input_paths(config_paths.to_str().unwrap_or(\"\"));\n+        let existing_paths: Vec<_> = paths.iter().filter(|p| p.exists()).collect();\n+        if existing_paths.is_empty() {\n+            log::warn!(\"No configuration files found for merging\");\n             return None;\n         }\n-        let config_file_path = config_file_path.as_ref().unwrap();\n-        match utils::read_file(config_file_path) {\n-            Ok(content) => {\n-                log::trace!(\"Config file content: \\\"\\n{}\\\"\", &content);\n-                Some(content)\n-            }\n+        let merged_table = Self::merge_toml_tables(&existing_paths)?;\n+        match toml::to_string(&merged_table) {\n+            Ok(content) => Some(content),\n             Err(e) => {\n-                let level = if e.kind() == ErrorKind::NotFound {\n-                    log::Level::Debug\n-                } else {\n-                    log::Level::Error\n-                };\n-\n-                log::log!(level, \"Unable to read config file content: {}\", &e);\n+                log::error!(\"Failed to serialize merged configuration: {}\", e);\n                 None\n             }\n         }\n     }\n \n+    /// Merge multiple TOML files into a single table with proper type preservation\n+    fn merge_toml_tables(file_paths: &[&std::path::PathBuf]) -> Option<toml::Table> {",
+    "path": "src/config.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "192ddf4d326f4f8ee70d100006130b6fcbe903f7",
+    "user": {
+      "login": "dzuelke",
+      "id": 27900,
+      "node_id": "MDQ6VXNlcjI3OTAw",
+      "avatar_url": "https://avatars.githubusercontent.com/u/27900?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dzuelke",
+      "html_url": "https://github.com/dzuelke",
+      "followers_url": "https://api.github.com/users/dzuelke/followers",
+      "following_url": "https://api.github.com/users/dzuelke/following{/other_user}",
+      "gists_url": "https://api.github.com/users/dzuelke/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/dzuelke/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/dzuelke/subscriptions",
+      "organizations_url": "https://api.github.com/users/dzuelke/orgs",
+      "repos_url": "https://api.github.com/users/dzuelke/repos",
+      "events_url": "https://api.github.com/users/dzuelke/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/dzuelke/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ah I see. That's something https://github.com/jdrouet/serde-toml-merge/pull/39 addresses it seems, but obviously not merged yet.\r\n\r\nI think the behavior should be to always merge/append tables and arrays, **unless they are empty, in which case a re-set happens**. Otherwise, it's not possible to \"clear\" stuff from a previous config.\r\n\r\nFor example, this would merge the two arrays of tables, so you'd have both `production` and `myctx`:\r\n\r\n```toml\r\n# base.toml\r\n[[kubernetes.contexts]]\r\ncontext_pattern = \"production\"\r\nstyle = \"bold red\"\r\n```\r\n\r\n```toml\r\n# mycustom.toml\r\n[[kubernetes.contexts]]\r\ncontext_pattern = \"myctx\"\r\nstyle = \"bold purple\"\r\n```\r\n\r\nBut then using these three configs, it would \"overwrite\" the array, so you only get `myctx`:\r\n\r\n```toml\r\n# base.toml\r\n[[kubernetes.contexts]]\r\ncontext_pattern = \"production\"\r\nstyle = \"bold red\"\r\n```\r\n\r\n```toml\r\n# reset-kubernetes.toml`\r\nkubernetes.contexts = [] # re-set kubernetes contexts from base theme\r\n```\r\n\r\n```toml\r\n# mycustom.toml\r\n[[kubernetes.contexts]]\r\ncontext_pattern = \"myctx\"\r\nstyle = \"bold purple\"\r\n```\r\n\r\nOr maybe another example... you have a base theme that is amazing, except it defines two custom commands you really don't like and want to remove:\r\n\r\n```toml\r\n# almost-greatest-theme.toml\r\n[custom.foo]\r\ncommand = 'echo foo'\r\n[custom.bar]\r\ncommand = 'echo bar'\r\n```\r\n\r\n```toml\r\n# mystyle.toml\r\ncustom = {} # re-set custom commands from base theme\r\n```\r\n\r\nYou could instead also re-declare both of them in `mystyle.toml` and instead say `disabled = false`, but if the base theme maintainer adds a third custom command and you update to it, you then have to add that third custom command and a `disabled = false`.\r\n\r\nDoes that make sense?\r\n\r\nThe \"downside\" of this is that any inline table/array definition you want to completely overwrite will always require having two configs (one to re-set, the other to set new values), because the parser will reject duplicate keys.\r\n\r\nBut I think the more common case is merging. Arrays are pretty rare in Starship configs, and for tables, completely overwriting them is probably rarely necessary, because you can just \"add\" `disabled = true`.",
+    "created_at": "2025-09-11T14:55:20Z",
+    "updated_at": "2025-09-11T14:57:30Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2341280035",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2341280035"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2341280035"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2341280035/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 218,
+    "side": "RIGHT",
+    "in_reply_to_id": 2336562756,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 117,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2346312724",
+    "pull_request_review_id": 3220222788,
+    "id": 2346312724,
+    "node_id": "PRRC_kwDOCqswNs6L2eQU",
+    "diff_hunk": "@@ -462,20 +463,30 @@ impl Default for Context<'_> {\n     }\n }\n \n+/// Get the home directory from environment or system\n fn home_dir(env: &Env) -> Option<PathBuf> {\n-    if cfg!(test) {\n-        if let Some(home) = env.get_env(\"HOME\") {\n-            return Some(PathBuf::from(home));\n-        }\n+    // Try to get HOME from environment first (mocked or real)\n+    if let Some(home) = env.get_env(\"HOME\") {\n+        return Some(PathBuf::from(home));\n     }",
+    "path": "src/context.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This is only intended to allow overrides in tests, `crate::utils::home_dir` is a better implementation and reading `$HOME` isn't the correct behaviour on Windows.",
+    "created_at": "2025-09-13T10:10:39Z",
+    "updated_at": "2025-09-13T10:10:40Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2346312724",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2346312724"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2346312724"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2346312724/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 468,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 471,
+    "side": "RIGHT",
+    "in_reply_to_id": 2312375640,
+    "author_association": "MEMBER",
+    "original_position": 21,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2346320469",
+    "pull_request_review_id": 3220233318,
+    "id": 2346320469,
+    "node_id": "PRRC_kwDOCqswNs6L2gJV",
+    "diff_hunk": "@@ -463,19 +464,28 @@ impl Default for Context<'_> {\n }\n \n fn home_dir(env: &Env) -> Option<PathBuf> {\n-    if cfg!(test) {\n-        if let Some(home) = env.get_env(\"HOME\") {\n-            return Some(PathBuf::from(home));\n-        }\n+    // Try to get HOME from environment first (mocked or real)\n+    if let Some(home) = env.get_env(\"HOME\") {\n+        return Some(PathBuf::from(home));\n     }\n-    utils::home_dir()\n+    // If HOME is not set, fallback to system home directory\n+    crate::utils::home_dir()\n }\n \n fn get_config_path_os(env: &Env) -> Option<OsString> {\n-    if let Some(config_path) = env.get_env_os(\"STARSHIP_CONFIG\") {\n-        return Some(config_path);\n+    if let Some(config_line) = env.get_env_os(\"STARSHIP_CONFIG\") {\n+        let config_str = config_line.to_str()?;\n+        if config_str.is_empty() {\n+            let default_path = home_dir(env)?.join(\".config\").join(\"starship.toml\");\n+            return Some(default_path.into_os_string());\n+        }",
+    "path": "src/context.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "192ddf4d326f4f8ee70d100006130b6fcbe903f7",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This avoids having two paths map to the default value, and removes the string conversion.\n\n```suggestion\n    if let Some(config_line) = env.get_env_os(\"STARSHIP_CONFIG\")\n        .filter(|v| !v.is_empty())\n```",
+    "created_at": "2025-09-13T10:15:50Z",
+    "updated_at": "2025-09-13T10:28:45Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2346320469",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2346320469"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2346320469"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2346320469/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 476,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 481,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 33,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2346324664",
+    "pull_request_review_id": 3220233318,
+    "id": 2346324664,
+    "node_id": "PRRC_kwDOCqswNs6L2hK4",
+    "diff_hunk": "@@ -135,45 +135,132 @@ impl StarshipConfig {\n     /// Create a config from a starship configuration file\n     fn config_from_file(config_file_path: Option<&OsStr>) -> Option<toml::Table> {\n         let toml_content = Self::read_config_content_as_str(config_file_path)?;\n-\n         match toml::from_str(&toml_content) {\n-            Ok(parsed) => {\n-                log::debug!(\"Config parsed: {:?}\", &parsed);\n-                Some(parsed)\n-            }\n+            Ok(parsed) => Some(parsed),\n             Err(error) => {\n                 log::error!(\"Unable to parse the config file: {error}\");\n                 None\n             }\n         }\n     }\n \n+    /// Checks if a config string contains multiple files\n+    pub fn has_multiple_files(config_str: &str) -> bool {\n+        std::env::split_paths(config_str).count() > 1\n+    }\n+\n+    /// Parses input line to extract and expand file paths using std::env::split_paths\n+    pub fn parse_input_paths(line: &str) -> Vec<std::path::PathBuf> {\n+        std::env::split_paths(line)\n+            .map(crate::context::Context::expand_tilde)\n+            .collect()\n+    }\n+\n     pub fn read_config_content_as_str(config_file_path: Option<&OsStr>) -> Option<String> {\n-        if config_file_path.is_none() {\n-            log::debug!(\n-                \"Unable to determine `config_file_path`. Perhaps `utils::home_dir` is not defined on your platform?\"\n-            );\n+        Self::read_config_content_as_str_with_context(config_file_path, None)\n+    }\n+\n+    pub fn read_config_content_as_str_with_context(\n+        config_file_path: Option<&OsStr>,\n+        context: Option<&Context>,\n+    ) -> Option<String> {\n+        let config_file_path = config_file_path?;\n+        let config_path_str = config_file_path.to_str()?;\n+\n+        if Self::has_multiple_files(config_path_str) {\n+            Self::merge_config_files_runtime(config_path_str).or_else(|| {\n+                let default_path = context\n+                    .and_then(|ctx| {\n+                        ctx.get_home().and_then(|home| {\n+                            utils::default_starship_config_path(Some(home.as_path()))\n+                        })\n+                    })\n+                    .or_else(|| utils::default_starship_config_path(None))?;\n+                utils::read_file(&default_path).ok()\n+            })\n+        } else {\n+            utils::read_file(config_file_path).ok().or_else(|| {\n+                log::error!(\"Unable to read config file content\");\n+                None\n+            })\n+        }\n+    }\n+\n+    /// Initialize the Config struct with context for proper home directory resolution\n+    pub fn initialize_with_context(config_file_path: Option<&OsStr>, context: &Context) -> Self {\n+        let config = Self::read_config_content_as_str_with_context(config_file_path, Some(context))\n+            .and_then(|toml_content| match toml::from_str(&toml_content) {\n+                Ok(parsed) => Some(parsed),\n+                Err(error) => {\n+                    log::error!(\"Unable to parse the config file: {error}\");\n+                    None\n+                }\n+            });\n+        Self { config }\n+    }\n+\n+    /// Merge multiple configuration files using proper TOML table merging\n+    /// Supports complex TOML structures including arrays, nested tables, and matrices\n+    pub fn merge_config_files_runtime(config_paths: &str) -> Option<String> {\n+        let paths = Self::parse_input_paths(config_paths);\n+        let existing_paths: Vec<_> = paths.iter().filter(|p| p.exists()).collect();\n+        if existing_paths.is_empty() {\n+            log::warn!(\"No configuration files found for merging\");\n             return None;\n         }",
+    "path": "src/config.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "To avoid this, this should perhaps just return a `toml::Table` or something like that.",
+    "created_at": "2025-09-13T10:19:33Z",
+    "updated_at": "2025-09-13T10:28:45Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2346324664",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2346324664"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2346324664"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2346324664/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 208,
+    "original_start_line": 206,
+    "start_side": "RIGHT",
+    "line": 214,
+    "original_line": 210,
+    "side": "RIGHT",
+    "in_reply_to_id": 2312386035,
+    "author_association": "MEMBER",
+    "original_position": 94,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2346325511",
+    "pull_request_review_id": 3220233318,
+    "id": 2346325511,
+    "node_id": "PRRC_kwDOCqswNs6L2hYH",
+    "diff_hunk": "@@ -134,46 +134,129 @@ impl StarshipConfig {\n \n     /// Create a config from a starship configuration file\n     fn config_from_file(config_file_path: Option<&OsStr>) -> Option<toml::Table> {\n+        let config_file_path = config_file_path?;",
+    "path": "src/config.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "192ddf4d326f4f8ee70d100006130b6fcbe903f7",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\n   fn config_from_file(config_file_path: &OsStr) -> Option<toml::Table> {\n```",
+    "created_at": "2025-09-13T10:20:03Z",
+    "updated_at": "2025-09-13T10:28:45Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2346325511",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2346325511"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2346325511"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2346325511/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 136,
+    "start_side": "LEFT",
+    "line": null,
+    "original_line": 137,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2346326128",
+    "pull_request_review_id": 3220233318,
+    "id": 2346326128,
+    "node_id": "PRRC_kwDOCqswNs6L2hhw",
+    "diff_hunk": "",
+    "path": "src/modules/custom.rs",
+    "commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Actually revert the changes please.",
+    "created_at": "2025-09-13T10:20:38Z",
+    "updated_at": "2025-09-13T10:28:45Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2346326128",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2346326128"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2346326128"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2346326128/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1,
+    "original_line": 1,
+    "side": "RIGHT",
+    "in_reply_to_id": 2328737479,
+    "author_association": "MEMBER",
+    "original_position": 1,
+    "position": 1,
+    "subject_type": "file"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2346327879",
+    "pull_request_review_id": 3220233318,
+    "id": 2346327879,
+    "node_id": "PRRC_kwDOCqswNs6L2h9H",
+    "diff_hunk": "@@ -308,4 +305,55 @@ mod tests {\n             config_path.unwrap()\n         );\n     }\n+    #[test]\n+    fn test_get_starship_config_env_not_set() {\n+        unsafe {\n+            std::env::remove_var(\"STARSHIP_CONFIG\");\n+        }",
+    "path": "src/bug_report.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "192ddf4d326f4f8ee70d100006130b6fcbe903f7",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This is `unsafe` for a reason. Please use `Env`/`Context` for env var mocks.",
+    "created_at": "2025-09-13T10:21:51Z",
+    "updated_at": "2025-09-13T10:28:45Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2346327879",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2346327879"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2346327879"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2346327879/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 310,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 312,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 47,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2346331479",
+    "pull_request_review_id": 3220233318,
+    "id": 2346331479,
+    "node_id": "PRRC_kwDOCqswNs6L2i1X",
+    "diff_hunk": "@@ -134,46 +134,129 @@ impl StarshipConfig {\n \n     /// Create a config from a starship configuration file\n     fn config_from_file(config_file_path: Option<&OsStr>) -> Option<toml::Table> {\n+        let config_file_path = config_file_path?;\n         let toml_content = Self::read_config_content_as_str(config_file_path)?;\n-\n         match toml::from_str(&toml_content) {\n-            Ok(parsed) => {\n-                log::debug!(\"Config parsed: {:?}\", &parsed);\n-                Some(parsed)\n-            }\n+            Ok(parsed) => Some(parsed),\n             Err(error) => {\n                 log::error!(\"Unable to parse the config file: {error}\");\n                 None\n             }\n         }\n     }\n \n-    pub fn read_config_content_as_str(config_file_path: Option<&OsStr>) -> Option<String> {\n-        if config_file_path.is_none() {\n-            log::debug!(\n-                \"Unable to determine `config_file_path`. Perhaps `utils::home_dir` is not defined on your platform?\"\n-            );\n+    /// Checks if a config string contains multiple files\n+    pub fn has_multiple_files(config_str: &str) -> bool {\n+        std::env::split_paths(config_str).count() > 1\n+    }\n+\n+    /// Checks if a config path contains multiple files (OsStr version)\n+    pub fn has_multiple_files_os(config_path: &OsStr) -> bool {\n+        Self::has_multiple_files(config_path.to_str().unwrap_or(\"\"))\n+    }\n+\n+    /// Parses input line to extract and expand file paths using std::env::split_paths\n+    pub fn parse_input_paths(line: &str) -> Vec<std::path::PathBuf> {",
+    "path": "src/config.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "192ddf4d326f4f8ee70d100006130b6fcbe903f7",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\n    pub fn parse_input_paths(line: &OsStr) -> Vec<std::path::PathBuf> {\n```",
+    "created_at": "2025-09-13T10:25:00Z",
+    "updated_at": "2025-09-13T10:28:45Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2346331479",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2346331479"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2346331479"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2346331479/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 159,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 45,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2346335144",
+    "pull_request_review_id": 3220233318,
+    "id": 2346335144,
+    "node_id": "PRRC_kwDOCqswNs6L2juo",
+    "diff_hunk": "@@ -134,46 +134,129 @@ impl StarshipConfig {\n \n     /// Create a config from a starship configuration file\n     fn config_from_file(config_file_path: Option<&OsStr>) -> Option<toml::Table> {\n+        let config_file_path = config_file_path?;\n         let toml_content = Self::read_config_content_as_str(config_file_path)?;\n-\n         match toml::from_str(&toml_content) {\n-            Ok(parsed) => {\n-                log::debug!(\"Config parsed: {:?}\", &parsed);\n-                Some(parsed)\n-            }\n+            Ok(parsed) => Some(parsed),\n             Err(error) => {\n                 log::error!(\"Unable to parse the config file: {error}\");\n                 None\n             }\n         }\n     }\n \n-    pub fn read_config_content_as_str(config_file_path: Option<&OsStr>) -> Option<String> {\n-        if config_file_path.is_none() {\n-            log::debug!(\n-                \"Unable to determine `config_file_path`. Perhaps `utils::home_dir` is not defined on your platform?\"\n-            );\n+    /// Checks if a config string contains multiple files\n+    pub fn has_multiple_files(config_str: &str) -> bool {\n+        std::env::split_paths(config_str).count() > 1\n+    }\n+\n+    /// Checks if a config path contains multiple files (OsStr version)\n+    pub fn has_multiple_files_os(config_path: &OsStr) -> bool {\n+        Self::has_multiple_files(config_path.to_str().unwrap_or(\"\"))\n+    }\n+\n+    /// Parses input line to extract and expand file paths using std::env::split_paths\n+    pub fn parse_input_paths(line: &str) -> Vec<std::path::PathBuf> {\n+        std::env::split_paths(line)\n+            .map(crate::context::Context::expand_tilde)\n+            .collect()\n+    }\n+\n+    pub fn read_config_content_as_str(config_file_path: &OsStr) -> Option<String> {\n+        Self::read_config_content_as_str_with_context(config_file_path, None)\n+    }\n+\n+    pub fn read_config_content_as_str_with_context(\n+        config_file_path: &OsStr,\n+        context: Option<&Context>,\n+    ) -> Option<String> {\n+        Self::merge_config_files_runtime(config_file_path).or_else(|| {\n+            let default_path = context\n+                .and_then(|ctx| {\n+                    ctx.get_home()\n+                        .and_then(|home| utils::default_starship_config_path(Some(home.as_path())))\n+                })\n+                .or_else(|| utils::default_starship_config_path(None))?;\n+            utils::read_file(&default_path).ok()",
+    "path": "src/config.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "192ddf4d326f4f8ee70d100006130b6fcbe903f7",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Shouldn't `get_config_path_os` already handle fallbacks?",
+    "created_at": "2025-09-13T10:28:16Z",
+    "updated_at": "2025-09-13T10:28:45Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2346335144",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2346335144"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2346335144"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2346335144/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 173,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 180,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 66,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2348961700",
+    "pull_request_review_id": 3224553957,
+    "id": 2348961700,
+    "node_id": "PRRC_kwDOCqswNs6MAk-k",
+    "diff_hunk": "@@ -462,20 +463,30 @@ impl Default for Context<'_> {\n     }\n }\n \n+/// Get the home directory from environment or system\n fn home_dir(env: &Env) -> Option<PathBuf> {\n-    if cfg!(test) {\n-        if let Some(home) = env.get_env(\"HOME\") {\n-            return Some(PathBuf::from(home));\n-        }\n+    // Try to get HOME from environment first (mocked or real)\n+    if let Some(home) = env.get_env(\"HOME\") {\n+        return Some(PathBuf::from(home));\n     }",
+    "path": "src/context.rs",
+    "commit_id": "7050a5c4d7da1309c86ba76581aec0f826132166",
+    "original_commit_id": "7e398aa344c8b07b17c4920248e080846f0a100f",
+    "user": {
+      "login": "Daniel-Escamilla",
+      "id": 73858568,
+      "node_id": "MDQ6VXNlcjczODU4NTY4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73858568?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Daniel-Escamilla",
+      "html_url": "https://github.com/Daniel-Escamilla",
+      "followers_url": "https://api.github.com/users/Daniel-Escamilla/followers",
+      "following_url": "https://api.github.com/users/Daniel-Escamilla/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Daniel-Escamilla/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Daniel-Escamilla/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Daniel-Escamilla/subscriptions",
+      "organizations_url": "https://api.github.com/users/Daniel-Escamilla/orgs",
+      "repos_url": "https://api.github.com/users/Daniel-Escamilla/repos",
+      "events_url": "https://api.github.com/users/Daniel-Escamilla/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Daniel-Escamilla/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Apologies, I wasn’t aware of this behavior. I’ll revert the change.",
+    "created_at": "2025-09-15T13:14:21Z",
+    "updated_at": "2025-09-15T13:14:21Z",
+    "html_url": "https://github.com/starship/starship/pull/6894#discussion_r2348961700",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6894",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2348961700"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6894#discussion_r2348961700"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6894"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2348961700/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 468,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 471,
+    "side": "RIGHT",
+    "in_reply_to_id": 2312375640,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 21,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

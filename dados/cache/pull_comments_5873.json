@@ -1,0 +1,210 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1541763716",
+    "pull_request_review_id": 1964327926,
+    "id": 1541763716,
+    "node_id": "PRRC_kwDOCqswNs5b5XKE",
+    "diff_hunk": "@@ -326,6 +326,10 @@ active boot switches: -d:release\\n\",\n             stdout: String::from(\"4.10.0\\n\"),\n             stderr: String::default(),\n         }),\n+        \"odin version\" => Some(CommandOutput {\n+            stdout: String::from(\"odin version dev-2024-03:fc587c507\"),",
+    "path": "src/utils.rs",
+    "commit_id": "21e552d61601a4dc17d3a2947f91043c438cf54e",
+    "original_commit_id": "4351c86d44a7f85d7c31e933eba29ef1424809bf",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n            stdout: String::from(\"odin version dev-2024-03:fc587c507\\n\"),\r\n```",
+    "created_at": "2024-03-27T18:28:30Z",
+    "updated_at": "2024-03-27T18:28:45Z",
+    "html_url": "https://github.com/starship/starship/pull/5873#discussion_r1541763716",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5873",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1541763716"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5873#discussion_r1541763716"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5873"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1541763716/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 330,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 5,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1541764243",
+    "pull_request_review_id": 1964327926,
+    "id": 1541764243,
+    "node_id": "PRRC_kwDOCqswNs5b5XST",
+    "diff_hunk": "@@ -0,0 +1,89 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::odin::OdinConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Odin version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"odin\");\n+    let config = OdinConfig::try_load(module.config);\n+\n+    let is_odin_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_odin_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let odin_version = context.exec_cmd(\"odin\", &[\"version\"])?.stdout;\n+                    let trimmed_version = odin_version.split(' ').last()?.trim().to_string();\n+\n+                    if config.show_commit {\n+                        return Some(Ok(trimmed_version));\n+                    }\n+\n+                    let no_commit = trimmed_version.split(':').next()?.trim().to_string();\n+                    Some(Ok(no_commit))\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `odin`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::test::ModuleRenderer;\n+    use nu_ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn folder_without_odin() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"odin.txt\"))?.sync_all()?;\n+        let actual = ModuleRenderer::new(\"odin\").path(dir.path()).collect();\n+        let expected = None;\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_odin_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"main.odin\"))?.sync_all()?;\n+        let actual = ModuleRenderer::new(\"odin\").path(dir.path()).collect();",
+    "path": "src/modules/odin.rs",
+    "commit_id": "21e552d61601a4dc17d3a2947f91043c438cf54e",
+    "original_commit_id": "4351c86d44a7f85d7c31e933eba29ef1424809bf",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please add a test that mocks the odin command to an output without the extra hash (my build does not have it), e.g. `\"odin version dev-2024-03\\n\"`. You can use `cmd` from `ModuleRenderer`",
+    "created_at": "2024-03-27T18:28:35Z",
+    "updated_at": "2024-03-27T18:28:45Z",
+    "html_url": "https://github.com/starship/starship/pull/5873#discussion_r1541764243",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5873",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1541764243"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5873#discussion_r1541764243"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5873"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1541764243/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 82,
+    "original_line": 81,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 81,
+    "position": 82,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1542249388",
+    "pull_request_review_id": 1965078577,
+    "id": 1542249388,
+    "node_id": "PRRC_kwDOCqswNs5b7Nus",
+    "diff_hunk": "@@ -0,0 +1,89 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::odin::OdinConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Odin version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"odin\");\n+    let config = OdinConfig::try_load(module.config);\n+\n+    let is_odin_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_odin_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let odin_version = context.exec_cmd(\"odin\", &[\"version\"])?.stdout;\n+                    let trimmed_version = odin_version.split(' ').last()?.trim().to_string();\n+\n+                    if config.show_commit {\n+                        return Some(Ok(trimmed_version));\n+                    }\n+\n+                    let no_commit = trimmed_version.split(':').next()?.trim().to_string();\n+                    Some(Ok(no_commit))\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `odin`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::test::ModuleRenderer;\n+    use nu_ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn folder_without_odin() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"odin.txt\"))?.sync_all()?;\n+        let actual = ModuleRenderer::new(\"odin\").path(dir.path()).collect();\n+        let expected = None;\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_odin_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"main.odin\"))?.sync_all()?;\n+        let actual = ModuleRenderer::new(\"odin\").path(dir.path()).collect();",
+    "path": "src/modules/odin.rs",
+    "commit_id": "21e552d61601a4dc17d3a2947f91043c438cf54e",
+    "original_commit_id": "4351c86d44a7f85d7c31e933eba29ef1424809bf",
+    "user": {
+      "login": "siliconcritters",
+      "id": 43973418,
+      "node_id": "MDQ6VXNlcjQzOTczNDE4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43973418?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/siliconcritters",
+      "html_url": "https://github.com/siliconcritters",
+      "followers_url": "https://api.github.com/users/siliconcritters/followers",
+      "following_url": "https://api.github.com/users/siliconcritters/following{/other_user}",
+      "gists_url": "https://api.github.com/users/siliconcritters/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/siliconcritters/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/siliconcritters/subscriptions",
+      "organizations_url": "https://api.github.com/users/siliconcritters/orgs",
+      "repos_url": "https://api.github.com/users/siliconcritters/repos",
+      "events_url": "https://api.github.com/users/siliconcritters/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/siliconcritters/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think it's done now in the latest commit",
+    "created_at": "2024-03-28T02:53:20Z",
+    "updated_at": "2024-03-28T02:53:20Z",
+    "html_url": "https://github.com/starship/starship/pull/5873#discussion_r1542249388",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5873",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1542249388"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5873#discussion_r1542249388"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5873"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1542249388/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 82,
+    "original_line": 81,
+    "side": "RIGHT",
+    "in_reply_to_id": 1541764243,
+    "author_association": "NONE",
+    "original_position": 81,
+    "position": 82,
+    "subject_type": "line"
+  }
+]

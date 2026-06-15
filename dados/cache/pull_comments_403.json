@@ -1,0 +1,836 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/327595944",
+    "pull_request_review_id": 292394603,
+    "id": 327595944,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNzU5NTk0NA==",
+    "diff_hunk": "@@ -26,6 +26,7 @@ const DEFAULT_PROMPT_ORDER: &[&str] = &[\n     \"golang\",\n     \"java\",\n     \"nix_shell\",\n+    \"memory_usage\",",
+    "path": "src/print.rs",
+    "commit_id": "9446fb52399b2d60034c60a62b091ba23a317aa0",
+    "original_commit_id": "064c826d4c9bbb755fc04266740634136eaf7945",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "So, if `memory_usage` is in the default prompt order, and the default threshold is `-1`, then new users with a default configuration are going to see the memory usage at all times.\r\n\r\nI think this works against the \"minimalist, only show information when relevant\" design that starship has used up until this point.\r\n\r\nPersonally, I think if `memory_usage` is going to be in the default prompt, it should have a threshold set. Maybe 75%?",
+    "created_at": "2019-09-24T12:51:56Z",
+    "updated_at": "2019-09-29T04:43:05Z",
+    "html_url": "https://github.com/starship/starship/pull/403#discussion_r327595944",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/403",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/327595944"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/403#discussion_r327595944"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/403"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/327595944/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 29,
+    "original_line": 29,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 4,
+    "position": 4,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/327596667",
+    "pull_request_review_id": 292394603,
+    "id": 327596667,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNzU5NjY2Nw==",
+    "diff_hunk": "@@ -0,0 +1,88 @@\n+use ansi_term::Color;\n+\n+use super::{Context, Module};\n+use byte_unit::{Byte, ByteUnit};\n+use sysinfo::SystemExt;\n+\n+/// Creates a module with system memory usage information\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    const DEFAULT_THRESHOLD: i64 = -1;\n+    const DEFAULT_SHOW_PERCENTAGE: bool = false;\n+    const DEFAULT_SYMBOL: &str = \"🐏 \";\n+\n+    let mut module = context.new_module(\"memory_usage\");\n+\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::White.bold().dimmed());\n+\n+    let system = sysinfo::System::new();\n+\n+    let used_memory_kib = system.get_used_memory();\n+    let total_memory_kib = system.get_total_memory();\n+    let used_swap_kib = system.get_used_swap();\n+    let total_swap_kib = system.get_total_swap();\n+\n+    let percent_mem_used = (used_memory_kib as f64 / total_memory_kib as f64) * 100.;\n+    let percent_swap_used = (used_swap_kib as f64 / total_swap_kib as f64) * 100.;\n+\n+    let threshold = module\n+        .config_value_i64(\"threshold\")\n+        .unwrap_or(DEFAULT_THRESHOLD);\n+\n+    if percent_mem_used.round() < threshold as f64 {",
+    "path": "src/modules/memory_usage.rs",
+    "commit_id": "9446fb52399b2d60034c60a62b091ba23a317aa0",
+    "original_commit_id": "064c826d4c9bbb755fc04266740634136eaf7945",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Hmm.. Is the round necessary here, given you have `threshold as f64`?",
+    "created_at": "2019-09-24T12:53:26Z",
+    "updated_at": "2019-09-29T04:43:05Z",
+    "html_url": "https://github.com/starship/starship/pull/403#discussion_r327596667",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/403",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/327596667"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/403#discussion_r327596667"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/403"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/327596667/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 33,
+    "original_line": 33,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 33,
+    "position": 33,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/327601324",
+    "pull_request_review_id": 292394603,
+    "id": 327601324,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNzYwMTMyNA==",
+    "diff_hunk": "@@ -0,0 +1,88 @@\n+use ansi_term::Color;\n+\n+use super::{Context, Module};\n+use byte_unit::{Byte, ByteUnit};\n+use sysinfo::SystemExt;\n+\n+/// Creates a module with system memory usage information\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    const DEFAULT_THRESHOLD: i64 = -1;\n+    const DEFAULT_SHOW_PERCENTAGE: bool = false;\n+    const DEFAULT_SYMBOL: &str = \"🐏 \";\n+\n+    let mut module = context.new_module(\"memory_usage\");\n+\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::White.bold().dimmed());\n+\n+    let system = sysinfo::System::new();\n+\n+    let used_memory_kib = system.get_used_memory();\n+    let total_memory_kib = system.get_total_memory();\n+    let used_swap_kib = system.get_used_swap();\n+    let total_swap_kib = system.get_total_swap();\n+\n+    let percent_mem_used = (used_memory_kib as f64 / total_memory_kib as f64) * 100.;\n+    let percent_swap_used = (used_swap_kib as f64 / total_swap_kib as f64) * 100.;\n+\n+    let threshold = module\n+        .config_value_i64(\"threshold\")\n+        .unwrap_or(DEFAULT_THRESHOLD);\n+\n+    if percent_mem_used.round() < threshold as f64 {\n+        return None;\n+    }\n+\n+    let show_percentage = module\n+        .config_value_bool(\"show_percentage\")\n+        .unwrap_or(DEFAULT_SHOW_PERCENTAGE);\n+\n+    let (display_mem, display_swap) = if show_percentage {\n+        (\n+            format!(\"{:.0}%\", percent_mem_used),\n+            format!(\"{:.0}%\", percent_swap_used),\n+        )\n+    } else {\n+        fn format_kib(n_kib: u64) -> String {\n+            let byte = Byte::from_unit(n_kib as f64, ByteUnit::KiB)\n+                .unwrap_or_else(|_| Byte::from_bytes(0));\n+            byte.get_appropriate_unit(true).format(0).replace(\" \", \"\")",
+    "path": "src/modules/memory_usage.rs",
+    "commit_id": "9446fb52399b2d60034c60a62b091ba23a317aa0",
+    "original_commit_id": "064c826d4c9bbb755fc04266740634136eaf7945",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It's minor, and it might not be worth changing, but you could avoid allocating the string twice here by using `retain` rather than `replace`.",
+    "created_at": "2019-09-24T13:03:06Z",
+    "updated_at": "2019-09-29T04:43:05Z",
+    "html_url": "https://github.com/starship/starship/pull/403#discussion_r327601324",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/403",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/327601324"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/403#discussion_r327601324"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/403"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/327601324/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 50,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 50,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/327603106",
+    "pull_request_review_id": 292394603,
+    "id": 327603106,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNzYwMzEwNg==",
+    "diff_hunk": "@@ -0,0 +1,88 @@\n+use ansi_term::Color;\n+\n+use super::{Context, Module};\n+use byte_unit::{Byte, ByteUnit};\n+use sysinfo::SystemExt;\n+\n+/// Creates a module with system memory usage information\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    const DEFAULT_THRESHOLD: i64 = -1;\n+    const DEFAULT_SHOW_PERCENTAGE: bool = false;\n+    const DEFAULT_SYMBOL: &str = \"🐏 \";\n+\n+    let mut module = context.new_module(\"memory_usage\");\n+\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::White.bold().dimmed());\n+\n+    let system = sysinfo::System::new();\n+\n+    let used_memory_kib = system.get_used_memory();\n+    let total_memory_kib = system.get_total_memory();\n+    let used_swap_kib = system.get_used_swap();\n+    let total_swap_kib = system.get_total_swap();\n+\n+    let percent_mem_used = (used_memory_kib as f64 / total_memory_kib as f64) * 100.;\n+    let percent_swap_used = (used_swap_kib as f64 / total_swap_kib as f64) * 100.;\n+\n+    let threshold = module\n+        .config_value_i64(\"threshold\")\n+        .unwrap_or(DEFAULT_THRESHOLD);\n+\n+    if percent_mem_used.round() < threshold as f64 {\n+        return None;\n+    }\n+\n+    let show_percentage = module\n+        .config_value_bool(\"show_percentage\")\n+        .unwrap_or(DEFAULT_SHOW_PERCENTAGE);\n+\n+    let (display_mem, display_swap) = if show_percentage {\n+        (\n+            format!(\"{:.0}%\", percent_mem_used),\n+            format!(\"{:.0}%\", percent_swap_used),\n+        )\n+    } else {\n+        fn format_kib(n_kib: u64) -> String {\n+            let byte = Byte::from_unit(n_kib as f64, ByteUnit::KiB)\n+                .unwrap_or_else(|_| Byte::from_bytes(0));\n+            byte.get_appropriate_unit(true).format(0).replace(\" \", \"\")\n+        }\n+        (\n+            format!(\n+                \"{}/{}\",\n+                format_kib(used_memory_kib),\n+                format_kib(total_memory_kib)\n+            ),\n+            format!(\n+                \"{}/{}\",\n+                format_kib(used_swap_kib),\n+                format_kib(total_swap_kib)\n+            ),\n+        )\n+    };\n+\n+    let show_swap = module\n+        .config_value_bool(\"show_swap\")\n+        .unwrap_or(total_swap_kib != 0);\n+\n+    module.set_style(module_style);\n+    if show_swap {\n+        module.new_segment(\n+            \"memory_usage\",\n+            &format!(\"{} | {}\", display_mem, display_swap),\n+        );\n+    } else {\n+        module.new_segment(\"memory_usage\", &display_mem);\n+    }\n+\n+    let icon = module\n+        .config_value_str(\"symbol\")\n+        .unwrap_or(DEFAULT_SYMBOL)\n+        .to_string();\n+\n+    module.get_prefix().set_value(icon);",
+    "path": "src/modules/memory_usage.rs",
+    "commit_id": "9446fb52399b2d60034c60a62b091ba23a317aa0",
+    "original_commit_id": "064c826d4c9bbb755fc04266740634136eaf7945",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I don't see any specific problem with this, but if we are being consistent with other modules, you would probably set the prefix to empty, and include a separate segment for the icon.\r\n\r\nIf you did make this change, and name the segment `symbol`, you would get the configuration lookup for free.",
+    "created_at": "2019-09-24T13:07:00Z",
+    "updated_at": "2019-09-29T04:43:05Z",
+    "html_url": "https://github.com/starship/starship/pull/403#discussion_r327603106",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/403",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/327603106"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/403#discussion_r327603106"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/403"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/327603106/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 85,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 85,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/327603724",
+    "pull_request_review_id": 292394603,
+    "id": 327603724,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNzYwMzcyNA==",
+    "diff_hunk": "@@ -488,6 +489,35 @@ The `line_break` module separates the prompt into two lines.\n disabled = true\n ```\n \n+## Memory Usage\n+\n+The `memory_usage` module shows current system memory and swap usage.\n+\n+By default the swap usage is displayed if the total system swap is non-zero.\n+\n+### Options\n+\n+| Variable          | Default               | Description                                                   |\n+| ----------------- | --------------------- | ------------------------------------------------------------- |\n+| `show_percentage` | `false`               | Display memory usage as a percentage of the available memory. |\n+| `show_swap`       | variable              | Display swap usage.                                           |",
+    "path": "docs/config/README.md",
+    "commit_id": "9446fb52399b2d60034c60a62b091ba23a317aa0",
+    "original_commit_id": "064c826d4c9bbb755fc04266740634136eaf7945",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Is `when above zero`, better than `variable` here?",
+    "created_at": "2019-09-24T13:08:23Z",
+    "updated_at": "2019-09-29T04:43:05Z",
+    "html_url": "https://github.com/starship/starship/pull/403#discussion_r327603724",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/403",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/327603724"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/403#discussion_r327603724"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/403"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/327603724/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 503,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/327907797",
+    "pull_request_review_id": 292799106,
+    "id": 327907797,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNzkwNzc5Nw==",
+    "diff_hunk": "@@ -0,0 +1,88 @@\n+use ansi_term::Color;\n+\n+use super::{Context, Module};\n+use byte_unit::{Byte, ByteUnit};\n+use sysinfo::SystemExt;\n+\n+/// Creates a module with system memory usage information\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    const DEFAULT_THRESHOLD: i64 = -1;\n+    const DEFAULT_SHOW_PERCENTAGE: bool = false;\n+    const DEFAULT_SYMBOL: &str = \"🐏 \";\n+\n+    let mut module = context.new_module(\"memory_usage\");\n+\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::White.bold().dimmed());\n+\n+    let system = sysinfo::System::new();\n+\n+    let used_memory_kib = system.get_used_memory();\n+    let total_memory_kib = system.get_total_memory();\n+    let used_swap_kib = system.get_used_swap();\n+    let total_swap_kib = system.get_total_swap();\n+\n+    let percent_mem_used = (used_memory_kib as f64 / total_memory_kib as f64) * 100.;\n+    let percent_swap_used = (used_swap_kib as f64 / total_swap_kib as f64) * 100.;\n+\n+    let threshold = module\n+        .config_value_i64(\"threshold\")\n+        .unwrap_or(DEFAULT_THRESHOLD);\n+\n+    if percent_mem_used.round() < threshold as f64 {",
+    "path": "src/modules/memory_usage.rs",
+    "commit_id": "9446fb52399b2d60034c60a62b091ba23a317aa0",
+    "original_commit_id": "064c826d4c9bbb755fc04266740634136eaf7945",
+    "user": {
+      "login": "ahouts",
+      "id": 16907671,
+      "node_id": "MDQ6VXNlcjE2OTA3Njcx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16907671?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ahouts",
+      "html_url": "https://github.com/ahouts",
+      "followers_url": "https://api.github.com/users/ahouts/followers",
+      "following_url": "https://api.github.com/users/ahouts/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ahouts/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ahouts/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ahouts/subscriptions",
+      "organizations_url": "https://api.github.com/users/ahouts/orgs",
+      "repos_url": "https://api.github.com/users/ahouts/repos",
+      "events_url": "https://api.github.com/users/ahouts/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ahouts/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The threshold value the user can set and the threshold we display are in whole units. One thing to know about `format` is that it rounds to whatever place you specify. As a result, for the percentage to display only if it is >= the threshold, we need to round just like `format` does.",
+    "created_at": "2019-09-25T02:22:33Z",
+    "updated_at": "2019-09-29T04:43:05Z",
+    "html_url": "https://github.com/starship/starship/pull/403#discussion_r327907797",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/403",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/327907797"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/403#discussion_r327907797"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/403"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/327907797/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 33,
+    "original_line": 33,
+    "side": "RIGHT",
+    "in_reply_to_id": 327596667,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 33,
+    "position": 33,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/327909666",
+    "pull_request_review_id": 292801443,
+    "id": 327909666,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNzkwOTY2Ng==",
+    "diff_hunk": "@@ -488,6 +489,35 @@ The `line_break` module separates the prompt into two lines.\n disabled = true\n ```\n \n+## Memory Usage\n+\n+The `memory_usage` module shows current system memory and swap usage.\n+\n+By default the swap usage is displayed if the total system swap is non-zero.\n+\n+### Options\n+\n+| Variable          | Default               | Description                                                   |\n+| ----------------- | --------------------- | ------------------------------------------------------------- |\n+| `show_percentage` | `false`               | Display memory usage as a percentage of the available memory. |\n+| `show_swap`       | variable              | Display swap usage.                                           |",
+    "path": "docs/config/README.md",
+    "commit_id": "9446fb52399b2d60034c60a62b091ba23a317aa0",
+    "original_commit_id": "064c826d4c9bbb755fc04266740634136eaf7945",
+    "user": {
+      "login": "ahouts",
+      "id": 16907671,
+      "node_id": "MDQ6VXNlcjE2OTA3Njcx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16907671?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ahouts",
+      "html_url": "https://github.com/ahouts",
+      "followers_url": "https://api.github.com/users/ahouts/followers",
+      "following_url": "https://api.github.com/users/ahouts/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ahouts/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ahouts/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ahouts/subscriptions",
+      "organizations_url": "https://api.github.com/users/ahouts/orgs",
+      "repos_url": "https://api.github.com/users/ahouts/repos",
+      "events_url": "https://api.github.com/users/ahouts/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ahouts/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The logic is when total system swap is non-zero, so maybe `when total swap non-zero` works here.",
+    "created_at": "2019-09-25T02:34:02Z",
+    "updated_at": "2019-09-29T04:43:05Z",
+    "html_url": "https://github.com/starship/starship/pull/403#discussion_r327909666",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/403",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/327909666"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/403#discussion_r327909666"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/403"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/327909666/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 503,
+    "side": "RIGHT",
+    "in_reply_to_id": 327603724,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/327909738",
+    "pull_request_review_id": 292801536,
+    "id": 327909738,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNzkwOTczOA==",
+    "diff_hunk": "@@ -0,0 +1,88 @@\n+use ansi_term::Color;\n+\n+use super::{Context, Module};\n+use byte_unit::{Byte, ByteUnit};\n+use sysinfo::SystemExt;\n+\n+/// Creates a module with system memory usage information\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    const DEFAULT_THRESHOLD: i64 = -1;\n+    const DEFAULT_SHOW_PERCENTAGE: bool = false;\n+    const DEFAULT_SYMBOL: &str = \"🐏 \";\n+\n+    let mut module = context.new_module(\"memory_usage\");\n+\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::White.bold().dimmed());\n+\n+    let system = sysinfo::System::new();\n+\n+    let used_memory_kib = system.get_used_memory();\n+    let total_memory_kib = system.get_total_memory();\n+    let used_swap_kib = system.get_used_swap();\n+    let total_swap_kib = system.get_total_swap();\n+\n+    let percent_mem_used = (used_memory_kib as f64 / total_memory_kib as f64) * 100.;\n+    let percent_swap_used = (used_swap_kib as f64 / total_swap_kib as f64) * 100.;\n+\n+    let threshold = module\n+        .config_value_i64(\"threshold\")\n+        .unwrap_or(DEFAULT_THRESHOLD);\n+\n+    if percent_mem_used.round() < threshold as f64 {\n+        return None;\n+    }\n+\n+    let show_percentage = module\n+        .config_value_bool(\"show_percentage\")\n+        .unwrap_or(DEFAULT_SHOW_PERCENTAGE);\n+\n+    let (display_mem, display_swap) = if show_percentage {\n+        (\n+            format!(\"{:.0}%\", percent_mem_used),\n+            format!(\"{:.0}%\", percent_swap_used),\n+        )\n+    } else {\n+        fn format_kib(n_kib: u64) -> String {\n+            let byte = Byte::from_unit(n_kib as f64, ByteUnit::KiB)\n+                .unwrap_or_else(|_| Byte::from_bytes(0));\n+            byte.get_appropriate_unit(true).format(0).replace(\" \", \"\")\n+        }\n+        (\n+            format!(\n+                \"{}/{}\",\n+                format_kib(used_memory_kib),\n+                format_kib(total_memory_kib)\n+            ),\n+            format!(\n+                \"{}/{}\",\n+                format_kib(used_swap_kib),\n+                format_kib(total_swap_kib)\n+            ),\n+        )\n+    };\n+\n+    let show_swap = module\n+        .config_value_bool(\"show_swap\")\n+        .unwrap_or(total_swap_kib != 0);\n+\n+    module.set_style(module_style);\n+    if show_swap {\n+        module.new_segment(\n+            \"memory_usage\",\n+            &format!(\"{} | {}\", display_mem, display_swap),\n+        );\n+    } else {\n+        module.new_segment(\"memory_usage\", &display_mem);\n+    }\n+\n+    let icon = module\n+        .config_value_str(\"symbol\")\n+        .unwrap_or(DEFAULT_SYMBOL)\n+        .to_string();\n+\n+    module.get_prefix().set_value(icon);",
+    "path": "src/modules/memory_usage.rs",
+    "commit_id": "9446fb52399b2d60034c60a62b091ba23a317aa0",
+    "original_commit_id": "064c826d4c9bbb755fc04266740634136eaf7945",
+    "user": {
+      "login": "ahouts",
+      "id": 16907671,
+      "node_id": "MDQ6VXNlcjE2OTA3Njcx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16907671?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ahouts",
+      "html_url": "https://github.com/ahouts",
+      "followers_url": "https://api.github.com/users/ahouts/followers",
+      "following_url": "https://api.github.com/users/ahouts/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ahouts/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ahouts/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ahouts/subscriptions",
+      "organizations_url": "https://api.github.com/users/ahouts/orgs",
+      "repos_url": "https://api.github.com/users/ahouts/repos",
+      "events_url": "https://api.github.com/users/ahouts/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ahouts/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Didn't notice that icons were handled differently than prefixes usually, fixed.",
+    "created_at": "2019-09-25T02:34:33Z",
+    "updated_at": "2019-09-29T04:43:05Z",
+    "html_url": "https://github.com/starship/starship/pull/403#discussion_r327909738",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/403",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/327909738"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/403#discussion_r327909738"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/403"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/327909738/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 85,
+    "side": "RIGHT",
+    "in_reply_to_id": 327603106,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 85,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/327909965",
+    "pull_request_review_id": 292801772,
+    "id": 327909965,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNzkwOTk2NQ==",
+    "diff_hunk": "@@ -0,0 +1,88 @@\n+use ansi_term::Color;\n+\n+use super::{Context, Module};\n+use byte_unit::{Byte, ByteUnit};\n+use sysinfo::SystemExt;\n+\n+/// Creates a module with system memory usage information\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    const DEFAULT_THRESHOLD: i64 = -1;\n+    const DEFAULT_SHOW_PERCENTAGE: bool = false;\n+    const DEFAULT_SYMBOL: &str = \"🐏 \";\n+\n+    let mut module = context.new_module(\"memory_usage\");\n+\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::White.bold().dimmed());\n+\n+    let system = sysinfo::System::new();\n+\n+    let used_memory_kib = system.get_used_memory();\n+    let total_memory_kib = system.get_total_memory();\n+    let used_swap_kib = system.get_used_swap();\n+    let total_swap_kib = system.get_total_swap();\n+\n+    let percent_mem_used = (used_memory_kib as f64 / total_memory_kib as f64) * 100.;\n+    let percent_swap_used = (used_swap_kib as f64 / total_swap_kib as f64) * 100.;\n+\n+    let threshold = module\n+        .config_value_i64(\"threshold\")\n+        .unwrap_or(DEFAULT_THRESHOLD);\n+\n+    if percent_mem_used.round() < threshold as f64 {\n+        return None;\n+    }\n+\n+    let show_percentage = module\n+        .config_value_bool(\"show_percentage\")\n+        .unwrap_or(DEFAULT_SHOW_PERCENTAGE);\n+\n+    let (display_mem, display_swap) = if show_percentage {\n+        (\n+            format!(\"{:.0}%\", percent_mem_used),\n+            format!(\"{:.0}%\", percent_swap_used),\n+        )\n+    } else {\n+        fn format_kib(n_kib: u64) -> String {\n+            let byte = Byte::from_unit(n_kib as f64, ByteUnit::KiB)\n+                .unwrap_or_else(|_| Byte::from_bytes(0));\n+            byte.get_appropriate_unit(true).format(0).replace(\" \", \"\")",
+    "path": "src/modules/memory_usage.rs",
+    "commit_id": "9446fb52399b2d60034c60a62b091ba23a317aa0",
+    "original_commit_id": "064c826d4c9bbb755fc04266740634136eaf7945",
+    "user": {
+      "login": "ahouts",
+      "id": 16907671,
+      "node_id": "MDQ6VXNlcjE2OTA3Njcx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16907671?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ahouts",
+      "html_url": "https://github.com/ahouts",
+      "followers_url": "https://api.github.com/users/ahouts/followers",
+      "following_url": "https://api.github.com/users/ahouts/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ahouts/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ahouts/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ahouts/subscriptions",
+      "organizations_url": "https://api.github.com/users/ahouts/orgs",
+      "repos_url": "https://api.github.com/users/ahouts/repos",
+      "events_url": "https://api.github.com/users/ahouts/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ahouts/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Not sure if the user will feel this one, but sure why not 😆",
+    "created_at": "2019-09-25T02:35:39Z",
+    "updated_at": "2019-09-29T04:43:05Z",
+    "html_url": "https://github.com/starship/starship/pull/403#discussion_r327909965",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/403",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/327909965"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/403#discussion_r327909965"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/403"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/327909965/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 50,
+    "side": "RIGHT",
+    "in_reply_to_id": 327601324,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 50,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/327910044",
+    "pull_request_review_id": 292801862,
+    "id": 327910044,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNzkxMDA0NA==",
+    "diff_hunk": "@@ -26,6 +26,7 @@ const DEFAULT_PROMPT_ORDER: &[&str] = &[\n     \"golang\",\n     \"java\",\n     \"nix_shell\",\n+    \"memory_usage\",",
+    "path": "src/print.rs",
+    "commit_id": "9446fb52399b2d60034c60a62b091ba23a317aa0",
+    "original_commit_id": "064c826d4c9bbb755fc04266740634136eaf7945",
+    "user": {
+      "login": "ahouts",
+      "id": 16907671,
+      "node_id": "MDQ6VXNlcjE2OTA3Njcx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16907671?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ahouts",
+      "html_url": "https://github.com/ahouts",
+      "followers_url": "https://api.github.com/users/ahouts/followers",
+      "following_url": "https://api.github.com/users/ahouts/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ahouts/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ahouts/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ahouts/subscriptions",
+      "organizations_url": "https://api.github.com/users/ahouts/orgs",
+      "repos_url": "https://api.github.com/users/ahouts/repos",
+      "events_url": "https://api.github.com/users/ahouts/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ahouts/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Good point, default changed to `75`.",
+    "created_at": "2019-09-25T02:36:08Z",
+    "updated_at": "2019-09-29T04:43:05Z",
+    "html_url": "https://github.com/starship/starship/pull/403#discussion_r327910044",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/403",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/327910044"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/403#discussion_r327910044"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/403"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/327910044/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 29,
+    "original_line": 29,
+    "side": "RIGHT",
+    "in_reply_to_id": 327595944,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 4,
+    "position": 4,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/327948800",
+    "pull_request_review_id": 292850348,
+    "id": 327948800,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNzk0ODgwMA==",
+    "diff_hunk": "@@ -0,0 +1,87 @@\n+use ansi_term::Color;\n+\n+use super::{Context, Module};\n+use byte_unit::{Byte, ByteUnit};\n+use sysinfo::SystemExt;\n+\n+/// Creates a module with system memory usage information\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    const DEFAULT_THRESHOLD: i64 = 75;\n+    const DEFAULT_SHOW_PERCENTAGE: bool = false;\n+    const RAM_CHAR: &str = \"🐏 \";\n+\n+    let mut module = context.new_module(\"memory_usage\");\n+\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::White.bold().dimmed());\n+\n+    let system = sysinfo::System::new();",
+    "path": "src/modules/memory_usage.rs",
+    "commit_id": "9446fb52399b2d60034c60a62b091ba23a317aa0",
+    "original_commit_id": "6abf80bd8a21bfcbc8b50c6b9c73a8e4f0a2b8cd",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I did some benchmarks, and I noticed that this module was quite slow. Around ~140ms on the MacBook Pro I'm currently on.\r\n\r\nIt turns out `sysinfo::System::new()` loads all of the system information available (disks, network, processes, etc).\r\n\r\nI was able to make the module about 3-4x faster by using this instead:\r\n\r\n```\r\nlet system = sysinfo::System::new_with_specifics(RefreshKind::new().with_system());\r\n```\r\n\r\nThis loads just the minimum information required in order to get the memory/swap details.",
+    "created_at": "2019-09-25T06:24:09Z",
+    "updated_at": "2019-09-29T04:43:05Z",
+    "html_url": "https://github.com/starship/starship/pull/403#discussion_r327948800",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/403",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/327948800"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/403#discussion_r327948800"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/403"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/327948800/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 19,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 19,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328454753",
+    "pull_request_review_id": 293509841,
+    "id": 328454753,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODQ1NDc1Mw==",
+    "diff_hunk": "@@ -0,0 +1,87 @@\n+use ansi_term::Color;\n+\n+use super::{Context, Module};\n+use byte_unit::{Byte, ByteUnit};\n+use sysinfo::SystemExt;\n+\n+/// Creates a module with system memory usage information\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    const DEFAULT_THRESHOLD: i64 = 75;\n+    const DEFAULT_SHOW_PERCENTAGE: bool = false;\n+    const RAM_CHAR: &str = \"🐏 \";\n+\n+    let mut module = context.new_module(\"memory_usage\");\n+\n+    let module_style = module\n+        .config_value_style(\"style\")\n+        .unwrap_or_else(|| Color::White.bold().dimmed());\n+\n+    let system = sysinfo::System::new();",
+    "path": "src/modules/memory_usage.rs",
+    "commit_id": "9446fb52399b2d60034c60a62b091ba23a317aa0",
+    "original_commit_id": "6abf80bd8a21bfcbc8b50c6b9c73a8e4f0a2b8cd",
+    "user": {
+      "login": "ahouts",
+      "id": 16907671,
+      "node_id": "MDQ6VXNlcjE2OTA3Njcx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16907671?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ahouts",
+      "html_url": "https://github.com/ahouts",
+      "followers_url": "https://api.github.com/users/ahouts/followers",
+      "following_url": "https://api.github.com/users/ahouts/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ahouts/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ahouts/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ahouts/subscriptions",
+      "organizations_url": "https://api.github.com/users/ahouts/orgs",
+      "repos_url": "https://api.github.com/users/ahouts/repos",
+      "events_url": "https://api.github.com/users/ahouts/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ahouts/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Good to know, updated with that fix.",
+    "created_at": "2019-09-26T06:36:29Z",
+    "updated_at": "2019-09-29T04:43:05Z",
+    "html_url": "https://github.com/starship/starship/pull/403#discussion_r328454753",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/403",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328454753"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/403#discussion_r328454753"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/403"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328454753/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 19,
+    "side": "RIGHT",
+    "in_reply_to_id": 327948800,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 19,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

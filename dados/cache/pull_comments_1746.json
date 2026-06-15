@@ -1,0 +1,764 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/511404584",
+    "pull_request_review_id": 516270233,
+    "id": 511404584,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUxMTQwNDU4NA==",
+    "diff_hunk": "@@ -0,0 +1,323 @@\n+use std::{\n+    error::Error,\n+    fmt,\n+    path::{Path, PathBuf},\n+};\n+\n+use byte_unit::{Byte, ByteError, ByteUnit};\n+use sysinfo::{Disk, DiskExt, RefreshKind, System, SystemExt};\n+\n+use super::{Context, Module, RootModuleConfig, Shell};\n+\n+use crate::configs::disk_used::DiskUsedConfig;\n+use crate::formatter::StringFormatter;\n+use crate::segment::Segment;\n+\n+fn format_byte(n_byte: f64) -> Result<String, ByteError> {\n+    let byte = Byte::from_unit(n_byte, ByteUnit::B)?;\n+    let mut display_bytes = byte.get_appropriate_unit(false).format(0);\n+    display_bytes.retain(|c| c != ' ');\n+    Ok(display_bytes)\n+}\n+\n+fn get_disk_name(disk: &'_ Disk) -> Option<&'_ str> {\n+    let full_disk_name = disk.get_name();\n+    let disk_name = Path::new(full_disk_name).file_name();\n+    match disk_name {\n+        Some(disk_name) => disk_name.to_str(),\n+        None => full_disk_name.to_str(),\n+    }\n+}\n+\n+fn format_disk_used(\n+    disk: &Disk,\n+    config: &DiskUsedConfig,\n+    show_disk_name: bool,\n+    add_separator: bool,\n+    percentage_char: &'_ str,\n+) -> Result<Vec<Segment>, Box<dyn Error>> {\n+    let used_space = (disk.get_total_space() - disk.get_available_space()) as f64;\n+    let total_space = disk.get_total_space() as f64;\n+\n+    let formatted_usage = if config.show_percentage {\n+        format!(\n+            \"{:.2}{}\",\n+            (used_space / total_space) * 100f64,\n+            percentage_char\n+        )\n+    } else {\n+        format!(\"{}/{}\", format_byte(used_space)?, format_byte(total_space)?)\n+    };\n+\n+    let threshold_config = config.threshold_styles.iter().find(|threshold_style| {\n+        (used_space / total_space) >= (threshold_style.threshold as f64 * 0.01f64)\n+    });\n+\n+    let style = match threshold_config {\n+        Some(threshold_config) => threshold_config.style,\n+        None => config.default_style,\n+    };\n+\n+    let parsed = StringFormatter::new(\n+        \"([$name:]($default_style))[$usage]($style)([$separator]($default_style))\",\n+    )\n+    .and_then(|formatter| {\n+        formatter\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(style)),\n+                \"default_style\" => Some(Ok(config.default_style)),\n+                _ => None,\n+            })\n+            .map(|var| match var {\n+                \"name\" if show_disk_name => match get_disk_name(disk) {\n+                    Some(name) => Some(Ok(name)),\n+                    _ => None,\n+                },\n+                \"usage\" => Some(Ok(formatted_usage.as_str())),\n+                \"separator\" if add_separator => Some(Ok(config.separator)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    match parsed {\n+        Ok(parsed) => Ok(parsed),\n+        Err(e) => Err(Box::new(e)),\n+    }\n+}\n+\n+fn should_display_disk(disk: &Disk, threshold: i64) -> bool {\n+    let percentage = (disk.get_total_space() - disk.get_available_space()) as f64\n+        / disk.get_total_space() as f64;\n+\n+    percentage >= (threshold as f64 * 0.01f64)\n+}\n+\n+#[derive(Debug)]\n+struct DiskNotFoundError {\n+    path: PathBuf,\n+}\n+impl DiskNotFoundError {\n+    fn new(path: PathBuf) -> Self {\n+        DiskNotFoundError { path }\n+    }\n+}\n+impl fmt::Display for DiskNotFoundError {\n+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {\n+        write!(f, \"No disk found for path: {:?}!\", self.path)\n+    }\n+}\n+impl Error for DiskNotFoundError {}\n+\n+#[cfg(target_os = \"windows\")]\n+#[derive(Debug)]\n+struct WinAPIVolumeError {\n+    desc: String,\n+}\n+#[cfg(target_os = \"windows\")]\n+impl WinAPIVolumeError {\n+    fn new(desc: String) -> Self {\n+        WinAPIVolumeError { desc }\n+    }\n+}\n+#[cfg(target_os = \"windows\")]\n+impl fmt::Display for WinAPIVolumeError {\n+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {\n+        write!(f, \"{}\", self.desc)\n+    }\n+}\n+#[cfg(target_os = \"windows\")]\n+impl Error for WinAPIVolumeError {}\n+\n+#[cfg(target_os = \"windows\")]\n+fn get_drive_from_path<'a>(path: &PathBuf, disks: &'a [Disk]) -> Result<&'a Disk, Box<dyn Error>> {\n+    use std::{ffi::OsString, iter::once, os::windows::prelude::*};\n+    use winapi::um::{errhandlingapi::GetLastError, fileapi::GetVolumePathNameW};\n+\n+    let path: Vec<u16> = path.as_os_str().encode_wide().chain(once(0)).collect();\n+    let mut volume_path_name: Vec<u16> = vec![0; 260];\n+\n+    let ret = unsafe {\n+        GetVolumePathNameW(\n+            path.as_ptr(),\n+            volume_path_name.as_mut_ptr(),\n+            volume_path_name.len() as u32,\n+        )\n+    };\n+\n+    if ret != 0 {\n+        // Strip out the nulls from the end\n+        while let Some(last) = volume_path_name.last() {\n+            if *last == 0 {\n+                volume_path_name.pop();\n+            } else {\n+                break;\n+            }\n+        }\n+        let volume_path_name = OsString::from_wide(&volume_path_name);\n+        log::info!(\"Got path name: {:?}\", volume_path_name);\n+        for disk in disks {\n+            if volume_path_name == disk.get_mount_point() {\n+                return Ok(disk);\n+            }\n+        }\n+        Err(Box::new(DiskNotFoundError::new(PathBuf::from(\n+            volume_path_name,\n+        ))))\n+    } else {\n+        let last_error = unsafe { GetLastError() };\n+        Err(Box::new(WinAPIVolumeError::new(format!(",
+    "path": "src/modules/disk_used.rs",
+    "commit_id": "cff024e71f6133441a82b91fa8eb485faac65c58",
+    "original_commit_id": "4c804262c494b1ba694bb182b929e0f5e7a46bb8",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "How about using `std::io::last_os_error()` instead of the custom error and logging the failure? Anyways the speed on windows appears to be unusable so it might make sense to just use sysinfo or not supporting windows at all.",
+    "created_at": "2020-10-24T11:21:39Z",
+    "updated_at": "2020-11-01T00:30:20Z",
+    "html_url": "https://github.com/starship/starship/pull/1746#discussion_r511404584",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1746",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/511404584"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1746#discussion_r511404584"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1746"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/511404584/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 169,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 169,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/511404775",
+    "pull_request_review_id": 516270263,
+    "id": 511404775,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUxMTQwNDc3NQ==",
+    "diff_hunk": "@@ -698,6 +699,76 @@ truncation_length = 8\n truncation_symbol = \"…/\"\n ```\n \n+## Disk Used\n+\n+The `disk_used` module shows disk used in current directory or any disk specified.\n+\n+By default the moduel only shows the current directory's disk used when it is more than 30%.\n+\n+::: tip\n+\n+This module is disabled by default.\n+To enable it, set `disabled` to `false` in your configuration file.\n+\n+:::\n+\n+### Options\n+\n+| Option              | Default                                                                | Description                                                                     |\n+| ------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------- |\n+| `prefix`            | ` `                                                                    | A prefix for the module output.                                                 |\n+| `format`            | `\"[($prefix )]($style)$symbol$current_storage(\\\\[$other_storage\\\\]) \"` | The format for the module.                                                      |\n+| `symbol`            | `\"💾 \"`                                                                | The symbol used before displaying the disk used usage.                          |\n+| `default_style`     | `\"white bold\"`                                                         | The style for the module.                                                       |\n+| `disabled`          | `true`                                                                 | Disables the `disk_used` module.                                                |\n+| `separator`         | `|`                                                                    | Used to seprate disk used texts.                                                |\n+| `show_percentage`   | `true`                                                                 | Switches between `63.05%` and `147GB/233GB`.                                    |\n+| `current_threshold` | `30`                                                                   | Hides the current directory disk used if it is less than this value.            |\n+| `all_threshold`     | ` `                                                                    | Hides all disk used if it is less than this value.                              |\n+| `show_current_name` | `false`                                                                | Toggles between `💾 sda1: 63.05%` and `💾 63.05%`.                              |\n+| `threshold_styles`  | [link](#disk-used-style-threshold)                                     | Thresholds and style pairs for disk used                                        |\n+\n+### Disk Used Style Threshold\n+\n+The `threshold_styles` are used to change the style of the disk used display based on the percentage of disk used.\n+\n+```toml\n+[[disk_used.threshold_styles]]\n+threshold = 50\n+style = \"yellow bold\"\n+[[disk_used.threshold_styles]]\n+threshold = 80\n+style = \"red bold\"\n+```\n+\n+### Variables\n+\n+| Variable          | Example                   | Description                                                                                   |\n+| ----------------- | ------------------------- | --------------------------------------------------------------------------------------------- |\n+| prefix            | `used`                    | A perfix for the prompt.                                                                      |\n+| style\\*           | `white bold`              | Mirrors the value of option `default_style`.                                                  |\n+| symbol            | `💾 `                     | Mirrors the value of option `symbol`.                                                         |\n+| current_storage   | `63.05%`                  | The amount of used space on the current disk.                                                 |\n+| other_storage\\*\\* | `sda2:63.05%|sdb1:63.05%` | The amount of used space on all disks. Only displays the disks that pass the `all_threshold`  |\n+\n+\\*: This variable can only be used as a part of a style string\n+\\*\\*: Disabled if `all_threshold` is not defined\n+\n+### Example\n+\n+```toml\n+# ~/.config/starship.toml\n+\n+[memory_usage]",
+    "path": "docs/config/README.md",
+    "commit_id": "cff024e71f6133441a82b91fa8eb485faac65c58",
+    "original_commit_id": "4c804262c494b1ba694bb182b929e0f5e7a46bb8",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n[disk_used]\r\n```",
+    "created_at": "2020-10-24T11:22:08Z",
+    "updated_at": "2020-11-01T00:30:20Z",
+    "html_url": "https://github.com/starship/starship/pull/1746#discussion_r511404775",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1746",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/511404775"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1746#discussion_r511404775"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1746"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/511404775/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 762,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 72,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/515551963",
+    "pull_request_review_id": 521178800,
+    "id": 515551963,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUxNTU1MTk2Mw==",
+    "diff_hunk": "@@ -0,0 +1,323 @@\n+use std::{\n+    error::Error,\n+    fmt,\n+    path::{Path, PathBuf},\n+};\n+\n+use byte_unit::{Byte, ByteError, ByteUnit};\n+use sysinfo::{Disk, DiskExt, RefreshKind, System, SystemExt};\n+\n+use super::{Context, Module, RootModuleConfig, Shell};\n+\n+use crate::configs::disk_used::DiskUsedConfig;\n+use crate::formatter::StringFormatter;\n+use crate::segment::Segment;\n+\n+fn format_byte(n_byte: f64) -> Result<String, ByteError> {\n+    let byte = Byte::from_unit(n_byte, ByteUnit::B)?;\n+    let mut display_bytes = byte.get_appropriate_unit(false).format(0);\n+    display_bytes.retain(|c| c != ' ');\n+    Ok(display_bytes)\n+}\n+\n+fn get_disk_name(disk: &'_ Disk) -> Option<&'_ str> {\n+    let full_disk_name = disk.get_name();\n+    let disk_name = Path::new(full_disk_name).file_name();\n+    match disk_name {\n+        Some(disk_name) => disk_name.to_str(),\n+        None => full_disk_name.to_str(),\n+    }\n+}\n+\n+fn format_disk_used(\n+    disk: &Disk,\n+    config: &DiskUsedConfig,\n+    show_disk_name: bool,\n+    add_separator: bool,\n+    percentage_char: &'_ str,\n+) -> Result<Vec<Segment>, Box<dyn Error>> {\n+    let used_space = (disk.get_total_space() - disk.get_available_space()) as f64;\n+    let total_space = disk.get_total_space() as f64;\n+\n+    let formatted_usage = if config.show_percentage {\n+        format!(\n+            \"{:.2}{}\",\n+            (used_space / total_space) * 100f64,\n+            percentage_char\n+        )\n+    } else {\n+        format!(\"{}/{}\", format_byte(used_space)?, format_byte(total_space)?)\n+    };\n+\n+    let threshold_config = config.threshold_styles.iter().find(|threshold_style| {\n+        (used_space / total_space) >= (threshold_style.threshold as f64 * 0.01f64)\n+    });\n+\n+    let style = match threshold_config {\n+        Some(threshold_config) => threshold_config.style,\n+        None => config.default_style,\n+    };\n+\n+    let parsed = StringFormatter::new(\n+        \"([$name:]($default_style))[$usage]($style)([$separator]($default_style))\",\n+    )\n+    .and_then(|formatter| {\n+        formatter\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(style)),\n+                \"default_style\" => Some(Ok(config.default_style)),\n+                _ => None,\n+            })\n+            .map(|var| match var {\n+                \"name\" if show_disk_name => match get_disk_name(disk) {\n+                    Some(name) => Some(Ok(name)),\n+                    _ => None,\n+                },\n+                \"usage\" => Some(Ok(formatted_usage.as_str())),\n+                \"separator\" if add_separator => Some(Ok(config.separator)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    match parsed {\n+        Ok(parsed) => Ok(parsed),\n+        Err(e) => Err(Box::new(e)),\n+    }\n+}\n+\n+fn should_display_disk(disk: &Disk, threshold: i64) -> bool {\n+    let percentage = (disk.get_total_space() - disk.get_available_space()) as f64\n+        / disk.get_total_space() as f64;\n+\n+    percentage >= (threshold as f64 * 0.01f64)\n+}\n+\n+#[derive(Debug)]\n+struct DiskNotFoundError {\n+    path: PathBuf,\n+}\n+impl DiskNotFoundError {\n+    fn new(path: PathBuf) -> Self {\n+        DiskNotFoundError { path }\n+    }\n+}\n+impl fmt::Display for DiskNotFoundError {\n+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {\n+        write!(f, \"No disk found for path: {:?}!\", self.path)\n+    }\n+}\n+impl Error for DiskNotFoundError {}\n+\n+#[cfg(target_os = \"windows\")]\n+#[derive(Debug)]\n+struct WinAPIVolumeError {\n+    desc: String,\n+}\n+#[cfg(target_os = \"windows\")]\n+impl WinAPIVolumeError {\n+    fn new(desc: String) -> Self {\n+        WinAPIVolumeError { desc }\n+    }\n+}\n+#[cfg(target_os = \"windows\")]\n+impl fmt::Display for WinAPIVolumeError {\n+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {\n+        write!(f, \"{}\", self.desc)\n+    }\n+}\n+#[cfg(target_os = \"windows\")]\n+impl Error for WinAPIVolumeError {}\n+\n+#[cfg(target_os = \"windows\")]\n+fn get_drive_from_path<'a>(path: &PathBuf, disks: &'a [Disk]) -> Result<&'a Disk, Box<dyn Error>> {\n+    use std::{ffi::OsString, iter::once, os::windows::prelude::*};\n+    use winapi::um::{errhandlingapi::GetLastError, fileapi::GetVolumePathNameW};\n+\n+    let path: Vec<u16> = path.as_os_str().encode_wide().chain(once(0)).collect();\n+    let mut volume_path_name: Vec<u16> = vec![0; 260];\n+\n+    let ret = unsafe {\n+        GetVolumePathNameW(\n+            path.as_ptr(),\n+            volume_path_name.as_mut_ptr(),\n+            volume_path_name.len() as u32,\n+        )\n+    };\n+\n+    if ret != 0 {\n+        // Strip out the nulls from the end\n+        while let Some(last) = volume_path_name.last() {\n+            if *last == 0 {\n+                volume_path_name.pop();\n+            } else {\n+                break;\n+            }\n+        }\n+        let volume_path_name = OsString::from_wide(&volume_path_name);\n+        log::info!(\"Got path name: {:?}\", volume_path_name);\n+        for disk in disks {\n+            if volume_path_name == disk.get_mount_point() {\n+                return Ok(disk);\n+            }\n+        }\n+        Err(Box::new(DiskNotFoundError::new(PathBuf::from(\n+            volume_path_name,\n+        ))))\n+    } else {\n+        let last_error = unsafe { GetLastError() };\n+        Err(Box::new(WinAPIVolumeError::new(format!(",
+    "path": "src/modules/disk_used.rs",
+    "commit_id": "cff024e71f6133441a82b91fa8eb485faac65c58",
+    "original_commit_id": "4c804262c494b1ba694bb182b929e0f5e7a46bb8",
+    "user": {
+      "login": "SarthakSingh31",
+      "id": 35749450,
+      "node_id": "MDQ6VXNlcjM1NzQ5NDUw",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35749450?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/SarthakSingh31",
+      "html_url": "https://github.com/SarthakSingh31",
+      "followers_url": "https://api.github.com/users/SarthakSingh31/followers",
+      "following_url": "https://api.github.com/users/SarthakSingh31/following{/other_user}",
+      "gists_url": "https://api.github.com/users/SarthakSingh31/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/SarthakSingh31/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/SarthakSingh31/subscriptions",
+      "organizations_url": "https://api.github.com/users/SarthakSingh31/orgs",
+      "repos_url": "https://api.github.com/users/SarthakSingh31/repos",
+      "events_url": "https://api.github.com/users/SarthakSingh31/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/SarthakSingh31/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I didn't know that `std::io::last_os_error()` existed will switch to it. I will also look into if I can do anything about the performance",
+    "created_at": "2020-10-31T23:21:50Z",
+    "updated_at": "2020-11-01T00:30:20Z",
+    "html_url": "https://github.com/starship/starship/pull/1746#discussion_r515551963",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1746",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/515551963"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1746#discussion_r515551963"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1746"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/515551963/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 169,
+    "side": "RIGHT",
+    "in_reply_to_id": 511404584,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 169,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/515552149",
+    "pull_request_review_id": 521178920,
+    "id": 515552149,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUxNTU1MjE0OQ==",
+    "diff_hunk": "@@ -698,6 +699,76 @@ truncation_length = 8\n truncation_symbol = \"…/\"\n ```\n \n+## Disk Used\n+\n+The `disk_used` module shows disk used in current directory or any disk specified.\n+\n+By default the moduel only shows the current directory's disk used when it is more than 30%.\n+\n+::: tip\n+\n+This module is disabled by default.\n+To enable it, set `disabled` to `false` in your configuration file.\n+\n+:::\n+\n+### Options\n+\n+| Option              | Default                                                                | Description                                                                     |\n+| ------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------- |\n+| `prefix`            | ` `                                                                    | A prefix for the module output.                                                 |\n+| `format`            | `\"[($prefix )]($style)$symbol$current_storage(\\\\[$other_storage\\\\]) \"` | The format for the module.                                                      |\n+| `symbol`            | `\"💾 \"`                                                                | The symbol used before displaying the disk used usage.                          |\n+| `default_style`     | `\"white bold\"`                                                         | The style for the module.                                                       |\n+| `disabled`          | `true`                                                                 | Disables the `disk_used` module.                                                |\n+| `separator`         | `|`                                                                    | Used to seprate disk used texts.                                                |\n+| `show_percentage`   | `true`                                                                 | Switches between `63.05%` and `147GB/233GB`.                                    |\n+| `current_threshold` | `30`                                                                   | Hides the current directory disk used if it is less than this value.            |\n+| `all_threshold`     | ` `                                                                    | Hides all disk used if it is less than this value.                              |\n+| `show_current_name` | `false`                                                                | Toggles between `💾 sda1: 63.05%` and `💾 63.05%`.                              |\n+| `threshold_styles`  | [link](#disk-used-style-threshold)                                     | Thresholds and style pairs for disk used                                        |\n+\n+### Disk Used Style Threshold\n+\n+The `threshold_styles` are used to change the style of the disk used display based on the percentage of disk used.\n+\n+```toml\n+[[disk_used.threshold_styles]]\n+threshold = 50\n+style = \"yellow bold\"\n+[[disk_used.threshold_styles]]\n+threshold = 80\n+style = \"red bold\"\n+```\n+\n+### Variables\n+\n+| Variable          | Example                   | Description                                                                                   |\n+| ----------------- | ------------------------- | --------------------------------------------------------------------------------------------- |\n+| prefix            | `used`                    | A perfix for the prompt.                                                                      |\n+| style\\*           | `white bold`              | Mirrors the value of option `default_style`.                                                  |\n+| symbol            | `💾 `                     | Mirrors the value of option `symbol`.                                                         |\n+| current_storage   | `63.05%`                  | The amount of used space on the current disk.                                                 |\n+| other_storage\\*\\* | `sda2:63.05%|sdb1:63.05%` | The amount of used space on all disks. Only displays the disks that pass the `all_threshold`  |\n+\n+\\*: This variable can only be used as a part of a style string\n+\\*\\*: Disabled if `all_threshold` is not defined\n+\n+### Example\n+\n+```toml\n+# ~/.config/starship.toml\n+\n+[memory_usage]",
+    "path": "docs/config/README.md",
+    "commit_id": "cff024e71f6133441a82b91fa8eb485faac65c58",
+    "original_commit_id": "4c804262c494b1ba694bb182b929e0f5e7a46bb8",
+    "user": {
+      "login": "SarthakSingh31",
+      "id": 35749450,
+      "node_id": "MDQ6VXNlcjM1NzQ5NDUw",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35749450?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/SarthakSingh31",
+      "html_url": "https://github.com/SarthakSingh31",
+      "followers_url": "https://api.github.com/users/SarthakSingh31/followers",
+      "following_url": "https://api.github.com/users/SarthakSingh31/following{/other_user}",
+      "gists_url": "https://api.github.com/users/SarthakSingh31/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/SarthakSingh31/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/SarthakSingh31/subscriptions",
+      "organizations_url": "https://api.github.com/users/SarthakSingh31/orgs",
+      "repos_url": "https://api.github.com/users/SarthakSingh31/repos",
+      "events_url": "https://api.github.com/users/SarthakSingh31/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/SarthakSingh31/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Good catch will fix",
+    "created_at": "2020-10-31T23:23:38Z",
+    "updated_at": "2020-11-01T00:30:20Z",
+    "html_url": "https://github.com/starship/starship/pull/1746#discussion_r515552149",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1746",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/515552149"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1746#discussion_r515552149"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1746"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/515552149/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 762,
+    "side": "RIGHT",
+    "in_reply_to_id": 511404775,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 72,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/518272878",
+    "pull_request_review_id": 524550467,
+    "id": 518272878,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUxODI3Mjg3OA==",
+    "diff_hunk": "@@ -0,0 +1,323 @@\n+use std::{\n+    error::Error,\n+    fmt,\n+    path::{Path, PathBuf},\n+};\n+\n+use byte_unit::{Byte, ByteError, ByteUnit};\n+use sysinfo::{Disk, DiskExt, RefreshKind, System, SystemExt};\n+\n+use super::{Context, Module, RootModuleConfig, Shell};\n+\n+use crate::configs::disk_used::DiskUsedConfig;\n+use crate::formatter::StringFormatter;\n+use crate::segment::Segment;\n+\n+fn format_byte(n_byte: f64) -> Result<String, ByteError> {\n+    let byte = Byte::from_unit(n_byte, ByteUnit::B)?;\n+    let mut display_bytes = byte.get_appropriate_unit(false).format(0);\n+    display_bytes.retain(|c| c != ' ');\n+    Ok(display_bytes)\n+}\n+\n+fn get_disk_name(disk: &'_ Disk) -> Option<&'_ str> {\n+    let full_disk_name = disk.get_name();\n+    let disk_name = Path::new(full_disk_name).file_name();\n+    match disk_name {\n+        Some(disk_name) => disk_name.to_str(),\n+        None => full_disk_name.to_str(),\n+    }\n+}\n+\n+fn format_disk_used(\n+    disk: &Disk,\n+    config: &DiskUsedConfig,\n+    show_disk_name: bool,\n+    add_separator: bool,\n+    percentage_char: &'_ str,\n+) -> Result<Vec<Segment>, Box<dyn Error>> {\n+    let used_space = (disk.get_total_space() - disk.get_available_space()) as f64;\n+    let total_space = disk.get_total_space() as f64;\n+\n+    let formatted_usage = if config.show_percentage {\n+        format!(\n+            \"{:.2}{}\",\n+            (used_space / total_space) * 100f64,\n+            percentage_char\n+        )\n+    } else {\n+        format!(\"{}/{}\", format_byte(used_space)?, format_byte(total_space)?)\n+    };\n+\n+    let threshold_config = config.threshold_styles.iter().find(|threshold_style| {\n+        (used_space / total_space) >= (threshold_style.threshold as f64 * 0.01f64)\n+    });\n+\n+    let style = match threshold_config {\n+        Some(threshold_config) => threshold_config.style,\n+        None => config.default_style,\n+    };\n+\n+    let parsed = StringFormatter::new(\n+        \"([$name:]($default_style))[$usage]($style)([$separator]($default_style))\",\n+    )\n+    .and_then(|formatter| {\n+        formatter\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(style)),\n+                \"default_style\" => Some(Ok(config.default_style)),\n+                _ => None,\n+            })\n+            .map(|var| match var {\n+                \"name\" if show_disk_name => match get_disk_name(disk) {\n+                    Some(name) => Some(Ok(name)),\n+                    _ => None,\n+                },\n+                \"usage\" => Some(Ok(formatted_usage.as_str())),\n+                \"separator\" if add_separator => Some(Ok(config.separator)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    match parsed {\n+        Ok(parsed) => Ok(parsed),\n+        Err(e) => Err(Box::new(e)),\n+    }\n+}\n+\n+fn should_display_disk(disk: &Disk, threshold: i64) -> bool {\n+    let percentage = (disk.get_total_space() - disk.get_available_space()) as f64\n+        / disk.get_total_space() as f64;\n+\n+    percentage >= (threshold as f64 * 0.01f64)\n+}\n+\n+#[derive(Debug)]\n+struct DiskNotFoundError {\n+    path: PathBuf,\n+}\n+impl DiskNotFoundError {\n+    fn new(path: PathBuf) -> Self {\n+        DiskNotFoundError { path }\n+    }\n+}\n+impl fmt::Display for DiskNotFoundError {\n+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {\n+        write!(f, \"No disk found for path: {:?}!\", self.path)\n+    }\n+}\n+impl Error for DiskNotFoundError {}\n+\n+#[cfg(target_os = \"windows\")]\n+#[derive(Debug)]\n+struct WinAPIVolumeError {\n+    desc: String,\n+}\n+#[cfg(target_os = \"windows\")]\n+impl WinAPIVolumeError {\n+    fn new(desc: String) -> Self {\n+        WinAPIVolumeError { desc }\n+    }\n+}\n+#[cfg(target_os = \"windows\")]\n+impl fmt::Display for WinAPIVolumeError {\n+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {\n+        write!(f, \"{}\", self.desc)\n+    }\n+}\n+#[cfg(target_os = \"windows\")]\n+impl Error for WinAPIVolumeError {}\n+\n+#[cfg(target_os = \"windows\")]\n+fn get_drive_from_path<'a>(path: &PathBuf, disks: &'a [Disk]) -> Result<&'a Disk, Box<dyn Error>> {\n+    use std::{ffi::OsString, iter::once, os::windows::prelude::*};\n+    use winapi::um::{errhandlingapi::GetLastError, fileapi::GetVolumePathNameW};\n+\n+    let path: Vec<u16> = path.as_os_str().encode_wide().chain(once(0)).collect();\n+    let mut volume_path_name: Vec<u16> = vec![0; 260];\n+\n+    let ret = unsafe {\n+        GetVolumePathNameW(\n+            path.as_ptr(),\n+            volume_path_name.as_mut_ptr(),\n+            volume_path_name.len() as u32,\n+        )\n+    };\n+\n+    if ret != 0 {\n+        // Strip out the nulls from the end\n+        while let Some(last) = volume_path_name.last() {\n+            if *last == 0 {\n+                volume_path_name.pop();\n+            } else {\n+                break;\n+            }\n+        }\n+        let volume_path_name = OsString::from_wide(&volume_path_name);\n+        log::info!(\"Got path name: {:?}\", volume_path_name);\n+        for disk in disks {\n+            if volume_path_name == disk.get_mount_point() {\n+                return Ok(disk);\n+            }\n+        }\n+        Err(Box::new(DiskNotFoundError::new(PathBuf::from(\n+            volume_path_name,\n+        ))))\n+    } else {\n+        let last_error = unsafe { GetLastError() };\n+        Err(Box::new(WinAPIVolumeError::new(format!(",
+    "path": "src/modules/disk_used.rs",
+    "commit_id": "cff024e71f6133441a82b91fa8eb485faac65c58",
+    "original_commit_id": "4c804262c494b1ba694bb182b929e0f5e7a46bb8",
+    "user": {
+      "login": "SarthakSingh31",
+      "id": 35749450,
+      "node_id": "MDQ6VXNlcjM1NzQ5NDUw",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35749450?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/SarthakSingh31",
+      "html_url": "https://github.com/SarthakSingh31",
+      "followers_url": "https://api.github.com/users/SarthakSingh31/followers",
+      "following_url": "https://api.github.com/users/SarthakSingh31/following{/other_user}",
+      "gists_url": "https://api.github.com/users/SarthakSingh31/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/SarthakSingh31/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/SarthakSingh31/subscriptions",
+      "organizations_url": "https://api.github.com/users/SarthakSingh31/orgs",
+      "repos_url": "https://api.github.com/users/SarthakSingh31/repos",
+      "events_url": "https://api.github.com/users/SarthakSingh31/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/SarthakSingh31/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I am going to leave the windows part in with the hopes that sysinfo gets faster on windows with future builds, since the module is disabled by default I don't think it should cause any issues.",
+    "created_at": "2020-11-05T18:30:47Z",
+    "updated_at": "2020-11-05T18:30:48Z",
+    "html_url": "https://github.com/starship/starship/pull/1746#discussion_r518272878",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1746",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/518272878"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1746#discussion_r518272878"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1746"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/518272878/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 169,
+    "side": "RIGHT",
+    "in_reply_to_id": 511404584,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 169,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/521312995",
+    "pull_request_review_id": 528114031,
+    "id": 521312995,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUyMTMxMjk5NQ==",
+    "diff_hunk": "@@ -698,6 +699,76 @@ truncation_length = 8\n truncation_symbol = \"…/\"\n ```\n \n+## Disk Used\n+\n+The `disk_used` module shows disk used in current directory or any disk specified.",
+    "path": "docs/config/README.md",
+    "commit_id": "cff024e71f6133441a82b91fa8eb485faac65c58",
+    "original_commit_id": "cff024e71f6133441a82b91fa8eb485faac65c58",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please rename the module to `disk_usage` to align with the `memory_usage` module",
+    "created_at": "2020-11-11T12:07:40Z",
+    "updated_at": "2020-11-11T12:07:40Z",
+    "html_url": "https://github.com/starship/starship/pull/1746#discussion_r521312995",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1746",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/521312995"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1746#discussion_r521312995"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1746"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/521312995/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 704,
+    "original_line": 704,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 14,
+    "position": 14,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/521313447",
+    "pull_request_review_id": 528114676,
+    "id": 521313447,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUyMTMxMzQ0Nw==",
+    "diff_hunk": "@@ -0,0 +1,307 @@\n+use std::{\n+    error::Error,\n+    fmt,\n+    path::{Path, PathBuf},\n+};\n+\n+use byte_unit::{Byte, ByteError, ByteUnit};\n+use sysinfo::{Disk, DiskExt, RefreshKind, System, SystemExt};\n+\n+use super::{Context, Module, RootModuleConfig, Shell};\n+\n+use crate::configs::disk_used::DiskUsedConfig;\n+use crate::formatter::StringFormatter;\n+use crate::segment::Segment;\n+\n+fn format_byte(n_byte: f64) -> Result<String, ByteError> {\n+    let byte = Byte::from_unit(n_byte, ByteUnit::B)?;\n+    let mut display_bytes = byte.get_appropriate_unit(false).format(0);\n+    display_bytes.retain(|c| c != ' ');\n+    Ok(display_bytes)\n+}\n+\n+fn get_disk_name(disk: &'_ Disk) -> Option<&'_ str> {\n+    let full_disk_name = disk.get_name();\n+    let disk_name = Path::new(full_disk_name).file_name();\n+    match disk_name {\n+        Some(disk_name) => disk_name.to_str(),\n+        None => full_disk_name.to_str(),\n+    }\n+}\n+\n+fn format_disk_used(\n+    disk: &Disk,\n+    config: &DiskUsedConfig,\n+    show_disk_name: bool,\n+    add_separator: bool,\n+    percentage_char: &'_ str,\n+) -> Result<Vec<Segment>, Box<dyn Error>> {\n+    let used_space = (disk.get_total_space() - disk.get_available_space()) as f64;",
+    "path": "src/modules/disk_used.rs",
+    "commit_id": "cff024e71f6133441a82b91fa8eb485faac65c58",
+    "original_commit_id": "cff024e71f6133441a82b91fa8eb485faac65c58",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'd prefer if these were kept as `u64` like in `memory_usage` and converted to `f64` on demand",
+    "created_at": "2020-11-11T12:08:39Z",
+    "updated_at": "2020-11-11T12:08:40Z",
+    "html_url": "https://github.com/starship/starship/pull/1746#discussion_r521313447",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1746",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/521313447"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1746#discussion_r521313447"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1746"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/521313447/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 39,
+    "original_line": 39,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 39,
+    "position": 39,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/521313769",
+    "pull_request_review_id": 528115134,
+    "id": 521313769,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUyMTMxMzc2OQ==",
+    "diff_hunk": "@@ -0,0 +1,307 @@\n+use std::{\n+    error::Error,\n+    fmt,\n+    path::{Path, PathBuf},\n+};\n+\n+use byte_unit::{Byte, ByteError, ByteUnit};\n+use sysinfo::{Disk, DiskExt, RefreshKind, System, SystemExt};\n+\n+use super::{Context, Module, RootModuleConfig, Shell};\n+\n+use crate::configs::disk_used::DiskUsedConfig;\n+use crate::formatter::StringFormatter;\n+use crate::segment::Segment;\n+\n+fn format_byte(n_byte: f64) -> Result<String, ByteError> {\n+    let byte = Byte::from_unit(n_byte, ByteUnit::B)?;\n+    let mut display_bytes = byte.get_appropriate_unit(false).format(0);\n+    display_bytes.retain(|c| c != ' ');\n+    Ok(display_bytes)\n+}\n+\n+fn get_disk_name(disk: &'_ Disk) -> Option<&'_ str> {\n+    let full_disk_name = disk.get_name();\n+    let disk_name = Path::new(full_disk_name).file_name();\n+    match disk_name {\n+        Some(disk_name) => disk_name.to_str(),\n+        None => full_disk_name.to_str(),\n+    }\n+}\n+\n+fn format_disk_used(\n+    disk: &Disk,\n+    config: &DiskUsedConfig,\n+    show_disk_name: bool,\n+    add_separator: bool,\n+    percentage_char: &'_ str,\n+) -> Result<Vec<Segment>, Box<dyn Error>> {\n+    let used_space = (disk.get_total_space() - disk.get_available_space()) as f64;\n+    let total_space = disk.get_total_space() as f64;\n+\n+    let formatted_usage = if config.show_percentage {\n+        format!(\n+            \"{:.2}{}\",\n+            (used_space / total_space) * 100f64,\n+            percentage_char\n+        )\n+    } else {\n+        format!(\"{}/{}\", format_byte(used_space)?, format_byte(total_space)?)\n+    };\n+\n+    let threshold_config = config.threshold_styles.iter().find(|threshold_style| {\n+        (used_space / total_space) >= (threshold_style.threshold as f64 * 0.01f64)\n+    });\n+\n+    let style = match threshold_config {\n+        Some(threshold_config) => threshold_config.style,\n+        None => config.default_style,\n+    };\n+\n+    let parsed = StringFormatter::new(\n+        \"([$name:]($default_style))[$usage]($style)([$separator]($default_style))\",\n+    )\n+    .and_then(|formatter| {\n+        formatter\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(style)),\n+                \"default_style\" => Some(Ok(config.default_style)),\n+                _ => None,\n+            })\n+            .map(|var| match var {\n+                \"name\" if show_disk_name => match get_disk_name(disk) {",
+    "path": "src/modules/disk_used.rs",
+    "commit_id": "cff024e71f6133441a82b91fa8eb485faac65c58",
+    "original_commit_id": "cff024e71f6133441a82b91fa8eb485faac65c58",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "For me the name always ends up empty on windows.",
+    "created_at": "2020-11-11T12:09:20Z",
+    "updated_at": "2020-11-11T12:09:20Z",
+    "html_url": "https://github.com/starship/starship/pull/1746#discussion_r521313769",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1746",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/521313769"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1746#discussion_r521313769"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1746"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/521313769/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 72,
+    "original_line": 72,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 72,
+    "position": 72,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/521314655",
+    "pull_request_review_id": 528116276,
+    "id": 521314655,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUyMTMxNDY1NQ==",
+    "diff_hunk": "@@ -0,0 +1,307 @@\n+use std::{\n+    error::Error,\n+    fmt,\n+    path::{Path, PathBuf},\n+};\n+\n+use byte_unit::{Byte, ByteError, ByteUnit};\n+use sysinfo::{Disk, DiskExt, RefreshKind, System, SystemExt};\n+\n+use super::{Context, Module, RootModuleConfig, Shell};\n+\n+use crate::configs::disk_used::DiskUsedConfig;\n+use crate::formatter::StringFormatter;\n+use crate::segment::Segment;\n+\n+fn format_byte(n_byte: f64) -> Result<String, ByteError> {\n+    let byte = Byte::from_unit(n_byte, ByteUnit::B)?;\n+    let mut display_bytes = byte.get_appropriate_unit(false).format(0);\n+    display_bytes.retain(|c| c != ' ');\n+    Ok(display_bytes)\n+}\n+\n+fn get_disk_name(disk: &'_ Disk) -> Option<&'_ str> {\n+    let full_disk_name = disk.get_name();\n+    let disk_name = Path::new(full_disk_name).file_name();\n+    match disk_name {\n+        Some(disk_name) => disk_name.to_str(),\n+        None => full_disk_name.to_str(),\n+    }\n+}\n+\n+fn format_disk_used(\n+    disk: &Disk,\n+    config: &DiskUsedConfig,\n+    show_disk_name: bool,\n+    add_separator: bool,\n+    percentage_char: &'_ str,\n+) -> Result<Vec<Segment>, Box<dyn Error>> {\n+    let used_space = (disk.get_total_space() - disk.get_available_space()) as f64;\n+    let total_space = disk.get_total_space() as f64;\n+\n+    let formatted_usage = if config.show_percentage {\n+        format!(\n+            \"{:.2}{}\",\n+            (used_space / total_space) * 100f64,\n+            percentage_char\n+        )\n+    } else {\n+        format!(\"{}/{}\", format_byte(used_space)?, format_byte(total_space)?)\n+    };\n+\n+    let threshold_config = config.threshold_styles.iter().find(|threshold_style| {\n+        (used_space / total_space) >= (threshold_style.threshold as f64 * 0.01f64)\n+    });\n+\n+    let style = match threshold_config {\n+        Some(threshold_config) => threshold_config.style,\n+        None => config.default_style,\n+    };\n+\n+    let parsed = StringFormatter::new(\n+        \"([$name:]($default_style))[$usage]($style)([$separator]($default_style))\",\n+    )\n+    .and_then(|formatter| {\n+        formatter\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(style)),\n+                \"default_style\" => Some(Ok(config.default_style)),\n+                _ => None,\n+            })\n+            .map(|var| match var {\n+                \"name\" if show_disk_name => match get_disk_name(disk) {\n+                    Some(name) => Some(Ok(name)),\n+                    _ => None,\n+                },\n+                \"usage\" => Some(Ok(formatted_usage.as_str())),\n+                \"separator\" if add_separator => Some(Ok(config.separator)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    match parsed {\n+        Ok(parsed) => Ok(parsed),\n+        Err(e) => Err(Box::new(e)),\n+    }\n+}\n+\n+fn should_display_disk(disk: &Disk, threshold: i64) -> bool {\n+    let percentage = (disk.get_total_space() - disk.get_available_space()) as f64\n+        / disk.get_total_space() as f64;\n+\n+    percentage >= (threshold as f64 * 0.01f64)\n+}\n+\n+#[derive(Debug)]\n+struct DiskNotFoundError {\n+    path: PathBuf,\n+}\n+impl DiskNotFoundError {\n+    fn new(path: PathBuf) -> Self {\n+        DiskNotFoundError { path }\n+    }\n+}\n+impl fmt::Display for DiskNotFoundError {\n+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {\n+        write!(f, \"No disk found for path: {:?}!\", self.path)\n+    }\n+}\n+impl Error for DiskNotFoundError {}\n+\n+#[cfg(target_os = \"windows\")]\n+fn get_drive_from_path<'a>(path: &PathBuf, disks: &'a [Disk]) -> Result<&'a Disk, Box<dyn Error>> {\n+    use std::{ffi::OsString, io::Error, iter::once, os::windows::prelude::*};\n+    use winapi::um::fileapi::GetVolumePathNameW;\n+\n+    let path: Vec<u16> = path.as_os_str().encode_wide().chain(once(0)).collect();\n+    let mut volume_path_name: Vec<u16> = vec![0; 260];\n+\n+    let ret = unsafe {\n+        GetVolumePathNameW(\n+            path.as_ptr(),\n+            volume_path_name.as_mut_ptr(),\n+            volume_path_name.len() as u32,\n+        )\n+    };\n+\n+    if ret != 0 {\n+        // Strip out the nulls from the end\n+        while let Some(last) = volume_path_name.last() {\n+            if *last == 0 {\n+                volume_path_name.pop();\n+            } else {\n+                break;\n+            }\n+        }\n+        let volume_path_name = OsString::from_wide(&volume_path_name);\n+        log::info!(\"Got path name: {:?}\", volume_path_name);",
+    "path": "src/modules/disk_used.rs",
+    "commit_id": "cff024e71f6133441a82b91fa8eb485faac65c58",
+    "original_commit_id": "cff024e71f6133441a82b91fa8eb485faac65c58",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The log level for this is too high.\r\n```suggestion\r\n        log::trace!(\"Got path name: {:?}\", volume_path_name);\r\n```",
+    "created_at": "2020-11-11T12:11:08Z",
+    "updated_at": "2020-11-11T12:11:09Z",
+    "html_url": "https://github.com/starship/starship/pull/1746#discussion_r521314655",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1746",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/521314655"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1746#discussion_r521314655"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1746"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/521314655/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 138,
+    "original_line": 138,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 138,
+    "position": 138,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/521315970",
+    "pull_request_review_id": 528117969,
+    "id": 521315970,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUyMTMxNTk3MA==",
+    "diff_hunk": "@@ -0,0 +1,307 @@\n+use std::{\n+    error::Error,\n+    fmt,\n+    path::{Path, PathBuf},\n+};\n+\n+use byte_unit::{Byte, ByteError, ByteUnit};\n+use sysinfo::{Disk, DiskExt, RefreshKind, System, SystemExt};\n+\n+use super::{Context, Module, RootModuleConfig, Shell};\n+\n+use crate::configs::disk_used::DiskUsedConfig;\n+use crate::formatter::StringFormatter;\n+use crate::segment::Segment;\n+\n+fn format_byte(n_byte: f64) -> Result<String, ByteError> {\n+    let byte = Byte::from_unit(n_byte, ByteUnit::B)?;\n+    let mut display_bytes = byte.get_appropriate_unit(false).format(0);\n+    display_bytes.retain(|c| c != ' ');\n+    Ok(display_bytes)\n+}\n+\n+fn get_disk_name(disk: &'_ Disk) -> Option<&'_ str> {\n+    let full_disk_name = disk.get_name();\n+    let disk_name = Path::new(full_disk_name).file_name();\n+    match disk_name {\n+        Some(disk_name) => disk_name.to_str(),\n+        None => full_disk_name.to_str(),\n+    }\n+}\n+\n+fn format_disk_used(\n+    disk: &Disk,\n+    config: &DiskUsedConfig,\n+    show_disk_name: bool,\n+    add_separator: bool,\n+    percentage_char: &'_ str,\n+) -> Result<Vec<Segment>, Box<dyn Error>> {\n+    let used_space = (disk.get_total_space() - disk.get_available_space()) as f64;\n+    let total_space = disk.get_total_space() as f64;\n+\n+    let formatted_usage = if config.show_percentage {\n+        format!(\n+            \"{:.2}{}\",\n+            (used_space / total_space) * 100f64,\n+            percentage_char\n+        )\n+    } else {\n+        format!(\"{}/{}\", format_byte(used_space)?, format_byte(total_space)?)\n+    };\n+\n+    let threshold_config = config.threshold_styles.iter().find(|threshold_style| {\n+        (used_space / total_space) >= (threshold_style.threshold as f64 * 0.01f64)\n+    });\n+\n+    let style = match threshold_config {\n+        Some(threshold_config) => threshold_config.style,\n+        None => config.default_style,\n+    };\n+\n+    let parsed = StringFormatter::new(\n+        \"([$name:]($default_style))[$usage]($style)([$separator]($default_style))\",\n+    )\n+    .and_then(|formatter| {\n+        formatter\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(style)),\n+                \"default_style\" => Some(Ok(config.default_style)),\n+                _ => None,\n+            })\n+            .map(|var| match var {\n+                \"name\" if show_disk_name => match get_disk_name(disk) {\n+                    Some(name) => Some(Ok(name)),\n+                    _ => None,\n+                },\n+                \"usage\" => Some(Ok(formatted_usage.as_str())),\n+                \"separator\" if add_separator => Some(Ok(config.separator)),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    match parsed {\n+        Ok(parsed) => Ok(parsed),\n+        Err(e) => Err(Box::new(e)),\n+    }\n+}\n+\n+fn should_display_disk(disk: &Disk, threshold: i64) -> bool {\n+    let percentage = (disk.get_total_space() - disk.get_available_space()) as f64\n+        / disk.get_total_space() as f64;\n+\n+    percentage >= (threshold as f64 * 0.01f64)\n+}\n+\n+#[derive(Debug)]\n+struct DiskNotFoundError {\n+    path: PathBuf,\n+}\n+impl DiskNotFoundError {\n+    fn new(path: PathBuf) -> Self {\n+        DiskNotFoundError { path }\n+    }\n+}\n+impl fmt::Display for DiskNotFoundError {\n+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {\n+        write!(f, \"No disk found for path: {:?}!\", self.path)\n+    }\n+}\n+impl Error for DiskNotFoundError {}\n+\n+#[cfg(target_os = \"windows\")]\n+fn get_drive_from_path<'a>(path: &PathBuf, disks: &'a [Disk]) -> Result<&'a Disk, Box<dyn Error>> {\n+    use std::{ffi::OsString, io::Error, iter::once, os::windows::prelude::*};\n+    use winapi::um::fileapi::GetVolumePathNameW;\n+\n+    let path: Vec<u16> = path.as_os_str().encode_wide().chain(once(0)).collect();\n+    let mut volume_path_name: Vec<u16> = vec![0; 260];\n+\n+    let ret = unsafe {\n+        GetVolumePathNameW(\n+            path.as_ptr(),\n+            volume_path_name.as_mut_ptr(),\n+            volume_path_name.len() as u32,\n+        )\n+    };\n+\n+    if ret != 0 {\n+        // Strip out the nulls from the end\n+        while let Some(last) = volume_path_name.last() {\n+            if *last == 0 {\n+                volume_path_name.pop();\n+            } else {\n+                break;\n+            }\n+        }\n+        let volume_path_name = OsString::from_wide(&volume_path_name);\n+        log::info!(\"Got path name: {:?}\", volume_path_name);\n+        for disk in disks {\n+            if volume_path_name == disk.get_mount_point() {\n+                return Ok(disk);\n+            }\n+        }\n+        Err(Box::new(DiskNotFoundError::new(PathBuf::from(\n+            volume_path_name,\n+        ))))\n+    } else {\n+        Err(Box::new(Error::last_os_error()))\n+    }\n+}\n+\n+#[cfg(any(target_os = \"unix\", target_os = \"macos\"))]\n+fn get_drive_from_path<'a>(path: &PathBuf, disks: &'a [Disk]) -> Result<&'a Disk, Box<dyn Error>> {\n+    use std::{fs, os::unix::fs::MetadataExt};\n+\n+    let meta = fs::metadata(path)?;\n+    let dev_id = meta.dev();\n+\n+    for disk in disks {\n+        let disk_meta = fs::metadata(disk.get_name())?;\n+        if disk_meta.rdev() == dev_id {\n+            return Ok(disk);\n+        }\n+    }\n+\n+    Err(Box::new(DiskNotFoundError::new(path.to_owned())))\n+}\n+\n+/// Uses the device id to get the drive\n+#[cfg(target_os = \"linux\")]\n+fn get_drive_from_path<'a>(path: &PathBuf, disks: &'a [Disk]) -> Result<&'a Disk, Box<dyn Error>> {\n+    use std::{fs, os::linux::fs::MetadataExt};\n+\n+    let meta = fs::metadata(path)?;\n+    let dev_id = meta.st_dev();\n+\n+    for disk in disks {\n+        let disk_meta = fs::metadata(disk.get_name())?;\n+        if disk_meta.st_rdev() == dev_id {\n+            return Ok(disk);\n+        }\n+    }\n+\n+    Err(Box::new(DiskNotFoundError::new(path.to_owned())))\n+}\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"disk_used\");\n+    let config = DiskUsedConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    let percentage_char = match context.shell {\n+        Shell::Zsh => \"%%\", // % is an escape in zsh, see PROMPT in `man zshmisc`\n+        _ => \"%\",\n+    };\n+\n+    let mut current_disk = None;\n+    let mut current_storage = None;\n+    let mut other_storage: Option<Vec<Segment>> = None;\n+    let system = System::new_with_specifics(RefreshKind::new().with_disks().with_disks_list());\n+    let all_disks = system.get_disks();\n+\n+    if let Some(threshold) = config.current_threshold {\n+        match get_drive_from_path(&context.current_dir, all_disks) {\n+            Ok(disk) => {\n+                current_disk = Some(disk);\n+                if should_display_disk(disk, threshold) {\n+                    match format_disk_used(\n+                        &disk,\n+                        &config,\n+                        config.show_current_name,\n+                        false,\n+                        percentage_char,\n+                    ) {\n+                        Ok(segments) => {\n+                            if !segments.is_empty() {\n+                                current_storage = Some(segments);\n+                            }\n+                        }\n+                        Err(e) => {\n+                            log::warn!(\"Couldn't format disk from current path: {}\", e);\n+                        }\n+                    }\n+                }\n+            }\n+            Err(e) => {\n+                log::warn!(\"Couldn't get disk from current path: {}\", e);\n+            }\n+        }\n+    }\n+\n+    if let Some(threshold) = config.all_threshold {\n+        let display_disks: Vec<_> = all_disks\n+            .iter()\n+            .filter(|disk| match current_disk {\n+                Some(current) => disk.get_name() != current.get_name(),\n+                None => true,\n+            })\n+            .filter(|disk| should_display_disk(disk, threshold))\n+            .collect();\n+        let mut all_segments = Vec::new();\n+\n+        for (i, disk) in display_disks.iter().enumerate() {",
+    "path": "src/modules/disk_used.rs",
+    "commit_id": "cff024e71f6133441a82b91fa8eb485faac65c58",
+    "original_commit_id": "cff024e71f6133441a82b91fa8eb485faac65c58",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "You don't need to change this but `filter_map` would work well here and avoid `collect`ing",
+    "created_at": "2020-11-11T12:13:47Z",
+    "updated_at": "2020-11-11T12:13:48Z",
+    "html_url": "https://github.com/starship/starship/pull/1746#discussion_r521315970",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1746",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/521315970"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1746#discussion_r521315970"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1746"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/521315970/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 243,
+    "original_start_line": 243,
+    "start_side": "RIGHT",
+    "line": 246,
+    "original_line": 246,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 246,
+    "position": 246,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/521316681",
+    "pull_request_review_id": 528118884,
+    "id": 521316681,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUyMTMxNjY4MQ==",
+    "diff_hunk": "@@ -149,6 +151,7 @@ pub fn description(module: &str) -> &'static str {\n         \"crystal\" => \"The currently installed version of Crystal\",\n         \"dart\" => \"The currently installed version of Dart\",\n         \"directory\" => \"The current working directory\",\n+        \"disk_used\" => \"Current disk used\",",
+    "path": "src/modules/mod.rs",
+    "commit_id": "cff024e71f6133441a82b91fa8eb485faac65c58",
+    "original_commit_id": "cff024e71f6133441a82b91fa8eb485faac65c58",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think you could make the describtion here a bit more elaborate.",
+    "created_at": "2020-11-11T12:15:02Z",
+    "updated_at": "2020-11-11T15:37:48Z",
+    "html_url": "https://github.com/starship/starship/pull/1746#discussion_r521316681",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1746",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/521316681"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1746#discussion_r521316681"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1746"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/521316681/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 154,
+    "original_line": 154,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 20,
+    "position": 20,
+    "subject_type": "line"
+  }
+]

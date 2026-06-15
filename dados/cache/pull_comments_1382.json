@@ -1,0 +1,3296 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444564141",
+    "pull_request_review_id": 436228466,
+    "id": 444564141,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDU2NDE0MQ==",
+    "diff_hunk": "@@ -1100,6 +1101,36 @@ The `ocaml` module shows the currently installed version of OCaml. Le module est\n symbol = \"🐪 \"\n ```\n \n+## Perl",
+    "path": "docs/fr-FR/config/README.md",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "dad25e7244c47cb58ad526aa9e6cdd460393eb47",
+    "user": null,
+    "body": "The translations are automatically updated by crowdin. So please revert all the changes to the lang files.",
+    "created_at": "2020-06-23T23:33:30Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444564141",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444564141"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444564141"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444564141/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1104,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 12,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444564827",
+    "pull_request_review_id": 436228466,
+    "id": 444564827,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDU2NDgyNw==",
+    "diff_hunk": "@@ -0,0 +1,102 @@\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::perl::PerlConfig;\n+use crate::utils;\n+\n+/// Creates a module with the current perl version\n+///\n+/// Will display the perl version if any of the following criteria are met:\n+///     - Current directory contains a `.pl` or a `.pm` file\n+///     - Current directory contains a \"Makefile.PL\", \"cpanfile\", \"META.json\", \"META.yml\", or \".perl-version\" file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_perl_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\n+            \"Makefile.PL\",\n+            \"cpanfile\",\n+            \"META.json\",\n+            \"META.yml\",\n+            \".perl-version\",\n+        ])\n+        .set_extensions(&[\"pl\", \"pm\"])\n+        .is_match();\n+\n+    if !is_perl_project {\n+        return None;\n+    }\n+\n+    let perl_version = utils::exec_cmd(\"perl\", &[\"-e\", \"print $^V;\"])?.stdout;",
+    "path": "src/modules/perl.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "1c4be213d51cf4bc3bc22fe5b46dc0a6e99b7c05",
+    "user": null,
+    "body": "Your command does not match with your mock command. So change either one to match.",
+    "created_at": "2020-06-23T23:35:51Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444564827",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444564827"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444564827"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444564827/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 28,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 28,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444565271",
+    "pull_request_review_id": 436228466,
+    "id": 444565271,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDU2NTI3MQ==",
+    "diff_hunk": "@@ -0,0 +1,102 @@\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::perl::PerlConfig;\n+use crate::utils;\n+\n+/// Creates a module with the current perl version\n+///\n+/// Will display the perl version if any of the following criteria are met:\n+///     - Current directory contains a `.pl` or a `.pm` file\n+///     - Current directory contains a \"Makefile.PL\", \"cpanfile\", \"META.json\", \"META.yml\", or \".perl-version\" file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_perl_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\n+            \"Makefile.PL\",\n+            \"cpanfile\",\n+            \"META.json\",\n+            \"META.yml\",\n+            \".perl-version\",\n+        ])\n+        .set_extensions(&[\"pl\", \"pm\"])\n+        .is_match();\n+\n+    if !is_perl_project {\n+        return None;\n+    }\n+\n+    let perl_version = utils::exec_cmd(\"perl\", &[\"-e\", \"print $^V;\"])?.stdout;\n+\n+    let mut module = context.new_module(\"perl\");\n+    let config: PerlConfig = PerlConfig::try_load(module.config);\n+    module.set_style(config.style);\n+\n+    module.create_segment(\"symbol\", &config.symbol);\n+    module.create_segment(\"version\", &SegmentConfig::new(&perl_version));\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::modules::utils::test::render_module;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn folder_without_perl_files() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+\n+        let actual = render_module(\"perl\", dir.path(), None);\n+\n+        let expected = None;\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_cpanfile_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"cpanfile\"))?.sync_all()?;\n+\n+        let actual = render_module(\"perl\", dir.path(), None);\n+\n+        let expected = Some(format!(\n+            \"via {} \",\n+            Color::Fixed(149).bold().paint(\"🐪 v5.26.1\")",
+    "path": "src/modules/perl.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "1c4be213d51cf4bc3bc22fe5b46dc0a6e99b7c05",
+    "user": null,
+    "body": "The version needs to match with the output of the mock command.",
+    "created_at": "2020-06-23T23:37:35Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444565271",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444565271"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444565271"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444565271/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 122,
+    "original_line": 67,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 67,
+    "position": 122,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444567882",
+    "pull_request_review_id": 436233094,
+    "id": 444567882,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDU2Nzg4Mg==",
+    "diff_hunk": "@@ -0,0 +1,102 @@\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::perl::PerlConfig;\n+use crate::utils;\n+\n+/// Creates a module with the current perl version\n+///\n+/// Will display the perl version if any of the following criteria are met:\n+///     - Current directory contains a `.pl` or a `.pm` file\n+///     - Current directory contains a \"Makefile.PL\", \"cpanfile\", \"META.json\", \"META.yml\", or \".perl-version\" file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_perl_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\n+            \"Makefile.PL\",\n+            \"cpanfile\",\n+            \"META.json\",\n+            \"META.yml\",\n+            \".perl-version\",\n+        ])\n+        .set_extensions(&[\"pl\", \"pm\"])\n+        .is_match();\n+\n+    if !is_perl_project {\n+        return None;\n+    }\n+\n+    let perl_version = utils::exec_cmd(\"perl\", &[\"-e\", \"print $^V;\"])?.stdout;\n+\n+    let mut module = context.new_module(\"perl\");\n+    let config: PerlConfig = PerlConfig::try_load(module.config);\n+    module.set_style(config.style);\n+\n+    module.create_segment(\"symbol\", &config.symbol);\n+    module.create_segment(\"version\", &SegmentConfig::new(&perl_version));\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::modules::utils::test::render_module;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn folder_without_perl_files() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+\n+        let actual = render_module(\"perl\", dir.path(), None);\n+\n+        let expected = None;\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_cpanfile_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"cpanfile\"))?.sync_all()?;\n+\n+        let actual = render_module(\"perl\", dir.path(), None);\n+\n+        let expected = Some(format!(\n+            \"via {} \",\n+            Color::Fixed(149).bold().paint(\"🐪 v5.26.1\")",
+    "path": "src/modules/perl.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "1c4be213d51cf4bc3bc22fe5b46dc0a6e99b7c05",
+    "user": {
+      "login": "stefb69",
+      "id": 4223252,
+      "node_id": "MDQ6VXNlcjQyMjMyNTI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223252?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefb69",
+      "html_url": "https://github.com/stefb69",
+      "followers_url": "https://api.github.com/users/stefb69/followers",
+      "following_url": "https://api.github.com/users/stefb69/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefb69/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefb69/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefb69/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefb69/orgs",
+      "repos_url": "https://api.github.com/users/stefb69/repos",
+      "events_url": "https://api.github.com/users/stefb69/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefb69/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "yes but test env all have different versions of perl. Linux 5.26.1, macos 5.30.2 and windows 5.30.3",
+    "created_at": "2020-06-23T23:47:06Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444567882",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444567882"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444567882"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444567882/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 122,
+    "original_line": 67,
+    "side": "RIGHT",
+    "in_reply_to_id": 444565271,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 67,
+    "position": 122,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444568852",
+    "pull_request_review_id": 436234266,
+    "id": 444568852,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDU2ODg1Mg==",
+    "diff_hunk": "@@ -0,0 +1,102 @@\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::perl::PerlConfig;\n+use crate::utils;\n+\n+/// Creates a module with the current perl version\n+///\n+/// Will display the perl version if any of the following criteria are met:\n+///     - Current directory contains a `.pl` or a `.pm` file\n+///     - Current directory contains a \"Makefile.PL\", \"cpanfile\", \"META.json\", \"META.yml\", or \".perl-version\" file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_perl_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\n+            \"Makefile.PL\",\n+            \"cpanfile\",\n+            \"META.json\",\n+            \"META.yml\",\n+            \".perl-version\",\n+        ])\n+        .set_extensions(&[\"pl\", \"pm\"])\n+        .is_match();\n+\n+    if !is_perl_project {\n+        return None;\n+    }\n+\n+    let perl_version = utils::exec_cmd(\"perl\", &[\"-e\", \"print $^V;\"])?.stdout;\n+\n+    let mut module = context.new_module(\"perl\");\n+    let config: PerlConfig = PerlConfig::try_load(module.config);\n+    module.set_style(config.style);\n+\n+    module.create_segment(\"symbol\", &config.symbol);\n+    module.create_segment(\"version\", &SegmentConfig::new(&perl_version));\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::modules::utils::test::render_module;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn folder_without_perl_files() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+\n+        let actual = render_module(\"perl\", dir.path(), None);\n+\n+        let expected = None;\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_cpanfile_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"cpanfile\"))?.sync_all()?;\n+\n+        let actual = render_module(\"perl\", dir.path(), None);\n+\n+        let expected = Some(format!(\n+            \"via {} \",\n+            Color::Fixed(149).bold().paint(\"🐪 v5.26.1\")",
+    "path": "src/modules/perl.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "1c4be213d51cf4bc3bc22fe5b46dc0a6e99b7c05",
+    "user": null,
+    "body": "The problem is that the command you are running when getting the version in the module is different from the command in the mock function. Which means that the command is run directly and the output of the mock command is not used.",
+    "created_at": "2020-06-23T23:50:28Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444568852",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444568852"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444568852"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444568852/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 122,
+    "original_line": 67,
+    "side": "RIGHT",
+    "in_reply_to_id": 444565271,
+    "author_association": "NONE",
+    "original_position": 67,
+    "position": 122,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444572165",
+    "pull_request_review_id": 436238198,
+    "id": 444572165,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDU3MjE2NQ==",
+    "diff_hunk": "@@ -0,0 +1,102 @@\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::perl::PerlConfig;\n+use crate::utils;\n+\n+/// Creates a module with the current perl version\n+///\n+/// Will display the perl version if any of the following criteria are met:\n+///     - Current directory contains a `.pl` or a `.pm` file\n+///     - Current directory contains a \"Makefile.PL\", \"cpanfile\", \"META.json\", \"META.yml\", or \".perl-version\" file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_perl_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\n+            \"Makefile.PL\",\n+            \"cpanfile\",\n+            \"META.json\",\n+            \"META.yml\",\n+            \".perl-version\",\n+        ])\n+        .set_extensions(&[\"pl\", \"pm\"])\n+        .is_match();\n+\n+    if !is_perl_project {\n+        return None;\n+    }\n+\n+    let perl_version = utils::exec_cmd(\"perl\", &[\"-e\", \"print $^V;\"])?.stdout;\n+\n+    let mut module = context.new_module(\"perl\");\n+    let config: PerlConfig = PerlConfig::try_load(module.config);\n+    module.set_style(config.style);\n+\n+    module.create_segment(\"symbol\", &config.symbol);\n+    module.create_segment(\"version\", &SegmentConfig::new(&perl_version));\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::modules::utils::test::render_module;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn folder_without_perl_files() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+\n+        let actual = render_module(\"perl\", dir.path(), None);\n+\n+        let expected = None;\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_cpanfile_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"cpanfile\"))?.sync_all()?;\n+\n+        let actual = render_module(\"perl\", dir.path(), None);\n+\n+        let expected = Some(format!(\n+            \"via {} \",\n+            Color::Fixed(149).bold().paint(\"🐪 v5.26.1\")",
+    "path": "src/modules/perl.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "1c4be213d51cf4bc3bc22fe5b46dc0a6e99b7c05",
+    "user": {
+      "login": "stefb69",
+      "id": 4223252,
+      "node_id": "MDQ6VXNlcjQyMjMyNTI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223252?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefb69",
+      "html_url": "https://github.com/stefb69",
+      "followers_url": "https://api.github.com/users/stefb69/followers",
+      "following_url": "https://api.github.com/users/stefb69/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefb69/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefb69/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefb69/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefb69/orgs",
+      "repos_url": "https://api.github.com/users/stefb69/repos",
+      "events_url": "https://api.github.com/users/stefb69/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefb69/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "ok I think i fixed that in last commit",
+    "created_at": "2020-06-24T00:02:06Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444572165",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444572165"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444572165"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444572165/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 122,
+    "original_line": 67,
+    "side": "RIGHT",
+    "in_reply_to_id": 444565271,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 67,
+    "position": 122,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444575323",
+    "pull_request_review_id": 436242030,
+    "id": 444575323,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDU3NTMyMw==",
+    "diff_hunk": "@@ -0,0 +1,102 @@\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::perl::PerlConfig;\n+use crate::utils;\n+\n+/// Creates a module with the current perl version\n+///\n+/// Will display the perl version if any of the following criteria are met:\n+///     - Current directory contains a `.pl` or a `.pm` file\n+///     - Current directory contains a \"Makefile.PL\", \"cpanfile\", \"META.json\", \"META.yml\", or \".perl-version\" file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_perl_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\n+            \"Makefile.PL\",\n+            \"cpanfile\",\n+            \"META.json\",\n+            \"META.yml\",\n+            \".perl-version\",\n+        ])\n+        .set_extensions(&[\"pl\", \"pm\"])\n+        .is_match();\n+\n+    if !is_perl_project {\n+        return None;\n+    }\n+\n+    let perl_version = utils::exec_cmd(\"perl\", &[\"-e\", \"print $^V;\"])?.stdout;\n+\n+    let mut module = context.new_module(\"perl\");\n+    let config: PerlConfig = PerlConfig::try_load(module.config);\n+    module.set_style(config.style);\n+\n+    module.create_segment(\"symbol\", &config.symbol);\n+    module.create_segment(\"version\", &SegmentConfig::new(&perl_version));\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::modules::utils::test::render_module;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn folder_without_perl_files() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+\n+        let actual = render_module(\"perl\", dir.path(), None);\n+\n+        let expected = None;\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_cpanfile_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"cpanfile\"))?.sync_all()?;\n+\n+        let actual = render_module(\"perl\", dir.path(), None);\n+\n+        let expected = Some(format!(\n+            \"via {} \",\n+            Color::Fixed(149).bold().paint(\"🐪 v5.26.1\")",
+    "path": "src/modules/perl.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "1c4be213d51cf4bc3bc22fe5b46dc0a6e99b7c05",
+    "user": null,
+    "body": "Checks are still failing. You need to replace the mock command with `perl -e print $^V;`.",
+    "created_at": "2020-06-24T00:13:43Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444575323",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444575323"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444575323"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444575323/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 122,
+    "original_line": 67,
+    "side": "RIGHT",
+    "in_reply_to_id": 444565271,
+    "author_association": "NONE",
+    "original_position": 67,
+    "position": 122,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444576677",
+    "pull_request_review_id": 436243642,
+    "id": 444576677,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDU3NjY3Nw==",
+    "diff_hunk": "@@ -87,6 +87,10 @@ active boot switches: -d:release\\n\",\n             stdout: String::from(\"4.10.0\"),\n             stderr: String::default(),\n         }),\n+        \"perl -e 'print $^V'\" => Some(CommandOutput {",
+    "path": "src/utils.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "a2d5c7841f455b975490ceb0e852a43968260b1d",
+    "user": null,
+    "body": "```suggestion\r\n        \"perl -e print $^V;\" => Some(CommandOutput {\r\n```",
+    "created_at": "2020-06-24T00:19:02Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444576677",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444576677"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444576677"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444576677/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 90,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444609395",
+    "pull_request_review_id": 436282035,
+    "id": 444609395,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDYwOTM5NQ==",
+    "diff_hunk": "@@ -1179,6 +1180,37 @@ The module will be shown if any of the following conditions are met:\n symbol = \"🐪 \"\n ```\n \n+## Perl\n+\n+The `perl` module shows the currently installed version of Perl.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `Makefile.PL` file",
+    "path": "docs/config/README.md",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "4dcc3f3fc6fd65684167fda5056a667961eabc12",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "There is also `Build.PL` used by [`Module::Build`](https://metacpan.org/pod/Module::Build) and [`Module::Build::Tiny`](https://metacpan.org/pod/Module::Build::Tiny).",
+    "created_at": "2020-06-24T02:27:27Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444609395",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444609395"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444609395"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444609395/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1188,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 17,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444609999",
+    "pull_request_review_id": 436282035,
+    "id": 444609999,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDYwOTk5OQ==",
+    "diff_hunk": "@@ -1179,6 +1180,37 @@ The module will be shown if any of the following conditions are met:\n symbol = \"🐪 \"\n ```\n \n+## Perl\n+\n+The `perl` module shows the currently installed version of Perl.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `Makefile.PL` file\n+- The current directory contains a `cpanfile` file",
+    "path": "docs/config/README.md",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "4dcc3f3fc6fd65684167fda5056a667961eabc12",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Well, if you support `cpanfile` then you should probably support  `cpanfile.snapshot` too. That's pretty much CPAN's version of a lockfile.",
+    "created_at": "2020-06-24T02:29:53Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444609999",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444609999"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444609999"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444609999/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1189,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 18,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444610335",
+    "pull_request_review_id": 436282035,
+    "id": 444610335,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDYxMDMzNQ==",
+    "diff_hunk": "@@ -1179,6 +1180,37 @@ The module will be shown if any of the following conditions are met:\n symbol = \"🐪 \"\n ```\n \n+## Perl\n+\n+The `perl` module shows the currently installed version of Perl.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `Makefile.PL` file\n+- The current directory contains a `cpanfile` file\n+- The current directory contains a `META.json` file\n+- The current directory contains a `META.yml` file\n+- The current directory contains a `.perl-version` file\n+- The current directory contains a `.pl` file\n+- The current directory contains a `.pm` file",
+    "path": "docs/config/README.md",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "4dcc3f3fc6fd65684167fda5056a667961eabc12",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "There are also documentation files aka `.pod` files.",
+    "created_at": "2020-06-24T02:31:06Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444610335",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444610335"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444610335"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444610335/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1194,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444610850",
+    "pull_request_review_id": 436282035,
+    "id": 444610850,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDYxMDg1MA==",
+    "diff_hunk": "@@ -1179,6 +1180,37 @@ The module will be shown if any of the following conditions are met:\n symbol = \"🐪 \"\n ```\n \n+## Perl\n+\n+The `perl` module shows the currently installed version of Perl.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `Makefile.PL` file\n+- The current directory contains a `cpanfile` file\n+- The current directory contains a `META.json` file\n+- The current directory contains a `META.yml` file\n+- The current directory contains a `.perl-version` file\n+- The current directory contains a `.pl` file\n+- The current directory contains a `.pm` file\n+\n+### Options\n+\n+| Variable   | Default      | Description                                           |\n+| ---------- | ------------ | ----------------------------------------------------- |\n+| `symbol`   | `\"🐪 \"`      | The symbol used before displaying the version of PHP. |\n+| `style`    | `\"bold 149\"` | The style for the module.                             |\n+| `disabled` | `false`      | Disables the `perl` module.                           |\n+\n+### Example\n+\n+```toml\n+# ~/.config/starship.toml\n+\n+[perl]\n+symbol = \"🐫 \"",
+    "path": "docs/config/README.md",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "4dcc3f3fc6fd65684167fda5056a667961eabc12",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Nasty, I'm sure OCaml folks would loudly object to the abuse of their camel 😀",
+    "created_at": "2020-06-24T02:33:19Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444610850",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444610850"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444610850"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444610850/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1210,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 39,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444623812",
+    "pull_request_review_id": 436299204,
+    "id": 444623812,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDYyMzgxMg==",
+    "diff_hunk": "@@ -87,6 +87,10 @@ active boot switches: -d:release\\n\",\n             stdout: String::from(\"4.10.0\"),\n             stderr: String::default(),\n         }),\n+        \"perl -e print $^V;\" => Some(CommandOutput {",
+    "path": "src/utils.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "4dcc3f3fc6fd65684167fda5056a667961eabc12",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": " This won't work cross-platform, in fact, it didn't on my Android. To make it work use the following form: `perl -e 'printf \"%vd\", $^V'`",
+    "created_at": "2020-06-24T03:27:15Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444623812",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444623812"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444623812"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444623812/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 90,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444796773",
+    "pull_request_review_id": 436518724,
+    "id": 444796773,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDc5Njc3Mw==",
+    "diff_hunk": "@@ -87,6 +87,10 @@ active boot switches: -d:release\\n\",\n             stdout: String::from(\"4.10.0\"),\n             stderr: String::default(),\n         }),\n+        \"perl -e print $^V;\" => Some(CommandOutput {",
+    "path": "src/utils.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "4dcc3f3fc6fd65684167fda5056a667961eabc12",
+    "user": {
+      "login": "stefb69",
+      "id": 4223252,
+      "node_id": "MDQ6VXNlcjQyMjMyNTI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223252?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefb69",
+      "html_url": "https://github.com/stefb69",
+      "followers_url": "https://api.github.com/users/stefb69/followers",
+      "following_url": "https://api.github.com/users/stefb69/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefb69/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefb69/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefb69/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefb69/orgs",
+      "repos_url": "https://api.github.com/users/stefb69/repos",
+      "events_url": "https://api.github.com/users/stefb69/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefb69/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "ok i've used  perl -e 'printf q#%vd#,$^V;' to try to avoid any double escape condition",
+    "created_at": "2020-06-24T10:24:57Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444796773",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444796773"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444796773"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444796773/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 90,
+    "side": "RIGHT",
+    "in_reply_to_id": 444623812,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444797065",
+    "pull_request_review_id": 436519087,
+    "id": 444797065,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDc5NzA2NQ==",
+    "diff_hunk": "@@ -1179,6 +1180,37 @@ The module will be shown if any of the following conditions are met:\n symbol = \"🐪 \"\n ```\n \n+## Perl\n+\n+The `perl` module shows the currently installed version of Perl.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `Makefile.PL` file\n+- The current directory contains a `cpanfile` file\n+- The current directory contains a `META.json` file\n+- The current directory contains a `META.yml` file\n+- The current directory contains a `.perl-version` file\n+- The current directory contains a `.pl` file\n+- The current directory contains a `.pm` file\n+\n+### Options\n+\n+| Variable   | Default      | Description                                           |\n+| ---------- | ------------ | ----------------------------------------------------- |\n+| `symbol`   | `\"🐪 \"`      | The symbol used before displaying the version of PHP. |\n+| `style`    | `\"bold 149\"` | The style for the module.                             |\n+| `disabled` | `false`      | Disables the `perl` module.                           |\n+\n+### Example\n+\n+```toml\n+# ~/.config/starship.toml\n+\n+[perl]\n+symbol = \"🐫 \"",
+    "path": "docs/config/README.md",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "4dcc3f3fc6fd65684167fda5056a667961eabc12",
+    "user": {
+      "login": "stefb69",
+      "id": 4223252,
+      "node_id": "MDQ6VXNlcjQyMjMyNTI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223252?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefb69",
+      "html_url": "https://github.com/stefb69",
+      "followers_url": "https://api.github.com/users/stefb69/followers",
+      "following_url": "https://api.github.com/users/stefb69/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefb69/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefb69/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefb69/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefb69/orgs",
+      "repos_url": "https://api.github.com/users/stefb69/repos",
+      "events_url": "https://api.github.com/users/stefb69/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefb69/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "this was a joke, as just the same thing is done a few lines up, i replace example by an oyster",
+    "created_at": "2020-06-24T10:25:30Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444797065",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444797065"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444797065"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444797065/reactions",
+      "total_count": 1,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 1,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1210,
+    "side": "RIGHT",
+    "in_reply_to_id": 444610850,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 39,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444797225",
+    "pull_request_review_id": 436519285,
+    "id": 444797225,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDc5NzIyNQ==",
+    "diff_hunk": "@@ -1179,6 +1180,37 @@ The module will be shown if any of the following conditions are met:\n symbol = \"🐪 \"\n ```\n \n+## Perl\n+\n+The `perl` module shows the currently installed version of Perl.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `Makefile.PL` file\n+- The current directory contains a `cpanfile` file\n+- The current directory contains a `META.json` file\n+- The current directory contains a `META.yml` file\n+- The current directory contains a `.perl-version` file\n+- The current directory contains a `.pl` file\n+- The current directory contains a `.pm` file",
+    "path": "docs/config/README.md",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "4dcc3f3fc6fd65684167fda5056a667961eabc12",
+    "user": {
+      "login": "stefb69",
+      "id": 4223252,
+      "node_id": "MDQ6VXNlcjQyMjMyNTI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223252?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefb69",
+      "html_url": "https://github.com/stefb69",
+      "followers_url": "https://api.github.com/users/stefb69/followers",
+      "following_url": "https://api.github.com/users/stefb69/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefb69/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefb69/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefb69/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefb69/orgs",
+      "repos_url": "https://api.github.com/users/stefb69/repos",
+      "events_url": "https://api.github.com/users/stefb69/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefb69/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "added .pod file",
+    "created_at": "2020-06-24T10:25:48Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444797225",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444797225"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444797225"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444797225/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1194,
+    "side": "RIGHT",
+    "in_reply_to_id": 444610335,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444799005",
+    "pull_request_review_id": 436521620,
+    "id": 444799005,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDc5OTAwNQ==",
+    "diff_hunk": "@@ -1179,6 +1180,37 @@ The module will be shown if any of the following conditions are met:\n symbol = \"🐪 \"\n ```\n \n+## Perl\n+\n+The `perl` module shows the currently installed version of Perl.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `Makefile.PL` file\n+- The current directory contains a `cpanfile` file\n+- The current directory contains a `META.json` file\n+- The current directory contains a `META.yml` file\n+- The current directory contains a `.perl-version` file\n+- The current directory contains a `.pl` file\n+- The current directory contains a `.pm` file",
+    "path": "docs/config/README.md",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "4dcc3f3fc6fd65684167fda5056a667961eabc12",
+    "user": {
+      "login": "stefb69",
+      "id": 4223252,
+      "node_id": "MDQ6VXNlcjQyMjMyNTI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223252?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefb69",
+      "html_url": "https://github.com/stefb69",
+      "followers_url": "https://api.github.com/users/stefb69/followers",
+      "following_url": "https://api.github.com/users/stefb69/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefb69/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefb69/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefb69/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefb69/orgs",
+      "repos_url": "https://api.github.com/users/stefb69/repos",
+      "events_url": "https://api.github.com/users/stefb69/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefb69/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "added, doc updated",
+    "created_at": "2020-06-24T10:29:28Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444799005",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444799005"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444799005"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444799005/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1194,
+    "side": "RIGHT",
+    "in_reply_to_id": 444610335,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444799429",
+    "pull_request_review_id": 436522162,
+    "id": 444799429,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDc5OTQyOQ==",
+    "diff_hunk": "@@ -1179,6 +1180,37 @@ The module will be shown if any of the following conditions are met:\n symbol = \"🐪 \"\n ```\n \n+## Perl\n+\n+The `perl` module shows the currently installed version of Perl.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `Makefile.PL` file\n+- The current directory contains a `cpanfile` file\n+- The current directory contains a `META.json` file\n+- The current directory contains a `META.yml` file\n+- The current directory contains a `.perl-version` file\n+- The current directory contains a `.pl` file\n+- The current directory contains a `.pm` file\n+\n+### Options\n+\n+| Variable   | Default      | Description                                           |\n+| ---------- | ------------ | ----------------------------------------------------- |\n+| `symbol`   | `\"🐪 \"`      | The symbol used before displaying the version of PHP. |\n+| `style`    | `\"bold 149\"` | The style for the module.                             |\n+| `disabled` | `false`      | Disables the `perl` module.                           |\n+\n+### Example\n+\n+```toml\n+# ~/.config/starship.toml\n+\n+[perl]\n+symbol = \"🐫 \"",
+    "path": "docs/config/README.md",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "4dcc3f3fc6fd65684167fda5056a667961eabc12",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "My comment was also a joke 🤣 ",
+    "created_at": "2020-06-24T10:30:18Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444799429",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444799429"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444799429"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444799429/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1210,
+    "side": "RIGHT",
+    "in_reply_to_id": 444610850,
+    "author_association": "MEMBER",
+    "original_position": 39,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444799766",
+    "pull_request_review_id": 436522562,
+    "id": 444799766,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDc5OTc2Ng==",
+    "diff_hunk": "@@ -1179,6 +1180,37 @@ The module will be shown if any of the following conditions are met:\n symbol = \"🐪 \"\n ```\n \n+## Perl\n+\n+The `perl` module shows the currently installed version of Perl.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `Makefile.PL` file\n+- The current directory contains a `cpanfile` file",
+    "path": "docs/config/README.md",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "4dcc3f3fc6fd65684167fda5056a667961eabc12",
+    "user": {
+      "login": "stefb69",
+      "id": 4223252,
+      "node_id": "MDQ6VXNlcjQyMjMyNTI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223252?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefb69",
+      "html_url": "https://github.com/stefb69",
+      "followers_url": "https://api.github.com/users/stefb69/followers",
+      "following_url": "https://api.github.com/users/stefb69/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefb69/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefb69/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefb69/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefb69/orgs",
+      "repos_url": "https://api.github.com/users/stefb69/repos",
+      "events_url": "https://api.github.com/users/stefb69/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefb69/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "added, doc updated, though i think there has to be a cpanfile if there is a cpanfile.snapshot, not sure, it wont hurt anyhow.",
+    "created_at": "2020-06-24T10:30:56Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444799766",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444799766"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444799766"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444799766/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1189,
+    "side": "RIGHT",
+    "in_reply_to_id": 444609999,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 18,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444799827",
+    "pull_request_review_id": 436522627,
+    "id": 444799827,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDc5OTgyNw==",
+    "diff_hunk": "@@ -87,6 +87,10 @@ active boot switches: -d:release\\n\",\n             stdout: String::from(\"4.10.0\"),\n             stderr: String::default(),\n         }),\n+        \"perl -e print $^V;\" => Some(CommandOutput {",
+    "path": "src/utils.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "4dcc3f3fc6fd65684167fda5056a667961eabc12",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Perfect 👍 ",
+    "created_at": "2020-06-24T10:31:04Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444799827",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444799827"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444799827"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444799827/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 90,
+    "side": "RIGHT",
+    "in_reply_to_id": 444623812,
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444799853",
+    "pull_request_review_id": 436522669,
+    "id": 444799853,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDc5OTg1Mw==",
+    "diff_hunk": "@@ -1179,6 +1180,37 @@ The module will be shown if any of the following conditions are met:\n symbol = \"🐪 \"\n ```\n \n+## Perl\n+\n+The `perl` module shows the currently installed version of Perl.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `Makefile.PL` file",
+    "path": "docs/config/README.md",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "4dcc3f3fc6fd65684167fda5056a667961eabc12",
+    "user": {
+      "login": "stefb69",
+      "id": 4223252,
+      "node_id": "MDQ6VXNlcjQyMjMyNTI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223252?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefb69",
+      "html_url": "https://github.com/stefb69",
+      "followers_url": "https://api.github.com/users/stefb69/followers",
+      "following_url": "https://api.github.com/users/stefb69/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefb69/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefb69/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefb69/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefb69/orgs",
+      "repos_url": "https://api.github.com/users/stefb69/repos",
+      "events_url": "https://api.github.com/users/stefb69/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefb69/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "added, doc updated",
+    "created_at": "2020-06-24T10:31:08Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444799853",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444799853"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444799853"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444799853/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1188,
+    "side": "RIGHT",
+    "in_reply_to_id": 444609395,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 17,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444800470",
+    "pull_request_review_id": 436523538,
+    "id": 444800470,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDgwMDQ3MA==",
+    "diff_hunk": "@@ -1179,6 +1180,37 @@ The module will be shown if any of the following conditions are met:\n symbol = \"🐪 \"\n ```\n \n+## Perl\n+\n+The `perl` module shows the currently installed version of Perl.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `Makefile.PL` file\n+- The current directory contains a `cpanfile` file",
+    "path": "docs/config/README.md",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "4dcc3f3fc6fd65684167fda5056a667961eabc12",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "> added, doc updated, though i think there has to be a cpanfile if there is a cpanfile.snapshot, not sure, it wont hurt anyhow.\r\n\r\nThat would be pretty unusual, I agree... But as you said, won't hurt 🙃 ",
+    "created_at": "2020-06-24T10:32:28Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444800470",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444800470"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444800470"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444800470/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1189,
+    "side": "RIGHT",
+    "in_reply_to_id": 444609999,
+    "author_association": "MEMBER",
+    "original_position": 18,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444860987",
+    "pull_request_review_id": 436602441,
+    "id": 444860987,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDg2MDk4Nw==",
+    "diff_hunk": "@@ -0,0 +1,210 @@\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::perl::PerlConfig;\n+use crate::utils;\n+\n+/// Creates a module with the current perl version\n+///\n+/// Will display the perl version if any of the following criteria are met:\n+///     - Current directory contains a `.pl` or a `.pm` file\n+///     - Current directory contains a \"Makefile.PL\", \"cpanfile\", \"META.json\", \"META.yml\", or \".perl-version\" file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_perl_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\n+            \"Makefile.PL\",\n+            \"Build.PL\",\n+            \"cpanfile\",\n+            \"cpanfile.snapshot\",\n+            \"META.json\",\n+            \"META.yml\",\n+            \".perl-version\",\n+        ])\n+        .set_extensions(&[\"pl\", \"pm\", \"pod\"])\n+        .is_match();\n+\n+    if !is_perl_project {\n+        return None;\n+    }\n+\n+    let perl_version = utils::exec_cmd(\"perl\", &[\"-e\", \"printf q#%vd#,$^V;\"])?.stdout;",
+    "path": "src/modules/perl.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "213d33d3c5557cfc6d6c7df6a80a78842fd028fd",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n    let perl_version = utils::exec_cmd(\"perl\", &[\"-e\", \"'printf q#%vd#,$^V;'\"])?.stdout;\r\n```\r\nNote the inner single quotes, without them tests won't get mocked but real Perl version.",
+    "created_at": "2020-06-24T12:35:24Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444860987",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444860987"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444860987"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444860987/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 32,
+    "original_line": 30,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 30,
+    "position": 32,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444928668",
+    "pull_request_review_id": 436693510,
+    "id": 444928668,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDkyODY2OA==",
+    "diff_hunk": "@@ -0,0 +1,210 @@\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::perl::PerlConfig;\n+use crate::utils;\n+\n+/// Creates a module with the current perl version\n+///\n+/// Will display the perl version if any of the following criteria are met:\n+///     - Current directory contains a `.pl` or a `.pm` file\n+///     - Current directory contains a \"Makefile.PL\", \"cpanfile\", \"META.json\", \"META.yml\", or \".perl-version\" file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_perl_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\n+            \"Makefile.PL\",\n+            \"Build.PL\",\n+            \"cpanfile\",\n+            \"cpanfile.snapshot\",\n+            \"META.json\",\n+            \"META.yml\",\n+            \".perl-version\",\n+        ])\n+        .set_extensions(&[\"pl\", \"pm\", \"pod\"])\n+        .is_match();\n+\n+    if !is_perl_project {\n+        return None;\n+    }\n+\n+    let perl_version = utils::exec_cmd(\"perl\", &[\"-e\", \"printf q#%vd#,$^V;\"])?.stdout;",
+    "path": "src/modules/perl.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "213d33d3c5557cfc6d6c7df6a80a78842fd028fd",
+    "user": {
+      "login": "stefb69",
+      "id": 4223252,
+      "node_id": "MDQ6VXNlcjQyMjMyNTI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223252?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefb69",
+      "html_url": "https://github.com/stefb69",
+      "followers_url": "https://api.github.com/users/stefb69/followers",
+      "following_url": "https://api.github.com/users/stefb69/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefb69/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefb69/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefb69/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefb69/orgs",
+      "repos_url": "https://api.github.com/users/stefb69/repos",
+      "events_url": "https://api.github.com/users/stefb69/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefb69/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "ok done",
+    "created_at": "2020-06-24T14:19:22Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444928668",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444928668"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444928668"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444928668/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 32,
+    "original_line": 30,
+    "side": "RIGHT",
+    "in_reply_to_id": 444860987,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 30,
+    "position": 32,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444930312",
+    "pull_request_review_id": 436695741,
+    "id": 444930312,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDkzMDMxMg==",
+    "diff_hunk": "@@ -0,0 +1,210 @@\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::perl::PerlConfig;\n+use crate::utils;\n+\n+/// Creates a module with the current perl version\n+///\n+/// Will display the perl version if any of the following criteria are met:\n+///     - Current directory contains a `.pl` or a `.pm` file\n+///     - Current directory contains a \"Makefile.PL\", \"cpanfile\", \"META.json\", \"META.yml\", or \".perl-version\" file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_perl_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\n+            \"Makefile.PL\",\n+            \"Build.PL\",\n+            \"cpanfile\",\n+            \"cpanfile.snapshot\",\n+            \"META.json\",\n+            \"META.yml\",\n+            \".perl-version\",\n+        ])\n+        .set_extensions(&[\"pl\", \"pm\", \"pod\"])\n+        .is_match();\n+\n+    if !is_perl_project {\n+        return None;\n+    }\n+\n+    let perl_version = utils::exec_cmd(\"perl\", &[\"-e\", \"printf q#%vd#,$^V;\"])?.stdout;",
+    "path": "src/modules/perl.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "213d33d3c5557cfc6d6c7df6a80a78842fd028fd",
+    "user": {
+      "login": "stefb69",
+      "id": 4223252,
+      "node_id": "MDQ6VXNlcjQyMjMyNTI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223252?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefb69",
+      "html_url": "https://github.com/stefb69",
+      "followers_url": "https://api.github.com/users/stefb69/followers",
+      "following_url": "https://api.github.com/users/stefb69/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefb69/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefb69/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefb69/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefb69/orgs",
+      "repos_url": "https://api.github.com/users/stefb69/repos",
+      "events_url": "https://api.github.com/users/stefb69/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefb69/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "thanks for you help this is my first PR in rust",
+    "created_at": "2020-06-24T14:21:34Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444930312",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444930312"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444930312"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444930312/reactions",
+      "total_count": 1,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 1,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 32,
+    "original_line": 30,
+    "side": "RIGHT",
+    "in_reply_to_id": 444860987,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 30,
+    "position": 32,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444932552",
+    "pull_request_review_id": 436698707,
+    "id": 444932552,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDkzMjU1Mg==",
+    "diff_hunk": "@@ -0,0 +1,210 @@\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::perl::PerlConfig;\n+use crate::utils;\n+\n+/// Creates a module with the current perl version\n+///\n+/// Will display the perl version if any of the following criteria are met:\n+///     - Current directory contains a `.pl` or a `.pm` file\n+///     - Current directory contains a \"Makefile.PL\", \"cpanfile\", \"META.json\", \"META.yml\", or \".perl-version\" file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_perl_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\n+            \"Makefile.PL\",\n+            \"Build.PL\",\n+            \"cpanfile\",\n+            \"cpanfile.snapshot\",\n+            \"META.json\",\n+            \"META.yml\",\n+            \".perl-version\",\n+        ])\n+        .set_extensions(&[\"pl\", \"pm\", \"pod\"])\n+        .is_match();\n+\n+    if !is_perl_project {\n+        return None;\n+    }\n+\n+    let perl_version = utils::exec_cmd(\"perl\", &[\"-e\", \"printf q#%vd#,$^V;\"])?.stdout;",
+    "path": "src/modules/perl.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "213d33d3c5557cfc6d6c7df6a80a78842fd028fd",
+    "user": {
+      "login": "stefb69",
+      "id": 4223252,
+      "node_id": "MDQ6VXNlcjQyMjMyNTI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223252?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefb69",
+      "html_url": "https://github.com/stefb69",
+      "followers_url": "https://api.github.com/users/stefb69/followers",
+      "following_url": "https://api.github.com/users/stefb69/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefb69/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefb69/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefb69/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefb69/orgs",
+      "repos_url": "https://api.github.com/users/stefb69/repos",
+      "events_url": "https://api.github.com/users/stefb69/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefb69/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "And now all check pass, not just ubuntu, cool.",
+    "created_at": "2020-06-24T14:24:34Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444932552",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444932552"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444932552"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444932552/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 32,
+    "original_line": 30,
+    "side": "RIGHT",
+    "in_reply_to_id": 444860987,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 30,
+    "position": 32,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/444942564",
+    "pull_request_review_id": 436711585,
+    "id": 444942564,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NDk0MjU2NA==",
+    "diff_hunk": "@@ -0,0 +1,210 @@\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::perl::PerlConfig;\n+use crate::utils;\n+\n+/// Creates a module with the current perl version\n+///\n+/// Will display the perl version if any of the following criteria are met:\n+///     - Current directory contains a `.pl` or a `.pm` file\n+///     - Current directory contains a \"Makefile.PL\", \"cpanfile\", \"META.json\", \"META.yml\", or \".perl-version\" file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_perl_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\n+            \"Makefile.PL\",\n+            \"Build.PL\",\n+            \"cpanfile\",\n+            \"cpanfile.snapshot\",\n+            \"META.json\",\n+            \"META.yml\",\n+            \".perl-version\",\n+        ])\n+        .set_extensions(&[\"pl\", \"pm\", \"pod\"])\n+        .is_match();\n+\n+    if !is_perl_project {\n+        return None;\n+    }\n+\n+    let perl_version = utils::exec_cmd(\"perl\", &[\"-e\", \"printf q#%vd#,$^V;\"])?.stdout;",
+    "path": "src/modules/perl.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "213d33d3c5557cfc6d6c7df6a80a78842fd028fd",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Let me tell you a _secret_, I mostly do node 🤣",
+    "created_at": "2020-06-24T14:37:23Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r444942564",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/444942564"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r444942564"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/444942564/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 32,
+    "original_line": 30,
+    "side": "RIGHT",
+    "in_reply_to_id": 444860987,
+    "author_association": "MEMBER",
+    "original_position": 30,
+    "position": 32,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/445001520",
+    "pull_request_review_id": 436788159,
+    "id": 445001520,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NTAwMTUyMA==",
+    "diff_hunk": "@@ -0,0 +1,210 @@\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::perl::PerlConfig;\n+use crate::utils;\n+\n+/// Creates a module with the current perl version\n+///\n+/// Will display the perl version if any of the following criteria are met:\n+///     - Current directory contains a `.pl` or a `.pm` file\n+///     - Current directory contains a \"Makefile.PL\", \"cpanfile\", \"META.json\", \"META.yml\", or \".perl-version\" file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_perl_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\n+            \"Makefile.PL\",\n+            \"Build.PL\",\n+            \"cpanfile\",\n+            \"cpanfile.snapshot\",\n+            \"META.json\",\n+            \"META.yml\",\n+            \".perl-version\",\n+        ])\n+        .set_extensions(&[\"pl\", \"pm\", \"pod\"])\n+        .is_match();\n+\n+    if !is_perl_project {\n+        return None;\n+    }\n+\n+    let perl_version = utils::exec_cmd(\"perl\", &[\"-e\", \"printf q#%vd#,$^V;\"])?.stdout;",
+    "path": "src/modules/perl.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "213d33d3c5557cfc6d6c7df6a80a78842fd028fd",
+    "user": {
+      "login": "stefb69",
+      "id": 4223252,
+      "node_id": "MDQ6VXNlcjQyMjMyNTI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223252?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefb69",
+      "html_url": "https://github.com/stefb69",
+      "followers_url": "https://api.github.com/users/stefb69/followers",
+      "following_url": "https://api.github.com/users/stefb69/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefb69/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefb69/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefb69/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefb69/orgs",
+      "repos_url": "https://api.github.com/users/stefb69/repos",
+      "events_url": "https://api.github.com/users/stefb69/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefb69/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "There is a regression with this modification\r\n![image](https://user-images.githubusercontent.com/4223252/85589837-31566b80-b644-11ea-82e0-3da992003cc2.png)\r\n",
+    "created_at": "2020-06-24T15:58:09Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r445001520",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/445001520"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r445001520"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/445001520/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 32,
+    "original_line": 30,
+    "side": "RIGHT",
+    "in_reply_to_id": 444860987,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 30,
+    "position": 32,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/445011151",
+    "pull_request_review_id": 436800700,
+    "id": 445011151,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ0NTAxMTE1MQ==",
+    "diff_hunk": "@@ -0,0 +1,210 @@\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::perl::PerlConfig;\n+use crate::utils;\n+\n+/// Creates a module with the current perl version\n+///\n+/// Will display the perl version if any of the following criteria are met:\n+///     - Current directory contains a `.pl` or a `.pm` file\n+///     - Current directory contains a \"Makefile.PL\", \"cpanfile\", \"META.json\", \"META.yml\", or \".perl-version\" file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_perl_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\n+            \"Makefile.PL\",\n+            \"Build.PL\",\n+            \"cpanfile\",\n+            \"cpanfile.snapshot\",\n+            \"META.json\",\n+            \"META.yml\",\n+            \".perl-version\",\n+        ])\n+        .set_extensions(&[\"pl\", \"pm\", \"pod\"])\n+        .is_match();\n+\n+    if !is_perl_project {\n+        return None;\n+    }\n+\n+    let perl_version = utils::exec_cmd(\"perl\", &[\"-e\", \"printf q#%vd#,$^V;\"])?.stdout;",
+    "path": "src/modules/perl.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "213d33d3c5557cfc6d6c7df6a80a78842fd028fd",
+    "user": {
+      "login": "stefb69",
+      "id": 4223252,
+      "node_id": "MDQ6VXNlcjQyMjMyNTI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223252?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefb69",
+      "html_url": "https://github.com/stefb69",
+      "followers_url": "https://api.github.com/users/stefb69/followers",
+      "following_url": "https://api.github.com/users/stefb69/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefb69/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefb69/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefb69/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefb69/orgs",
+      "repos_url": "https://api.github.com/users/stefb69/repos",
+      "events_url": "https://api.github.com/users/stefb69/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefb69/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "resolved by 916e1b1",
+    "created_at": "2020-06-24T16:13:04Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r445011151",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/445011151"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r445011151"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/445011151/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 32,
+    "original_line": 30,
+    "side": "RIGHT",
+    "in_reply_to_id": 444860987,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 30,
+    "position": 32,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461219364",
+    "pull_request_review_id": 456193125,
+    "id": 461219364,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTIxOTM2NA==",
+    "diff_hunk": "@@ -101,6 +101,10 @@ active boot switches: -d:release\\n\",\n             stdout: String::from(\"4.08.1\\n\"),\n             stderr: String::default(),\n         }),\n+        \"perl -e printf q#%vd#,$^V;\" => Some(CommandOutput {",
+    "path": "src/utils.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "481401be552a5c42552e006a7b9bb89dc38e7603",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n        \"perl -e 'printf q#%vd#,$^V;'\" => Some(CommandOutput {\r\n```",
+    "created_at": "2020-07-27T23:03:33Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461219364",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461219364"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461219364"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461219364/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 114,
+    "original_line": 104,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 4,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461219965",
+    "pull_request_review_id": 456193125,
+    "id": 461219965,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTIxOTk2NQ==",
+    "diff_hunk": "@@ -0,0 +1,210 @@\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::perl::PerlConfig;\n+use crate::utils;\n+\n+/// Creates a module with the current perl version\n+///\n+/// Will display the perl version if any of the following criteria are met:\n+///     - Current directory contains a `.pl` or a `.pm` file\n+///     - Current directory contains a \"Makefile.PL\", \"cpanfile\", \"META.json\", \"META.yml\", or \".perl-version\" file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_perl_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\n+            \"Makefile.PL\",\n+            \"Build.PL\",\n+            \"cpanfile\",\n+            \"cpanfile.snapshot\",\n+            \"META.json\",\n+            \"META.yml\",\n+            \".perl-version\",\n+        ])\n+        .set_extensions(&[\"pl\", \"pm\", \"pod\"])\n+        .is_match();\n+\n+    if !is_perl_project {\n+        return None;\n+    }\n+\n+    let perl_version = utils::exec_cmd(\"perl\", &[\"-e\", \"printf q#%vd#,$^V;\"])?.stdout;",
+    "path": "src/modules/perl.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "213d33d3c5557cfc6d6c7df6a80a78842fd028fd",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "~Actually I was right back then, this should be quoted. The reason it failed is that mock also needed adjustments.~\r\n**EDIT:** resolved ✅ ",
+    "created_at": "2020-07-27T23:05:14Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461219965",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461219965"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461219965"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461219965/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 32,
+    "original_line": 30,
+    "side": "RIGHT",
+    "in_reply_to_id": 444860987,
+    "author_association": "MEMBER",
+    "original_position": 30,
+    "position": 32,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461221449",
+    "pull_request_review_id": 456195359,
+    "id": 461221449,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTIyMTQ0OQ==",
+    "diff_hunk": "@@ -0,0 +1,210 @@\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::perl::PerlConfig;\n+use crate::utils;\n+\n+/// Creates a module with the current perl version\n+///\n+/// Will display the perl version if any of the following criteria are met:\n+///     - Current directory contains a `.pl` or a `.pm` file\n+///     - Current directory contains a \"Makefile.PL\", \"cpanfile\", \"META.json\", \"META.yml\", or \".perl-version\" file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_perl_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\n+            \"Makefile.PL\",\n+            \"Build.PL\",\n+            \"cpanfile\",\n+            \"cpanfile.snapshot\",\n+            \"META.json\",\n+            \"META.yml\",\n+            \".perl-version\",\n+        ])\n+        .set_extensions(&[\"pl\", \"pm\", \"pod\"])\n+        .is_match();\n+\n+    if !is_perl_project {\n+        return None;\n+    }\n+\n+    let perl_version = utils::exec_cmd(\"perl\", &[\"-e\", \"printf q#%vd#,$^V;\"])?.stdout;",
+    "path": "src/modules/perl.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "213d33d3c5557cfc6d6c7df6a80a78842fd028fd",
+    "user": {
+      "login": "stefb69",
+      "id": 4223252,
+      "node_id": "MDQ6VXNlcjQyMjMyNTI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223252?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefb69",
+      "html_url": "https://github.com/stefb69",
+      "followers_url": "https://api.github.com/users/stefb69/followers",
+      "following_url": "https://api.github.com/users/stefb69/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefb69/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefb69/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefb69/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefb69/orgs",
+      "repos_url": "https://api.github.com/users/stefb69/repos",
+      "events_url": "https://api.github.com/users/stefb69/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefb69/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "nope. mock has not failed it's some other module. with quotes it fails",
+    "created_at": "2020-07-27T23:09:31Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461221449",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461221449"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461221449"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461221449/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 32,
+    "original_line": 30,
+    "side": "RIGHT",
+    "in_reply_to_id": 444860987,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 30,
+    "position": 32,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461224751",
+    "pull_request_review_id": 456199111,
+    "id": 461224751,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTIyNDc1MQ==",
+    "diff_hunk": "@@ -1661,6 +1662,40 @@ The module will be shown if any of the following conditions are met:\n format = \"via [🐪 $version]($style) \"\n ```\n \n+## Perl\n+\n+The `perl` module shows the currently installed version of Perl.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `Makefile.PL` file\n+- The current directory contains a `Build.PL` file\n+- The current directory contains a `cpanfile` file\n+- The current directory contains a `cpanfile.snapshot` file\n+- The current directory contains a `META.json` file\n+- The current directory contains a `META.yml` file\n+- The current directory contains a `.perl-version` file\n+- The current directory contains a `.pl` file\n+- The current directory contains a `.pm` file",
+    "path": "docs/config/README.md",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "481401be552a5c42552e006a7b9bb89dc38e7603",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n- The current directory contains a `Makefile.PL` or `Build.PL` file\r\n- The current directory contains a `cpanfile` or `cpanfile.snapshot` file\r\n- The current directory contains a `META.json` or `META.yml` file\r\n- The current directory contains a `.perl-version` file\r\n- The current directory contains a file with `.pl`, `.pm` or `.pod` extension\r\n```",
+    "created_at": "2020-07-27T23:19:45Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461224751",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461224751"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461224751"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461224751/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 1670,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 1678,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 25,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461225287",
+    "pull_request_review_id": 456199111,
+    "id": 461225287,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTIyNTI4Nw==",
+    "diff_hunk": "@@ -1661,6 +1662,40 @@ The module will be shown if any of the following conditions are met:\n format = \"via [🐪 $version]($style) \"\n ```\n \n+## Perl\n+\n+The `perl` module shows the currently installed version of Perl.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `Makefile.PL` file\n+- The current directory contains a `Build.PL` file\n+- The current directory contains a `cpanfile` file\n+- The current directory contains a `cpanfile.snapshot` file\n+- The current directory contains a `META.json` file\n+- The current directory contains a `META.yml` file\n+- The current directory contains a `.perl-version` file\n+- The current directory contains a `.pl` file\n+- The current directory contains a `.pm` file",
+    "path": "docs/config/README.md",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "481401be552a5c42552e006a7b9bb89dc38e7603",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It is mostly a cosmetic suggestion for sake of decreasing the number of lines.",
+    "created_at": "2020-07-27T23:21:17Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461225287",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461225287"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461225287"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461225287/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 1670,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 1678,
+    "side": "RIGHT",
+    "in_reply_to_id": 461224751,
+    "author_association": "MEMBER",
+    "original_position": 25,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461226263",
+    "pull_request_review_id": 456199111,
+    "id": 461226263,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTIyNjI2Mw==",
+    "diff_hunk": "@@ -1661,6 +1662,40 @@ The module will be shown if any of the following conditions are met:\n format = \"via [🐪 $version]($style) \"\n ```\n \n+## Perl\n+\n+The `perl` module shows the currently installed version of Perl.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `Makefile.PL` file\n+- The current directory contains a `Build.PL` file\n+- The current directory contains a `cpanfile` file\n+- The current directory contains a `cpanfile.snapshot` file\n+- The current directory contains a `META.json` file\n+- The current directory contains a `META.yml` file\n+- The current directory contains a `.perl-version` file\n+- The current directory contains a `.pl` file\n+- The current directory contains a `.pm` file\n+- The current directory contains a `.pod` file\n+\n+### Options\n+\n+| Variable   | Default      | Description                                           |\n+| ---------- | ------------ | ----------------------------------------------------- |\n+| `symbol`   | `\"🐪 \"`      | The symbol used before displaying the version of PHP. |\n+| `style`    | `\"bold 149\"` | The style for the module.                             |\n+| `disabled` | `false`      | Disables the `perl` module.                           |\n+\n+### Example\n+\n+```toml\n+# ~/.config/starship.toml\n+\n+[perl]\n+symbol = \"🦪 \"\n+```",
+    "path": "docs/config/README.md",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "481401be552a5c42552e006a7b9bb89dc38e7603",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "### Options\r\n\r\n| Option     | Default                            | Description                                             |\r\n| ---------- | ---------------------------------- | ------------------------------------------------------- |\r\n| `format`   | `\"via [$symbol$version]($style) \"` | The format string for the module.                       |\r\n| `symbol`   | `\"🐪 \"`                            | The symbol used before displaying the version of Perl. |\r\n| `style`    | `\"bold 149\"`                    | The style for the module.                               |\r\n| `disabled` | `false`                            | Disables the `perl` module.                            |\r\n\r\n### Variables\r\n\r\n| Variable | Example   | Description                          |\r\n| -------- | --------- | ------------------------------------ |\r\n| version  | `v5.26.1` | The version of `perl`               |\r\n| symbol   |           | Mirrors the value of option `symbol` |\r\n| style\\*  |           | Mirrors the value of option `style`  |\r\n\r\n\\*: This variable can only be used as a part of a style string\r\n\r\n### Example\r\n\r\n```toml\r\n# ~/.config/starship.toml\r\n\r\n[perl]\r\nformat = \"via [🦪 $version]($style) \"\r\n```",
+    "created_at": "2020-07-27T23:23:50Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461226263",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461226263"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461226263"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461226263/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 1681,
+    "original_start_line": 1681,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 1696,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 43,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461226507",
+    "pull_request_review_id": 456199111,
+    "id": 461226507,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTIyNjUwNw==",
+    "diff_hunk": "@@ -1661,6 +1662,40 @@ The module will be shown if any of the following conditions are met:\n format = \"via [🐪 $version]($style) \"\n ```\n \n+## Perl\n+\n+The `perl` module shows the currently installed version of Perl.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `Makefile.PL` file\n+- The current directory contains a `Build.PL` file\n+- The current directory contains a `cpanfile` file\n+- The current directory contains a `cpanfile.snapshot` file\n+- The current directory contains a `META.json` file\n+- The current directory contains a `META.yml` file\n+- The current directory contains a `.perl-version` file\n+- The current directory contains a `.pl` file\n+- The current directory contains a `.pm` file\n+- The current directory contains a `.pod` file\n+\n+### Options\n+\n+| Variable   | Default      | Description                                           |\n+| ---------- | ------------ | ----------------------------------------------------- |\n+| `symbol`   | `\"🐪 \"`      | The symbol used before displaying the version of PHP. |",
+    "path": "docs/config/README.md",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "481401be552a5c42552e006a7b9bb89dc38e7603",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "You have PHP leftover here.",
+    "created_at": "2020-07-27T23:24:36Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461226507",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461226507"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461226507"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461226507/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1685,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 32,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461227345",
+    "pull_request_review_id": 456199111,
+    "id": 461227345,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTIyNzM0NQ==",
+    "diff_hunk": "@@ -0,0 +1,231 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::perl::PerlConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+/// Creates a module with the current perl version\n+///\n+/// Will display the perl version if any of the following criteria are met:\n+///     - Current directory contains a `.pl` or a `.pm` file\n+///     - Current directory contains a \"Makefile.PL\", \"cpanfile\", \"META.json\", \"META.yml\", or \".perl-version\" file",
+    "path": "src/modules/perl.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "481401be552a5c42552e006a7b9bb89dc38e7603",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please update this comment section. I believe you are missing files with `.pod` extension, `Build.PL` file and `cpanfile.snapshot`.",
+    "created_at": "2020-07-27T23:27:13Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461227345",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461227345"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461227345"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461227345/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 10,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 11,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 11,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461227601",
+    "pull_request_review_id": 456202286,
+    "id": 461227601,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTIyNzYwMQ==",
+    "diff_hunk": "@@ -101,6 +101,10 @@ active boot switches: -d:release\\n\",\n             stdout: String::from(\"4.08.1\\n\"),\n             stderr: String::default(),\n         }),\n+        \"perl -e printf q#%vd#,$^V;\" => Some(CommandOutput {",
+    "path": "src/utils.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "481401be552a5c42552e006a7b9bb89dc38e7603",
+    "user": {
+      "login": "stefb69",
+      "id": 4223252,
+      "node_id": "MDQ6VXNlcjQyMjMyNTI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223252?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefb69",
+      "html_url": "https://github.com/stefb69",
+      "followers_url": "https://api.github.com/users/stefb69/followers",
+      "following_url": "https://api.github.com/users/stefb69/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefb69/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefb69/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefb69/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefb69/orgs",
+      "repos_url": "https://api.github.com/users/stefb69/repos",
+      "events_url": "https://api.github.com/users/stefb69/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefb69/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "With your modifcations tests fails..., just tested on my machine.\r\n\r\n![image](https://user-images.githubusercontent.com/4223252/88601633-71f53a80-d071-11ea-849f-f481eb631504.png)\r\n",
+    "created_at": "2020-07-27T23:28:08Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461227601",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461227601"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461227601"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461227601/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 114,
+    "original_line": 104,
+    "side": "RIGHT",
+    "in_reply_to_id": 461219364,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 4,
+    "position": 4,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461228199",
+    "pull_request_review_id": 456202972,
+    "id": 461228199,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTIyODE5OQ==",
+    "diff_hunk": "@@ -1661,6 +1662,40 @@ The module will be shown if any of the following conditions are met:\n format = \"via [🐪 $version]($style) \"\n ```\n \n+## Perl\n+\n+The `perl` module shows the currently installed version of Perl.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `Makefile.PL` file\n+- The current directory contains a `Build.PL` file\n+- The current directory contains a `cpanfile` file\n+- The current directory contains a `cpanfile.snapshot` file\n+- The current directory contains a `META.json` file\n+- The current directory contains a `META.yml` file\n+- The current directory contains a `.perl-version` file\n+- The current directory contains a `.pl` file\n+- The current directory contains a `.pm` file\n+- The current directory contains a `.pod` file\n+\n+### Options\n+\n+| Variable   | Default      | Description                                           |\n+| ---------- | ------------ | ----------------------------------------------------- |\n+| `symbol`   | `\"🐪 \"`      | The symbol used before displaying the version of PHP. |",
+    "path": "docs/config/README.md",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "481401be552a5c42552e006a7b9bb89dc38e7603",
+    "user": {
+      "login": "stefb69",
+      "id": 4223252,
+      "node_id": "MDQ6VXNlcjQyMjMyNTI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223252?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefb69",
+      "html_url": "https://github.com/stefb69",
+      "followers_url": "https://api.github.com/users/stefb69/followers",
+      "following_url": "https://api.github.com/users/stefb69/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefb69/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefb69/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefb69/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefb69/orgs",
+      "repos_url": "https://api.github.com/users/stefb69/repos",
+      "events_url": "https://api.github.com/users/stefb69/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefb69/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "oups",
+    "created_at": "2020-07-27T23:30:00Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461228199",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461228199"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461228199"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461228199/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1685,
+    "side": "RIGHT",
+    "in_reply_to_id": 461226507,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 32,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461230384",
+    "pull_request_review_id": 456205450,
+    "id": 461230384,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTIzMDM4NA==",
+    "diff_hunk": "@@ -101,6 +101,10 @@ active boot switches: -d:release\\n\",\n             stdout: String::from(\"4.08.1\\n\"),\n             stderr: String::default(),\n         }),\n+        \"perl -e printf q#%vd#,$^V;\" => Some(CommandOutput {",
+    "path": "src/utils.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "481401be552a5c42552e006a7b9bb89dc38e7603",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Let's see. I started with:\r\n```\r\nstarship on  perl-module [$!] is 📦 v0.44.0 via 🦀 v1.44.1\r\n❯ git show --shortstat\r\ncommit 481401be552a5c42552e006a7b9bb89dc38e7603 (HEAD -> perl-module)\r\nAuthor: Stephane Benoit <stefb@wizzz.net>\r\nDate:   Mon Jul 27 20:50:39 2020 +0200\r\n\r\n    Fixed missing new line\r\n\r\n 1 file changed, 1 insertion(+), 1 deletion(-)\r\n```\r\n\r\nThen, I made changes both to mock and actual invocation:\r\n```diff\r\ndiff --git a/src/modules/perl.rs b/src/modules/perl.rs\r\nindex 08fd824..1854ac2 100644\r\n--- a/src/modules/perl.rs\r\n+++ b/src/modules/perl.rs\r\n@@ -28,7 +28,7 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\r\n         return None;\r\n     }\r\n \r\n-    let perl_version = utils::exec_cmd(\"perl\", &[\"-e\", \"printf q#%vd#,$^V;\"])?.stdout;\r\n+    let perl_version = utils::exec_cmd(\"perl\", &[\"-e\", \"'printf q#%vd#,$^V;'\"])?.stdout;\r\n \r\n     let mut module = context.new_module(\"perl\");\r\n     let config: PerlConfig = PerlConfig::try_load(module.config);\r\ndiff --git a/src/utils.rs b/src/utils.rs\r\nindex c83bea6..373fec2 100644\r\n--- a/src/utils.rs\r\n+++ b/src/utils.rs\r\n@@ -101,7 +101,7 @@ active boot switches: -d:release\\n\",\r\n             stdout: String::from(\"4.08.1\\n\"),\r\n             stderr: String::default(),\r\n         }),\r\n-        \"perl -e printf q#%vd#,$^V;\" => Some(CommandOutput {\r\n+        \"perl -e 'printf q#%vd#,$^V;'\" => Some(CommandOutput {\r\n             stdout: String::from(\"5.26.1\"),\r\n             stderr: String::default(),\r\n         }),\r\n\r\n```\r\n\r\nFor the record, I'm having Perl 5.32.0 installed locally:\r\n```\r\nstarship on  perl-module [$!] is 📦 v0.44.0 via 🦀 v1.44.1\r\n❯ perl --version\r\n\r\nThis is perl 5, version 32, subversion 0 (v5.32.0) built for darwin-thread-multi-2level\r\n\r\nCopyright 1987-2020, Larry Wall\r\n\r\nPerl may be copied only under the terms of either the Artistic License or the\r\nGNU General Public License, which may be found in the Perl 5 source kit.\r\n\r\nComplete documentation for Perl, including FAQ lists, should be found on\r\nthis system using \"man perl\" or \"perldoc perl\".  If you have access to the\r\nInternet, point your browser at http://www.perl.org/, the Perl Home Page.\r\n```\r\n\r\n**EDIT:** Sorry I failed to invoke Perl test suite properly, updated with corrected invocation/output.\r\nI've run the test:\r\n```\r\nstarship on  perl-module [$!] is 📦 v0.44.0 via 🦀 v1.44.1\r\n❯ cargo test modules::perl\r\n   Compiling starship v0.44.0 (/Users/vladimyr/workspace/github.com/starship/starship)\r\nwarning: method is never used: `is_empty`\r\n   --> src/module.rs:101:5\r\n    |\r\n101 |     pub fn is_empty(&self) -> bool {\r\n    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n    |\r\n    = note: `#[warn(dead_code)]` on by default\r\n\r\nwarning: method is never used: `new`\r\n  --> src/segment.rs:21:5\r\n   |\r\n21 |     pub fn new(name: &str) -> Self {\r\n   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n\r\nwarning: method is never used: `set_value`\r\n  --> src/segment.rs:46:5\r\n   |\r\n46 | /     pub fn set_value<T>(&mut self, value: T) -> &mut Self\r\n47 | |     where\r\n48 | |         T: Into<String>,\r\n49 | |     {\r\n50 | |         self.value = value.into();\r\n51 | |         self\r\n52 | |     }\r\n   | |_____^\r\n\r\nwarning: method is never used: `is_empty`\r\n  --> src/segment.rs:68:5\r\n   |\r\n68 |     pub fn is_empty(&self) -> bool {\r\n   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n\r\nwarning: method is never used: `set_value`\r\n  --> src/segment.rs:46:5\r\n   |\r\n46 | /     pub fn set_value<T>(&mut self, value: T) -> &mut Self\r\n47 | |     where\r\n48 | |         T: Into<String>,\r\n49 | |     {\r\n50 | |         self.value = value.into();\r\n51 | |         self\r\n52 | |     }\r\n   | |_____^\r\n   |\r\n   = note: `#[warn(dead_code)]` on by default\r\n\r\nwarning: 1 warning emitted\r\n\r\nwarning: 4 warnings emitted\r\n\r\n    Finished test [unoptimized + debuginfo] target(s) in 36.27s\r\n     Running target/debug/deps/starship-2b44a645abddee21\r\n\r\nrunning 11 tests\r\ntest modules::perl::tests::folder_with_cpanfile_snapshot_file ... ok\r\ntest modules::perl::tests::folder_with_buildfile_file ... ok\r\ntest modules::perl::tests::folder_with_makefile_file ... ok\r\ntest modules::perl::tests::folder_with_cpanfile_file ... ok\r\ntest modules::perl::tests::folder_with_meta_yml_file ... ok\r\ntest modules::perl::tests::folder_with_perl_module_file ... ok\r\ntest modules::perl::tests::folder_with_meta_json_file ... ok\r\ntest modules::perl::tests::folder_with_perl_version ... ok\r\ntest modules::perl::tests::folder_with_perl_file ... ok\r\ntest modules::perl::tests::folder_without_perl_files ... ok\r\ntest modules::perl::tests::folder_with_perldoc_file ... ok\r\n\r\ntest result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 240 filtered out\r\n\r\n     Running target/debug/deps/starship-b3862c2e5a1d1776\r\n\r\nrunning 11 tests\r\ntest modules::perl::tests::folder_with_cpanfile_file ... ok\r\ntest modules::perl::tests::folder_with_cpanfile_snapshot_file ... ok\r\ntest modules::perl::tests::folder_with_buildfile_file ... ok\r\ntest modules::perl::tests::folder_with_makefile_file ... ok\r\ntest modules::perl::tests::folder_with_meta_yml_file ... ok\r\ntest modules::perl::tests::folder_with_perl_file ... ok\r\ntest modules::perl::tests::folder_with_meta_json_file ... ok\r\ntest modules::perl::tests::folder_without_perl_files ... ok\r\ntest modules::perl::tests::folder_with_perl_module_file ... ok\r\ntest modules::perl::tests::folder_with_perldoc_file ... ok\r\ntest modules::perl::tests::folder_with_perl_version ... ok\r\n\r\ntest result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 252 filtered out\r\n\r\n     Running target/debug/deps/testsuite-d9f5f469e468477c\r\n\r\nrunning 0 tests\r\n\r\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 181 filtered out\r\n\r\n\r\n```\r\n\r\nAnd it passed ✅ ",
+    "created_at": "2020-07-27T23:37:01Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461230384",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461230384"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461230384"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461230384/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 114,
+    "original_line": 104,
+    "side": "RIGHT",
+    "in_reply_to_id": 461219364,
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 4,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461234223",
+    "pull_request_review_id": 456209841,
+    "id": 461234223,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTIzNDIyMw==",
+    "diff_hunk": "@@ -101,6 +101,10 @@ active boot switches: -d:release\\n\",\n             stdout: String::from(\"4.08.1\\n\"),\n             stderr: String::default(),\n         }),\n+        \"perl -e printf q#%vd#,$^V;\" => Some(CommandOutput {",
+    "path": "src/utils.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "481401be552a5c42552e006a7b9bb89dc38e7603",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "@stefb69 It seems that the key to success is to quote on both sides (invocation and mock). Let me know if that works for you 🤞 ",
+    "created_at": "2020-07-27T23:48:52Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461234223",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461234223"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461234223"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461234223/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 114,
+    "original_line": 104,
+    "side": "RIGHT",
+    "in_reply_to_id": 461219364,
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 4,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461234947",
+    "pull_request_review_id": 456210661,
+    "id": 461234947,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTIzNDk0Nw==",
+    "diff_hunk": "@@ -1661,6 +1662,40 @@ The module will be shown if any of the following conditions are met:\n format = \"via [🐪 $version]($style) \"\n ```\n \n+## Perl\n+\n+The `perl` module shows the currently installed version of Perl.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `Makefile.PL` file\n+- The current directory contains a `Build.PL` file\n+- The current directory contains a `cpanfile` file\n+- The current directory contains a `cpanfile.snapshot` file\n+- The current directory contains a `META.json` file\n+- The current directory contains a `META.yml` file\n+- The current directory contains a `.perl-version` file\n+- The current directory contains a `.pl` file\n+- The current directory contains a `.pm` file\n+- The current directory contains a `.pod` file\n+\n+### Options\n+\n+| Variable   | Default      | Description                                           |\n+| ---------- | ------------ | ----------------------------------------------------- |\n+| `symbol`   | `\"🐪 \"`      | The symbol used before displaying the version of PHP. |",
+    "path": "docs/config/README.md",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "481401be552a5c42552e006a7b9bb89dc38e7603",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Mah, it happens all the time 😃 ",
+    "created_at": "2020-07-27T23:51:07Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461234947",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461234947"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461234947"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461234947/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1685,
+    "side": "RIGHT",
+    "in_reply_to_id": 461226507,
+    "author_association": "MEMBER",
+    "original_position": 32,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461236181",
+    "pull_request_review_id": 456212033,
+    "id": 461236181,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTIzNjE4MQ==",
+    "diff_hunk": "@@ -1661,6 +1662,45 @@ The module will be shown if any of the following conditions are met:\n format = \"via [🐪 $version]($style) \"\n ```\n \n+\n+## Perl\n+\n+The `perl` module shows the currently installed version of Perl.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `Makefile.PL` or `Build.PL` file\n+- The current directory contains a `cpanfile` or `cpanfile.snapshot` file\n+- The current directory contains a `META.json` file or `META.yml` file\n+- The current directory contains a `.perl-version` file\n+- The current directory contains a `.pl`, `.pm` or `.pod`\n+\n+### Options\n+\n+| Variable   | Default                            | Description                                           |\n+| ---------- |----------------------------------- | ----------------------------------------------------- |\n+| `format`   | `\"via [$symbol$version]($style) \"` | The symbol used before displaying the version of Perl |",
+    "path": "docs/config/README.md",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "bcff4db774e91251d20d7c1770658fc5ee473900",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'm sorry 🙃 \r\n```suggestion\r\n| `format`   | `\"via [$symbol$version]($style) \"` | The format string for the module.                       |\r\n```",
+    "created_at": "2020-07-27T23:55:04Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461236181",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461236181"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461236181"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461236181/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1681,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 28,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461242024",
+    "pull_request_review_id": 456218116,
+    "id": 461242024,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTI0MjAyNA==",
+    "diff_hunk": "@@ -101,6 +101,10 @@ active boot switches: -d:release\\n\",\n             stdout: String::from(\"4.08.1\\n\"),\n             stderr: String::default(),\n         }),\n+        \"perl -e printf q#%vd#,$^V;\" => Some(CommandOutput {",
+    "path": "src/utils.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "481401be552a5c42552e006a7b9bb89dc38e7603",
+    "user": {
+      "login": "stefb69",
+      "id": 4223252,
+      "node_id": "MDQ6VXNlcjQyMjMyNTI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223252?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefb69",
+      "html_url": "https://github.com/stefb69",
+      "followers_url": "https://api.github.com/users/stefb69/followers",
+      "following_url": "https://api.github.com/users/stefb69/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefb69/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefb69/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefb69/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefb69/orgs",
+      "repos_url": "https://api.github.com/users/stefb69/repos",
+      "events_url": "https://api.github.com/users/stefb69/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefb69/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I see your point but please try the resulting binary in a perl folder : \r\n![image](https://user-images.githubusercontent.com/4223252/88604336-876d6300-d077-11ea-9a09-fdaf1175a52e.png)\r\nSame as last time, i already tried and had the same issue. The only way everything works ok is without quotes",
+    "created_at": "2020-07-28T00:12:55Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461242024",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461242024"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461242024"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461242024/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 114,
+    "original_line": 104,
+    "side": "RIGHT",
+    "in_reply_to_id": 461219364,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 4,
+    "position": 4,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461244905",
+    "pull_request_review_id": 456221190,
+    "id": 461244905,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTI0NDkwNQ==",
+    "diff_hunk": "@@ -101,6 +101,10 @@ active boot switches: -d:release\\n\",\n             stdout: String::from(\"4.08.1\\n\"),\n             stderr: String::default(),\n         }),\n+        \"perl -e printf q#%vd#,$^V;\" => Some(CommandOutput {",
+    "path": "src/utils.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "481401be552a5c42552e006a7b9bb89dc38e7603",
+    "user": {
+      "login": "stefb69",
+      "id": 4223252,
+      "node_id": "MDQ6VXNlcjQyMjMyNTI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223252?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefb69",
+      "html_url": "https://github.com/stefb69",
+      "followers_url": "https://api.github.com/users/stefb69/followers",
+      "following_url": "https://api.github.com/users/stefb69/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefb69/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefb69/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefb69/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefb69/orgs",
+      "repos_url": "https://api.github.com/users/stefb69/repos",
+      "events_url": "https://api.github.com/users/stefb69/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefb69/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "And actually the tests do not fail in the automated tests, it is another module that fails with ubuntu nightly and macos nightly",
+    "created_at": "2020-07-28T00:22:37Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461244905",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461244905"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461244905"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461244905/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 114,
+    "original_line": 104,
+    "side": "RIGHT",
+    "in_reply_to_id": 461219364,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 4,
+    "position": 4,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461245227",
+    "pull_request_review_id": 456221576,
+    "id": 461245227,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTI0NTIyNw==",
+    "diff_hunk": "@@ -101,6 +101,10 @@ active boot switches: -d:release\\n\",\n             stdout: String::from(\"4.08.1\\n\"),\n             stderr: String::default(),\n         }),\n+        \"perl -e printf q#%vd#,$^V;\" => Some(CommandOutput {",
+    "path": "src/utils.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "481401be552a5c42552e006a7b9bb89dc38e7603",
+    "user": {
+      "login": "stefb69",
+      "id": 4223252,
+      "node_id": "MDQ6VXNlcjQyMjMyNTI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4223252?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefb69",
+      "html_url": "https://github.com/stefb69",
+      "followers_url": "https://api.github.com/users/stefb69/followers",
+      "following_url": "https://api.github.com/users/stefb69/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefb69/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefb69/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefb69/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefb69/orgs",
+      "repos_url": "https://api.github.com/users/stefb69/repos",
+      "events_url": "https://api.github.com/users/stefb69/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefb69/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "![image](https://user-images.githubusercontent.com/4223252/88605126-5aba4b00-d079-11ea-8ec1-21f42555c7c8.png)\r\n",
+    "created_at": "2020-07-28T00:23:45Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461245227",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461245227"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461245227"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461245227/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 114,
+    "original_line": 104,
+    "side": "RIGHT",
+    "in_reply_to_id": 461219364,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 4,
+    "position": 4,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461248135",
+    "pull_request_review_id": 456224696,
+    "id": 461248135,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTI0ODEzNQ==",
+    "diff_hunk": "@@ -101,6 +101,10 @@ active boot switches: -d:release\\n\",\n             stdout: String::from(\"4.08.1\\n\"),\n             stderr: String::default(),\n         }),\n+        \"perl -e printf q#%vd#,$^V;\" => Some(CommandOutput {",
+    "path": "src/utils.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "481401be552a5c42552e006a7b9bb89dc38e7603",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "> And actually the tests do not fail in the automated tests, it is another module that fails with ubuntu nightly and macos nightly\r\n\r\nYou can ignore those, they fail sporadically on other PRs too...",
+    "created_at": "2020-07-28T00:33:43Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461248135",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461248135"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461248135"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461248135/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 114,
+    "original_line": 104,
+    "side": "RIGHT",
+    "in_reply_to_id": 461219364,
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 4,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461248352",
+    "pull_request_review_id": 456224926,
+    "id": 461248352,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTI0ODM1Mg==",
+    "diff_hunk": "@@ -101,6 +101,10 @@ active boot switches: -d:release\\n\",\n             stdout: String::from(\"4.08.1\\n\"),\n             stderr: String::default(),\n         }),\n+        \"perl -e printf q#%vd#,$^V;\" => Some(CommandOutput {",
+    "path": "src/utils.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "481401be552a5c42552e006a7b9bb89dc38e7603",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "> I see your point but please try the resulting binary in a perl folder :\r\n> ![image](https://user-images.githubusercontent.com/4223252/88604336-876d6300-d077-11ea-9a09-fdaf1175a52e.png)\r\n> Same as last time, i already tried and had the same issue. The only way everything works ok is without quotes\r\n\r\nWow, you are right. This is interesting 🤔 ",
+    "created_at": "2020-07-28T00:34:27Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461248352",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461248352"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461248352"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461248352/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 114,
+    "original_line": 104,
+    "side": "RIGHT",
+    "in_reply_to_id": 461219364,
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 4,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/461253967",
+    "pull_request_review_id": 456230868,
+    "id": 461253967,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2MTI1Mzk2Nw==",
+    "diff_hunk": "@@ -101,6 +101,10 @@ active boot switches: -d:release\\n\",\n             stdout: String::from(\"4.08.1\\n\"),\n             stderr: String::default(),\n         }),\n+        \"perl -e printf q#%vd#,$^V;\" => Some(CommandOutput {",
+    "path": "src/utils.rs",
+    "commit_id": "ab03ee057b63627f4d94de16e27c490ed91e4d73",
+    "original_commit_id": "481401be552a5c42552e006a7b9bb89dc38e7603",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Well, what can I say? I was wrong about this and sorry for pushing you into reiterating on what should've stayed closed/resolved topic 🤦 \r\nActually this provided me with a valuable lesson 👍  and now I need to go and revert portions of #1491 (like this for instance https://github.com/starship/starship/pull/1491/files#diff-3dbd16223f25e8b5e0bcf099743107e9R104)",
+    "created_at": "2020-07-28T00:54:20Z",
+    "updated_at": "2020-08-04T15:33:54Z",
+    "html_url": "https://github.com/starship/starship/pull/1382#discussion_r461253967",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1382",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/461253967"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1382#discussion_r461253967"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1382"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/461253967/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 114,
+    "original_line": 104,
+    "side": "RIGHT",
+    "in_reply_to_id": 461219364,
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 4,
+    "subject_type": "line"
+  }
+]

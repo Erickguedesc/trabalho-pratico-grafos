@@ -1,0 +1,260 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/426144185",
+    "pull_request_review_id": 413068740,
+    "id": 426144185,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyNjE0NDE4NQ==",
+    "diff_hunk": "@@ -12,37 +13,43 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let mut module = context.new_module(\"git_state\");\n     let config: GitStateConfig = GitStateConfig::try_load(module.config);\n \n-    module.set_style(config.style);\n-    module.get_prefix().set_value(\"(\");\n-    module.get_suffix().set_value(\") \");\n-\n     let repo = context.get_repo().ok()?;\n     let repo_root = repo.root.as_ref()?;\n     let repo_state = repo.state?;\n \n-    let state_description = get_state_description(repo_state, repo_root, config);\n-\n-    let label = match &state_description {\n-        StateDescription::Label(label) => label,\n-        StateDescription::LabelAndProgress(label, _) => label,\n-        StateDescription::Clean => {\n+    let state_description = get_state_description(repo_state, repo_root, &config)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"state\" => Some(Ok(state_description.label)),",
+    "path": "src/modules/git_state.rs",
+    "commit_id": "7ed589596ea7bc1dc7599de42ddc89e3759bcfe2",
+    "original_commit_id": "b3b6b857e181bffa4f3b06e80302f300fc2d7ad1",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "What do you think about making `label` format strings, so that users can write e.g. `[REBASING](bold green)` to change the styles?\r\n\r\n```suggestion\r\n            .map_meta(|variable, _| match variable {\r\n                \"state\" => Some(state_description.label),\r\n```",
+    "created_at": "2020-05-16T11:11:46Z",
+    "updated_at": "2020-05-17T07:41:47Z",
+    "html_url": "https://github.com/starship/starship/pull/1221#discussion_r426144185",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1221",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/426144185"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1221#discussion_r426144185"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1221"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/426144185/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 28,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 29,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 39,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/426144242",
+    "pull_request_review_id": 413068740,
+    "id": 426144242,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyNjE0NDI0Mg==",
+    "diff_hunk": "@@ -12,37 +13,43 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let mut module = context.new_module(\"git_state\");\n     let config: GitStateConfig = GitStateConfig::try_load(module.config);\n \n-    module.set_style(config.style);\n-    module.get_prefix().set_value(\"(\");\n-    module.get_suffix().set_value(\") \");\n-\n     let repo = context.get_repo().ok()?;\n     let repo_root = repo.root.as_ref()?;\n     let repo_state = repo.state?;\n \n-    let state_description = get_state_description(repo_state, repo_root, config);\n-\n-    let label = match &state_description {\n-        StateDescription::Label(label) => label,\n-        StateDescription::LabelAndProgress(label, _) => label,\n-        StateDescription::Clean => {\n+    let state_description = get_state_description(repo_state, repo_root, &config)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"state\" => Some(Ok(state_description.label)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"progress_current\" => state_description.current.as_ref().map(Ok),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"progress_total\" => state_description.total.as_ref().map(Ok),\n+                _ => None,\n+            })",
+    "path": "src/modules/git_state.rs",
+    "commit_id": "7ed589596ea7bc1dc7599de42ddc89e3759bcfe2",
+    "original_commit_id": "b3b6b857e181bffa4f3b06e80302f300fc2d7ad1",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Can these two be combined?\r\n\r\n```suggestion\r\n            .map(|variable| match variable {\r\n                \"progress_current\" => state_description.current.as_ref().map(Ok),\r\n                \"progress_total\" => state_description.total.as_ref().map(Ok),\r\n                _ => None,\r\n            })\r\n```",
+    "created_at": "2020-05-16T11:12:29Z",
+    "updated_at": "2020-05-17T07:41:47Z",
+    "html_url": "https://github.com/starship/starship/pull/1221#discussion_r426144242",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1221",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/426144242"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1221#discussion_r426144242"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1221"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/426144242/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 32,
+    "original_start_line": 32,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 39,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 49,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/426148526",
+    "pull_request_review_id": 413072244,
+    "id": 426148526,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyNjE0ODUyNg==",
+    "diff_hunk": "@@ -12,37 +13,43 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let mut module = context.new_module(\"git_state\");\n     let config: GitStateConfig = GitStateConfig::try_load(module.config);\n \n-    module.set_style(config.style);\n-    module.get_prefix().set_value(\"(\");\n-    module.get_suffix().set_value(\") \");\n-\n     let repo = context.get_repo().ok()?;\n     let repo_root = repo.root.as_ref()?;\n     let repo_state = repo.state?;\n \n-    let state_description = get_state_description(repo_state, repo_root, config);\n-\n-    let label = match &state_description {\n-        StateDescription::Label(label) => label,\n-        StateDescription::LabelAndProgress(label, _) => label,\n-        StateDescription::Clean => {\n+    let state_description = get_state_description(repo_state, repo_root, &config)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"state\" => Some(Ok(state_description.label)),",
+    "path": "src/modules/git_state.rs",
+    "commit_id": "7ed589596ea7bc1dc7599de42ddc89e3759bcfe2",
+    "original_commit_id": "b3b6b857e181bffa4f3b06e80302f300fc2d7ad1",
+    "user": null,
+    "body": "I think that's a good change! Should I update the docs to reflect this somehow?",
+    "created_at": "2020-05-16T12:15:38Z",
+    "updated_at": "2020-05-17T07:41:47Z",
+    "html_url": "https://github.com/starship/starship/pull/1221#discussion_r426148526",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1221",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/426148526"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1221#discussion_r426148526"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1221"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/426148526/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 28,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 29,
+    "side": "RIGHT",
+    "in_reply_to_id": 426144185,
+    "author_association": "NONE",
+    "original_position": 39,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/426195715",
+    "pull_request_review_id": 413112120,
+    "id": 426195715,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyNjE5NTcxNQ==",
+    "diff_hunk": "@@ -12,37 +13,43 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let mut module = context.new_module(\"git_state\");\n     let config: GitStateConfig = GitStateConfig::try_load(module.config);\n \n-    module.set_style(config.style);\n-    module.get_prefix().set_value(\"(\");\n-    module.get_suffix().set_value(\") \");\n-\n     let repo = context.get_repo().ok()?;\n     let repo_root = repo.root.as_ref()?;\n     let repo_state = repo.state?;\n \n-    let state_description = get_state_description(repo_state, repo_root, config);\n-\n-    let label = match &state_description {\n-        StateDescription::Label(label) => label,\n-        StateDescription::LabelAndProgress(label, _) => label,\n-        StateDescription::Clean => {\n+    let state_description = get_state_description(repo_state, repo_root, &config)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"state\" => Some(Ok(state_description.label)),",
+    "path": "src/modules/git_state.rs",
+    "commit_id": "7ed589596ea7bc1dc7599de42ddc89e3759bcfe2",
+    "original_commit_id": "b3b6b857e181bffa4f3b06e80302f300fc2d7ad1",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Yes, go ahead :+1: ",
+    "created_at": "2020-05-16T22:12:04Z",
+    "updated_at": "2020-05-17T07:41:47Z",
+    "html_url": "https://github.com/starship/starship/pull/1221#discussion_r426195715",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1221",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/426195715"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1221#discussion_r426195715"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1221"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/426195715/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 28,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 29,
+    "side": "RIGHT",
+    "in_reply_to_id": 426144185,
+    "author_association": "MEMBER",
+    "original_position": 39,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

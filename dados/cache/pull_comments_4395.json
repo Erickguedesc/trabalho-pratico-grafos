@@ -1,0 +1,835 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/985662340",
+    "pull_request_review_id": 1128193415,
+    "id": 985662340,
+    "node_id": "PRRC_kwDOCqswNs46wAOE",
+    "diff_hunk": "@@ -0,0 +1,252 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::haxe::HaxeConfig;\n+use crate::formatter::StringFormatter;\n+use crate::formatter::VersionFormatter;\n+use serde_json as json;\n+\n+use regex::Regex;\n+const HAXE_VERSION_PATTERN: &str =\n+    \"(?P<version>(?:\\\\d+\\\\.\\\\d+\\\\.\\\\d+(?:-(?:alpha|beta|pre|rc)[\\\\d\\\\.+]+)?)|[[:xdigit:]]+)\";\n+\n+/// Creates a module with the current Haxe version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"haxe\");\n+    let config = HaxeConfig::try_load(module.config);\n+\n+    let is_haxe_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_haxe_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let haxe_version = get_haxe_version(context)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &haxe_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `haxe`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_haxe_version(context: &Context) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(\".haxerc\");\n+    if file_contents.is_some() {\n+        let raw_json = match file_contents {\n+            Some(val) => val,\n+            None => panic!(\"failed to read contents of .haxerc!\"),\n+        };",
+    "path": "src/modules/haxe.rs",
+    "commit_id": "9d2f48ecdfa6741c948186d5785e4cc0c082a48e",
+    "original_commit_id": "ec6b77eef03f4b9b3975d0f15d48a58483ccf5da",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n    if let Some(raw_json) = file_contents {\r\n```",
+    "created_at": "2022-10-03T11:10:37Z",
+    "updated_at": "2022-10-03T11:39:33Z",
+    "html_url": "https://github.com/starship/starship/pull/4395#discussion_r985662340",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4395",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/985662340"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4395#discussion_r985662340"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4395"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/985662340/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 66,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 70,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 70,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/985665305",
+    "pull_request_review_id": 1128193415,
+    "id": 985665305,
+    "node_id": "PRRC_kwDOCqswNs46wA8Z",
+    "diff_hunk": "@@ -0,0 +1,252 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::haxe::HaxeConfig;\n+use crate::formatter::StringFormatter;\n+use crate::formatter::VersionFormatter;\n+use serde_json as json;\n+\n+use regex::Regex;\n+const HAXE_VERSION_PATTERN: &str =\n+    \"(?P<version>(?:\\\\d+\\\\.\\\\d+\\\\.\\\\d+(?:-(?:alpha|beta|pre|rc)[\\\\d\\\\.+]+)?)|[[:xdigit:]]+)\";\n+\n+/// Creates a module with the current Haxe version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"haxe\");\n+    let config = HaxeConfig::try_load(module.config);\n+\n+    let is_haxe_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_haxe_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let haxe_version = get_haxe_version(context)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &haxe_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `haxe`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_haxe_version(context: &Context) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(\".haxerc\");\n+    if file_contents.is_some() {\n+        let raw_json = match file_contents {\n+            Some(val) => val,\n+            None => panic!(\"failed to read contents of .haxerc!\"),\n+        };\n+        let haxerc_json: json::Value = json::from_str(&raw_json).ok()?;\n+        let raw_version = haxerc_json.get(\"version\")?.as_str()?;",
+    "path": "src/modules/haxe.rs",
+    "commit_id": "9d2f48ecdfa6741c948186d5785e4cc0c082a48e",
+    "original_commit_id": "ec6b77eef03f4b9b3975d0f15d48a58483ccf5da",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Does the `haxerc` always contain `version`? If not, it should fall back to `haxe --version`",
+    "created_at": "2022-10-03T11:13:17Z",
+    "updated_at": "2022-10-03T11:39:33Z",
+    "html_url": "https://github.com/starship/starship/pull/4395#discussion_r985665305",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4395",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/985665305"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4395#discussion_r985665305"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4395"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/985665305/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 72,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 72,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/985669778",
+    "pull_request_review_id": 1128193415,
+    "id": 985669778,
+    "node_id": "PRRC_kwDOCqswNs46wCCS",
+    "diff_hunk": "@@ -0,0 +1,41 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct HaxeConfig<'a> {\n+    pub format: &'a str,\n+    pub version_format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+    pub detect_extensions: Vec<&'a str>,\n+    pub detect_files: Vec<&'a str>,\n+    pub detect_folders: Vec<&'a str>,\n+}\n+\n+impl<'a> Default for HaxeConfig<'a> {\n+    fn default() -> Self {\n+        HaxeConfig {\n+            format: \"via [$symbol($version )]($style)\",\n+            version_format: \"v${raw}\",\n+            symbol: \"⌘ \",\n+            style: \"bold fg:202\",\n+            disabled: false,\n+            detect_extensions: vec![\"hx\", \"hxml\"],\n+            detect_files: vec![\n+                \"project.xml\",\n+                \"Project.xml\",\n+                \"application.xml\",",
+    "path": "src/configs/haxe.rs",
+    "commit_id": "9d2f48ecdfa6741c948186d5785e4cc0c082a48e",
+    "original_commit_id": "ec6b77eef03f4b9b3975d0f15d48a58483ccf5da",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think these filenames are a bit too generic for the default file list.\r\n```suggestion\r\n```",
+    "created_at": "2022-10-03T11:19:01Z",
+    "updated_at": "2022-10-03T11:39:33Z",
+    "html_url": "https://github.com/starship/starship/pull/4395#discussion_r985669778",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4395",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/985669778"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4395#discussion_r985669778"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4395"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/985669778/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 31,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 33,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 33,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/986078897",
+    "pull_request_review_id": 1128806409,
+    "id": 986078897,
+    "node_id": "PRRC_kwDOCqswNs46xl6x",
+    "diff_hunk": "@@ -0,0 +1,252 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::haxe::HaxeConfig;\n+use crate::formatter::StringFormatter;\n+use crate::formatter::VersionFormatter;\n+use serde_json as json;\n+\n+use regex::Regex;\n+const HAXE_VERSION_PATTERN: &str =\n+    \"(?P<version>(?:\\\\d+\\\\.\\\\d+\\\\.\\\\d+(?:-(?:alpha|beta|pre|rc)[\\\\d\\\\.+]+)?)|[[:xdigit:]]+)\";\n+\n+/// Creates a module with the current Haxe version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"haxe\");\n+    let config = HaxeConfig::try_load(module.config);\n+\n+    let is_haxe_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_haxe_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let haxe_version = get_haxe_version(context)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &haxe_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `haxe`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_haxe_version(context: &Context) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(\".haxerc\");\n+    if file_contents.is_some() {\n+        let raw_json = match file_contents {\n+            Some(val) => val,\n+            None => panic!(\"failed to read contents of .haxerc!\"),\n+        };",
+    "path": "src/modules/haxe.rs",
+    "commit_id": "9d2f48ecdfa6741c948186d5785e4cc0c082a48e",
+    "original_commit_id": "ec6b77eef03f4b9b3975d0f15d48a58483ccf5da",
+    "user": {
+      "login": "AlexHaxe",
+      "id": 7204032,
+      "node_id": "MDQ6VXNlcjcyMDQwMzI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7204032?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/AlexHaxe",
+      "html_url": "https://github.com/AlexHaxe",
+      "followers_url": "https://api.github.com/users/AlexHaxe/followers",
+      "following_url": "https://api.github.com/users/AlexHaxe/following{/other_user}",
+      "gists_url": "https://api.github.com/users/AlexHaxe/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/AlexHaxe/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/AlexHaxe/subscriptions",
+      "organizations_url": "https://api.github.com/users/AlexHaxe/orgs",
+      "repos_url": "https://api.github.com/users/AlexHaxe/repos",
+      "events_url": "https://api.github.com/users/AlexHaxe/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/AlexHaxe/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "thanks for suggestion, it's my first dabble into rust territory :)",
+    "created_at": "2022-10-03T18:03:23Z",
+    "updated_at": "2022-10-03T18:03:23Z",
+    "html_url": "https://github.com/starship/starship/pull/4395#discussion_r986078897",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4395",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/986078897"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4395#discussion_r986078897"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4395"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/986078897/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 66,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 70,
+    "side": "RIGHT",
+    "in_reply_to_id": 985662340,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 70,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/986090254",
+    "pull_request_review_id": 1128822916,
+    "id": 986090254,
+    "node_id": "PRRC_kwDOCqswNs46xosO",
+    "diff_hunk": "@@ -0,0 +1,252 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::haxe::HaxeConfig;\n+use crate::formatter::StringFormatter;\n+use crate::formatter::VersionFormatter;\n+use serde_json as json;\n+\n+use regex::Regex;\n+const HAXE_VERSION_PATTERN: &str =\n+    \"(?P<version>(?:\\\\d+\\\\.\\\\d+\\\\.\\\\d+(?:-(?:alpha|beta|pre|rc)[\\\\d\\\\.+]+)?)|[[:xdigit:]]+)\";\n+\n+/// Creates a module with the current Haxe version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"haxe\");\n+    let config = HaxeConfig::try_load(module.config);\n+\n+    let is_haxe_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_haxe_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let haxe_version = get_haxe_version(context)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &haxe_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `haxe`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_haxe_version(context: &Context) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(\".haxerc\");\n+    if file_contents.is_some() {\n+        let raw_json = match file_contents {\n+            Some(val) => val,\n+            None => panic!(\"failed to read contents of .haxerc!\"),\n+        };\n+        let haxerc_json: json::Value = json::from_str(&raw_json).ok()?;\n+        let raw_version = haxerc_json.get(\"version\")?.as_str()?;",
+    "path": "src/modules/haxe.rs",
+    "commit_id": "9d2f48ecdfa6741c948186d5785e4cc0c082a48e",
+    "original_commit_id": "ec6b77eef03f4b9b3975d0f15d48a58483ccf5da",
+    "user": {
+      "login": "AlexHaxe",
+      "id": 7204032,
+      "node_id": "MDQ6VXNlcjcyMDQwMzI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7204032?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/AlexHaxe",
+      "html_url": "https://github.com/AlexHaxe",
+      "followers_url": "https://api.github.com/users/AlexHaxe/followers",
+      "following_url": "https://api.github.com/users/AlexHaxe/following{/other_user}",
+      "gists_url": "https://api.github.com/users/AlexHaxe/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/AlexHaxe/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/AlexHaxe/subscriptions",
+      "organizations_url": "https://api.github.com/users/AlexHaxe/orgs",
+      "repos_url": "https://api.github.com/users/AlexHaxe/repos",
+      "events_url": "https://api.github.com/users/AlexHaxe/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/AlexHaxe/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`.haxerc` always contains a version field.\r\nhowever not all projects use lix package manager, so `.haxerc` is not present for all Haxe projects.\r\n\r\nafter checking lix sources there are multiple different values that `version` field can represent. it can either be a semver version, a git hash of a nightly build, fixed names like `stable` or `latest` or even a path to a local build of Haxe compiler. given these different possible values it doesn't make a lot of sense to use a regex to validate it's `version` field contents.\r\n\r\nalso `haxe --version` only prints a version string, so I might drop regex check entirely. unless there is a good reason to keep validating version information. \r\n\r\nregardless I will add a fallback to `haxe --version` in case of json parser issues.",
+    "created_at": "2022-10-03T18:17:00Z",
+    "updated_at": "2022-10-03T18:17:01Z",
+    "html_url": "https://github.com/starship/starship/pull/4395#discussion_r986090254",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4395",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/986090254"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4395#discussion_r986090254"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4395"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/986090254/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 72,
+    "side": "RIGHT",
+    "in_reply_to_id": 985665305,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 72,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/986095772",
+    "pull_request_review_id": 1128830818,
+    "id": 986095772,
+    "node_id": "PRRC_kwDOCqswNs46xqCc",
+    "diff_hunk": "@@ -0,0 +1,41 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct HaxeConfig<'a> {\n+    pub format: &'a str,\n+    pub version_format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+    pub detect_extensions: Vec<&'a str>,\n+    pub detect_files: Vec<&'a str>,\n+    pub detect_folders: Vec<&'a str>,\n+}\n+\n+impl<'a> Default for HaxeConfig<'a> {\n+    fn default() -> Self {\n+        HaxeConfig {\n+            format: \"via [$symbol($version )]($style)\",\n+            version_format: \"v${raw}\",\n+            symbol: \"⌘ \",\n+            style: \"bold fg:202\",\n+            disabled: false,\n+            detect_extensions: vec![\"hx\", \"hxml\"],\n+            detect_files: vec![\n+                \"project.xml\",\n+                \"Project.xml\",\n+                \"application.xml\",",
+    "path": "src/configs/haxe.rs",
+    "commit_id": "9d2f48ecdfa6741c948186d5785e4cc0c082a48e",
+    "original_commit_id": "ec6b77eef03f4b9b3975d0f15d48a58483ccf5da",
+    "user": {
+      "login": "AlexHaxe",
+      "id": 7204032,
+      "node_id": "MDQ6VXNlcjcyMDQwMzI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7204032?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/AlexHaxe",
+      "html_url": "https://github.com/AlexHaxe",
+      "followers_url": "https://api.github.com/users/AlexHaxe/followers",
+      "following_url": "https://api.github.com/users/AlexHaxe/following{/other_user}",
+      "gists_url": "https://api.github.com/users/AlexHaxe/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/AlexHaxe/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/AlexHaxe/subscriptions",
+      "organizations_url": "https://api.github.com/users/AlexHaxe/orgs",
+      "repos_url": "https://api.github.com/users/AlexHaxe/repos",
+      "events_url": "https://api.github.com/users/AlexHaxe/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/AlexHaxe/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "understood, people who use it can still add it via their configuration files",
+    "created_at": "2022-10-03T18:23:50Z",
+    "updated_at": "2022-10-03T18:23:51Z",
+    "html_url": "https://github.com/starship/starship/pull/4395#discussion_r986095772",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4395",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/986095772"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4395#discussion_r986095772"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4395"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/986095772/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 31,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 33,
+    "side": "RIGHT",
+    "in_reply_to_id": 985669778,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 33,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/992609684",
+    "pull_request_review_id": 1137912527,
+    "id": 992609684,
+    "node_id": "PRRC_kwDOCqswNs47KgWU",
+    "diff_hunk": "@@ -0,0 +1,252 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::haxe::HaxeConfig;\n+use crate::formatter::StringFormatter;\n+use crate::formatter::VersionFormatter;\n+use serde_json as json;\n+\n+use regex::Regex;\n+const HAXE_VERSION_PATTERN: &str =\n+    \"(?P<version>(?:\\\\d+\\\\.\\\\d+\\\\.\\\\d+(?:-(?:alpha|beta|pre|rc)[\\\\d\\\\.+]+)?)|[[:xdigit:]]+)\";\n+\n+/// Creates a module with the current Haxe version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"haxe\");\n+    let config = HaxeConfig::try_load(module.config);\n+\n+    let is_haxe_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_haxe_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let haxe_version = get_haxe_version(context)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &haxe_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `haxe`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_haxe_version(context: &Context) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(\".haxerc\");\n+    if file_contents.is_some() {\n+        let raw_json = match file_contents {\n+            Some(val) => val,\n+            None => panic!(\"failed to read contents of .haxerc!\"),\n+        };\n+        let haxerc_json: json::Value = json::from_str(&raw_json).ok()?;\n+        let raw_version = haxerc_json.get(\"version\")?.as_str()?;",
+    "path": "src/modules/haxe.rs",
+    "commit_id": "9d2f48ecdfa6741c948186d5785e4cc0c082a48e",
+    "original_commit_id": "ec6b77eef03f4b9b3975d0f15d48a58483ccf5da",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "> it can either be a semver version, a git hash of a nightly build, fixed names like stable or latest or even a path to a local build of Haxe compiler.\r\n\r\nIn that case, I think there should be some verification that the field contents are version-like to avoid displaying long paths in the prompt.",
+    "created_at": "2022-10-11T17:33:42Z",
+    "updated_at": "2022-10-11T17:33:42Z",
+    "html_url": "https://github.com/starship/starship/pull/4395#discussion_r992609684",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4395",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/992609684"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4395#discussion_r992609684"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4395"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/992609684/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 72,
+    "side": "RIGHT",
+    "in_reply_to_id": 985665305,
+    "author_association": "MEMBER",
+    "original_position": 72,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/996376088",
+    "pull_request_review_id": 1143243361,
+    "id": 996376088,
+    "node_id": "PRRC_kwDOCqswNs47Y34Y",
+    "diff_hunk": "@@ -0,0 +1,252 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::haxe::HaxeConfig;\n+use crate::formatter::StringFormatter;\n+use crate::formatter::VersionFormatter;\n+use serde_json as json;\n+\n+use regex::Regex;\n+const HAXE_VERSION_PATTERN: &str =\n+    \"(?P<version>(?:\\\\d+\\\\.\\\\d+\\\\.\\\\d+(?:-(?:alpha|beta|pre|rc)[\\\\d\\\\.+]+)?)|[[:xdigit:]]+)\";\n+\n+/// Creates a module with the current Haxe version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"haxe\");\n+    let config = HaxeConfig::try_load(module.config);\n+\n+    let is_haxe_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_haxe_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let haxe_version = get_haxe_version(context)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &haxe_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `haxe`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_haxe_version(context: &Context) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(\".haxerc\");\n+    if file_contents.is_some() {\n+        let raw_json = match file_contents {\n+            Some(val) => val,\n+            None => panic!(\"failed to read contents of .haxerc!\"),\n+        };\n+        let haxerc_json: json::Value = json::from_str(&raw_json).ok()?;\n+        let raw_version = haxerc_json.get(\"version\")?.as_str()?;",
+    "path": "src/modules/haxe.rs",
+    "commit_id": "9d2f48ecdfa6741c948186d5785e4cc0c082a48e",
+    "original_commit_id": "ec6b77eef03f4b9b3975d0f15d48a58483ccf5da",
+    "user": {
+      "login": "AlexHaxe",
+      "id": 7204032,
+      "node_id": "MDQ6VXNlcjcyMDQwMzI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7204032?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/AlexHaxe",
+      "html_url": "https://github.com/AlexHaxe",
+      "followers_url": "https://api.github.com/users/AlexHaxe/followers",
+      "following_url": "https://api.github.com/users/AlexHaxe/following{/other_user}",
+      "gists_url": "https://api.github.com/users/AlexHaxe/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/AlexHaxe/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/AlexHaxe/subscriptions",
+      "organizations_url": "https://api.github.com/users/AlexHaxe/orgs",
+      "repos_url": "https://api.github.com/users/AlexHaxe/repos",
+      "events_url": "https://api.github.com/users/AlexHaxe/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/AlexHaxe/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I've added code to detect a path in a `.haxerc` version field and it will call the exectuable instead to get it's actual version number.",
+    "created_at": "2022-10-16T02:01:56Z",
+    "updated_at": "2022-10-16T02:01:56Z",
+    "html_url": "https://github.com/starship/starship/pull/4395#discussion_r996376088",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4395",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/996376088"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4395#discussion_r996376088"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4395"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/996376088/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 72,
+    "side": "RIGHT",
+    "in_reply_to_id": 985665305,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 72,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/996443036",
+    "pull_request_review_id": 1143295442,
+    "id": 996443036,
+    "node_id": "PRRC_kwDOCqswNs47ZIOc",
+    "diff_hunk": "@@ -0,0 +1,325 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::haxe::HaxeConfig;\n+use crate::formatter::StringFormatter;\n+use crate::formatter::VersionFormatter;\n+use serde_json as json;\n+\n+use regex::Regex;\n+const HAXERC_VERSION_PATTERN: &str = \"(?P<version>[0-9a-zA-Z][-+0-9.a-zA-Z]+)\";\n+\n+/// Creates a module with the current Haxe version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"haxe\");\n+    let config = HaxeConfig::try_load(module.config);\n+\n+    let is_haxe_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_haxe_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let haxe_version = get_haxe_version(context)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &haxe_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `haxe`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_haxe_version(context: &Context) -> Option<String> {\n+    if let Some(version) = get_haxerc_version(context) {\n+        Some(version)\n+    } else {\n+        let cmd_output = context.exec_cmd(\"haxe\", &[\"--version\"])?;\n+        parse_haxe_version(cmd_output.stdout.as_str())\n+    }\n+}\n+\n+fn get_haxerc_version(context: &Context) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(\".haxerc\");\n+    if let Some(raw_json) = file_contents {\n+        let package_json: json::Value = json::from_str(&raw_json).ok()?;\n+\n+        let raw_version = package_json.get(\"version\")?.as_str()?;\n+        if raw_version == \"null\" {",
+    "path": "src/modules/haxe.rs",
+    "commit_id": "9d2f48ecdfa6741c948186d5785e4cc0c082a48e",
+    "original_commit_id": "f823821c14152dd85af6f216e702cfcd4f71f510",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Is `\"null\"` (string) a possible value here? The line above should already handle regular non-string `null`.",
+    "created_at": "2022-10-16T13:31:25Z",
+    "updated_at": "2022-10-16T13:40:20Z",
+    "html_url": "https://github.com/starship/starship/pull/4395#discussion_r996443036",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4395",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/996443036"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4395#discussion_r996443036"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4395"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/996443036/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 78,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 78,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/996443268",
+    "pull_request_review_id": 1143295442,
+    "id": 996443268,
+    "node_id": "PRRC_kwDOCqswNs47ZISE",
+    "diff_hunk": "@@ -0,0 +1,325 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::haxe::HaxeConfig;\n+use crate::formatter::StringFormatter;\n+use crate::formatter::VersionFormatter;\n+use serde_json as json;\n+\n+use regex::Regex;\n+const HAXERC_VERSION_PATTERN: &str = \"(?P<version>[0-9a-zA-Z][-+0-9.a-zA-Z]+)\";\n+\n+/// Creates a module with the current Haxe version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"haxe\");\n+    let config = HaxeConfig::try_load(module.config);\n+\n+    let is_haxe_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_haxe_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let haxe_version = get_haxe_version(context)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &haxe_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `haxe`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_haxe_version(context: &Context) -> Option<String> {\n+    if let Some(version) = get_haxerc_version(context) {\n+        Some(version)\n+    } else {\n+        let cmd_output = context.exec_cmd(\"haxe\", &[\"--version\"])?;\n+        parse_haxe_version(cmd_output.stdout.as_str())\n+    }\n+}\n+\n+fn get_haxerc_version(context: &Context) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(\".haxerc\");\n+    if let Some(raw_json) = file_contents {\n+        let package_json: json::Value = json::from_str(&raw_json).ok()?;\n+\n+        let raw_version = package_json.get(\"version\")?.as_str()?;\n+        if raw_version == \"null\" {\n+            return None;\n+        };\n+        if raw_version.contains('/') || raw_version.contains('\\\\') {\n+            return None;\n+        }\n+\n+        Some(raw_version.to_string())\n+    } else {\n+        None\n+    }\n+}\n+\n+fn parse_haxe_version(raw_version: &str) -> Option<String> {\n+    let re = Regex::new(HAXERC_VERSION_PATTERN).ok()?;\n+    let captures = re.captures(raw_version)?;\n+    let version = &captures[\"version\"];\n+\n+    Some(version.to_string())\n+}",
+    "path": "src/modules/haxe.rs",
+    "commit_id": "9d2f48ecdfa6741c948186d5785e4cc0c082a48e",
+    "original_commit_id": "f823821c14152dd85af6f216e702cfcd4f71f510",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think validating this doesn't hurt, but does this really need to use a capture group? Wouldn't verifying the whole string with `is_match()` work better here?",
+    "created_at": "2022-10-16T13:33:29Z",
+    "updated_at": "2022-10-16T13:40:20Z",
+    "html_url": "https://github.com/starship/starship/pull/4395#discussion_r996443268",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4395",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/996443268"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4395#discussion_r996443268"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4395"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/996443268/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 91,
+    "original_start_line": 91,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 97,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 97,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/996443491",
+    "pull_request_review_id": 1143295442,
+    "id": 996443491,
+    "node_id": "PRRC_kwDOCqswNs47ZIVj",
+    "diff_hunk": "@@ -0,0 +1,325 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::haxe::HaxeConfig;\n+use crate::formatter::StringFormatter;\n+use crate::formatter::VersionFormatter;\n+use serde_json as json;\n+\n+use regex::Regex;\n+const HAXERC_VERSION_PATTERN: &str = \"(?P<version>[0-9a-zA-Z][-+0-9.a-zA-Z]+)\";\n+\n+/// Creates a module with the current Haxe version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"haxe\");\n+    let config = HaxeConfig::try_load(module.config);\n+\n+    let is_haxe_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_haxe_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let haxe_version = get_haxe_version(context)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &haxe_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `haxe`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_haxe_version(context: &Context) -> Option<String> {\n+    if let Some(version) = get_haxerc_version(context) {\n+        Some(version)\n+    } else {\n+        let cmd_output = context.exec_cmd(\"haxe\", &[\"--version\"])?;\n+        parse_haxe_version(cmd_output.stdout.as_str())\n+    }",
+    "path": "src/modules/haxe.rs",
+    "commit_id": "9d2f48ecdfa6741c948186d5785e4cc0c082a48e",
+    "original_commit_id": "f823821c14152dd85af6f216e702cfcd4f71f510",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This would look better with `or_else`:\r\n```suggestion\r\n    get_haxerc_version(context).or_else(|| {\r\n        context.exec_cmd(\"haxe\", &[\"--version\"])?;\r\n        parse_haxe_version(cmd_output.stdout.as_str())\r\n    })\r\n```",
+    "created_at": "2022-10-16T13:34:54Z",
+    "updated_at": "2022-10-16T13:40:20Z",
+    "html_url": "https://github.com/starship/starship/pull/4395#discussion_r996443491",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4395",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/996443491"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4395#discussion_r996443491"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4395"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/996443491/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 64,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 69,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 69,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/996443546",
+    "pull_request_review_id": 1143295442,
+    "id": 996443546,
+    "node_id": "PRRC_kwDOCqswNs47ZIWa",
+    "diff_hunk": "@@ -0,0 +1,325 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::haxe::HaxeConfig;\n+use crate::formatter::StringFormatter;\n+use crate::formatter::VersionFormatter;\n+use serde_json as json;\n+\n+use regex::Regex;\n+const HAXERC_VERSION_PATTERN: &str = \"(?P<version>[0-9a-zA-Z][-+0-9.a-zA-Z]+)\";\n+\n+/// Creates a module with the current Haxe version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"haxe\");\n+    let config = HaxeConfig::try_load(module.config);\n+\n+    let is_haxe_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_haxe_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let haxe_version = get_haxe_version(context)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &haxe_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `haxe`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_haxe_version(context: &Context) -> Option<String> {\n+    if let Some(version) = get_haxerc_version(context) {\n+        Some(version)\n+    } else {\n+        let cmd_output = context.exec_cmd(\"haxe\", &[\"--version\"])?;\n+        parse_haxe_version(cmd_output.stdout.as_str())\n+    }\n+}\n+\n+fn get_haxerc_version(context: &Context) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(\".haxerc\");\n+    if let Some(raw_json) = file_contents {",
+    "path": "src/modules/haxe.rs",
+    "commit_id": "9d2f48ecdfa6741c948186d5785e4cc0c082a48e",
+    "original_commit_id": "f823821c14152dd85af6f216e702cfcd4f71f510",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This should just use `?`:\r\n```suggestion\r\n    let raw_json = context.read_file_from_pwd(\".haxerc\")?;\r\n```",
+    "created_at": "2022-10-16T13:35:38Z",
+    "updated_at": "2022-10-16T13:40:20Z",
+    "html_url": "https://github.com/starship/starship/pull/4395#discussion_r996443546",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4395",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/996443546"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4395#discussion_r996443546"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4395"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/996443546/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 73,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 74,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 74,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

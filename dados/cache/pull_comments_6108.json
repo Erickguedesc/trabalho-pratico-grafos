@@ -1,0 +1,419 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1695576996",
+    "pull_request_review_id": 2205529311,
+    "id": 1695576996,
+    "node_id": "PRRC_kwDOCqswNs5lEHOk",
+    "diff_hunk": "@@ -0,0 +1,155 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::mojo::MojoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Mojo version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"mojo\");\n+    let config = MojoConfig::try_load(module.config);\n+\n+    let is_mojo_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_mojo_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let mojo_version_output = context.exec_cmd(\"mojo\", &[\"--version\"])?.stdout;\n+                    let version_items = mojo_version_output.split(' ').collect::<Vec<&str>>();\n+\n+                    if version_items.len() <= 1 {\n+                        return None;\n+                    }\n+\n+                    if version_items.len() == 2 || !config.show_commit {\n+                        return Some(Ok(version_items[1].trim().to_string()));\n+                    }",
+    "path": "src/modules/mojo.rs",
+    "commit_id": "316ede6b1357ac5206a8bbb1dbf83b98bc0b34c9",
+    "original_commit_id": "3576f00a525b3cff8eb5993dc94a9e15d096145c",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Instead of manual indexing, I would prefer something like this:\r\n```rust\r\n                    let (version, hash) = match version_items[..] {\r\n                        [_, version] => (version, None),\r\n                        [_, version, hash, ..] => (version, Some(hash)),\r\n                        _ => {\r\n                            log::debug!(\"Unexpected `mojo --version` output: {mojo_version_output}\");\r\n                            return None;\r\n                        }\r\n                    }\r\n```\r\n",
+    "created_at": "2024-07-29T17:09:30Z",
+    "updated_at": "2024-08-01T07:47:54Z",
+    "html_url": "https://github.com/starship/starship/pull/6108#discussion_r1695576996",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6108",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1695576996"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6108#discussion_r1695576996"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6108"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1695576996/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 34,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 43,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 43,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1695578691",
+    "pull_request_review_id": 2205529311,
+    "id": 1695578691,
+    "node_id": "PRRC_kwDOCqswNs5lEHpD",
+    "diff_hunk": "@@ -0,0 +1,155 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::mojo::MojoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Mojo version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"mojo\");\n+    let config = MojoConfig::try_load(module.config);\n+\n+    let is_mojo_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_mojo_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let mojo_version_output = context.exec_cmd(\"mojo\", &[\"--version\"])?.stdout;\n+                    let version_items = mojo_version_output.split(' ').collect::<Vec<&str>>();\n+\n+                    if version_items.len() <= 1 {\n+                        return None;\n+                    }\n+\n+                    if version_items.len() == 2 || !config.show_commit {\n+                        return Some(Ok(version_items[1].trim().to_string()));\n+                    }\n+\n+                    let mojo_version = version_items[1].trim();\n+                    let mojo_hash = version_items[2].trim();\n+\n+                    Some(Ok(format!(\"{} {}\", mojo_version, mojo_hash)))",
+    "path": "src/modules/mojo.rs",
+    "commit_id": "316ede6b1357ac5206a8bbb1dbf83b98bc0b34c9",
+    "original_commit_id": "3576f00a525b3cff8eb5993dc94a9e15d096145c",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think it might be better to have separate `$version` and `$hash` variables. To cache the output/parsed version you can use `once_cell::sync::Lazy`.",
+    "created_at": "2024-07-29T17:11:03Z",
+    "updated_at": "2024-07-29T17:15:42Z",
+    "html_url": "https://github.com/starship/starship/pull/6108#discussion_r1695578691",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6108",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1695578691"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6108#discussion_r1695578691"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6108"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1695578691/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 48,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 48,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1695583191",
+    "pull_request_review_id": 2205529311,
+    "id": 1695583191,
+    "node_id": "PRRC_kwDOCqswNs5lEIvX",
+    "diff_hunk": "@@ -0,0 +1,155 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::mojo::MojoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Mojo version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"mojo\");\n+    let config = MojoConfig::try_load(module.config);\n+\n+    let is_mojo_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_mojo_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let mojo_version_output = context.exec_cmd(\"mojo\", &[\"--version\"])?.stdout;\n+                    let version_items = mojo_version_output.split(' ').collect::<Vec<&str>>();",
+    "path": "src/modules/mojo.rs",
+    "commit_id": "316ede6b1357ac5206a8bbb1dbf83b98bc0b34c9",
+    "original_commit_id": "3576f00a525b3cff8eb5993dc94a9e15d096145c",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n                    let version_items = mojo_version_output.split_ascii_whitespace().collect::<Vec<&str>>();\r\n```",
+    "created_at": "2024-07-29T17:14:19Z",
+    "updated_at": "2024-07-29T17:15:42Z",
+    "html_url": "https://github.com/starship/starship/pull/6108#discussion_r1695583191",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6108",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1695583191"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6108#discussion_r1695583191"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6108"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1695583191/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 35,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1701403900",
+    "pull_request_review_id": 2214846014,
+    "id": 1701403900,
+    "node_id": "PRRC_kwDOCqswNs5laVz8",
+    "diff_hunk": "@@ -0,0 +1,155 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::mojo::MojoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Mojo version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"mojo\");\n+    let config = MojoConfig::try_load(module.config);\n+\n+    let is_mojo_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_mojo_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let mojo_version_output = context.exec_cmd(\"mojo\", &[\"--version\"])?.stdout;\n+                    let version_items = mojo_version_output.split(' ').collect::<Vec<&str>>();\n+\n+                    if version_items.len() <= 1 {\n+                        return None;\n+                    }\n+\n+                    if version_items.len() == 2 || !config.show_commit {\n+                        return Some(Ok(version_items[1].trim().to_string()));\n+                    }\n+\n+                    let mojo_version = version_items[1].trim();\n+                    let mojo_hash = version_items[2].trim();\n+\n+                    Some(Ok(format!(\"{} {}\", mojo_version, mojo_hash)))",
+    "path": "src/modules/mojo.rs",
+    "commit_id": "316ede6b1357ac5206a8bbb1dbf83b98bc0b34c9",
+    "original_commit_id": "3576f00a525b3cff8eb5993dc94a9e15d096145c",
+    "user": {
+      "login": "DanielKneipp",
+      "id": 7017171,
+      "node_id": "MDQ6VXNlcjcwMTcxNzE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7017171?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/DanielKneipp",
+      "html_url": "https://github.com/DanielKneipp",
+      "followers_url": "https://api.github.com/users/DanielKneipp/followers",
+      "following_url": "https://api.github.com/users/DanielKneipp/following{/other_user}",
+      "gists_url": "https://api.github.com/users/DanielKneipp/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/DanielKneipp/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/DanielKneipp/subscriptions",
+      "organizations_url": "https://api.github.com/users/DanielKneipp/orgs",
+      "repos_url": "https://api.github.com/users/DanielKneipp/repos",
+      "events_url": "https://api.github.com/users/DanielKneipp/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/DanielKneipp/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Hey, thanks a lot for the suggestions. I implemented the hash as a variable and used the match pattern. Much better indeed!\r\n\r\nHowever, I'm struggling to understand how `Lazy` will be beneficial here. Since the module function will need to be executed anyway when `parsed` is used, wouldn't the function inside `Lazy` be called the same amount of times with or without `Lazy`? I see only a delay in the function call",
+    "created_at": "2024-08-02T07:17:42Z",
+    "updated_at": "2024-08-02T07:17:42Z",
+    "html_url": "https://github.com/starship/starship/pull/6108#discussion_r1701403900",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6108",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1701403900"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6108#discussion_r1701403900"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6108"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1701403900/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 48,
+    "side": "RIGHT",
+    "in_reply_to_id": 1695578691,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 48,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1701898556",
+    "pull_request_review_id": 2215670840,
+    "id": 1701898556,
+    "node_id": "PRRC_kwDOCqswNs5lcOk8",
+    "diff_hunk": "@@ -0,0 +1,155 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::mojo::MojoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Mojo version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"mojo\");\n+    let config = MojoConfig::try_load(module.config);\n+\n+    let is_mojo_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_mojo_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let mojo_version_output = context.exec_cmd(\"mojo\", &[\"--version\"])?.stdout;\n+                    let version_items = mojo_version_output.split(' ').collect::<Vec<&str>>();\n+\n+                    if version_items.len() <= 1 {\n+                        return None;\n+                    }\n+\n+                    if version_items.len() == 2 || !config.show_commit {\n+                        return Some(Ok(version_items[1].trim().to_string()));\n+                    }\n+\n+                    let mojo_version = version_items[1].trim();\n+                    let mojo_hash = version_items[2].trim();\n+\n+                    Some(Ok(format!(\"{} {}\", mojo_version, mojo_hash)))",
+    "path": "src/modules/mojo.rs",
+    "commit_id": "316ede6b1357ac5206a8bbb1dbf83b98bc0b34c9",
+    "original_commit_id": "3576f00a525b3cff8eb5993dc94a9e15d096145c",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The version is not necessarily included in the format string, and in that case getting the version can be skipped altogether. ",
+    "created_at": "2024-08-02T14:06:13Z",
+    "updated_at": "2024-08-02T14:06:14Z",
+    "html_url": "https://github.com/starship/starship/pull/6108#discussion_r1701898556",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6108",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1701898556"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6108#discussion_r1701898556"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6108"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1701898556/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 48,
+    "side": "RIGHT",
+    "in_reply_to_id": 1695578691,
+    "author_association": "MEMBER",
+    "original_position": 48,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1702420747",
+    "pull_request_review_id": 2216562119,
+    "id": 1702420747,
+    "node_id": "PRRC_kwDOCqswNs5leOEL",
+    "diff_hunk": "@@ -0,0 +1,155 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::mojo::MojoConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Mojo version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"mojo\");\n+    let config = MojoConfig::try_load(module.config);\n+\n+    let is_mojo_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_mojo_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let mojo_version_output = context.exec_cmd(\"mojo\", &[\"--version\"])?.stdout;\n+                    let version_items = mojo_version_output.split(' ').collect::<Vec<&str>>();\n+\n+                    if version_items.len() <= 1 {\n+                        return None;\n+                    }\n+\n+                    if version_items.len() == 2 || !config.show_commit {\n+                        return Some(Ok(version_items[1].trim().to_string()));\n+                    }\n+\n+                    let mojo_version = version_items[1].trim();\n+                    let mojo_hash = version_items[2].trim();\n+\n+                    Some(Ok(format!(\"{} {}\", mojo_version, mojo_hash)))",
+    "path": "src/modules/mojo.rs",
+    "commit_id": "316ede6b1357ac5206a8bbb1dbf83b98bc0b34c9",
+    "original_commit_id": "3576f00a525b3cff8eb5993dc94a9e15d096145c",
+    "user": {
+      "login": "DanielKneipp",
+      "id": 7017171,
+      "node_id": "MDQ6VXNlcjcwMTcxNzE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7017171?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/DanielKneipp",
+      "html_url": "https://github.com/DanielKneipp",
+      "followers_url": "https://api.github.com/users/DanielKneipp/followers",
+      "following_url": "https://api.github.com/users/DanielKneipp/following{/other_user}",
+      "gists_url": "https://api.github.com/users/DanielKneipp/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/DanielKneipp/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/DanielKneipp/subscriptions",
+      "organizations_url": "https://api.github.com/users/DanielKneipp/orgs",
+      "repos_url": "https://api.github.com/users/DanielKneipp/repos",
+      "events_url": "https://api.github.com/users/DanielKneipp/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/DanielKneipp/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Oh well, I wouldn't expect someone to use this without showing the version. But since it's a possibility, I believe I have it implemented now 👍.",
+    "created_at": "2024-08-03T00:43:31Z",
+    "updated_at": "2024-08-03T00:43:31Z",
+    "html_url": "https://github.com/starship/starship/pull/6108#discussion_r1702420747",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6108",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1702420747"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6108#discussion_r1702420747"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6108"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1702420747/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 48,
+    "side": "RIGHT",
+    "in_reply_to_id": 1695578691,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 48,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

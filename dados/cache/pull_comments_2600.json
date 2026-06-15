@@ -1,0 +1,696 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/615418503",
+    "pull_request_review_id": 638344180,
+    "id": 615418503,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxNTQxODUwMw==",
+    "diff_hunk": "@@ -686,6 +686,41 @@ By default the module will be shown if any of the following conditions are met:\n format = \"via [🦕 $version](green bold) \"\n ```\n \n+## DLang\n+\n+The `dlang` module shows you your currently installed version of D.\n+By default the module will be shown if any of the following conditions are met:\n+- The current directory contains a file ending with `.d` or `.di`.\n+\n+### Options\n+\n+| Option              | Default                                           | Description                                     |\n+| ------------------- | ------------------------------------------------- | ----------------------------------------------- |\n+| `format`            | `\"via [$symbol($version )]($style)\"`              | The format for the module.                      |\n+| `symbol`            | `\" \"`                                           | A format string representing the symbol of DLang |\n+| `detect_extensions` | `[\"d\", \"di\"]`                                              | Which extensions should trigger this module.    |\n+| `detect_files`      | `[]`      | Which filenames should trigger this module.     |",
+    "path": "docs/config/README.md",
+    "commit_id": "d751324b51993682ec987639824e78bc192fd610",
+    "original_commit_id": "aa76800d0f0d8f41393769dcfc732b00b6cc2d95",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\n| `detect_files`      | `[\"dub.json\", \"dub.sdl\"]`      | Which filenames should trigger this module.     |\n```\n",
+    "created_at": "2021-04-18T15:57:18Z",
+    "updated_at": "2021-04-20T06:31:29Z",
+    "html_url": "https://github.com/starship/starship/pull/2600#discussion_r615418503",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2600",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/615418503"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2600#discussion_r615418503"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2600"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/615418503/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 702,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 17,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/615418624",
+    "pull_request_review_id": 638344180,
+    "id": 615418624,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxNTQxODYyNA==",
+    "diff_hunk": "@@ -0,0 +1,112 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::dlang::DLangConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current D version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"dlang\");\n+    let config = DLangConfig::try_load(module.config);\n+    let is_dlang_project = context\n+        .try_begin_scan()?\n+        .set_extensions(&config.detect_extensions)\n+        .is_match();\n+\n+    if !is_dlang_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"dmd\", &[\"--version\"])\n+                    .and_then(|output| parse_dlang_version(output.stdout.trim()))\n+                    .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `dlang`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_dlang_version(dlang_version: &str) -> Option<String> {\n+    let version = dlang_version\n+        .split('\\n')",
+    "path": "src/modules/dlang.rs",
+    "commit_id": "d751324b51993682ec987639824e78bc192fd610",
+    "original_commit_id": "aa76800d0f0d8f41393769dcfc732b00b6cc2d95",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please add comments describing the outputs of each step.\n```suggestion\n        .lines()\n```\n",
+    "created_at": "2021-04-18T15:58:06Z",
+    "updated_at": "2021-04-20T06:31:29Z",
+    "html_url": "https://github.com/starship/starship/pull/2600#discussion_r615418624",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2600",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/615418624"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2600#discussion_r615418624"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2600"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/615418624/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 52,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 52,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/615418979",
+    "pull_request_review_id": 638344180,
+    "id": 615418979,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxNTQxODk3OQ==",
+    "diff_hunk": "@@ -0,0 +1,112 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::dlang::DLangConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current D version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"dlang\");\n+    let config = DLangConfig::try_load(module.config);\n+    let is_dlang_project = context\n+        .try_begin_scan()?\n+        .set_extensions(&config.detect_extensions)\n+        .is_match();\n+\n+    if !is_dlang_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"dmd\", &[\"--version\"])\n+                    .and_then(|output| parse_dlang_version(output.stdout.trim()))\n+                    .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `dlang`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_dlang_version(dlang_version: &str) -> Option<String> {\n+    let version = dlang_version\n+        .split('\\n')\n+        .next()?\n+        .split_whitespace()\n+        .nth(3)?;\n+\n+    Some(version.to_owned())\n+}\n+\n+#[cfg(test)]\n+mod tests {",
+    "path": "src/modules/dlang.rs",
+    "commit_id": "d751324b51993682ec987639824e78bc192fd610",
+    "original_commit_id": "aa76800d0f0d8f41393769dcfc732b00b6cc2d95",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please add tests for dub manifests: `dub.json` and `dub.sdl`\nhttps://dub.pm/package-format-json.html\nhttps://dub.pm/package-format-sdl.html",
+    "created_at": "2021-04-18T16:00:59Z",
+    "updated_at": "2021-04-20T06:31:29Z",
+    "html_url": "https://github.com/starship/starship/pull/2600#discussion_r615418979",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2600",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/615418979"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2600#discussion_r615418979"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2600"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/615418979/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 66,
+    "original_line": 61,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 61,
+    "position": 66,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/615420480",
+    "pull_request_review_id": 638345546,
+    "id": 615420480,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxNTQyMDQ4MA==",
+    "diff_hunk": "@@ -686,6 +686,42 @@ By default the module will be shown if any of the following conditions are met:\n format = \"via [🦕 $version](green bold) \"\n ```\n \n+## DLang\n+\n+The `dlang` module shows you your currently installed version of D.\n+By default the module will be shown if any of the following conditions are met:\n+- The current directory contains a file ending with `.d` or `.di`.\n+- The current directory contains a `dub.json` or `dub.sdl`.",
+    "path": "docs/config/README.md",
+    "commit_id": "d751324b51993682ec987639824e78bc192fd610",
+    "original_commit_id": "0a3b89bb0fb2698dbe07b22bde2835f7eb6ca815",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\n- The current directory contains a file with the `.d` or `.di` extension.\n- The current directory contains a `dub.json` or `dub.sdl` file.\n```\n",
+    "created_at": "2021-04-18T16:14:26Z",
+    "updated_at": "2021-04-20T06:31:29Z",
+    "html_url": "https://github.com/starship/starship/pull/2600#discussion_r615420480",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2600",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/615420480"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2600#discussion_r615420480"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2600"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/615420480/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 693,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 694,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 9,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/615421045",
+    "pull_request_review_id": 638345546,
+    "id": 615421045,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxNTQyMTA0NQ==",
+    "diff_hunk": "@@ -0,0 +1,143 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::dlang::DLangConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current D version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"dlang\");\n+    let config = DLangConfig::try_load(module.config);\n+    let is_dlang_project = context\n+        .try_begin_scan()?\n+        .set_extensions(&config.detect_extensions)\n+        .set_files(&config.detect_files)\n+        .is_match();\n+\n+    if !is_dlang_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"dmd\", &[\"--version\"])\n+                    .and_then(|output| parse_dlang_version(output.stdout.trim()))\n+                    .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `dlang`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_dlang_version(dlang_version: &str) -> Option<String> {\n+    let version = dlang_version\n+        // split into lines\n+        .lines()\n+        // first line\n+        .next()?\n+        // split by whitespace\n+        .split_whitespace()",
+    "path": "src/modules/dlang.rs",
+    "commit_id": "d751324b51993682ec987639824e78bc192fd610",
+    "original_commit_id": "0a3b89bb0fb2698dbe07b22bde2835f7eb6ca815",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I meant something along these lines https://github.com/starship/starship/blob/fe030c2064e20f1359ab4844d3b3472a1ed1f6b6/src/modules/ruby.rs#L59-L67",
+    "created_at": "2021-04-18T16:18:39Z",
+    "updated_at": "2021-04-20T06:31:29Z",
+    "html_url": "https://github.com/starship/starship/pull/2600#discussion_r615421045",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2600",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/615421045"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2600#discussion_r615421045"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2600"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/615421045/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 52,
+    "original_start_line": 52,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 58,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 58,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/615421188",
+    "pull_request_review_id": 638345546,
+    "id": 615421188,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxNTQyMTE4OA==",
+    "diff_hunk": "@@ -0,0 +1,143 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::dlang::DLangConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current D version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"dlang\");\n+    let config = DLangConfig::try_load(module.config);\n+    let is_dlang_project = context\n+        .try_begin_scan()?\n+        .set_extensions(&config.detect_extensions)\n+        .set_files(&config.detect_files)\n+        .is_match();\n+\n+    if !is_dlang_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"dmd\", &[\"--version\"])\n+                    .and_then(|output| parse_dlang_version(output.stdout.trim()))\n+                    .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `dlang`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_dlang_version(dlang_version: &str) -> Option<String> {\n+    let version = dlang_version\n+        // split into lines\n+        .lines()\n+        // first line\n+        .next()?\n+        // split by whitespace\n+        .split_whitespace()\n+        // get 3rd index once splitted\n+        .nth(3)?;\n+\n+    Some(version.to_owned())\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::parse_dlang_version;\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn test_parse_dlang_version() {\n+        const OUTPUT: &str = \"DMD32 D Compiler v2.096.0-dirty\n+        Copyright (C) 1999-2021 by The D Language Foundation, All Rights Reserved written by Walter Bright\\n\";",
+    "path": "src/modules/dlang.rs",
+    "commit_id": "d751324b51993682ec987639824e78bc192fd610",
+    "original_commit_id": "0a3b89bb0fb2698dbe07b22bde2835f7eb6ca815",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Is this supposed to be indented?",
+    "created_at": "2021-04-18T16:19:55Z",
+    "updated_at": "2021-04-20T06:31:29Z",
+    "html_url": "https://github.com/starship/starship/pull/2600#discussion_r615421188",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2600",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/615421188"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2600#discussion_r615421188"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2600"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/615421188/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 76,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 76,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/615430321",
+    "pull_request_review_id": 638351894,
+    "id": 615430321,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxNTQzMDMyMQ==",
+    "diff_hunk": "@@ -0,0 +1,143 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::dlang::DLangConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current D version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"dlang\");\n+    let config = DLangConfig::try_load(module.config);\n+    let is_dlang_project = context\n+        .try_begin_scan()?\n+        .set_extensions(&config.detect_extensions)\n+        .set_files(&config.detect_files)\n+        .is_match();\n+\n+    if !is_dlang_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"dmd\", &[\"--version\"])\n+                    .and_then(|output| parse_dlang_version(output.stdout.trim()))\n+                    .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `dlang`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_dlang_version(dlang_version: &str) -> Option<String> {\n+    let version = dlang_version\n+        // split into lines\n+        .lines()\n+        // first line\n+        .next()?\n+        // split by whitespace\n+        .split_whitespace()",
+    "path": "src/modules/dlang.rs",
+    "commit_id": "d751324b51993682ec987639824e78bc192fd610",
+    "original_commit_id": "0a3b89bb0fb2698dbe07b22bde2835f7eb6ca815",
+    "user": {
+      "login": "Milo123459",
+      "id": 50248166,
+      "node_id": "MDQ6VXNlcjUwMjQ4MTY2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/50248166?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Milo123459",
+      "html_url": "https://github.com/Milo123459",
+      "followers_url": "https://api.github.com/users/Milo123459/followers",
+      "following_url": "https://api.github.com/users/Milo123459/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Milo123459/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Milo123459/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Milo123459/subscriptions",
+      "organizations_url": "https://api.github.com/users/Milo123459/orgs",
+      "repos_url": "https://api.github.com/users/Milo123459/repos",
+      "events_url": "https://api.github.com/users/Milo123459/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Milo123459/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "oh",
+    "created_at": "2021-04-18T17:37:51Z",
+    "updated_at": "2021-04-20T06:31:29Z",
+    "html_url": "https://github.com/starship/starship/pull/2600#discussion_r615430321",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2600",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/615430321"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2600#discussion_r615430321"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2600"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/615430321/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 52,
+    "original_start_line": 52,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 58,
+    "side": "RIGHT",
+    "in_reply_to_id": 615421045,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 58,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/615430643",
+    "pull_request_review_id": 638352114,
+    "id": 615430643,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxNTQzMDY0Mw==",
+    "diff_hunk": "@@ -0,0 +1,143 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::dlang::DLangConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current D version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"dlang\");\n+    let config = DLangConfig::try_load(module.config);\n+    let is_dlang_project = context\n+        .try_begin_scan()?\n+        .set_extensions(&config.detect_extensions)\n+        .set_files(&config.detect_files)\n+        .is_match();\n+\n+    if !is_dlang_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"dmd\", &[\"--version\"])\n+                    .and_then(|output| parse_dlang_version(output.stdout.trim()))\n+                    .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `dlang`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_dlang_version(dlang_version: &str) -> Option<String> {\n+    let version = dlang_version\n+        // split into lines\n+        .lines()\n+        // first line\n+        .next()?\n+        // split by whitespace\n+        .split_whitespace()\n+        // get 3rd index once splitted\n+        .nth(3)?;\n+\n+    Some(version.to_owned())\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::parse_dlang_version;\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn test_parse_dlang_version() {\n+        const OUTPUT: &str = \"DMD32 D Compiler v2.096.0-dirty\n+        Copyright (C) 1999-2021 by The D Language Foundation, All Rights Reserved written by Walter Bright\\n\";",
+    "path": "src/modules/dlang.rs",
+    "commit_id": "d751324b51993682ec987639824e78bc192fd610",
+    "original_commit_id": "0a3b89bb0fb2698dbe07b22bde2835f7eb6ca815",
+    "user": {
+      "login": "Milo123459",
+      "id": 50248166,
+      "node_id": "MDQ6VXNlcjUwMjQ4MTY2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/50248166?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Milo123459",
+      "html_url": "https://github.com/Milo123459",
+      "followers_url": "https://api.github.com/users/Milo123459/followers",
+      "following_url": "https://api.github.com/users/Milo123459/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Milo123459/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Milo123459/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Milo123459/subscriptions",
+      "organizations_url": "https://api.github.com/users/Milo123459/orgs",
+      "repos_url": "https://api.github.com/users/Milo123459/repos",
+      "events_url": "https://api.github.com/users/Milo123459/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Milo123459/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'm confused, that's what dmd --version returns.",
+    "created_at": "2021-04-18T17:40:28Z",
+    "updated_at": "2021-04-20T06:31:29Z",
+    "html_url": "https://github.com/starship/starship/pull/2600#discussion_r615430643",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2600",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/615430643"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2600#discussion_r615430643"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2600"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/615430643/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 76,
+    "side": "RIGHT",
+    "in_reply_to_id": 615421188,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 76,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/615725583",
+    "pull_request_review_id": 638702598,
+    "id": 615725583,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxNTcyNTU4Mw==",
+    "diff_hunk": "@@ -0,0 +1,143 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::dlang::DLangConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current D version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"dlang\");\n+    let config = DLangConfig::try_load(module.config);\n+    let is_dlang_project = context\n+        .try_begin_scan()?\n+        .set_extensions(&config.detect_extensions)\n+        .set_files(&config.detect_files)\n+        .is_match();\n+\n+    if !is_dlang_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"dmd\", &[\"--version\"])\n+                    .and_then(|output| parse_dlang_version(output.stdout.trim()))\n+                    .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `dlang`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_dlang_version(dlang_version: &str) -> Option<String> {\n+    let version = dlang_version\n+        // split into lines\n+        .lines()\n+        // first line\n+        .next()?\n+        // split by whitespace\n+        .split_whitespace()\n+        // get 3rd index once splitted\n+        .nth(3)?;\n+\n+    Some(version.to_owned())\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::parse_dlang_version;\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn test_parse_dlang_version() {\n+        const OUTPUT: &str = \"DMD32 D Compiler v2.096.0-dirty\n+        Copyright (C) 1999-2021 by The D Language Foundation, All Rights Reserved written by Walter Bright\\n\";",
+    "path": "src/modules/dlang.rs",
+    "commit_id": "d751324b51993682ec987639824e78bc192fd610",
+    "original_commit_id": "0a3b89bb0fb2698dbe07b22bde2835f7eb6ca815",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'm asking about the space between dirty and copyright.\r\n```diff\r\n+        const OUTPUT: &str = \"DMD32 D Compiler v2.096.0-dirty\r\n+        Copyright (C) 1999-2021 by The D Language Foundation, All Rights Reserved written by Walter Bright\\n\";\r\n```",
+    "created_at": "2021-04-19T10:22:38Z",
+    "updated_at": "2021-04-20T06:31:29Z",
+    "html_url": "https://github.com/starship/starship/pull/2600#discussion_r615725583",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2600",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/615725583"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2600#discussion_r615725583"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2600"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/615725583/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 76,
+    "side": "RIGHT",
+    "in_reply_to_id": 615421188,
+    "author_association": "MEMBER",
+    "original_position": 76,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/615726435",
+    "pull_request_review_id": 638703735,
+    "id": 615726435,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYxNTcyNjQzNQ==",
+    "diff_hunk": "@@ -0,0 +1,143 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::dlang::DLangConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current D version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"dlang\");\n+    let config = DLangConfig::try_load(module.config);\n+    let is_dlang_project = context\n+        .try_begin_scan()?\n+        .set_extensions(&config.detect_extensions)\n+        .set_files(&config.detect_files)\n+        .is_match();\n+\n+    if !is_dlang_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => context\n+                    .exec_cmd(\"dmd\", &[\"--version\"])\n+                    .and_then(|output| parse_dlang_version(output.stdout.trim()))\n+                    .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `dlang`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_dlang_version(dlang_version: &str) -> Option<String> {\n+    let version = dlang_version\n+        // split into lines\n+        .lines()\n+        // first line\n+        .next()?\n+        // split by whitespace\n+        .split_whitespace()\n+        // get 3rd index once splitted\n+        .nth(3)?;\n+\n+    Some(version.to_owned())\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::parse_dlang_version;\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn test_parse_dlang_version() {\n+        const OUTPUT: &str = \"DMD32 D Compiler v2.096.0-dirty\n+        Copyright (C) 1999-2021 by The D Language Foundation, All Rights Reserved written by Walter Bright\\n\";",
+    "path": "src/modules/dlang.rs",
+    "commit_id": "d751324b51993682ec987639824e78bc192fd610",
+    "original_commit_id": "0a3b89bb0fb2698dbe07b22bde2835f7eb6ca815",
+    "user": {
+      "login": "Milo123459",
+      "id": 50248166,
+      "node_id": "MDQ6VXNlcjUwMjQ4MTY2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/50248166?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Milo123459",
+      "html_url": "https://github.com/Milo123459",
+      "followers_url": "https://api.github.com/users/Milo123459/followers",
+      "following_url": "https://api.github.com/users/Milo123459/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Milo123459/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Milo123459/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Milo123459/subscriptions",
+      "organizations_url": "https://api.github.com/users/Milo123459/orgs",
+      "repos_url": "https://api.github.com/users/Milo123459/repos",
+      "events_url": "https://api.github.com/users/Milo123459/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Milo123459/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Oh it's a new line",
+    "created_at": "2021-04-19T10:24:00Z",
+    "updated_at": "2021-04-20T06:31:29Z",
+    "html_url": "https://github.com/starship/starship/pull/2600#discussion_r615726435",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2600",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/615726435"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2600#discussion_r615726435"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2600"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/615726435/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 76,
+    "side": "RIGHT",
+    "in_reply_to_id": 615421188,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 76,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

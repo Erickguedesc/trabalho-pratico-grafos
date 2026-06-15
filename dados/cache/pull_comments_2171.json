@@ -1,0 +1,489 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/560495641",
+    "pull_request_review_id": 571660354,
+    "id": 560495641,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU2MDQ5NTY0MQ==",
+    "diff_hunk": "@@ -64,6 +64,7 @@ indexmap = \"1.6.1\"\n notify-rust = { version = \"4.2.2\", optional = true }\n semver = \"0.11.0\"\n which = \"4.0.2\"\n+process_control = \"3.0.0\"",
+    "path": "Cargo.toml",
+    "commit_id": "72ae960cf9f605ebe7fa0246638d1800cff22e89",
+    "original_commit_id": "277fd3f6e2568ee719a31a8c10ca98cbc5d00c00",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This features is supposed to speed the crate up and it's already an indirect dependency.\r\n\r\n```suggestion\r\nprocess_control = { version = \"3.0.0\", features = [\"crossbeam-channel\"] }\r\n```\r\n",
+    "created_at": "2021-01-19T21:06:22Z",
+    "updated_at": "2021-01-21T18:02:07Z",
+    "html_url": "https://github.com/starship/starship/pull/2171#discussion_r560495641",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2171",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/560495641"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2171#discussion_r560495641"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2171"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/560495641/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 67,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/560497163",
+    "pull_request_review_id": 571660354,
+    "id": 560497163,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU2MDQ5NzE2Mw==",
+    "diff_hunk": "@@ -258,15 +259,31 @@ fn internal_exec_cmd(cmd: &str, args: &[&str]) -> Option<CommandOutput> {\n             log::trace!(\"Using {:?} as {:?}\", full_path, cmd);\n             full_path\n         }\n-        Err(e) => {\n-            log::trace!(\"Unable to find {:?} in PATH, {:?}\", cmd, e);\n+        Err(error) => {\n+            log::trace!(\"Unable to find {:?} in PATH, {:?}\", cmd, error);\n             return None;\n         }\n     };\n \n+    let time_limit = Duration::from_millis(500);\n+\n     let start = Instant::now();\n-    match Command::new(full_path).args(args).output() {\n-        Ok(output) => {\n+\n+    let process = match Command::new(full_path)\n+        .args(args)\n+        .stderr(Stdio::piped())\n+        .stdout(Stdio::piped())\n+        .spawn()\n+    {\n+        Ok(process) => process,\n+        Err(error) => {\n+            log::info!(\"Unable to run {:?}, {:?}\", cmd, error);\n+            return None;\n+        }\n+    };\n+\n+    match process.with_output_timeout(time_limit).wait() {",
+    "path": "src/utils.rs",
+    "commit_id": "72ae960cf9f605ebe7fa0246638d1800cff22e89",
+    "original_commit_id": "277fd3f6e2568ee719a31a8c10ca98cbc5d00c00",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think terminating the process on timeout makes sense.\r\n\r\n```suggestion\r\n    match process.with_output_timeout(time_limit).terminating().wait() {\r\n```",
+    "created_at": "2021-01-19T21:09:13Z",
+    "updated_at": "2021-01-21T18:02:07Z",
+    "html_url": "https://github.com/starship/starship/pull/2171#discussion_r560497163",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2171",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/560497163"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2171#discussion_r560497163"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2171"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/560497163/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 285,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 43,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/560506156",
+    "pull_request_review_id": 571660354,
+    "id": 560506156,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU2MDUwNjE1Ng==",
+    "diff_hunk": "@@ -287,6 +304,10 @@ fn internal_exec_cmd(cmd: &str, args: &[&str]) -> Option<CommandOutput> {\n                 stderr: stderr_string,\n             })\n         }\n+        Ok(None) => {\n+            log::warn!(\"Executing command {:?} timedout\", cmd);",
+    "path": "src/utils.rs",
+    "commit_id": "72ae960cf9f605ebe7fa0246638d1800cff22e89",
+    "original_commit_id": "277fd3f6e2568ee719a31a8c10ca98cbc5d00c00",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this needs to separated with a space:\r\n```suggestion\r\n            log::warn!(\"Executing command {:?} timed out\", cmd);\r\n```",
+    "created_at": "2021-01-19T21:25:26Z",
+    "updated_at": "2021-01-21T18:02:07Z",
+    "html_url": "https://github.com/starship/starship/pull/2171#discussion_r560506156",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2171",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/560506156"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2171#discussion_r560506156"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2171"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/560506156/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 308,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 53,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/561171947",
+    "pull_request_review_id": 572496682,
+    "id": 561171947,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU2MTE3MTk0Nw==",
+    "diff_hunk": "@@ -64,6 +64,7 @@ indexmap = \"1.6.1\"\n notify-rust = { version = \"4.2.2\", optional = true }\n semver = \"0.11.0\"\n which = \"4.0.2\"\n+process_control = \"3.0.0\"",
+    "path": "Cargo.toml",
+    "commit_id": "72ae960cf9f605ebe7fa0246638d1800cff22e89",
+    "original_commit_id": "277fd3f6e2568ee719a31a8c10ca98cbc5d00c00",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Good idea, I never thought to add while working on the poc.",
+    "created_at": "2021-01-20T18:10:58Z",
+    "updated_at": "2021-01-21T18:02:07Z",
+    "html_url": "https://github.com/starship/starship/pull/2171#discussion_r561171947",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2171",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/561171947"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2171#discussion_r561171947"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2171"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/561171947/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 67,
+    "side": "RIGHT",
+    "in_reply_to_id": 560495641,
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/561177061",
+    "pull_request_review_id": 572503382,
+    "id": 561177061,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU2MTE3NzA2MQ==",
+    "diff_hunk": "@@ -258,15 +259,31 @@ fn internal_exec_cmd(cmd: &str, args: &[&str]) -> Option<CommandOutput> {\n             log::trace!(\"Using {:?} as {:?}\", full_path, cmd);\n             full_path\n         }\n-        Err(e) => {\n-            log::trace!(\"Unable to find {:?} in PATH, {:?}\", cmd, e);\n+        Err(error) => {\n+            log::trace!(\"Unable to find {:?} in PATH, {:?}\", cmd, error);\n             return None;\n         }\n     };\n \n+    let time_limit = Duration::from_millis(500);\n+\n     let start = Instant::now();\n-    match Command::new(full_path).args(args).output() {\n-        Ok(output) => {\n+\n+    let process = match Command::new(full_path)\n+        .args(args)\n+        .stderr(Stdio::piped())\n+        .stdout(Stdio::piped())\n+        .spawn()\n+    {\n+        Ok(process) => process,\n+        Err(error) => {\n+            log::info!(\"Unable to run {:?}, {:?}\", cmd, error);\n+            return None;\n+        }\n+    };\n+\n+    match process.with_output_timeout(time_limit).wait() {",
+    "path": "src/utils.rs",
+    "commit_id": "72ae960cf9f605ebe7fa0246638d1800cff22e89",
+    "original_commit_id": "277fd3f6e2568ee719a31a8c10ca98cbc5d00c00",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'm not sure about this the [process_control docs](https://docs.rs/process_control/3.0.0/process_control/struct.Terminator.html#safety) seem to indicate that `terminating` isn't safe to use in production. Any suggestions what to do to here?",
+    "created_at": "2021-01-20T18:19:25Z",
+    "updated_at": "2021-01-21T18:02:07Z",
+    "html_url": "https://github.com/starship/starship/pull/2171#discussion_r561177061",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2171",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/561177061"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2171#discussion_r561177061"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2171"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/561177061/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 285,
+    "side": "RIGHT",
+    "in_reply_to_id": 560497163,
+    "author_association": "MEMBER",
+    "original_position": 43,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/561197146",
+    "pull_request_review_id": 572528808,
+    "id": 561197146,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU2MTE5NzE0Ng==",
+    "diff_hunk": "@@ -258,15 +259,31 @@ fn internal_exec_cmd(cmd: &str, args: &[&str]) -> Option<CommandOutput> {\n             log::trace!(\"Using {:?} as {:?}\", full_path, cmd);\n             full_path\n         }\n-        Err(e) => {\n-            log::trace!(\"Unable to find {:?} in PATH, {:?}\", cmd, e);\n+        Err(error) => {\n+            log::trace!(\"Unable to find {:?} in PATH, {:?}\", cmd, error);\n             return None;\n         }\n     };\n \n+    let time_limit = Duration::from_millis(500);\n+\n     let start = Instant::now();\n-    match Command::new(full_path).args(args).output() {\n-        Ok(output) => {\n+\n+    let process = match Command::new(full_path)\n+        .args(args)\n+        .stderr(Stdio::piped())\n+        .stdout(Stdio::piped())\n+        .spawn()\n+    {\n+        Ok(process) => process,\n+        Err(error) => {\n+            log::info!(\"Unable to run {:?}, {:?}\", cmd, error);\n+            return None;\n+        }\n+    };\n+\n+    match process.with_output_timeout(time_limit).wait() {",
+    "path": "src/utils.rs",
+    "commit_id": "72ae960cf9f605ebe7fa0246638d1800cff22e89",
+    "original_commit_id": "277fd3f6e2568ee719a31a8c10ca98cbc5d00c00",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "[terminat**ing**](https://docs.rs/process_control/3.0.0/process_control/trait.Timeout.html#tymethod.terminating) should be safe. [It's supposed what to be one of the things that sets it apart from other crates.](https://docs.rs/process_control/3.0.0/process_control/index.html#comparable-crates)\r\n\r\nIf you don't want to add `terminating` the crate isn't required for the timeout functionality.\r\n\r\n```rust\r\nlet (sender, receiver) = channel();\r\n\r\nthread::spawn(move|| {\r\n    sender.send(process.output()).unwrap();\r\n});\r\n\r\nreceiver.recv_timeout(duration)\r\n```",
+    "created_at": "2021-01-20T18:51:14Z",
+    "updated_at": "2021-01-21T18:02:07Z",
+    "html_url": "https://github.com/starship/starship/pull/2171#discussion_r561197146",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2171",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/561197146"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2171#discussion_r561197146"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2171"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/561197146/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 285,
+    "side": "RIGHT",
+    "in_reply_to_id": 560497163,
+    "author_association": "MEMBER",
+    "original_position": 43,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/562088354",
+    "pull_request_review_id": 573597428,
+    "id": 562088354,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU2MjA4ODM1NA==",
+    "diff_hunk": "@@ -258,15 +259,31 @@ fn internal_exec_cmd(cmd: &str, args: &[&str]) -> Option<CommandOutput> {\n             log::trace!(\"Using {:?} as {:?}\", full_path, cmd);\n             full_path\n         }\n-        Err(e) => {\n-            log::trace!(\"Unable to find {:?} in PATH, {:?}\", cmd, e);\n+        Err(error) => {\n+            log::trace!(\"Unable to find {:?} in PATH, {:?}\", cmd, error);\n             return None;\n         }\n     };\n \n+    let time_limit = Duration::from_millis(500);\n+\n     let start = Instant::now();\n-    match Command::new(full_path).args(args).output() {\n-        Ok(output) => {\n+\n+    let process = match Command::new(full_path)\n+        .args(args)\n+        .stderr(Stdio::piped())\n+        .stdout(Stdio::piped())\n+        .spawn()\n+    {\n+        Ok(process) => process,\n+        Err(error) => {\n+            log::info!(\"Unable to run {:?}, {:?}\", cmd, error);\n+            return None;\n+        }\n+    };\n+\n+    match process.with_output_timeout(time_limit).wait() {",
+    "path": "src/utils.rs",
+    "commit_id": "72ae960cf9f605ebe7fa0246638d1800cff22e89",
+    "original_commit_id": "277fd3f6e2568ee719a31a8c10ca98cbc5d00c00",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ah nice I didn't see that.",
+    "created_at": "2021-01-21T18:02:34Z",
+    "updated_at": "2021-01-21T18:02:34Z",
+    "html_url": "https://github.com/starship/starship/pull/2171#discussion_r562088354",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2171",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/562088354"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2171#discussion_r562088354"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2171"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/562088354/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 285,
+    "side": "RIGHT",
+    "in_reply_to_id": 560497163,
+    "author_association": "MEMBER",
+    "original_position": 43,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

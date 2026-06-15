@@ -1,0 +1,350 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1399725429",
+    "pull_request_review_id": 1740648882,
+    "id": 1399725429,
+    "node_id": "PRRC_kwDOCqswNs5Tbh11",
+    "diff_hunk": "@@ -229,6 +230,14 @@ pub fn fixture_repo(provider: FixtureProvider) -> io::Result<TempDir> {\n \n             Ok(path)\n         }\n+        FixtureProvider::GitBare => {\n+            let path = tempfile::tempdir()?;\n+            create_command(\"git\")?\n+                .current_dir(path.path())\n+                .args([\"--bare\", \"init\"])\n+                .output()?;",
+    "path": "src/test/mod.rs",
+    "commit_id": "a5a635ea1f749c8e0cd947d86ec7c68429ae7fd7",
+    "original_commit_id": "4d575b62745c06cecf911c63b1e11521739bdb4c",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this should use `gix::ThreadSafeRepository::init` instead.",
+    "created_at": "2023-11-20T20:39:38Z",
+    "updated_at": "2023-11-20T21:12:27Z",
+    "html_url": "https://github.com/starship/starship/pull/5581#discussion_r1399725429",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5581",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1399725429"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5581#discussion_r1399725429"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5581"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1399725429/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 235,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 238,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 17,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1399751788",
+    "pull_request_review_id": 1740648882,
+    "id": 1399751788,
+    "node_id": "PRRC_kwDOCqswNs5TboRs",
+    "diff_hunk": "@@ -214,6 +214,12 @@ fn get_repo_status(\n     log::debug!(\"New repo status created\");\n \n     let mut repo_status = RepoStatus::default();\n+\n+    // can't run git status against a bare repo\n+    if repo.repo.work_tree.is_none() {\n+        log::debug!(\"This is a bare repository, not generating git status\");\n+        return Some(repo_status);\n+    }",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "a5a635ea1f749c8e0cd947d86ec7c68429ae7fd7",
+    "original_commit_id": "4d575b62745c06cecf911c63b1e11521739bdb4c",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This should probably check if the repository kind is `Bare` per the git config. Since `git status` ignores bare repositories in general, perhaps also perform this check earlier.",
+    "created_at": "2023-11-20T21:12:16Z",
+    "updated_at": "2023-11-20T21:12:27Z",
+    "html_url": "https://github.com/starship/starship/pull/5581#discussion_r1399751788",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5581",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1399751788"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5581#discussion_r1399751788"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5581"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1399751788/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 217,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 222,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 9,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1402773520",
+    "pull_request_review_id": 1745475530,
+    "id": 1402773520,
+    "node_id": "PRRC_kwDOCqswNs5TnKAQ",
+    "diff_hunk": "@@ -214,6 +214,12 @@ fn get_repo_status(\n     log::debug!(\"New repo status created\");\n \n     let mut repo_status = RepoStatus::default();\n+\n+    // can't run git status against a bare repo\n+    if repo.repo.work_tree.is_none() {\n+        log::debug!(\"This is a bare repository, not generating git status\");\n+        return Some(repo_status);\n+    }",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "a5a635ea1f749c8e0cd947d86ec7c68429ae7fd7",
+    "original_commit_id": "4d575b62745c06cecf911c63b1e11521739bdb4c",
+    "user": {
+      "login": "wjhoward",
+      "id": 61805721,
+      "node_id": "MDQ6VXNlcjYxODA1NzIx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/61805721?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/wjhoward",
+      "html_url": "https://github.com/wjhoward",
+      "followers_url": "https://api.github.com/users/wjhoward/followers",
+      "following_url": "https://api.github.com/users/wjhoward/following{/other_user}",
+      "gists_url": "https://api.github.com/users/wjhoward/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/wjhoward/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/wjhoward/subscriptions",
+      "organizations_url": "https://api.github.com/users/wjhoward/orgs",
+      "repos_url": "https://api.github.com/users/wjhoward/repos",
+      "events_url": "https://api.github.com/users/wjhoward/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/wjhoward/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Makes sense, code updated to enable checking the repo type and I've moved the check to the start of the `module` function",
+    "created_at": "2023-11-22T22:40:52Z",
+    "updated_at": "2023-11-22T22:40:52Z",
+    "html_url": "https://github.com/starship/starship/pull/5581#discussion_r1402773520",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5581",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1402773520"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5581#discussion_r1402773520"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5581"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1402773520/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 217,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 222,
+    "side": "RIGHT",
+    "in_reply_to_id": 1399751788,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 9,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1402777197",
+    "pull_request_review_id": 1745480228,
+    "id": 1402777197,
+    "node_id": "PRRC_kwDOCqswNs5TnK5t",
+    "diff_hunk": "@@ -229,6 +230,14 @@ pub fn fixture_repo(provider: FixtureProvider) -> io::Result<TempDir> {\n \n             Ok(path)\n         }\n+        FixtureProvider::GitBare => {\n+            let path = tempfile::tempdir()?;\n+            create_command(\"git\")?\n+                .current_dir(path.path())\n+                .args([\"--bare\", \"init\"])\n+                .output()?;",
+    "path": "src/test/mod.rs",
+    "commit_id": "a5a635ea1f749c8e0cd947d86ec7c68429ae7fd7",
+    "original_commit_id": "4d575b62745c06cecf911c63b1e11521739bdb4c",
+    "user": {
+      "login": "wjhoward",
+      "id": 61805721,
+      "node_id": "MDQ6VXNlcjYxODA1NzIx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/61805721?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/wjhoward",
+      "html_url": "https://github.com/wjhoward",
+      "followers_url": "https://api.github.com/users/wjhoward/followers",
+      "following_url": "https://api.github.com/users/wjhoward/following{/other_user}",
+      "gists_url": "https://api.github.com/users/wjhoward/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/wjhoward/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/wjhoward/subscriptions",
+      "organizations_url": "https://api.github.com/users/wjhoward/orgs",
+      "repos_url": "https://api.github.com/users/wjhoward/repos",
+      "events_url": "https://api.github.com/users/wjhoward/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/wjhoward/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I had a look at switching to use `gix::ThreadSafeRepository::init` but ran in to some challenges due to the expected return type: https://github.com/starship/starship/blob/4d575b62745c06cecf911c63b1e11521739bdb4c/src/test/mod.rs#L174\r\n\r\nSo I'm not sure how easy it would be to utilise `gix::ThreadSafeRepository::init` given the above.\r\nIn addition I've followed the convention of the other fixture providers e.g:\r\n\r\nhttps://github.com/starship/starship/blob/4d575b62745c06cecf911c63b1e11521739bdb4c/src/test/mod.rs#L191-L199\r\n\r\nLet me know what you think?",
+    "created_at": "2023-11-22T22:48:05Z",
+    "updated_at": "2023-11-22T22:48:05Z",
+    "html_url": "https://github.com/starship/starship/pull/5581#discussion_r1402777197",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5581",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1402777197"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5581#discussion_r1402777197"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5581"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1402777197/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 235,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 238,
+    "side": "RIGHT",
+    "in_reply_to_id": 1399725429,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 17,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1404576139",
+    "pull_request_review_id": 1748299329,
+    "id": 1404576139,
+    "node_id": "PRRC_kwDOCqswNs5TuCGL",
+    "diff_hunk": "@@ -229,6 +230,14 @@ pub fn fixture_repo(provider: FixtureProvider) -> io::Result<TempDir> {\n \n             Ok(path)\n         }\n+        FixtureProvider::GitBare => {\n+            let path = tempfile::tempdir()?;\n+            create_command(\"git\")?\n+                .current_dir(path.path())\n+                .args([\"--bare\", \"init\"])\n+                .output()?;",
+    "path": "src/test/mod.rs",
+    "commit_id": "a5a635ea1f749c8e0cd947d86ec7c68429ae7fd7",
+    "original_commit_id": "4d575b62745c06cecf911c63b1e11521739bdb4c",
+    "user": {
+      "login": "wjhoward",
+      "id": 61805721,
+      "node_id": "MDQ6VXNlcjYxODA1NzIx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/61805721?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/wjhoward",
+      "html_url": "https://github.com/wjhoward",
+      "followers_url": "https://api.github.com/users/wjhoward/followers",
+      "following_url": "https://api.github.com/users/wjhoward/following{/other_user}",
+      "gists_url": "https://api.github.com/users/wjhoward/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/wjhoward/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/wjhoward/subscriptions",
+      "organizations_url": "https://api.github.com/users/wjhoward/orgs",
+      "repos_url": "https://api.github.com/users/wjhoward/repos",
+      "events_url": "https://api.github.com/users/wjhoward/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/wjhoward/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Switched to `gix::ThreadSafeRepository::init`.",
+    "created_at": "2023-11-24T18:14:10Z",
+    "updated_at": "2023-11-24T18:14:10Z",
+    "html_url": "https://github.com/starship/starship/pull/5581#discussion_r1404576139",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5581",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1404576139"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5581#discussion_r1404576139"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5581"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1404576139/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 235,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 238,
+    "side": "RIGHT",
+    "in_reply_to_id": 1399725429,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 17,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

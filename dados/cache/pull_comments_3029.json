@@ -1,0 +1,419 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/704749368",
+    "pull_request_review_id": 749584848,
+    "id": 704749368,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwNDc0OTM2OA==",
+    "diff_hunk": "@@ -1078,6 +1078,37 @@ By default the module will be shown if any of the following conditions are met:\n format = \"via [e $version](bold red) \"\n ```\n \n+## Fill\n+\n+The `fill` module fills any extra space on the line with a symbol. If multiple `fill` modules are\n+present in a line they will split the space evenly between them. This is useful for aligning\n+other modules.\n+\n+### Options\n+\n+| Option     | Default        | Description                            |\n+| ---------- | -------------- | -------------------------------------- |\n+| `symbol`   | `\".\"`          | The symbol used to fill the line.      |",
+    "path": "docs/config/README.md",
+    "commit_id": "e1887e067e44740489586ff08e16debdee8e08f5",
+    "original_commit_id": "78024e96d6d38b107ad97d5e76424e09ab8b03c4",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think that a space may be a better-suited default. It's what I often see in other prompts people want to mimic. Thoughts? 🤔 ",
+    "created_at": "2021-09-08T20:28:38Z",
+    "updated_at": "2021-09-10T18:05:47Z",
+    "html_url": "https://github.com/starship/starship/pull/3029#discussion_r704749368",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3029",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/704749368"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3029#discussion_r704749368"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3029"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/704749368/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1132,
+    "original_line": 1132,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 14,
+    "position": 14,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/706362758",
+    "pull_request_review_id": 749584848,
+    "id": 706362758,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwNjM2Mjc1OA==",
+    "diff_hunk": "@@ -1,39 +1,184 @@\n+use crate::print::{Grapheme, UnicodeWidthGraphemes};\n use ansi_term::{ANSIString, Style};\n use std::fmt;\n+use unicode_segmentation::UnicodeSegmentation;\n \n-/// A segment is a single configurable element in a module. This will usually\n-/// contain a data point to provide context for the prompt's user\n-/// (e.g. The version that software is running).\n+/// Type that holds text with an associated style\n #[derive(Clone)]\n-pub struct Segment {\n+pub struct TextSegment {\n     /// The segment's style. If None, will inherit the style of the module containing it.\n-    pub style: Option<Style>,\n+    style: Option<Style>,\n \n     /// The string value of the current segment.\n-    pub value: String,\n+    value: String,\n+}\n+\n+impl TextSegment {\n+    // Returns the ANSIString of the segment value, not including its prefix and suffix",
+    "path": "src/segment.rs",
+    "commit_id": "e1887e067e44740489586ff08e16debdee8e08f5",
+    "original_commit_id": "b29e7056df2372fe56b2fbe07818f78b6f20c28f",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "We used to have the notion of `prefix` and `suffix` in the codebase, but have since gone on to have each individually styled text element be a `Segment` of its own.\r\n\r\nTo avoid confusion, I'd recommend we remove the mention of \"prefix\" and \"suffix\".\r\n```suggestion\r\n    // Returns the ANSIString of the segment value\r\n```",
+    "created_at": "2021-09-10T17:45:04Z",
+    "updated_at": "2021-09-10T18:05:47Z",
+    "html_url": "https://github.com/starship/starship/pull/3029#discussion_r706362758",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3029",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/706362758"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3029#discussion_r706362758"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3029"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/706362758/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 17,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/706363089",
+    "pull_request_review_id": 749584848,
+    "id": 706363089,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwNjM2MzA4OQ==",
+    "diff_hunk": "@@ -1,39 +1,184 @@\n+use crate::print::{Grapheme, UnicodeWidthGraphemes};\n use ansi_term::{ANSIString, Style};\n use std::fmt;\n+use unicode_segmentation::UnicodeSegmentation;\n \n-/// A segment is a single configurable element in a module. This will usually\n-/// contain a data point to provide context for the prompt's user\n-/// (e.g. The version that software is running).\n+/// Type that holds text with an associated style",
+    "path": "src/segment.rs",
+    "commit_id": "e1887e067e44740489586ff08e16debdee8e08f5",
+    "original_commit_id": "b29e7056df2372fe56b2fbe07818f78b6f20c28f",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Is there a reason this older, more descriptive comment, no longer applies?\r\n\r\n```suggestion\r\n/// A segment is a single configurable element in a module. This will usually\r\n/// contain a data point to provide context for the prompt's user\r\n/// (e.g. The version that software is running).\r\n```",
+    "created_at": "2021-09-10T17:45:40Z",
+    "updated_at": "2021-09-10T18:05:47Z",
+    "html_url": "https://github.com/starship/starship/pull/3029#discussion_r706363089",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3029",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/706363089"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3029#discussion_r706363089"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3029"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/706363089/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 6,
+    "original_line": 6,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 9,
+    "position": 9,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/706450802",
+    "pull_request_review_id": 751771748,
+    "id": 706450802,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwNjQ1MDgwMg==",
+    "diff_hunk": "@@ -1,39 +1,184 @@\n+use crate::print::{Grapheme, UnicodeWidthGraphemes};\n use ansi_term::{ANSIString, Style};\n use std::fmt;\n+use unicode_segmentation::UnicodeSegmentation;\n \n-/// A segment is a single configurable element in a module. This will usually\n-/// contain a data point to provide context for the prompt's user\n-/// (e.g. The version that software is running).\n+/// Type that holds text with an associated style",
+    "path": "src/segment.rs",
+    "commit_id": "e1887e067e44740489586ff08e16debdee8e08f5",
+    "original_commit_id": "b29e7056df2372fe56b2fbe07818f78b6f20c28f",
+    "user": {
+      "login": "mjeffryes",
+      "id": 1189194,
+      "node_id": "MDQ6VXNlcjExODkxOTQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1189194?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mjeffryes",
+      "html_url": "https://github.com/mjeffryes",
+      "followers_url": "https://api.github.com/users/mjeffryes/followers",
+      "following_url": "https://api.github.com/users/mjeffryes/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mjeffryes/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mjeffryes/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mjeffryes/subscriptions",
+      "organizations_url": "https://api.github.com/users/mjeffryes/orgs",
+      "repos_url": "https://api.github.com/users/mjeffryes/repos",
+      "events_url": "https://api.github.com/users/mjeffryes/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mjeffryes/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I feel like that comment is not really true even before this change (sometimes a module produces multiple segments that can't be configured independently, sometimes two different elements that share a style might be combined) and definitely isn't correct after this change (because we're actively splitting segments on newlines). \r\n\r\nThe thing that seems to be notable about a segment is that it's a chunk of text that has the same styling. It is true that for the most part a segment will be a logical chunk of text, but that's more of a byproduct of sensible styling choices than inherent in the type. \r\n\r\neg. we could create a format string like `\"[r](red)[a](yellow)[i](green)[n](cyan)[b](blue)[o](magenta)[w](white)\"` which would be 7 segments but really only one element (a word). This is just uncommon, b/c shell prompts generally use styles for color coding, not just decoration. \r\n\r\nI'm open to expanding on the comment though. How about this?\r\n```\r\n/// A segment is a chunk of text with an associated style.\r\n/// In general, modules should produce one segment for each configurable element in the module. \r\n/// (eg. The version that software is running might be one element, and the symbol for the module a second segment).\r\n```\r\n(Though TBH, to me it feels like the last two lines really belong as a comment on `Module not on Segment)\r\n",
+    "created_at": "2021-09-10T20:25:59Z",
+    "updated_at": "2021-09-10T20:25:59Z",
+    "html_url": "https://github.com/starship/starship/pull/3029#discussion_r706450802",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3029",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/706450802"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3029#discussion_r706450802"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3029"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/706450802/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 6,
+    "original_line": 6,
+    "side": "RIGHT",
+    "in_reply_to_id": 706363089,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 9,
+    "position": 9,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/706450852",
+    "pull_request_review_id": 751771815,
+    "id": 706450852,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwNjQ1MDg1Mg==",
+    "diff_hunk": "@@ -1078,6 +1078,37 @@ By default the module will be shown if any of the following conditions are met:\n format = \"via [e $version](bold red) \"\n ```\n \n+## Fill\n+\n+The `fill` module fills any extra space on the line with a symbol. If multiple `fill` modules are\n+present in a line they will split the space evenly between them. This is useful for aligning\n+other modules.\n+\n+### Options\n+\n+| Option     | Default        | Description                            |\n+| ---------- | -------------- | -------------------------------------- |\n+| `symbol`   | `\".\"`          | The symbol used to fill the line.      |",
+    "path": "docs/config/README.md",
+    "commit_id": "e1887e067e44740489586ff08e16debdee8e08f5",
+    "original_commit_id": "78024e96d6d38b107ad97d5e76424e09ab8b03c4",
+    "user": {
+      "login": "mjeffryes",
+      "id": 1189194,
+      "node_id": "MDQ6VXNlcjExODkxOTQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1189194?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mjeffryes",
+      "html_url": "https://github.com/mjeffryes",
+      "followers_url": "https://api.github.com/users/mjeffryes/followers",
+      "following_url": "https://api.github.com/users/mjeffryes/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mjeffryes/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mjeffryes/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mjeffryes/subscriptions",
+      "organizations_url": "https://api.github.com/users/mjeffryes/orgs",
+      "repos_url": "https://api.github.com/users/mjeffryes/repos",
+      "events_url": "https://api.github.com/users/mjeffryes/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mjeffryes/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I went with a visible default because it makes it easier to understand what's going on when you first add a fill, but I agree that most people are going to want to use a space in the end, so happy to change it. ",
+    "created_at": "2021-09-10T20:26:05Z",
+    "updated_at": "2021-09-10T20:26:05Z",
+    "html_url": "https://github.com/starship/starship/pull/3029#discussion_r706450852",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3029",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/706450852"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3029#discussion_r706450852"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3029"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/706450852/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1132,
+    "original_line": 1132,
+    "side": "RIGHT",
+    "in_reply_to_id": 704749368,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 14,
+    "position": 14,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/706525785",
+    "pull_request_review_id": 751861778,
+    "id": 706525785,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDcwNjUyNTc4NQ==",
+    "diff_hunk": "@@ -1,39 +1,184 @@\n+use crate::print::{Grapheme, UnicodeWidthGraphemes};\n use ansi_term::{ANSIString, Style};\n use std::fmt;\n+use unicode_segmentation::UnicodeSegmentation;\n \n-/// A segment is a single configurable element in a module. This will usually\n-/// contain a data point to provide context for the prompt's user\n-/// (e.g. The version that software is running).\n+/// Type that holds text with an associated style",
+    "path": "src/segment.rs",
+    "commit_id": "e1887e067e44740489586ff08e16debdee8e08f5",
+    "original_commit_id": "b29e7056df2372fe56b2fbe07818f78b6f20c28f",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Totally fair. Go with whatever comment you think is fitting. 👍",
+    "created_at": "2021-09-11T00:05:58Z",
+    "updated_at": "2021-09-11T00:05:58Z",
+    "html_url": "https://github.com/starship/starship/pull/3029#discussion_r706525785",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3029",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/706525785"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3029#discussion_r706525785"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3029"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/706525785/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 6,
+    "original_line": 6,
+    "side": "RIGHT",
+    "in_reply_to_id": 706363089,
+    "author_association": "MEMBER",
+    "original_position": 9,
+    "position": 9,
+    "subject_type": "line"
+  }
+]

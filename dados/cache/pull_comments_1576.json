@@ -1,0 +1,330 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/469237170",
+    "pull_request_review_id": 465886960,
+    "id": 469237170,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2OTIzNzE3MA==",
+    "diff_hunk": "@@ -24,3 +24,6 @@ function global:prompt {\n }\n \n $ENV:STARSHIP_SHELL = \"powershell\"\n+\n+# Set up the session key that will be used to store logs\n+$ENV:STARSHIP_SESSION_KEY = -join ( (65..90) + (97..122) | Get-Random -Count 16 | % {[char]$_})",
+    "path": "src/init/starship.ps1",
+    "commit_id": "26c9ec4c35582cea6e73d655ca8e8de85c665aff",
+    "original_commit_id": "9963642d249e122e971e77796e6980da76638da7",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n$ENV:STARSHIP_SESSION_KEY = -join ( (65..90) + (97..122) | Get-Random -Count 16 | ForEach-Object {[char]$_})\r\n```\r\nUsing aliases like `|%` is discouraged in scripts",
+    "created_at": "2020-08-12T12:54:57Z",
+    "updated_at": "2020-09-28T19:03:31Z",
+    "html_url": "https://github.com/starship/starship/pull/1576#discussion_r469237170",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1576",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/469237170"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1576#discussion_r469237170"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1576"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/469237170/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 29,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 6,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/469245532",
+    "pull_request_review_id": 465897790,
+    "id": 469245532,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2OTI0NTUzMg==",
+    "diff_hunk": "@@ -0,0 +1,87 @@\n+use ansi_term::Color;\n+use log::{Level, LevelFilter, Metadata, Record};\n+use std::{\n+    env,\n+    fs::{self, File, OpenOptions},\n+    io::Write,\n+    sync::{Arc, Mutex},\n+};\n+\n+pub struct StarshipLogger {\n+    log_file: Arc<Mutex<File>>,\n+    log_file_content: Arc<String>,",
+    "path": "src/logger.rs",
+    "commit_id": "26c9ec4c35582cea6e73d655ca8e8de85c665aff",
+    "original_commit_id": "9963642d249e122e971e77796e6980da76638da7",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Should `log_file` be `BufWrite` and `log_file_content` a `HashSet<String>`? I think compressing the logfile could also be worth it.",
+    "created_at": "2020-08-12T13:08:11Z",
+    "updated_at": "2020-09-28T19:03:31Z",
+    "html_url": "https://github.com/starship/starship/pull/1576#discussion_r469245532",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1576",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/469245532"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1576#discussion_r469245532"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1576"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/469245532/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 12,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 12,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/469369823",
+    "pull_request_review_id": 466058547,
+    "id": 469369823,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2OTM2OTgyMw==",
+    "diff_hunk": "@@ -24,3 +24,6 @@ function global:prompt {\n }\n \n $ENV:STARSHIP_SHELL = \"powershell\"\n+\n+# Set up the session key that will be used to store logs\n+$ENV:STARSHIP_SESSION_KEY = -join ( (65..90) + (97..122) | Get-Random -Count 16 | % {[char]$_})",
+    "path": "src/init/starship.ps1",
+    "commit_id": "26c9ec4c35582cea6e73d655ca8e8de85c665aff",
+    "original_commit_id": "9963642d249e122e971e77796e6980da76638da7",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n$ENV:STARSHIP_SESSION_KEY = -join (('a'..'z') + ('A'..'Z') + ('0'..'9') | Get-Random -Count 16)\r\n```\r\neven better",
+    "created_at": "2020-08-12T15:59:55Z",
+    "updated_at": "2020-09-28T19:03:31Z",
+    "html_url": "https://github.com/starship/starship/pull/1576#discussion_r469369823",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1576",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/469369823"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1576#discussion_r469369823"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1576"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/469369823/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 29,
+    "side": "RIGHT",
+    "in_reply_to_id": 469237170,
+    "author_association": "MEMBER",
+    "original_position": 6,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/469723290",
+    "pull_request_review_id": 466474970,
+    "id": 469723290,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ2OTcyMzI5MA==",
+    "diff_hunk": "@@ -0,0 +1,87 @@\n+use ansi_term::Color;\n+use log::{Level, LevelFilter, Metadata, Record};\n+use std::{\n+    env,\n+    fs::{self, File, OpenOptions},\n+    io::Write,\n+    sync::{Arc, Mutex},\n+};\n+\n+pub struct StarshipLogger {\n+    log_file: Arc<Mutex<File>>,\n+    log_file_content: Arc<String>,",
+    "path": "src/logger.rs",
+    "commit_id": "26c9ec4c35582cea6e73d655ca8e8de85c665aff",
+    "original_commit_id": "9963642d249e122e971e77796e6980da76638da7",
+    "user": null,
+    "body": "I've changed them to your respective suggestions but how do you think we should compress the log files?\r\nBecause we can't just compress all logs that are not our session (e.g. from an old session) because we can have multiple sessions open at the same time.\r\nAnd compressing our own file does not make much sense to me because we would have to uncompress and recompress the log file every starship invocation which could potentially take quite long.",
+    "created_at": "2020-08-13T06:24:56Z",
+    "updated_at": "2020-09-28T19:03:31Z",
+    "html_url": "https://github.com/starship/starship/pull/1576#discussion_r469723290",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1576",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/469723290"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1576#discussion_r469723290"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1576"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/469723290/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 12,
+    "side": "RIGHT",
+    "in_reply_to_id": 469245532,
+    "author_association": "NONE",
+    "original_position": 12,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/470265821",
+    "pull_request_review_id": 467151698,
+    "id": 470265821,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ3MDI2NTgyMQ==",
+    "diff_hunk": "@@ -0,0 +1,87 @@\n+use ansi_term::Color;\n+use log::{Level, LevelFilter, Metadata, Record};\n+use std::{\n+    env,\n+    fs::{self, File, OpenOptions},\n+    io::Write,\n+    sync::{Arc, Mutex},\n+};\n+\n+pub struct StarshipLogger {\n+    log_file: Arc<Mutex<File>>,\n+    log_file_content: Arc<String>,",
+    "path": "src/logger.rs",
+    "commit_id": "26c9ec4c35582cea6e73d655ca8e8de85c665aff",
+    "original_commit_id": "9963642d249e122e971e77796e6980da76638da7",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It looks like the file gets flushed with every log message, so no Bufwriter might be better because it's not going to buffer anything.\r\n\r\nI didn't think of having to recompress every time, I guess it's better not to compress that in that case.",
+    "created_at": "2020-08-13T21:42:59Z",
+    "updated_at": "2020-09-28T19:03:31Z",
+    "html_url": "https://github.com/starship/starship/pull/1576#discussion_r470265821",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1576",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/470265821"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1576#discussion_r470265821"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1576"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/470265821/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 12,
+    "side": "RIGHT",
+    "in_reply_to_id": 469245532,
+    "author_association": "MEMBER",
+    "original_position": 12,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

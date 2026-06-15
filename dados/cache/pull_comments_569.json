@@ -1,0 +1,905 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/352185485",
+    "pull_request_review_id": 324781978,
+    "id": 352185485,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MjE4NTQ4NQ==",
+    "diff_hunk": "@@ -0,0 +1,90 @@\n+use std::process::Command;\n+use unicode_segmentation::UnicodeSegmentation;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::hg_branch::HgBranchConfig;\n+\n+/// Creates a module with the Hg bookmark or branch in the current directory\n+///\n+/// Will display the bookmark or branch name if the current directory is an hg repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_hg_repo = context\n+        .try_begin_scan()?\n+        .set_files(&[\".hgignore\"])\n+        .set_folders(&[\".hg\"])\n+        .is_match();\n+\n+    if !is_hg_repo {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"hg_branch\");\n+    let config = HgBranchConfig::try_load(module.config);\n+    module.set_style(config.style);\n+\n+    module.get_prefix().set_value(\"on \");\n+\n+    let truncation_symbol = get_graphemes(config.truncation_symbol, 1);\n+    module.create_segment(\"symbol\", &config.symbol);\n+\n+    // TODO: Once error handling is implemented, warn the user if their config\n+    // truncation length is nonsensical\n+    let len = if config.truncation_length <= 0 {\n+        log::warn!(\n+            \"\\\"truncation_length\\\" should be a positive value, found {}\",\n+            config.truncation_length\n+        );\n+        std::usize::MAX\n+    } else {\n+        config.truncation_length as usize\n+    };\n+\n+    let mut branch_name = match get_hg_log_template(context, \"{activebookmark}\") {\n+        None => get_hg_log_template(context, \"{branch}\").unwrap(),",
+    "path": "src/modules/hg_branch.rs",
+    "commit_id": "567ce8d19bb9d8114c49b3eef42242084815bff6",
+    "original_commit_id": "1436d74d1c0f1f64eb38044cd7f15ba9c7d9e82f",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Could we replace the `.unwrap()` with an early return of `None`?\r\nIt would be best to simply not show the module than to panic.",
+    "created_at": "2019-11-29T15:49:20Z",
+    "updated_at": "2019-12-02T22:14:15Z",
+    "html_url": "https://github.com/starship/starship/pull/569#discussion_r352185485",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/569",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/352185485"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/569#discussion_r352185485"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/569"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/352185485/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 44,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 44,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/352185574",
+    "pull_request_review_id": 324781978,
+    "id": 352185574,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MjE4NTU3NA==",
+    "diff_hunk": "@@ -0,0 +1,90 @@\n+use std::process::Command;\n+use unicode_segmentation::UnicodeSegmentation;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::hg_branch::HgBranchConfig;\n+\n+/// Creates a module with the Hg bookmark or branch in the current directory\n+///\n+/// Will display the bookmark or branch name if the current directory is an hg repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_hg_repo = context\n+        .try_begin_scan()?\n+        .set_files(&[\".hgignore\"])\n+        .set_folders(&[\".hg\"])\n+        .is_match();\n+\n+    if !is_hg_repo {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"hg_branch\");\n+    let config = HgBranchConfig::try_load(module.config);\n+    module.set_style(config.style);\n+\n+    module.get_prefix().set_value(\"on \");\n+\n+    let truncation_symbol = get_graphemes(config.truncation_symbol, 1);\n+    module.create_segment(\"symbol\", &config.symbol);\n+\n+    // TODO: Once error handling is implemented, warn the user if their config\n+    // truncation length is nonsensical\n+    let len = if config.truncation_length <= 0 {\n+        log::warn!(\n+            \"\\\"truncation_length\\\" should be a positive value, found {}\",\n+            config.truncation_length\n+        );\n+        std::usize::MAX\n+    } else {\n+        config.truncation_length as usize\n+    };\n+\n+    let mut branch_name = match get_hg_log_template(context, \"{activebookmark}\") {\n+        None => get_hg_log_template(context, \"{branch}\").unwrap(),\n+        Some(bookmark) => bookmark,\n+    };\n+    if branch_name == \"\" {\n+        branch_name = get_hg_log_template(context, \"{branch}\").unwrap();",
+    "path": "src/modules/hg_branch.rs",
+    "commit_id": "567ce8d19bb9d8114c49b3eef42242084815bff6",
+    "original_commit_id": "1436d74d1c0f1f64eb38044cd7f15ba9c7d9e82f",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Similarly here. ☝️ ",
+    "created_at": "2019-11-29T15:49:42Z",
+    "updated_at": "2019-12-02T22:14:15Z",
+    "html_url": "https://github.com/starship/starship/pull/569#discussion_r352185574",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/569",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/352185574"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/569#discussion_r352185574"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/569"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/352185574/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 48,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 48,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/352291131",
+    "pull_request_review_id": 324897450,
+    "id": 352291131,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MjI5MTEzMQ==",
+    "diff_hunk": "@@ -0,0 +1,90 @@\n+use std::process::Command;\n+use unicode_segmentation::UnicodeSegmentation;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::hg_branch::HgBranchConfig;\n+\n+/// Creates a module with the Hg bookmark or branch in the current directory\n+///\n+/// Will display the bookmark or branch name if the current directory is an hg repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_hg_repo = context\n+        .try_begin_scan()?\n+        .set_files(&[\".hgignore\"])\n+        .set_folders(&[\".hg\"])\n+        .is_match();\n+\n+    if !is_hg_repo {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"hg_branch\");\n+    let config = HgBranchConfig::try_load(module.config);\n+    module.set_style(config.style);\n+\n+    module.get_prefix().set_value(\"on \");\n+\n+    let truncation_symbol = get_graphemes(config.truncation_symbol, 1);\n+    module.create_segment(\"symbol\", &config.symbol);\n+\n+    // TODO: Once error handling is implemented, warn the user if their config\n+    // truncation length is nonsensical\n+    let len = if config.truncation_length <= 0 {\n+        log::warn!(\n+            \"\\\"truncation_length\\\" should be a positive value, found {}\",\n+            config.truncation_length\n+        );\n+        std::usize::MAX\n+    } else {\n+        config.truncation_length as usize\n+    };\n+\n+    let mut branch_name = match get_hg_log_template(context, \"{activebookmark}\") {\n+        None => get_hg_log_template(context, \"{branch}\").unwrap(),",
+    "path": "src/modules/hg_branch.rs",
+    "commit_id": "567ce8d19bb9d8114c49b3eef42242084815bff6",
+    "original_commit_id": "1436d74d1c0f1f64eb38044cd7f15ba9c7d9e82f",
+    "user": {
+      "login": "rpl",
+      "id": 11484,
+      "node_id": "MDQ6VXNlcjExNDg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11484?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rpl",
+      "html_url": "https://github.com/rpl",
+      "followers_url": "https://api.github.com/users/rpl/followers",
+      "following_url": "https://api.github.com/users/rpl/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rpl/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rpl/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rpl/subscriptions",
+      "organizations_url": "https://api.github.com/users/rpl/orgs",
+      "repos_url": "https://api.github.com/users/rpl/repos",
+      "events_url": "https://api.github.com/users/rpl/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rpl/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "yeah, `.unwrap()` was quite rude ;-)\r\n\r\nHow about the updated version (which is using `.unwrap_or_default()`)?\r\nI also added a couple of additional tests:\r\n- if the current working dir isn't recognized as an hg repo, the module shouldn't produce any output at all\r\n- if it is an hg repo, but the module fails to retrieve a bookmark or branch name (e.g. because it fails to execute hg, not unlikely if it is not installed), it defaults to \"(no branch)\" (which let the user know that, even if an hg repo has been detected, something went wrong and so the branch name is missing)\r\n\r\nHow that sounds/looks to you?",
+    "created_at": "2019-11-30T15:47:54Z",
+    "updated_at": "2019-12-02T22:14:15Z",
+    "html_url": "https://github.com/starship/starship/pull/569#discussion_r352291131",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/569",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/352291131"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/569#discussion_r352291131"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/569"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/352291131/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 44,
+    "side": "RIGHT",
+    "in_reply_to_id": 352185485,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 44,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/352321043",
+    "pull_request_review_id": 324920989,
+    "id": 352321043,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MjMyMTA0Mw==",
+    "diff_hunk": "@@ -0,0 +1,90 @@\n+use std::process::Command;\n+use unicode_segmentation::UnicodeSegmentation;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::hg_branch::HgBranchConfig;\n+\n+/// Creates a module with the Hg bookmark or branch in the current directory\n+///\n+/// Will display the bookmark or branch name if the current directory is an hg repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_hg_repo = context\n+        .try_begin_scan()?\n+        .set_files(&[\".hgignore\"])\n+        .set_folders(&[\".hg\"])\n+        .is_match();\n+\n+    if !is_hg_repo {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"hg_branch\");\n+    let config = HgBranchConfig::try_load(module.config);\n+    module.set_style(config.style);\n+\n+    module.get_prefix().set_value(\"on \");\n+\n+    let truncation_symbol = get_graphemes(config.truncation_symbol, 1);\n+    module.create_segment(\"symbol\", &config.symbol);\n+\n+    // TODO: Once error handling is implemented, warn the user if their config\n+    // truncation length is nonsensical\n+    let len = if config.truncation_length <= 0 {\n+        log::warn!(\n+            \"\\\"truncation_length\\\" should be a positive value, found {}\",\n+            config.truncation_length\n+        );\n+        std::usize::MAX\n+    } else {\n+        config.truncation_length as usize\n+    };\n+\n+    let mut branch_name = match get_hg_log_template(context, \"{activebookmark}\") {\n+        None => get_hg_log_template(context, \"{branch}\").unwrap(),",
+    "path": "src/modules/hg_branch.rs",
+    "commit_id": "567ce8d19bb9d8114c49b3eef42242084815bff6",
+    "original_commit_id": "1436d74d1c0f1f64eb38044cd7f15ba9c7d9e82f",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This is certainly better, but I think the more semantic solution here is to use `None` instead of an empty string.\r\n\r\nI think something along these lines would be better:\r\n```rust\r\nlet get_branch_name = |tmpl| get_hg_log_template(tmpl, context, &config);\r\n\r\nlet mut branch_name = get_branch_name(\"{activebookmark}\");\r\n\r\nif branch_name.is_none() {\r\n    branch_name = get_branch_name(\"{branch}\");\r\n}\r\n\r\nif branch_name.is_none() {\r\n    branch_name = \"(no branch)\".to_string();\r\n}\r\n```\r\n\r\nPerhaps a simpler way of addressing this without the `if`s would be to use some `Option` methods:\r\n```rust\r\n// I haven't ran this code, so I don't know if it compiles\r\nlet get_branch_name = |tmpl| get_hg_log_template(tmpl, context, &config);\r\n\r\nlet mut branch_name = get_branch_name(\"{activebookmark}\")\r\n\t.or_else(|| get_branch_name(\"{branch}\"))\r\n\t.unwrap_or(\"(no branch)\".to_string());\r\n```",
+    "created_at": "2019-12-01T05:33:18Z",
+    "updated_at": "2019-12-02T22:14:15Z",
+    "html_url": "https://github.com/starship/starship/pull/569#discussion_r352321043",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/569",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/352321043"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/569#discussion_r352321043"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/569"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/352321043/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 44,
+    "side": "RIGHT",
+    "in_reply_to_id": 352185485,
+    "author_association": "MEMBER",
+    "original_position": 44,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/352343181",
+    "pull_request_review_id": 324938577,
+    "id": 352343181,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MjM0MzE4MQ==",
+    "diff_hunk": "@@ -0,0 +1,90 @@\n+use std::process::Command;\n+use unicode_segmentation::UnicodeSegmentation;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::hg_branch::HgBranchConfig;\n+\n+/// Creates a module with the Hg bookmark or branch in the current directory\n+///\n+/// Will display the bookmark or branch name if the current directory is an hg repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_hg_repo = context\n+        .try_begin_scan()?\n+        .set_files(&[\".hgignore\"])\n+        .set_folders(&[\".hg\"])\n+        .is_match();\n+\n+    if !is_hg_repo {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"hg_branch\");\n+    let config = HgBranchConfig::try_load(module.config);\n+    module.set_style(config.style);\n+\n+    module.get_prefix().set_value(\"on \");\n+\n+    let truncation_symbol = get_graphemes(config.truncation_symbol, 1);\n+    module.create_segment(\"symbol\", &config.symbol);\n+\n+    // TODO: Once error handling is implemented, warn the user if their config\n+    // truncation length is nonsensical\n+    let len = if config.truncation_length <= 0 {\n+        log::warn!(\n+            \"\\\"truncation_length\\\" should be a positive value, found {}\",\n+            config.truncation_length\n+        );\n+        std::usize::MAX\n+    } else {\n+        config.truncation_length as usize\n+    };\n+\n+    let mut branch_name = match get_hg_log_template(context, \"{activebookmark}\") {\n+        None => get_hg_log_template(context, \"{branch}\").unwrap(),",
+    "path": "src/modules/hg_branch.rs",
+    "commit_id": "567ce8d19bb9d8114c49b3eef42242084815bff6",
+    "original_commit_id": "1436d74d1c0f1f64eb38044cd7f15ba9c7d9e82f",
+    "user": {
+      "login": "rpl",
+      "id": 11484,
+      "node_id": "MDQ6VXNlcjExNDg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11484?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rpl",
+      "html_url": "https://github.com/rpl",
+      "followers_url": "https://api.github.com/users/rpl/followers",
+      "following_url": "https://api.github.com/users/rpl/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rpl/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rpl/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rpl/subscriptions",
+      "organizations_url": "https://api.github.com/users/rpl/orgs",
+      "repos_url": "https://api.github.com/users/rpl/repos",
+      "events_url": "https://api.github.com/users/rpl/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rpl/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "yeah, you are right, I just had to turn an empty string output into None on the `get_hg_log_template` side  (because the '{activebookmark}' output could be an empty string and it would be good to fallback to the branch name in that case)\r\n\r\nThanks! This is so much nicer.",
+    "created_at": "2019-12-01T13:00:14Z",
+    "updated_at": "2019-12-02T22:14:15Z",
+    "html_url": "https://github.com/starship/starship/pull/569#discussion_r352343181",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/569",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/352343181"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/569#discussion_r352343181"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/569"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/352343181/reactions",
+      "total_count": 1,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 1,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 44,
+    "side": "RIGHT",
+    "in_reply_to_id": 352185485,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 44,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/352736459",
+    "pull_request_review_id": 325416566,
+    "id": 352736459,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MjczNjQ1OQ==",
+    "diff_hunk": "@@ -559,6 +560,31 @@ The module will be shown if any of the following conditions are met:\n symbol = \"🏎💨 \"\n ```\n \n+## Hg Branch\n+\n+The `hg_branch` module shows the active branch of the repo in your current directory.\n+\n+### Options\n+\n+| Variable            | Default         | Description                                                                                  |\n+| ------------------- | --------------- | -------------------------------------------------------------------------------------------- |\n+| `symbol`            | `\" \"`          | The symbol used before the hg bookmark or branch name of the repo in your current directory. |\n+| `truncation_length` | `2^63 - 1`      | Truncates the hg branch name to X graphemes                                                  |\n+| `truncation_symbol` | `\"…\"`           | The symbol used to indicate a branch name was truncated. You can use \"\" for no symbol        |",
+    "path": "docs/config/README.md",
+    "commit_id": "567ce8d19bb9d8114c49b3eef42242084815bff6",
+    "original_commit_id": "457f2e14f4a7264ee4691eb9b0728f958121d741",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this note could be applied for any custom value. I don't think it's necessary to include here.\r\n\r\n```suggestion\r\n| `truncation_symbol` | `\"…\"`           | The symbol used to indicate a branch name was truncated.                                     |\r\n```",
+    "created_at": "2019-12-02T17:45:04Z",
+    "updated_at": "2019-12-02T22:14:15Z",
+    "html_url": "https://github.com/starship/starship/pull/569#discussion_r352736459",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/569",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/352736459"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/569#discussion_r352736459"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/569"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/352736459/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 573,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 22,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/352738492",
+    "pull_request_review_id": 325416566,
+    "id": 352738492,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MjczODQ5Mg==",
+    "diff_hunk": "@@ -559,6 +560,31 @@ The module will be shown if any of the following conditions are met:\n symbol = \"🏎💨 \"\n ```\n \n+## Hg Branch",
+    "path": "docs/config/README.md",
+    "commit_id": "567ce8d19bb9d8114c49b3eef42242084815bff6",
+    "original_commit_id": "457f2e14f4a7264ee4691eb9b0728f958121d741",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this may be a more fitting name for folks looking for \"Mercurial\" modules:\r\n```suggestion\r\n## Mercurial Branch\r\n```",
+    "created_at": "2019-12-02T17:49:23Z",
+    "updated_at": "2019-12-02T22:14:15Z",
+    "html_url": "https://github.com/starship/starship/pull/569#discussion_r352738492",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/569",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/352738492"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/569#discussion_r352738492"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/569"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/352738492/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 563,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 12,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/352739972",
+    "pull_request_review_id": 325416566,
+    "id": 352739972,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MjczOTk3Mg==",
+    "diff_hunk": "@@ -0,0 +1,29 @@\n+use crate::config::{ModuleConfig, RootModuleConfig, SegmentConfig};\n+\n+use ansi_term::{Color, Style};\n+use starship_module_config_derive::ModuleConfig;\n+\n+#[derive(Clone, ModuleConfig)]\n+pub struct HgBranchConfig<'a> {\n+    pub symbol: SegmentConfig<'a>,\n+    pub truncation_length: i64,\n+    pub truncation_symbol: &'a str,\n+    pub branch_name: SegmentConfig<'a>,\n+    pub style: Style,\n+    pub disabled: bool,\n+    pub hg_binary: &'a str,",
+    "path": "src/configs/hg_branch.rs",
+    "commit_id": "567ce8d19bb9d8114c49b3eef42242084815bff6",
+    "original_commit_id": "457f2e14f4a7264ee4691eb9b0728f958121d741",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'm not an `hg` user myself. What is the use-case for changing the `hg` binary?",
+    "created_at": "2019-12-02T17:52:26Z",
+    "updated_at": "2019-12-02T22:14:15Z",
+    "html_url": "https://github.com/starship/starship/pull/569#discussion_r352739972",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/569",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/352739972"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/569#discussion_r352739972"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/569"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/352739972/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 14,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 14,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/352740137",
+    "pull_request_review_id": 325416566,
+    "id": 352740137,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1Mjc0MDEzNw==",
+    "diff_hunk": "@@ -0,0 +1,29 @@\n+use crate::config::{ModuleConfig, RootModuleConfig, SegmentConfig};\n+\n+use ansi_term::{Color, Style};\n+use starship_module_config_derive::ModuleConfig;\n+\n+#[derive(Clone, ModuleConfig)]\n+pub struct HgBranchConfig<'a> {\n+    pub symbol: SegmentConfig<'a>,\n+    pub truncation_length: i64,\n+    pub truncation_symbol: &'a str,\n+    pub branch_name: SegmentConfig<'a>,\n+    pub style: Style,\n+    pub disabled: bool,\n+    pub hg_binary: &'a str,",
+    "path": "src/configs/hg_branch.rs",
+    "commit_id": "567ce8d19bb9d8114c49b3eef42242084815bff6",
+    "original_commit_id": "457f2e14f4a7264ee4691eb9b0728f958121d741",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It looks like this configuration option is not documented. Could docs be added for it?",
+    "created_at": "2019-12-02T17:52:46Z",
+    "updated_at": "2019-12-02T22:14:15Z",
+    "html_url": "https://github.com/starship/starship/pull/569#discussion_r352740137",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/569",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/352740137"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/569#discussion_r352740137"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/569"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/352740137/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 14,
+    "side": "RIGHT",
+    "in_reply_to_id": 352739972,
+    "author_association": "MEMBER",
+    "original_position": 14,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/352740570",
+    "pull_request_review_id": 325416566,
+    "id": 352740570,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1Mjc0MDU3MA==",
+    "diff_hunk": "@@ -0,0 +1,29 @@\n+use crate::config::{ModuleConfig, RootModuleConfig, SegmentConfig};\n+\n+use ansi_term::{Color, Style};\n+use starship_module_config_derive::ModuleConfig;\n+\n+#[derive(Clone, ModuleConfig)]\n+pub struct HgBranchConfig<'a> {\n+    pub symbol: SegmentConfig<'a>,\n+    pub truncation_length: i64,\n+    pub truncation_symbol: &'a str,\n+    pub branch_name: SegmentConfig<'a>,\n+    pub style: Style,\n+    pub disabled: bool,\n+    pub hg_binary: &'a str,\n+}\n+\n+impl<'a> RootModuleConfig<'a> for HgBranchConfig<'a> {\n+    fn new() -> Self {\n+        HgBranchConfig {\n+            symbol: SegmentConfig::new(\" \"),\n+            truncation_length: std::i64::MAX,\n+            truncation_symbol: \"…\",\n+            branch_name: SegmentConfig::default(),\n+            style: Color::Purple.bold(),\n+            disabled: true,\n+            hg_binary: \"hg\",",
+    "path": "src/configs/hg_branch.rs",
+    "commit_id": "567ce8d19bb9d8114c49b3eef42242084815bff6",
+    "original_commit_id": "457f2e14f4a7264ee4691eb9b0728f958121d741",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Nitpick: Could `hg_binary` be moved above `style` and `disabled`, since those keys are in every module?",
+    "created_at": "2019-12-02T17:53:31Z",
+    "updated_at": "2019-12-02T22:14:15Z",
+    "html_url": "https://github.com/starship/starship/pull/569#discussion_r352740570",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/569",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/352740570"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/569#discussion_r352740570"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/569"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/352740570/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 26,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 26,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/352744661",
+    "pull_request_review_id": 325416566,
+    "id": 352744661,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1Mjc0NDY2MQ==",
+    "diff_hunk": "@@ -0,0 +1,95 @@\n+use std::process::Command;\n+use unicode_segmentation::UnicodeSegmentation;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::hg_branch::HgBranchConfig;\n+\n+/// Creates a module with the Hg bookmark or branch in the current directory\n+///\n+/// Will display the bookmark or branch name if the current directory is an hg repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_hg_repo = context\n+        .try_begin_scan()?\n+        .set_files(&[\".hgignore\"])\n+        .set_folders(&[\".hg\"])\n+        .is_match();\n+\n+    if !is_hg_repo {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"hg_branch\");\n+    let config = HgBranchConfig::try_load(module.config);\n+    module.set_style(config.style);\n+\n+    module.get_prefix().set_value(\"on \");\n+\n+    let truncation_symbol = get_graphemes(config.truncation_symbol, 1);\n+    module.create_segment(\"symbol\", &config.symbol);\n+\n+    // TODO: Once error handling is implemented, warn the user if their config\n+    // truncation length is nonsensical\n+    let len = if config.truncation_length <= 0 {\n+        log::warn!(\n+            \"\\\"truncation_length\\\" should be a positive value, found {}\",\n+            config.truncation_length\n+        );\n+        std::usize::MAX\n+    } else {\n+        config.truncation_length as usize\n+    };\n+\n+    let get_branch_name = |tmpl| get_hg_log_template(tmpl, context, &config);\n+\n+    let branch_name = get_branch_name(\"{activebookmark}\")\n+        .or_else(|| get_branch_name(\"{branch}\"))\n+        .unwrap_or_else(|| \"(no branch)\".to_string());\n+\n+    let truncated_graphemes = get_graphemes(&branch_name, len);\n+    // The truncation symbol should only be added if we truncated\n+    let truncated_and_symbol = if len < graphemes_len(&branch_name) {\n+        truncated_graphemes + &truncation_symbol\n+    } else {\n+        truncated_graphemes\n+    };\n+\n+    module.create_segment(\n+        \"name\",\n+        &config.branch_name.with_value(&truncated_and_symbol),\n+    );\n+\n+    Some(module)\n+}\n+\n+fn get_hg_log_template(hgtmpl: &str, ctx: &Context, cfg: &HgBranchConfig) -> Option<String> {\n+    let output = Command::new(cfg.hg_binary)",
+    "path": "src/modules/hg_branch.rs",
+    "commit_id": "567ce8d19bb9d8114c49b3eef42242084815bff6",
+    "original_commit_id": "457f2e14f4a7264ee4691eb9b0728f958121d741",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "A more concise way of handling this might be to early return on `None` (also avoiding the `.clone()` for `ctx.current_dir`):\r\n```rust\r\n    let output = Command::new(cfg.hg_binary)\r\n        .args(&[\"log\", \"-r\", \".\", \"--template\", hgtmpl])\r\n        .current_dir(&ctx.current_dir)\r\n        .output()\r\n        .ok()\r\n        .and_then(|output| String::from_utf8(output.stdout).ok())?;\r\n\r\n    if output.is_empty() {\r\n        None\r\n    } else {\r\n        Some(output)\r\n    }\r\n```",
+    "created_at": "2019-12-02T18:02:15Z",
+    "updated_at": "2019-12-02T22:14:15Z",
+    "html_url": "https://github.com/starship/starship/pull/569#discussion_r352744661",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/569",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/352744661"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/569#discussion_r352744661"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/569"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/352744661/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 66,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 66,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/352888338",
+    "pull_request_review_id": 325780526,
+    "id": 352888338,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1Mjg4ODMzOA==",
+    "diff_hunk": "@@ -0,0 +1,95 @@\n+use std::process::Command;\n+use unicode_segmentation::UnicodeSegmentation;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::hg_branch::HgBranchConfig;\n+\n+/// Creates a module with the Hg bookmark or branch in the current directory\n+///\n+/// Will display the bookmark or branch name if the current directory is an hg repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_hg_repo = context\n+        .try_begin_scan()?\n+        .set_files(&[\".hgignore\"])\n+        .set_folders(&[\".hg\"])\n+        .is_match();\n+\n+    if !is_hg_repo {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"hg_branch\");\n+    let config = HgBranchConfig::try_load(module.config);\n+    module.set_style(config.style);\n+\n+    module.get_prefix().set_value(\"on \");\n+\n+    let truncation_symbol = get_graphemes(config.truncation_symbol, 1);\n+    module.create_segment(\"symbol\", &config.symbol);\n+\n+    // TODO: Once error handling is implemented, warn the user if their config\n+    // truncation length is nonsensical\n+    let len = if config.truncation_length <= 0 {\n+        log::warn!(\n+            \"\\\"truncation_length\\\" should be a positive value, found {}\",\n+            config.truncation_length\n+        );\n+        std::usize::MAX\n+    } else {\n+        config.truncation_length as usize\n+    };\n+\n+    let get_branch_name = |tmpl| get_hg_log_template(tmpl, context, &config);\n+\n+    let branch_name = get_branch_name(\"{activebookmark}\")\n+        .or_else(|| get_branch_name(\"{branch}\"))\n+        .unwrap_or_else(|| \"(no branch)\".to_string());\n+\n+    let truncated_graphemes = get_graphemes(&branch_name, len);\n+    // The truncation symbol should only be added if we truncated\n+    let truncated_and_symbol = if len < graphemes_len(&branch_name) {\n+        truncated_graphemes + &truncation_symbol\n+    } else {\n+        truncated_graphemes\n+    };\n+\n+    module.create_segment(\n+        \"name\",\n+        &config.branch_name.with_value(&truncated_and_symbol),\n+    );\n+\n+    Some(module)\n+}\n+\n+fn get_hg_log_template(hgtmpl: &str, ctx: &Context, cfg: &HgBranchConfig) -> Option<String> {\n+    let output = Command::new(cfg.hg_binary)",
+    "path": "src/modules/hg_branch.rs",
+    "commit_id": "567ce8d19bb9d8114c49b3eef42242084815bff6",
+    "original_commit_id": "457f2e14f4a7264ee4691eb9b0728f958121d741",
+    "user": {
+      "login": "rpl",
+      "id": 11484,
+      "node_id": "MDQ6VXNlcjExNDg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11484?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rpl",
+      "html_url": "https://github.com/rpl",
+      "followers_url": "https://api.github.com/users/rpl/followers",
+      "following_url": "https://api.github.com/users/rpl/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rpl/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rpl/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rpl/subscriptions",
+      "organizations_url": "https://api.github.com/users/rpl/orgs",
+      "repos_url": "https://api.github.com/users/rpl/repos",
+      "events_url": "https://api.github.com/users/rpl/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rpl/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": ":+1: a small touch that makes it looks way better (I should have thought of returning earlier on None using `?`, thanks for pointing it out!)",
+    "created_at": "2019-12-02T22:16:56Z",
+    "updated_at": "2019-12-02T22:16:56Z",
+    "html_url": "https://github.com/starship/starship/pull/569#discussion_r352888338",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/569",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/352888338"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/569#discussion_r352888338"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/569"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/352888338/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 66,
+    "side": "RIGHT",
+    "in_reply_to_id": 352744661,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 66,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/352890292",
+    "pull_request_review_id": 325782973,
+    "id": 352890292,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1Mjg5MDI5Mg==",
+    "diff_hunk": "@@ -0,0 +1,29 @@\n+use crate::config::{ModuleConfig, RootModuleConfig, SegmentConfig};\n+\n+use ansi_term::{Color, Style};\n+use starship_module_config_derive::ModuleConfig;\n+\n+#[derive(Clone, ModuleConfig)]\n+pub struct HgBranchConfig<'a> {\n+    pub symbol: SegmentConfig<'a>,\n+    pub truncation_length: i64,\n+    pub truncation_symbol: &'a str,\n+    pub branch_name: SegmentConfig<'a>,\n+    pub style: Style,\n+    pub disabled: bool,\n+    pub hg_binary: &'a str,",
+    "path": "src/configs/hg_branch.rs",
+    "commit_id": "567ce8d19bb9d8114c49b3eef42242084815bff6",
+    "original_commit_id": "457f2e14f4a7264ee4691eb9b0728f958121d741",
+    "user": {
+      "login": "rpl",
+      "id": 11484,
+      "node_id": "MDQ6VXNlcjExNDg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11484?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/rpl",
+      "html_url": "https://github.com/rpl",
+      "followers_url": "https://api.github.com/users/rpl/followers",
+      "following_url": "https://api.github.com/users/rpl/following{/other_user}",
+      "gists_url": "https://api.github.com/users/rpl/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/rpl/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/rpl/subscriptions",
+      "organizations_url": "https://api.github.com/users/rpl/orgs",
+      "repos_url": "https://api.github.com/users/rpl/repos",
+      "events_url": "https://api.github.com/users/rpl/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/rpl/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'm pretty sure that none that use mercurial would have to use that configuration option.\r\n\r\nI have to confess that I added it mainly to be able to easily test that the module does fallback gracefully when all the mercurial commands fails to run successfully.\r\n\r\nI was already unhappy (also a bit \"guilty\" :-)) about such an hacky testing strategy and so I took the opportunity to think to something else that would be less invasive (as it doesn't need to customize the hg binary name).\r\n\r\nIn the updated version the single test case that was using this config option is now using a fake \"broken hg repo\" (and I removed any trace of this unnecessary config option).",
+    "created_at": "2019-12-02T22:21:42Z",
+    "updated_at": "2019-12-02T22:21:42Z",
+    "html_url": "https://github.com/starship/starship/pull/569#discussion_r352890292",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/569",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/352890292"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/569#discussion_r352890292"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/569"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/352890292/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 14,
+    "side": "RIGHT",
+    "in_reply_to_id": 352739972,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 14,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

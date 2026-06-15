@@ -1,0 +1,629 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/606612509",
+    "pull_request_review_id": 627429374,
+    "id": 606612509,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYwNjYxMjUwOQ==",
+    "diff_hunk": "@@ -121,68 +121,50 @@ pub fn init_stub(shell_name: &str) -> io::Result<()> {\n              * https://github.com/starship/starship/pull/241\n              * https://github.com/starship/starship/pull/278\n              */\n-            let script = {\n-                format!(\n-                    r#\"if [ \"${{BASH_VERSINFO[0]}}\" -gt 4 ] || ([ \"${{BASH_VERSINFO[0]}}\" -eq 4 ] && [ \"${{BASH_VERSINFO[1]}}\" -ge 1 ])\n-then\n-source <(\"{0}\" init bash --print-full-init)\n-else\n-source /dev/stdin <<<\"$(\"{0}\" init bash --print-full-init)\"\n-fi\"#,\n-                    starship.sprint_posix()?\n-                )\n-            };\n-\n-            Some(script)\n-        }\n-        \"zsh\" => {\n-            let script = format!(\n-                \"source <(\\\"{}\\\" init zsh --print-full-init)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"fish\" => {\n+            r#\"\n+            major=\"${{BASH_VERSINFO[0]}}\"\n+            minor=\"${{BASH_VERSINFO[1]}}\"\n+\n+            if ((major > 4)) || {{ ((major == 4)) && ((minor >= 1)); }}; then\n+                source <(\"{0}\" init bash --print-full-init)\n+            else\n+                source /dev/stdin <<<\"$(\"{0}\" init bash --print-full-init)\"\n+            fi\n+            \"#,",
+    "path": "src/init/mod.rs",
+    "commit_id": "4e67079d052602f79c5a3062d268c11c3d903508",
+    "original_commit_id": "c75cd8e769b7b0c12e4ac96f7b7140f8ad166d79",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I've tested the following snippet using versions `bash-3.2`, `bash-4.4`, and `bash-5.1`. It passes shellcheck, uses arithmetic comparisons, and avoids using subshell for the right `OR` branch (check for version `>=4.1`).\r\nNote that Bash isn't indentation sensitive so indenting this doesn't really change anything except it doesn't stick out anymore.",
+    "created_at": "2021-04-03T03:51:27Z",
+    "updated_at": "2021-04-03T08:47:52Z",
+    "html_url": "https://github.com/starship/starship/pull/2548#discussion_r606612509",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2548",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/606612509"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2548#discussion_r606612509"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2548"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/606612509/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 137,
+    "original_line": 133,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 46,
+    "position": 50,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/606612801",
+    "pull_request_review_id": 627429374,
+    "id": 606612801,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYwNjYxMjgwMQ==",
+    "diff_hunk": "@@ -121,68 +121,50 @@ pub fn init_stub(shell_name: &str) -> io::Result<()> {\n              * https://github.com/starship/starship/pull/241\n              * https://github.com/starship/starship/pull/278\n              */\n-            let script = {\n-                format!(\n-                    r#\"if [ \"${{BASH_VERSINFO[0]}}\" -gt 4 ] || ([ \"${{BASH_VERSINFO[0]}}\" -eq 4 ] && [ \"${{BASH_VERSINFO[1]}}\" -ge 1 ])\n-then\n-source <(\"{0}\" init bash --print-full-init)\n-else\n-source /dev/stdin <<<\"$(\"{0}\" init bash --print-full-init)\"\n-fi\"#,\n-                    starship.sprint_posix()?\n-                )\n-            };\n-\n-            Some(script)\n-        }\n-        \"zsh\" => {\n-            let script = format!(\n-                \"source <(\\\"{}\\\" init zsh --print-full-init)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"fish\" => {\n+            r#\"\n+            major=\"${{BASH_VERSINFO[0]}}\"\n+            minor=\"${{BASH_VERSINFO[1]}}\"\n+\n+            if ((major > 4)) || {{ ((major == 4)) && ((minor >= 1)); }}; then\n+                source <(\"{0}\" init bash --print-full-init)\n+            else\n+                source /dev/stdin <<<\"$(\"{0}\" init bash --print-full-init)\"\n+            fi\n+            \"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"zsh\" => print!(\n+            r#\"source <(\"{}\" init zsh --print-full-init)\"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"fish\" => print!(\n             // Fish does process substitution with pipes and psub instead of bash syntax\n-            let script = format!(\n-                \"source (\\\"{}\\\" init fish --print-full-init | psub)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"powershell\" => {\n-            // Explanation of syntax:\n-            // &: Explicitly tells powershell to execute path with starship executable.\n-            //\n-            // @: multi-line stdout is returned as an array, but a single line or no lines\n-            //    are returned as-is. @ ensures it's always an array.\n-            //\n-            // -join \"`n\": Joins the stdout array together as a string with newlines.\n-            //             Powershell escapes with ` instead of \\ thus `n translates to a newline.\n-            let script = format!(\n-                \"Invoke-Expression (@(&\\\"{}\\\" init powershell --print-full-init) -join \\\"`n\\\")\",\n-                starship.sprint()?\n-            );\n-            Some(script)\n-        }\n-        \"ion\" => {\n-            let script = format!(\"eval $({} init ion --print-full-init)\", starship.sprint()?);\n-            Some(script)\n-        }\n-        \"elvish\" => {\n-            let script = format!(\n-                \"eval (\\\"{}\\\" init elvish --print-full-init | slurp)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"tcsh\" => {\n-            let script = format!(\n-                r#\"eval \"`(\"{}\" init tcsh --print-full-init)`\"\"#,\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n+            r#\"source (\"{}\" init fish --print-full-init | psub)\"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"powershell\" => print!(\n+            /*\n+             * Explanation of syntax:\n+             * &: Explicitly tells powershell to execute path with starship executable.\n+             *\n+             * @: multi-line stdout is returned as an array, but a single line or no lines\n+             *    are returned as-is. @ ensures it's always an array.\n+             *\n+             * -join \"`n\": Joins the stdout array together as a string with newlines.\n+             *             Powershell escapes with ` instead of \\ thus `n translates to a newline.\n+             */\n+            r#\"Invoke-Expression (@(&\"{}\" init powershell --print-full-init) -join \"`n\")\"#,\n+            starship.sprint()?\n+        ),\n+        \"ion\" => print!(\"eval $({} init ion --print-full-init)\", starship.sprint()?),\n+        \"elvish\" => print!(\n+            r#\"eval (\"{}\" init elvish --print-full-init | slurp)\"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"tcsh\" => print!(\n+            r#\"eval `(\"{}\" init tcsh --print-full-init)`\"#,",
+    "path": "src/init/mod.rs",
+    "commit_id": "4e67079d052602f79c5a3062d268c11c3d903508",
+    "original_commit_id": "c75cd8e769b7b0c12e4ac96f7b7140f8ad166d79",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Previously it looked like this:\r\n```rust\r\nr#\"eval \"`(\"{}\" init tcsh --print-full-init)`\"\"#\r\n```\r\nI removed quotes around backticks because they are redundant.",
+    "created_at": "2021-04-03T03:53:37Z",
+    "updated_at": "2021-04-03T08:47:52Z",
+    "html_url": "https://github.com/starship/starship/pull/2548#discussion_r606612801",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2548",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/606612801"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2548#discussion_r606612801"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2548"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/606612801/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 159,
+    "original_line": 165,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 117,
+    "position": 111,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/606617753",
+    "pull_request_review_id": 627432177,
+    "id": 606617753,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYwNjYxNzc1Mw==",
+    "diff_hunk": "@@ -121,68 +121,50 @@ pub fn init_stub(shell_name: &str) -> io::Result<()> {\n              * https://github.com/starship/starship/pull/241\n              * https://github.com/starship/starship/pull/278\n              */\n-            let script = {\n-                format!(\n-                    r#\"if [ \"${{BASH_VERSINFO[0]}}\" -gt 4 ] || ([ \"${{BASH_VERSINFO[0]}}\" -eq 4 ] && [ \"${{BASH_VERSINFO[1]}}\" -ge 1 ])\n-then\n-source <(\"{0}\" init bash --print-full-init)\n-else\n-source /dev/stdin <<<\"$(\"{0}\" init bash --print-full-init)\"\n-fi\"#,\n-                    starship.sprint_posix()?\n-                )\n-            };\n-\n-            Some(script)\n-        }\n-        \"zsh\" => {\n-            let script = format!(\n-                \"source <(\\\"{}\\\" init zsh --print-full-init)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"fish\" => {\n+            r#\"\n+            major=\"${{BASH_VERSINFO[0]}}\"\n+            minor=\"${{BASH_VERSINFO[1]}}\"\n+\n+            if ((major > 4)) || {{ ((major == 4)) && ((minor >= 1)); }}; then\n+                source <(\"{0}\" init bash --print-full-init)\n+            else\n+                source /dev/stdin <<<\"$(\"{0}\" init bash --print-full-init)\"\n+            fi\n+            \"#,",
+    "path": "src/init/mod.rs",
+    "commit_id": "4e67079d052602f79c5a3062d268c11c3d903508",
+    "original_commit_id": "c75cd8e769b7b0c12e4ac96f7b7140f8ad166d79",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`IIFE`-like `__main` is used to allow sourcing this stub without polluting scope.",
+    "created_at": "2021-04-03T04:46:38Z",
+    "updated_at": "2021-04-03T08:47:52Z",
+    "html_url": "https://github.com/starship/starship/pull/2548#discussion_r606617753",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2548",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/606617753"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2548#discussion_r606617753"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2548"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/606617753/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 137,
+    "original_line": 133,
+    "side": "RIGHT",
+    "in_reply_to_id": 606612509,
+    "author_association": "MEMBER",
+    "original_position": 46,
+    "position": 50,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/606634419",
+    "pull_request_review_id": 627440937,
+    "id": 606634419,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYwNjYzNDQxOQ==",
+    "diff_hunk": "@@ -121,68 +121,60 @@ pub fn init_stub(shell_name: &str) -> io::Result<()> {\n              * https://github.com/starship/starship/pull/241\n              * https://github.com/starship/starship/pull/278\n              */\n-            let script = {\n-                format!(\n-                    r#\"if [ \"${{BASH_VERSINFO[0]}}\" -gt 4 ] || ([ \"${{BASH_VERSINFO[0]}}\" -eq 4 ] && [ \"${{BASH_VERSINFO[1]}}\" -ge 1 ])\n-then\n-source <(\"{0}\" init bash --print-full-init)\n-else\n-source /dev/stdin <<<\"$(\"{0}\" init bash --print-full-init)\"\n-fi\"#,\n-                    starship.sprint_posix()?\n-                )\n-            };\n+            r#\"\n+            __main() {{\n+                local major=\"${{BASH_VERSINFO[0]}}\"\n+                local minor=\"${{BASH_VERSINFO[1]}}\"\n \n-            Some(script)\n-        }\n-        \"zsh\" => {\n-            let script = format!(\n-                \"source <(\\\"{}\\\" init zsh --print-full-init)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"fish\" => {\n+                if ((major > 4)) || {{ ((major == 4)) && ((minor >= 1)); }}; then\n+                    source <(\"{0}\" init bash --print-full-init)\n+                else\n+                    source /dev/stdin <<<\"$(\"{0}\" init bash --print-full-init)\"\n+                fi\n+            }}\n+            __main\n+            unset -f __main\n+            \"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"zsh\" => print!(\n+            r#\"source <(\"{}\" init zsh --print-full-init)\"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"fish\" => print!(\n             // Fish does process substitution with pipes and psub instead of bash syntax\n-            let script = format!(\n-                \"source (\\\"{}\\\" init fish --print-full-init | psub)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"powershell\" => {\n-            // Explanation of syntax:\n-            // &: Explicitly tells powershell to execute path with starship executable.\n-            //\n-            // @: multi-line stdout is returned as an array, but a single line or no lines\n-            //    are returned as-is. @ ensures it's always an array.\n-            //\n-            // -join \"`n\": Joins the stdout array together as a string with newlines.\n-            //             Powershell escapes with ` instead of \\ thus `n translates to a newline.\n-            let script = format!(\n-                \"Invoke-Expression (@(&\\\"{}\\\" init powershell --print-full-init) -join \\\"`n\\\")\",\n-                starship.sprint()?\n-            );\n-            Some(script)\n-        }\n-        \"ion\" => {\n-            let script = format!(\"eval $({} init ion --print-full-init)\", starship.sprint()?);\n-            Some(script)\n-        }\n-        \"elvish\" => {\n-            let script = format!(\n-                \"eval (\\\"{}\\\" init elvish --print-full-init | slurp)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"tcsh\" => {\n-            let script = format!(\n-                r#\"eval \"`(\"{}\" init tcsh --print-full-init)`\"\"#,\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n+            r#\"source (\"{}\" init fish --print-full-init | psub)\"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"powershell\" => print!(\n+            /*\n+             * Explanation of syntax:\n+             *\n+             *      iex: alias of Invoke-Expression\n+             *\n+             *      &: Explicitly tells PowerShell to execute path with Starship\n+             *         executable.\n+             *\n+             *      @: multi-line stdout is returned as an array, but a single\n+             *         line or no lines are returned as-is. @ ensures it's always\n+             *         an array.\n+             *\n+             *      -join \"`n\": Joins the stdout array together as a string with\n+             *                  newlines. PowerShell escapes with ` instead of \\\n+             *                  thus `n translates to a newline.\n+             */\n+            r#\"iex (@(&\"{}\" init powershell --print-full-init) -join \"`n\")\"#,",
+    "path": "src/init/mod.rs",
+    "commit_id": "4e67079d052602f79c5a3062d268c11c3d903508",
+    "original_commit_id": "9ada995e214862748c28cd1d75d0524a898e72e9",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The PowerShell linter recommends against using shorthands in PowerShell scripts.\r\n\r\nBut for simplification using `Out-String` over ``-join \"`n\"`` might make sense.",
+    "created_at": "2021-04-03T07:57:35Z",
+    "updated_at": "2021-04-03T08:47:52Z",
+    "html_url": "https://github.com/starship/starship/pull/2548#discussion_r606634419",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2548",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/606634419"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2548#discussion_r606634419"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2548"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/606634419/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 166,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 117,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/606636716",
+    "pull_request_review_id": 627442079,
+    "id": 606636716,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYwNjYzNjcxNg==",
+    "diff_hunk": "@@ -121,68 +121,60 @@ pub fn init_stub(shell_name: &str) -> io::Result<()> {\n              * https://github.com/starship/starship/pull/241\n              * https://github.com/starship/starship/pull/278\n              */\n-            let script = {\n-                format!(\n-                    r#\"if [ \"${{BASH_VERSINFO[0]}}\" -gt 4 ] || ([ \"${{BASH_VERSINFO[0]}}\" -eq 4 ] && [ \"${{BASH_VERSINFO[1]}}\" -ge 1 ])\n-then\n-source <(\"{0}\" init bash --print-full-init)\n-else\n-source /dev/stdin <<<\"$(\"{0}\" init bash --print-full-init)\"\n-fi\"#,\n-                    starship.sprint_posix()?\n-                )\n-            };\n+            r#\"\n+            __main() {{\n+                local major=\"${{BASH_VERSINFO[0]}}\"\n+                local minor=\"${{BASH_VERSINFO[1]}}\"\n \n-            Some(script)\n-        }\n-        \"zsh\" => {\n-            let script = format!(\n-                \"source <(\\\"{}\\\" init zsh --print-full-init)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"fish\" => {\n+                if ((major > 4)) || {{ ((major == 4)) && ((minor >= 1)); }}; then\n+                    source <(\"{0}\" init bash --print-full-init)\n+                else\n+                    source /dev/stdin <<<\"$(\"{0}\" init bash --print-full-init)\"\n+                fi\n+            }}\n+            __main\n+            unset -f __main\n+            \"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"zsh\" => print!(\n+            r#\"source <(\"{}\" init zsh --print-full-init)\"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"fish\" => print!(\n             // Fish does process substitution with pipes and psub instead of bash syntax\n-            let script = format!(\n-                \"source (\\\"{}\\\" init fish --print-full-init | psub)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"powershell\" => {\n-            // Explanation of syntax:\n-            // &: Explicitly tells powershell to execute path with starship executable.\n-            //\n-            // @: multi-line stdout is returned as an array, but a single line or no lines\n-            //    are returned as-is. @ ensures it's always an array.\n-            //\n-            // -join \"`n\": Joins the stdout array together as a string with newlines.\n-            //             Powershell escapes with ` instead of \\ thus `n translates to a newline.\n-            let script = format!(\n-                \"Invoke-Expression (@(&\\\"{}\\\" init powershell --print-full-init) -join \\\"`n\\\")\",\n-                starship.sprint()?\n-            );\n-            Some(script)\n-        }\n-        \"ion\" => {\n-            let script = format!(\"eval $({} init ion --print-full-init)\", starship.sprint()?);\n-            Some(script)\n-        }\n-        \"elvish\" => {\n-            let script = format!(\n-                \"eval (\\\"{}\\\" init elvish --print-full-init | slurp)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"tcsh\" => {\n-            let script = format!(\n-                r#\"eval \"`(\"{}\" init tcsh --print-full-init)`\"\"#,\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n+            r#\"source (\"{}\" init fish --print-full-init | psub)\"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"powershell\" => print!(\n+            /*\n+             * Explanation of syntax:\n+             *\n+             *      iex: alias of Invoke-Expression\n+             *\n+             *      &: Explicitly tells PowerShell to execute path with Starship\n+             *         executable.\n+             *\n+             *      @: multi-line stdout is returned as an array, but a single\n+             *         line or no lines are returned as-is. @ ensures it's always\n+             *         an array.\n+             *\n+             *      -join \"`n\": Joins the stdout array together as a string with\n+             *                  newlines. PowerShell escapes with ` instead of \\\n+             *                  thus `n translates to a newline.\n+             */\n+            r#\"iex (@(&\"{}\" init powershell --print-full-init) -join \"`n\")\"#,",
+    "path": "src/init/mod.rs",
+    "commit_id": "4e67079d052602f79c5a3062d268c11c3d903508",
+    "original_commit_id": "9ada995e214862748c28cd1d75d0524a898e72e9",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I've just swapped `Invoke-Expression` with `iex` here because I got used to seeing it around inside various installation instructions. Everything else is inherited.\r\nSo you are suggesting going back to `Invoke-Expression`, and replacing ``-join \"`n\"`` with `Out-String`? Whatever you like, just please write it down cause I'm doing blind coding here. I've never used posh longer than few minutes and don't have an installation at hand for testing :upside_down_face: ",
+    "created_at": "2021-04-03T08:21:46Z",
+    "updated_at": "2021-04-03T08:47:52Z",
+    "html_url": "https://github.com/starship/starship/pull/2548#discussion_r606636716",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2548",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/606636716"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2548#discussion_r606636716"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2548"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/606636716/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 166,
+    "side": "RIGHT",
+    "in_reply_to_id": 606634419,
+    "author_association": "MEMBER",
+    "original_position": 117,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/606637982",
+    "pull_request_review_id": 627442758,
+    "id": 606637982,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYwNjYzNzk4Mg==",
+    "diff_hunk": "@@ -121,68 +121,60 @@ pub fn init_stub(shell_name: &str) -> io::Result<()> {\n              * https://github.com/starship/starship/pull/241\n              * https://github.com/starship/starship/pull/278\n              */\n-            let script = {\n-                format!(\n-                    r#\"if [ \"${{BASH_VERSINFO[0]}}\" -gt 4 ] || ([ \"${{BASH_VERSINFO[0]}}\" -eq 4 ] && [ \"${{BASH_VERSINFO[1]}}\" -ge 1 ])\n-then\n-source <(\"{0}\" init bash --print-full-init)\n-else\n-source /dev/stdin <<<\"$(\"{0}\" init bash --print-full-init)\"\n-fi\"#,\n-                    starship.sprint_posix()?\n-                )\n-            };\n+            r#\"\n+            __main() {{\n+                local major=\"${{BASH_VERSINFO[0]}}\"\n+                local minor=\"${{BASH_VERSINFO[1]}}\"\n \n-            Some(script)\n-        }\n-        \"zsh\" => {\n-            let script = format!(\n-                \"source <(\\\"{}\\\" init zsh --print-full-init)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"fish\" => {\n+                if ((major > 4)) || {{ ((major == 4)) && ((minor >= 1)); }}; then\n+                    source <(\"{0}\" init bash --print-full-init)\n+                else\n+                    source /dev/stdin <<<\"$(\"{0}\" init bash --print-full-init)\"\n+                fi\n+            }}\n+            __main\n+            unset -f __main\n+            \"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"zsh\" => print!(\n+            r#\"source <(\"{}\" init zsh --print-full-init)\"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"fish\" => print!(\n             // Fish does process substitution with pipes and psub instead of bash syntax\n-            let script = format!(\n-                \"source (\\\"{}\\\" init fish --print-full-init | psub)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"powershell\" => {\n-            // Explanation of syntax:\n-            // &: Explicitly tells powershell to execute path with starship executable.\n-            //\n-            // @: multi-line stdout is returned as an array, but a single line or no lines\n-            //    are returned as-is. @ ensures it's always an array.\n-            //\n-            // -join \"`n\": Joins the stdout array together as a string with newlines.\n-            //             Powershell escapes with ` instead of \\ thus `n translates to a newline.\n-            let script = format!(\n-                \"Invoke-Expression (@(&\\\"{}\\\" init powershell --print-full-init) -join \\\"`n\\\")\",\n-                starship.sprint()?\n-            );\n-            Some(script)\n-        }\n-        \"ion\" => {\n-            let script = format!(\"eval $({} init ion --print-full-init)\", starship.sprint()?);\n-            Some(script)\n-        }\n-        \"elvish\" => {\n-            let script = format!(\n-                \"eval (\\\"{}\\\" init elvish --print-full-init | slurp)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"tcsh\" => {\n-            let script = format!(\n-                r#\"eval \"`(\"{}\" init tcsh --print-full-init)`\"\"#,\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n+            r#\"source (\"{}\" init fish --print-full-init | psub)\"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"powershell\" => print!(\n+            /*\n+             * Explanation of syntax:\n+             *\n+             *      iex: alias of Invoke-Expression\n+             *\n+             *      &: Explicitly tells PowerShell to execute path with Starship\n+             *         executable.\n+             *\n+             *      @: multi-line stdout is returned as an array, but a single\n+             *         line or no lines are returned as-is. @ ensures it's always\n+             *         an array.\n+             *\n+             *      -join \"`n\": Joins the stdout array together as a string with\n+             *                  newlines. PowerShell escapes with ` instead of \\\n+             *                  thus `n translates to a newline.\n+             */\n+            r#\"iex (@(&\"{}\" init powershell --print-full-init) -join \"`n\")\"#,",
+    "path": "src/init/mod.rs",
+    "commit_id": "4e67079d052602f79c5a3062d268c11c3d903508",
+    "original_commit_id": "9ada995e214862748c28cd1d75d0524a898e72e9",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This will work:\r\n\r\n```suggestion\r\n            r#\"Invoke-Expression (&\"{}\" init powershell --print-full-init | Out-String)\"#,\r\n```",
+    "created_at": "2021-04-03T08:37:18Z",
+    "updated_at": "2021-04-03T08:47:52Z",
+    "html_url": "https://github.com/starship/starship/pull/2548#discussion_r606637982",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2548",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/606637982"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2548#discussion_r606637982"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2548"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/606637982/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 166,
+    "side": "RIGHT",
+    "in_reply_to_id": 606634419,
+    "author_association": "MEMBER",
+    "original_position": 117,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/606638381",
+    "pull_request_review_id": 627442954,
+    "id": 606638381,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYwNjYzODM4MQ==",
+    "diff_hunk": "@@ -121,68 +121,60 @@ pub fn init_stub(shell_name: &str) -> io::Result<()> {\n              * https://github.com/starship/starship/pull/241\n              * https://github.com/starship/starship/pull/278\n              */\n-            let script = {\n-                format!(\n-                    r#\"if [ \"${{BASH_VERSINFO[0]}}\" -gt 4 ] || ([ \"${{BASH_VERSINFO[0]}}\" -eq 4 ] && [ \"${{BASH_VERSINFO[1]}}\" -ge 1 ])\n-then\n-source <(\"{0}\" init bash --print-full-init)\n-else\n-source /dev/stdin <<<\"$(\"{0}\" init bash --print-full-init)\"\n-fi\"#,\n-                    starship.sprint_posix()?\n-                )\n-            };\n+            r#\"\n+            __main() {{\n+                local major=\"${{BASH_VERSINFO[0]}}\"\n+                local minor=\"${{BASH_VERSINFO[1]}}\"\n \n-            Some(script)\n-        }\n-        \"zsh\" => {\n-            let script = format!(\n-                \"source <(\\\"{}\\\" init zsh --print-full-init)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"fish\" => {\n+                if ((major > 4)) || {{ ((major == 4)) && ((minor >= 1)); }}; then\n+                    source <(\"{0}\" init bash --print-full-init)\n+                else\n+                    source /dev/stdin <<<\"$(\"{0}\" init bash --print-full-init)\"\n+                fi\n+            }}\n+            __main\n+            unset -f __main\n+            \"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"zsh\" => print!(\n+            r#\"source <(\"{}\" init zsh --print-full-init)\"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"fish\" => print!(\n             // Fish does process substitution with pipes and psub instead of bash syntax\n-            let script = format!(\n-                \"source (\\\"{}\\\" init fish --print-full-init | psub)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"powershell\" => {\n-            // Explanation of syntax:\n-            // &: Explicitly tells powershell to execute path with starship executable.\n-            //\n-            // @: multi-line stdout is returned as an array, but a single line or no lines\n-            //    are returned as-is. @ ensures it's always an array.\n-            //\n-            // -join \"`n\": Joins the stdout array together as a string with newlines.\n-            //             Powershell escapes with ` instead of \\ thus `n translates to a newline.\n-            let script = format!(\n-                \"Invoke-Expression (@(&\\\"{}\\\" init powershell --print-full-init) -join \\\"`n\\\")\",\n-                starship.sprint()?\n-            );\n-            Some(script)\n-        }\n-        \"ion\" => {\n-            let script = format!(\"eval $({} init ion --print-full-init)\", starship.sprint()?);\n-            Some(script)\n-        }\n-        \"elvish\" => {\n-            let script = format!(\n-                \"eval (\\\"{}\\\" init elvish --print-full-init | slurp)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"tcsh\" => {\n-            let script = format!(\n-                r#\"eval \"`(\"{}\" init tcsh --print-full-init)`\"\"#,\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n+            r#\"source (\"{}\" init fish --print-full-init | psub)\"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"powershell\" => print!(\n+            /*\n+             * Explanation of syntax:\n+             *\n+             *      iex: alias of Invoke-Expression\n+             *\n+             *      &: Explicitly tells PowerShell to execute path with Starship\n+             *         executable.\n+             *\n+             *      @: multi-line stdout is returned as an array, but a single\n+             *         line or no lines are returned as-is. @ ensures it's always\n+             *         an array.\n+             *\n+             *      -join \"`n\": Joins the stdout array together as a string with\n+             *                  newlines. PowerShell escapes with ` instead of \\\n+             *                  thus `n translates to a newline.\n+             */\n+            r#\"iex (@(&\"{}\" init powershell --print-full-init) -join \"`n\")\"#,",
+    "path": "src/init/mod.rs",
+    "commit_id": "4e67079d052602f79c5a3062d268c11c3d903508",
+    "original_commit_id": "9ada995e214862748c28cd1d75d0524a898e72e9",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Now it makes sense to completely lose the above comment? Names are pretty descriptive and I would guess that `&` operator is a well-known thing in the PowerShell world?",
+    "created_at": "2021-04-03T08:41:21Z",
+    "updated_at": "2021-04-03T08:47:52Z",
+    "html_url": "https://github.com/starship/starship/pull/2548#discussion_r606638381",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2548",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/606638381"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2548#discussion_r606638381"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2548"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/606638381/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 166,
+    "side": "RIGHT",
+    "in_reply_to_id": 606634419,
+    "author_association": "MEMBER",
+    "original_position": 117,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/606638457",
+    "pull_request_review_id": 627443010,
+    "id": 606638457,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYwNjYzODQ1Nw==",
+    "diff_hunk": "@@ -121,68 +121,60 @@ pub fn init_stub(shell_name: &str) -> io::Result<()> {\n              * https://github.com/starship/starship/pull/241\n              * https://github.com/starship/starship/pull/278\n              */\n-            let script = {\n-                format!(\n-                    r#\"if [ \"${{BASH_VERSINFO[0]}}\" -gt 4 ] || ([ \"${{BASH_VERSINFO[0]}}\" -eq 4 ] && [ \"${{BASH_VERSINFO[1]}}\" -ge 1 ])\n-then\n-source <(\"{0}\" init bash --print-full-init)\n-else\n-source /dev/stdin <<<\"$(\"{0}\" init bash --print-full-init)\"\n-fi\"#,\n-                    starship.sprint_posix()?\n-                )\n-            };\n+            r#\"\n+            __main() {{\n+                local major=\"${{BASH_VERSINFO[0]}}\"\n+                local minor=\"${{BASH_VERSINFO[1]}}\"\n \n-            Some(script)\n-        }\n-        \"zsh\" => {\n-            let script = format!(\n-                \"source <(\\\"{}\\\" init zsh --print-full-init)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"fish\" => {\n+                if ((major > 4)) || {{ ((major == 4)) && ((minor >= 1)); }}; then\n+                    source <(\"{0}\" init bash --print-full-init)\n+                else\n+                    source /dev/stdin <<<\"$(\"{0}\" init bash --print-full-init)\"\n+                fi\n+            }}\n+            __main\n+            unset -f __main\n+            \"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"zsh\" => print!(\n+            r#\"source <(\"{}\" init zsh --print-full-init)\"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"fish\" => print!(\n             // Fish does process substitution with pipes and psub instead of bash syntax\n-            let script = format!(\n-                \"source (\\\"{}\\\" init fish --print-full-init | psub)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"powershell\" => {\n-            // Explanation of syntax:\n-            // &: Explicitly tells powershell to execute path with starship executable.\n-            //\n-            // @: multi-line stdout is returned as an array, but a single line or no lines\n-            //    are returned as-is. @ ensures it's always an array.\n-            //\n-            // -join \"`n\": Joins the stdout array together as a string with newlines.\n-            //             Powershell escapes with ` instead of \\ thus `n translates to a newline.\n-            let script = format!(\n-                \"Invoke-Expression (@(&\\\"{}\\\" init powershell --print-full-init) -join \\\"`n\\\")\",\n-                starship.sprint()?\n-            );\n-            Some(script)\n-        }\n-        \"ion\" => {\n-            let script = format!(\"eval $({} init ion --print-full-init)\", starship.sprint()?);\n-            Some(script)\n-        }\n-        \"elvish\" => {\n-            let script = format!(\n-                \"eval (\\\"{}\\\" init elvish --print-full-init | slurp)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"tcsh\" => {\n-            let script = format!(\n-                r#\"eval \"`(\"{}\" init tcsh --print-full-init)`\"\"#,\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n+            r#\"source (\"{}\" init fish --print-full-init | psub)\"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"powershell\" => print!(\n+            /*\n+             * Explanation of syntax:\n+             *\n+             *      iex: alias of Invoke-Expression\n+             *\n+             *      &: Explicitly tells PowerShell to execute path with Starship\n+             *         executable.\n+             *\n+             *      @: multi-line stdout is returned as an array, but a single\n+             *         line or no lines are returned as-is. @ ensures it's always\n+             *         an array.\n+             *\n+             *      -join \"`n\": Joins the stdout array together as a string with\n+             *                  newlines. PowerShell escapes with ` instead of \\\n+             *                  thus `n translates to a newline.\n+             */\n+            r#\"iex (@(&\"{}\" init powershell --print-full-init) -join \"`n\")\"#,",
+    "path": "src/init/mod.rs",
+    "commit_id": "4e67079d052602f79c5a3062d268c11c3d903508",
+    "original_commit_id": "9ada995e214862748c28cd1d75d0524a898e72e9",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think it's fine to remove the comment.",
+    "created_at": "2021-04-03T08:42:39Z",
+    "updated_at": "2021-04-03T08:47:52Z",
+    "html_url": "https://github.com/starship/starship/pull/2548#discussion_r606638457",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2548",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/606638457"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2548#discussion_r606638457"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2548"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/606638457/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 166,
+    "side": "RIGHT",
+    "in_reply_to_id": 606634419,
+    "author_association": "MEMBER",
+    "original_position": 117,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/606638998",
+    "pull_request_review_id": 627443297,
+    "id": 606638998,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYwNjYzODk5OA==",
+    "diff_hunk": "@@ -121,68 +121,60 @@ pub fn init_stub(shell_name: &str) -> io::Result<()> {\n              * https://github.com/starship/starship/pull/241\n              * https://github.com/starship/starship/pull/278\n              */\n-            let script = {\n-                format!(\n-                    r#\"if [ \"${{BASH_VERSINFO[0]}}\" -gt 4 ] || ([ \"${{BASH_VERSINFO[0]}}\" -eq 4 ] && [ \"${{BASH_VERSINFO[1]}}\" -ge 1 ])\n-then\n-source <(\"{0}\" init bash --print-full-init)\n-else\n-source /dev/stdin <<<\"$(\"{0}\" init bash --print-full-init)\"\n-fi\"#,\n-                    starship.sprint_posix()?\n-                )\n-            };\n+            r#\"\n+            __main() {{\n+                local major=\"${{BASH_VERSINFO[0]}}\"\n+                local minor=\"${{BASH_VERSINFO[1]}}\"\n \n-            Some(script)\n-        }\n-        \"zsh\" => {\n-            let script = format!(\n-                \"source <(\\\"{}\\\" init zsh --print-full-init)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"fish\" => {\n+                if ((major > 4)) || {{ ((major == 4)) && ((minor >= 1)); }}; then\n+                    source <(\"{0}\" init bash --print-full-init)\n+                else\n+                    source /dev/stdin <<<\"$(\"{0}\" init bash --print-full-init)\"\n+                fi\n+            }}\n+            __main\n+            unset -f __main\n+            \"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"zsh\" => print!(\n+            r#\"source <(\"{}\" init zsh --print-full-init)\"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"fish\" => print!(\n             // Fish does process substitution with pipes and psub instead of bash syntax\n-            let script = format!(\n-                \"source (\\\"{}\\\" init fish --print-full-init | psub)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"powershell\" => {\n-            // Explanation of syntax:\n-            // &: Explicitly tells powershell to execute path with starship executable.\n-            //\n-            // @: multi-line stdout is returned as an array, but a single line or no lines\n-            //    are returned as-is. @ ensures it's always an array.\n-            //\n-            // -join \"`n\": Joins the stdout array together as a string with newlines.\n-            //             Powershell escapes with ` instead of \\ thus `n translates to a newline.\n-            let script = format!(\n-                \"Invoke-Expression (@(&\\\"{}\\\" init powershell --print-full-init) -join \\\"`n\\\")\",\n-                starship.sprint()?\n-            );\n-            Some(script)\n-        }\n-        \"ion\" => {\n-            let script = format!(\"eval $({} init ion --print-full-init)\", starship.sprint()?);\n-            Some(script)\n-        }\n-        \"elvish\" => {\n-            let script = format!(\n-                \"eval (\\\"{}\\\" init elvish --print-full-init | slurp)\",\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n-        \"tcsh\" => {\n-            let script = format!(\n-                r#\"eval \"`(\"{}\" init tcsh --print-full-init)`\"\"#,\n-                starship.sprint_posix()?\n-            );\n-            Some(script)\n-        }\n+            r#\"source (\"{}\" init fish --print-full-init | psub)\"#,\n+            starship.sprint_posix()?\n+        ),\n+        \"powershell\" => print!(\n+            /*\n+             * Explanation of syntax:\n+             *\n+             *      iex: alias of Invoke-Expression\n+             *\n+             *      &: Explicitly tells PowerShell to execute path with Starship\n+             *         executable.\n+             *\n+             *      @: multi-line stdout is returned as an array, but a single\n+             *         line or no lines are returned as-is. @ ensures it's always\n+             *         an array.\n+             *\n+             *      -join \"`n\": Joins the stdout array together as a string with\n+             *                  newlines. PowerShell escapes with ` instead of \\\n+             *                  thus `n translates to a newline.\n+             */\n+            r#\"iex (@(&\"{}\" init powershell --print-full-init) -join \"`n\")\"#,",
+    "path": "src/init/mod.rs",
+    "commit_id": "4e67079d052602f79c5a3062d268c11c3d903508",
+    "original_commit_id": "9ada995e214862748c28cd1d75d0524a898e72e9",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Done, thanks for your help! :+1: ",
+    "created_at": "2021-04-03T08:48:36Z",
+    "updated_at": "2021-04-03T08:48:36Z",
+    "html_url": "https://github.com/starship/starship/pull/2548#discussion_r606638998",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2548",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/606638998"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2548#discussion_r606638998"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2548"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/606638998/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 166,
+    "side": "RIGHT",
+    "in_reply_to_id": 606634419,
+    "author_association": "MEMBER",
+    "original_position": 117,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

@@ -1,0 +1,211 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/623386549",
+    "pull_request_review_id": 648641642,
+    "id": 623386549,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYyMzM4NjU0OQ==",
+    "diff_hunk": "@@ -302,6 +305,37 @@ project = abc\n         dir.close()\n     }\n \n+    #[test]\n+    fn project_set_in_env() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        let active_config_path = dir.path().join(\"active_config\");\n+        let mut active_config_file = File::create(&active_config_path)?;\n+        active_config_file.write_all(b\"default\")?;\n+\n+        create_dir(dir.path().join(\"configurations\"))?;\n+        let config_default_path = dir.path().join(\"configurations\").join(\"config_default\");\n+        let mut config_default_file = File::create(&config_default_path)?;\n+        config_default_file.write_all(\n+            b\"\\\n+[core]\n+project = abc\n+\",\n+        )?;\n+\n+        let actual = ModuleRenderer::new(\"gcloud\")\n+            .env(\"CLOUDSDK_CORE_PROJECT\", \"env_project\")\n+            .env(\"CLOUDSDK_CONFIG\", dir.path().to_string_lossy())\n+            .config(toml::toml! {\n+                [gcloud]\n+                format = \"on [$symbol$project]($style) \"\n+            })\n+            .collect();\n+        let expected = Some(format!(\"on {} \", Color::Blue.bold().paint(\"☁️ env_project\")));",
+    "path": "src/modules/gcloud.rs",
+    "commit_id": "389098f0f3c9d5726340063be1cfe34b1126f748",
+    "original_commit_id": "09de6171832d64910fafd5ac4a8f06c0cd6e64f8",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Looks like I broke this when I tried to fix the merge conflicts, I think this should fix it \n```suggestion\n        let expected = Some(format!(\"on {} \", Color::Blue.bold().paint(\"☁️  env_project\")));\n```\n",
+    "created_at": "2021-04-29T20:46:23Z",
+    "updated_at": "2021-04-30T03:44:51Z",
+    "html_url": "https://github.com/starship/starship/pull/2596#discussion_r623386549",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2596",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/623386549"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2596#discussion_r623386549"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2596"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/623386549/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 333,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 41,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/623417846",
+    "pull_request_review_id": 648674988,
+    "id": 623417846,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYyMzQxNzg0Ng==",
+    "diff_hunk": "@@ -302,6 +305,37 @@ project = abc\n         dir.close()\n     }\n \n+    #[test]\n+    fn project_set_in_env() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        let active_config_path = dir.path().join(\"active_config\");\n+        let mut active_config_file = File::create(&active_config_path)?;\n+        active_config_file.write_all(b\"default\")?;\n+\n+        create_dir(dir.path().join(\"configurations\"))?;\n+        let config_default_path = dir.path().join(\"configurations\").join(\"config_default\");\n+        let mut config_default_file = File::create(&config_default_path)?;\n+        config_default_file.write_all(\n+            b\"\\\n+[core]\n+project = abc\n+\",\n+        )?;\n+\n+        let actual = ModuleRenderer::new(\"gcloud\")\n+            .env(\"CLOUDSDK_CORE_PROJECT\", \"env_project\")\n+            .env(\"CLOUDSDK_CONFIG\", dir.path().to_string_lossy())\n+            .config(toml::toml! {\n+                [gcloud]\n+                format = \"on [$symbol$project]($style) \"\n+            })\n+            .collect();\n+        let expected = Some(format!(\"on {} \", Color::Blue.bold().paint(\"☁️ env_project\")));",
+    "path": "src/modules/gcloud.rs",
+    "commit_id": "389098f0f3c9d5726340063be1cfe34b1126f748",
+    "original_commit_id": "09de6171832d64910fafd5ac4a8f06c0cd6e64f8",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'll take a look once I get back to my machine. ⌛  ",
+    "created_at": "2021-04-29T21:33:45Z",
+    "updated_at": "2021-04-30T03:44:51Z",
+    "html_url": "https://github.com/starship/starship/pull/2596#discussion_r623417846",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2596",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/623417846"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2596#discussion_r623417846"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2596"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/623417846/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 333,
+    "side": "RIGHT",
+    "in_reply_to_id": 623386549,
+    "author_association": "MEMBER",
+    "original_position": 41,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/623568798",
+    "pull_request_review_id": 648835478,
+    "id": 623568798,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYyMzU2ODc5OA==",
+    "diff_hunk": "@@ -302,6 +305,37 @@ project = abc\n         dir.close()\n     }\n \n+    #[test]\n+    fn project_set_in_env() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        let active_config_path = dir.path().join(\"active_config\");\n+        let mut active_config_file = File::create(&active_config_path)?;\n+        active_config_file.write_all(b\"default\")?;\n+\n+        create_dir(dir.path().join(\"configurations\"))?;\n+        let config_default_path = dir.path().join(\"configurations\").join(\"config_default\");\n+        let mut config_default_file = File::create(&config_default_path)?;\n+        config_default_file.write_all(\n+            b\"\\\n+[core]\n+project = abc\n+\",\n+        )?;\n+\n+        let actual = ModuleRenderer::new(\"gcloud\")\n+            .env(\"CLOUDSDK_CORE_PROJECT\", \"env_project\")\n+            .env(\"CLOUDSDK_CONFIG\", dir.path().to_string_lossy())\n+            .config(toml::toml! {\n+                [gcloud]\n+                format = \"on [$symbol$project]($style) \"\n+            })\n+            .collect();\n+        let expected = Some(format!(\"on {} \", Color::Blue.bold().paint(\"☁️ env_project\")));",
+    "path": "src/modules/gcloud.rs",
+    "commit_id": "389098f0f3c9d5726340063be1cfe34b1126f748",
+    "original_commit_id": "09de6171832d64910fafd5ac4a8f06c0cd6e64f8",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Yup, that was it!",
+    "created_at": "2021-04-30T03:45:20Z",
+    "updated_at": "2021-04-30T03:45:20Z",
+    "html_url": "https://github.com/starship/starship/pull/2596#discussion_r623568798",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2596",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/623568798"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2596#discussion_r623568798"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2596"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/623568798/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 333,
+    "side": "RIGHT",
+    "in_reply_to_id": 623386549,
+    "author_association": "MEMBER",
+    "original_position": 41,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

@@ -1,0 +1,840 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/818074789",
+    "pull_request_review_id": 898131624,
+    "id": 818074789,
+    "node_id": "PRRC_kwDOCqswNs4wwtSl",
+    "diff_hunk": "@@ -321,6 +354,8 @@ mod tests {\n         static OVERRIDES_CWD_A: &str = r\"\\\\?\\C:\\src\";\n         static OVERRIDES_CWD_B: &str = r\"C:\\src\";\n \n+        fs::create_dir(OVERRIDES_CWD_B).unwrap();",
+    "path": "src/modules/rust.rs",
+    "commit_id": "9910cd8b7e987dad94d8b5bb1ddd8db0fa73202d",
+    "original_commit_id": "25cfa38169e893f3c9463c41d5a1fd84737d48e9",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This test will pollute `C:\\` and can only succeed once (dir already exists). Please add an `#[ignore]` to restrict it to CI-only or fix that.",
+    "created_at": "2022-03-02T20:27:24Z",
+    "updated_at": "2022-03-02T20:45:11Z",
+    "html_url": "https://github.com/starship/starship/pull/3668#discussion_r818074789",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3668",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/818074789"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3668#discussion_r818074789"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3668"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/818074789/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 357,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 96,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/818079985",
+    "pull_request_review_id": 898131624,
+    "id": 818079985,
+    "node_id": "PRRC_kwDOCqswNs4wwujx",
+    "diff_hunk": "@@ -119,26 +120,48 @@ fn execute_rustup_default(context: &Context) -> Option<String> {\n         .map(str::to_owned)\n }\n \n+// convert a path to a key in rustup `settings.toml`.\n+// Mimics rustup:\n+// * `settings::Settings::path_to_key`\n+// * `utils::utils::canonicalize_path`\n+fn path_to_key(path: &Path) -> String {\n+    if path.exists() {\n+        // allow disallowed method since we want to mimic\n+        // rustup exactly.\n+        #[allow(clippy::disallowed_methods)]\n+        fs::canonicalize(path)\n+            .unwrap_or_else(|_| PathBuf::from(path))\n+            .display()\n+            .to_string()\n+    } else {\n+        path.display().to_string()\n+    }\n+}\n+\n fn extract_toolchain_from_rustup_override_list(stdout: &str, cwd: &Path) -> Option<String> {\n     if stdout == \"no overrides\\n\" {\n         return None;\n     }\n-    // use display version of path, also allows stripping \\\\?\\\n-    let cwd = cwd.to_string_lossy();\n-    // rustup strips \\\\?\\ prefix\n-    #[cfg(windows)]\n-    let cwd = cwd.strip_prefix(r\"\\\\?\\\").unwrap_or(&cwd);\n \n-    stdout\n+    let overrides: HashMap<String, &str> = stdout\n         .lines()\n         .filter_map(|line| {\n             let (dir, toolchain) = line.split_once('\\t')?;\n-            Some((dir.trim(), toolchain.trim()))\n+            Some((path_to_key(Path::new(dir.trim())), toolchain.trim()))\n         })\n-        // find most specific match\n-        .filter(|(dir, _)| cwd.starts_with(dir))\n-        .max_by_key(|(dir, _)| dir.len())\n-        .map(|(_, toolchain)| toolchain.to_owned())\n+        .collect();\n+\n+    let mut dir = Some(cwd);\n+\n+    while let Some(d) = dir {\n+        let key = path_to_key(d);",
+    "path": "src/modules/rust.rs",
+    "commit_id": "9910cd8b7e987dad94d8b5bb1ddd8db0fa73202d",
+    "original_commit_id": "25cfa38169e893f3c9463c41d5a1fd84737d48e9",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Does this really need `canonicalize` at every level or at all? We can be reasonably sure that the first path exists, and each call will do I/O. Both the overrides and cwd should already be canonicalized (`dunce` will just sometimes strip the prefix).\r\n\r\nI'd prefer to just strip the prefixes and convert each level directly into a `String`.",
+    "created_at": "2022-03-02T20:34:46Z",
+    "updated_at": "2022-03-02T20:45:11Z",
+    "html_url": "https://github.com/starship/starship/pull/3668#discussion_r818079985",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3668",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/818079985"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3668#discussion_r818079985"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3668"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/818079985/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 157,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/818345660",
+    "pull_request_review_id": 898487584,
+    "id": 818345660,
+    "node_id": "PRRC_kwDOCqswNs4wxva8",
+    "diff_hunk": "@@ -321,6 +354,8 @@ mod tests {\n         static OVERRIDES_CWD_A: &str = r\"\\\\?\\C:\\src\";\n         static OVERRIDES_CWD_B: &str = r\"C:\\src\";\n \n+        fs::create_dir(OVERRIDES_CWD_B).unwrap();",
+    "path": "src/modules/rust.rs",
+    "commit_id": "9910cd8b7e987dad94d8b5bb1ddd8db0fa73202d",
+    "original_commit_id": "25cfa38169e893f3c9463c41d5a1fd84737d48e9",
+    "user": {
+      "login": "syphar",
+      "id": 540890,
+      "node_id": "MDQ6VXNlcjU0MDg5MA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/540890?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/syphar",
+      "html_url": "https://github.com/syphar",
+      "followers_url": "https://api.github.com/users/syphar/followers",
+      "following_url": "https://api.github.com/users/syphar/following{/other_user}",
+      "gists_url": "https://api.github.com/users/syphar/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/syphar/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/syphar/subscriptions",
+      "organizations_url": "https://api.github.com/users/syphar/orgs",
+      "repos_url": "https://api.github.com/users/syphar/repos",
+      "events_url": "https://api.github.com/users/syphar/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/syphar/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "valid point, I'll change it. ",
+    "created_at": "2022-03-03T06:16:41Z",
+    "updated_at": "2022-03-03T06:16:41Z",
+    "html_url": "https://github.com/starship/starship/pull/3668#discussion_r818345660",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3668",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/818345660"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3668#discussion_r818345660"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3668"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/818345660/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 357,
+    "side": "RIGHT",
+    "in_reply_to_id": 818074789,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 96,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/818348681",
+    "pull_request_review_id": 898491661,
+    "id": 818348681,
+    "node_id": "PRRC_kwDOCqswNs4wxwKJ",
+    "diff_hunk": "@@ -119,26 +120,48 @@ fn execute_rustup_default(context: &Context) -> Option<String> {\n         .map(str::to_owned)\n }\n \n+// convert a path to a key in rustup `settings.toml`.\n+// Mimics rustup:\n+// * `settings::Settings::path_to_key`\n+// * `utils::utils::canonicalize_path`\n+fn path_to_key(path: &Path) -> String {\n+    if path.exists() {\n+        // allow disallowed method since we want to mimic\n+        // rustup exactly.\n+        #[allow(clippy::disallowed_methods)]\n+        fs::canonicalize(path)\n+            .unwrap_or_else(|_| PathBuf::from(path))\n+            .display()\n+            .to_string()\n+    } else {\n+        path.display().to_string()\n+    }\n+}\n+\n fn extract_toolchain_from_rustup_override_list(stdout: &str, cwd: &Path) -> Option<String> {\n     if stdout == \"no overrides\\n\" {\n         return None;\n     }\n-    // use display version of path, also allows stripping \\\\?\\\n-    let cwd = cwd.to_string_lossy();\n-    // rustup strips \\\\?\\ prefix\n-    #[cfg(windows)]\n-    let cwd = cwd.strip_prefix(r\"\\\\?\\\").unwrap_or(&cwd);\n \n-    stdout\n+    let overrides: HashMap<String, &str> = stdout\n         .lines()\n         .filter_map(|line| {\n             let (dir, toolchain) = line.split_once('\\t')?;\n-            Some((dir.trim(), toolchain.trim()))\n+            Some((path_to_key(Path::new(dir.trim())), toolchain.trim()))\n         })\n-        // find most specific match\n-        .filter(|(dir, _)| cwd.starts_with(dir))\n-        .max_by_key(|(dir, _)| dir.len())\n-        .map(|(_, toolchain)| toolchain.to_owned())\n+        .collect();\n+\n+    let mut dir = Some(cwd);\n+\n+    while let Some(d) = dir {\n+        let key = path_to_key(d);",
+    "path": "src/modules/rust.rs",
+    "commit_id": "9910cd8b7e987dad94d8b5bb1ddd8db0fa73202d",
+    "original_commit_id": "25cfa38169e893f3c9463c41d5a1fd84737d48e9",
+    "user": {
+      "login": "syphar",
+      "id": 540890,
+      "node_id": "MDQ6VXNlcjU0MDg5MA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/540890?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/syphar",
+      "html_url": "https://github.com/syphar",
+      "followers_url": "https://api.github.com/users/syphar/followers",
+      "following_url": "https://api.github.com/users/syphar/following{/other_user}",
+      "gists_url": "https://api.github.com/users/syphar/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/syphar/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/syphar/subscriptions",
+      "organizations_url": "https://api.github.com/users/syphar/orgs",
+      "repos_url": "https://api.github.com/users/syphar/repos",
+      "events_url": "https://api.github.com/users/syphar/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/syphar/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "> I'd prefer to just strip the prefixes and convert each level directly into a `String`.\r\n\r\nThis probably boils down to a general design-decision. Personally I prefer using library features ( in this case, for paths and their comparison) over reinventing the wheel. In the end, this is what lead to this bug here since prefix-matching works different for strings and paths. \r\n\r\nSecondly, this mimics how `rustup` does it, so possible edge-cases I don't know about are covered. \r\n\r\nIMO I/O effort is negligible in comparison to the rest of starship or even the rest of the rust-module. \r\n\r\n**Of course if that's preferred I can fix the prefix matching while still using strings and not paths.**\r\n\r\n> Both the overrides and cwd should already be canonicalized (dunce will just sometimes strip the prefix).\r\n\r\nFor the overrides you're probably right, since rustup probably stores the canonicalized path in `settings.yml`.  But when I removed the canonicalization for the overrides, the windows-test failed. How does the `settings.yml` look on windows compared to the tests? \r\n",
+    "created_at": "2022-03-03T06:23:58Z",
+    "updated_at": "2022-03-04T07:13:56Z",
+    "html_url": "https://github.com/starship/starship/pull/3668#discussion_r818348681",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3668",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/818348681"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3668#discussion_r818348681"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3668"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/818348681/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 157,
+    "side": "RIGHT",
+    "in_reply_to_id": 818079985,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/819318496",
+    "pull_request_review_id": 899875036,
+    "id": 819318496,
+    "node_id": "PRRC_kwDOCqswNs4w1c7g",
+    "diff_hunk": "@@ -119,26 +120,48 @@ fn execute_rustup_default(context: &Context) -> Option<String> {\n         .map(str::to_owned)\n }\n \n+// convert a path to a key in rustup `settings.toml`.\n+// Mimics rustup:\n+// * `settings::Settings::path_to_key`\n+// * `utils::utils::canonicalize_path`\n+fn path_to_key(path: &Path) -> String {\n+    if path.exists() {\n+        // allow disallowed method since we want to mimic\n+        // rustup exactly.\n+        #[allow(clippy::disallowed_methods)]\n+        fs::canonicalize(path)\n+            .unwrap_or_else(|_| PathBuf::from(path))\n+            .display()\n+            .to_string()\n+    } else {\n+        path.display().to_string()\n+    }\n+}\n+\n fn extract_toolchain_from_rustup_override_list(stdout: &str, cwd: &Path) -> Option<String> {\n     if stdout == \"no overrides\\n\" {\n         return None;\n     }\n-    // use display version of path, also allows stripping \\\\?\\\n-    let cwd = cwd.to_string_lossy();\n-    // rustup strips \\\\?\\ prefix\n-    #[cfg(windows)]\n-    let cwd = cwd.strip_prefix(r\"\\\\?\\\").unwrap_or(&cwd);\n \n-    stdout\n+    let overrides: HashMap<String, &str> = stdout\n         .lines()\n         .filter_map(|line| {\n             let (dir, toolchain) = line.split_once('\\t')?;\n-            Some((dir.trim(), toolchain.trim()))\n+            Some((path_to_key(Path::new(dir.trim())), toolchain.trim()))\n         })\n-        // find most specific match\n-        .filter(|(dir, _)| cwd.starts_with(dir))\n-        .max_by_key(|(dir, _)| dir.len())\n-        .map(|(_, toolchain)| toolchain.to_owned())\n+        .collect();\n+\n+    let mut dir = Some(cwd);\n+\n+    while let Some(d) = dir {\n+        let key = path_to_key(d);",
+    "path": "src/modules/rust.rs",
+    "commit_id": "9910cd8b7e987dad94d8b5bb1ddd8db0fa73202d",
+    "original_commit_id": "25cfa38169e893f3c9463c41d5a1fd84737d48e9",
+    "user": {
+      "login": "syphar",
+      "id": 540890,
+      "node_id": "MDQ6VXNlcjU0MDg5MA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/540890?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/syphar",
+      "html_url": "https://github.com/syphar",
+      "followers_url": "https://api.github.com/users/syphar/followers",
+      "following_url": "https://api.github.com/users/syphar/following{/other_user}",
+      "gists_url": "https://api.github.com/users/syphar/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/syphar/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/syphar/subscriptions",
+      "organizations_url": "https://api.github.com/users/syphar/orgs",
+      "repos_url": "https://api.github.com/users/syphar/repos",
+      "events_url": "https://api.github.com/users/syphar/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/syphar/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "@davidkna could you give me some feedback here? \r\nI would love to fix this bug. \r\n\r\nOf course I'm happy to adapt to a string-based approach if that's preferred. ",
+    "created_at": "2022-03-04T07:14:37Z",
+    "updated_at": "2022-03-04T07:14:37Z",
+    "html_url": "https://github.com/starship/starship/pull/3668#discussion_r819318496",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3668",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/819318496"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3668#discussion_r819318496"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3668"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/819318496/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 157,
+    "side": "RIGHT",
+    "in_reply_to_id": 818079985,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/820259317",
+    "pull_request_review_id": 901097660,
+    "id": 820259317,
+    "node_id": "PRRC_kwDOCqswNs4w5Cn1",
+    "diff_hunk": "@@ -119,26 +120,48 @@ fn execute_rustup_default(context: &Context) -> Option<String> {\n         .map(str::to_owned)\n }\n \n+// convert a path to a key in rustup `settings.toml`.\n+// Mimics rustup:\n+// * `settings::Settings::path_to_key`\n+// * `utils::utils::canonicalize_path`\n+fn path_to_key(path: &Path) -> String {\n+    if path.exists() {\n+        // allow disallowed method since we want to mimic\n+        // rustup exactly.\n+        #[allow(clippy::disallowed_methods)]\n+        fs::canonicalize(path)\n+            .unwrap_or_else(|_| PathBuf::from(path))\n+            .display()\n+            .to_string()\n+    } else {\n+        path.display().to_string()\n+    }\n+}\n+\n fn extract_toolchain_from_rustup_override_list(stdout: &str, cwd: &Path) -> Option<String> {\n     if stdout == \"no overrides\\n\" {\n         return None;\n     }\n-    // use display version of path, also allows stripping \\\\?\\\n-    let cwd = cwd.to_string_lossy();\n-    // rustup strips \\\\?\\ prefix\n-    #[cfg(windows)]\n-    let cwd = cwd.strip_prefix(r\"\\\\?\\\").unwrap_or(&cwd);\n \n-    stdout\n+    let overrides: HashMap<String, &str> = stdout\n         .lines()\n         .filter_map(|line| {\n             let (dir, toolchain) = line.split_once('\\t')?;\n-            Some((dir.trim(), toolchain.trim()))\n+            Some((path_to_key(Path::new(dir.trim())), toolchain.trim()))\n         })\n-        // find most specific match\n-        .filter(|(dir, _)| cwd.starts_with(dir))\n-        .max_by_key(|(dir, _)| dir.len())\n-        .map(|(_, toolchain)| toolchain.to_owned())\n+        .collect();\n+\n+    let mut dir = Some(cwd);\n+\n+    while let Some(d) = dir {\n+        let key = path_to_key(d);",
+    "path": "src/modules/rust.rs",
+    "commit_id": "9910cd8b7e987dad94d8b5bb1ddd8db0fa73202d",
+    "original_commit_id": "25cfa38169e893f3c9463c41d5a1fd84737d48e9",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": ">Personally I prefer using library features ( in this case, for paths and their comparison) over reinventing the wheel.\r\n\r\nAren't this code and rustup itself just creating string keys for each parent and comparing them? I'd prefer not doing canonicalization here, but if you feel strongly about it, you can stay with this approach.\r\n\r\n> But when I removed the canonicalization for the overrides, the windows-test failed.\r\n\r\nRustup unconditionally removes the verbatim path prefix. The canonicalization adds back the prefix back to both `current_dir` and the override and makes them match (this code is doing the opposite of rustup).\r\n",
+    "created_at": "2022-03-06T16:50:21Z",
+    "updated_at": "2022-03-06T16:50:21Z",
+    "html_url": "https://github.com/starship/starship/pull/3668#discussion_r820259317",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3668",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/820259317"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3668#discussion_r820259317"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3668"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/820259317/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 157,
+    "side": "RIGHT",
+    "in_reply_to_id": 818079985,
+    "author_association": "MEMBER",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/820260214",
+    "pull_request_review_id": 901098429,
+    "id": 820260214,
+    "node_id": "PRRC_kwDOCqswNs4w5C12",
+    "diff_hunk": "@@ -119,26 +120,48 @@ fn execute_rustup_default(context: &Context) -> Option<String> {\n         .map(str::to_owned)\n }\n \n+// convert a path to a key in rustup `settings.toml`.\n+// Mimics rustup:\n+// * `settings::Settings::path_to_key`\n+// * `utils::utils::canonicalize_path`\n+fn path_to_key(path: &Path) -> String {\n+    if path.exists() {\n+        // allow disallowed method since we want to mimic\n+        // rustup exactly.\n+        #[allow(clippy::disallowed_methods)]\n+        fs::canonicalize(path)\n+            .unwrap_or_else(|_| PathBuf::from(path))\n+            .display()\n+            .to_string()\n+    } else {\n+        path.display().to_string()\n+    }\n+}\n+\n fn extract_toolchain_from_rustup_override_list(stdout: &str, cwd: &Path) -> Option<String> {\n     if stdout == \"no overrides\\n\" {\n         return None;\n     }\n-    // use display version of path, also allows stripping \\\\?\\\n-    let cwd = cwd.to_string_lossy();\n-    // rustup strips \\\\?\\ prefix\n-    #[cfg(windows)]\n-    let cwd = cwd.strip_prefix(r\"\\\\?\\\").unwrap_or(&cwd);\n \n-    stdout\n+    let overrides: HashMap<String, &str> = stdout\n         .lines()\n         .filter_map(|line| {\n             let (dir, toolchain) = line.split_once('\\t')?;\n-            Some((dir.trim(), toolchain.trim()))\n+            Some((path_to_key(Path::new(dir.trim())), toolchain.trim()))\n         })\n-        // find most specific match\n-        .filter(|(dir, _)| cwd.starts_with(dir))\n-        .max_by_key(|(dir, _)| dir.len())\n-        .map(|(_, toolchain)| toolchain.to_owned())\n+        .collect();\n+\n+    let mut dir = Some(cwd);\n+\n+    while let Some(d) = dir {\n+        let key = path_to_key(d);",
+    "path": "src/modules/rust.rs",
+    "commit_id": "9910cd8b7e987dad94d8b5bb1ddd8db0fa73202d",
+    "original_commit_id": "25cfa38169e893f3c9463c41d5a1fd84737d48e9",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "> Personally I prefer using library features ( in this case, for paths and their comparison) over reinventing the wheel.\r\n\r\nBy the way: #3414 seems to be doing proper Path-based comparison and should not be too far off.",
+    "created_at": "2022-03-06T16:57:49Z",
+    "updated_at": "2022-03-06T16:57:49Z",
+    "html_url": "https://github.com/starship/starship/pull/3668#discussion_r820260214",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3668",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/820260214"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3668#discussion_r820260214"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3668"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/820260214/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 157,
+    "side": "RIGHT",
+    "in_reply_to_id": 818079985,
+    "author_association": "MEMBER",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/821492983",
+    "pull_request_review_id": 902779112,
+    "id": 821492983,
+    "node_id": "PRRC_kwDOCqswNs4w9vz3",
+    "diff_hunk": "@@ -119,26 +120,48 @@ fn execute_rustup_default(context: &Context) -> Option<String> {\n         .map(str::to_owned)\n }\n \n+// convert a path to a key in rustup `settings.toml`.\n+// Mimics rustup:\n+// * `settings::Settings::path_to_key`\n+// * `utils::utils::canonicalize_path`\n+fn path_to_key(path: &Path) -> String {\n+    if path.exists() {\n+        // allow disallowed method since we want to mimic\n+        // rustup exactly.\n+        #[allow(clippy::disallowed_methods)]\n+        fs::canonicalize(path)\n+            .unwrap_or_else(|_| PathBuf::from(path))\n+            .display()\n+            .to_string()\n+    } else {\n+        path.display().to_string()\n+    }\n+}\n+\n fn extract_toolchain_from_rustup_override_list(stdout: &str, cwd: &Path) -> Option<String> {\n     if stdout == \"no overrides\\n\" {\n         return None;\n     }\n-    // use display version of path, also allows stripping \\\\?\\\n-    let cwd = cwd.to_string_lossy();\n-    // rustup strips \\\\?\\ prefix\n-    #[cfg(windows)]\n-    let cwd = cwd.strip_prefix(r\"\\\\?\\\").unwrap_or(&cwd);\n \n-    stdout\n+    let overrides: HashMap<String, &str> = stdout\n         .lines()\n         .filter_map(|line| {\n             let (dir, toolchain) = line.split_once('\\t')?;\n-            Some((dir.trim(), toolchain.trim()))\n+            Some((path_to_key(Path::new(dir.trim())), toolchain.trim()))\n         })\n-        // find most specific match\n-        .filter(|(dir, _)| cwd.starts_with(dir))\n-        .max_by_key(|(dir, _)| dir.len())\n-        .map(|(_, toolchain)| toolchain.to_owned())\n+        .collect();\n+\n+    let mut dir = Some(cwd);\n+\n+    while let Some(d) = dir {\n+        let key = path_to_key(d);",
+    "path": "src/modules/rust.rs",
+    "commit_id": "9910cd8b7e987dad94d8b5bb1ddd8db0fa73202d",
+    "original_commit_id": "25cfa38169e893f3c9463c41d5a1fd84737d48e9",
+    "user": {
+      "login": "syphar",
+      "id": 540890,
+      "node_id": "MDQ6VXNlcjU0MDg5MA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/540890?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/syphar",
+      "html_url": "https://github.com/syphar",
+      "followers_url": "https://api.github.com/users/syphar/followers",
+      "following_url": "https://api.github.com/users/syphar/following{/other_user}",
+      "gists_url": "https://api.github.com/users/syphar/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/syphar/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/syphar/subscriptions",
+      "organizations_url": "https://api.github.com/users/syphar/orgs",
+      "repos_url": "https://api.github.com/users/syphar/repos",
+      "events_url": "https://api.github.com/users/syphar/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/syphar/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "> > Personally I prefer using library features ( in this case, for paths and their comparison) over reinventing the wheel.\r\n> \r\n> By the way: #3414 seems to be doing proper Path-based comparison and should not be too far off.\r\n\r\nAre you sure this works on windows too? \r\n\r\nTo me #3414 looks like it's reverting the windows-specific change you made in #3359, and just comparing a `PathBuf` override with a `Path` cwd. ",
+    "created_at": "2022-03-08T09:46:53Z",
+    "updated_at": "2022-03-08T09:46:54Z",
+    "html_url": "https://github.com/starship/starship/pull/3668#discussion_r821492983",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3668",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/821492983"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3668#discussion_r821492983"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3668"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/821492983/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 157,
+    "side": "RIGHT",
+    "in_reply_to_id": 818079985,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/821494562",
+    "pull_request_review_id": 902781213,
+    "id": 821494562,
+    "node_id": "PRRC_kwDOCqswNs4w9wMi",
+    "diff_hunk": "@@ -119,26 +120,48 @@ fn execute_rustup_default(context: &Context) -> Option<String> {\n         .map(str::to_owned)\n }\n \n+// convert a path to a key in rustup `settings.toml`.\n+// Mimics rustup:\n+// * `settings::Settings::path_to_key`\n+// * `utils::utils::canonicalize_path`\n+fn path_to_key(path: &Path) -> String {\n+    if path.exists() {\n+        // allow disallowed method since we want to mimic\n+        // rustup exactly.\n+        #[allow(clippy::disallowed_methods)]\n+        fs::canonicalize(path)\n+            .unwrap_or_else(|_| PathBuf::from(path))\n+            .display()\n+            .to_string()\n+    } else {\n+        path.display().to_string()\n+    }\n+}\n+\n fn extract_toolchain_from_rustup_override_list(stdout: &str, cwd: &Path) -> Option<String> {\n     if stdout == \"no overrides\\n\" {\n         return None;\n     }\n-    // use display version of path, also allows stripping \\\\?\\\n-    let cwd = cwd.to_string_lossy();\n-    // rustup strips \\\\?\\ prefix\n-    #[cfg(windows)]\n-    let cwd = cwd.strip_prefix(r\"\\\\?\\\").unwrap_or(&cwd);\n \n-    stdout\n+    let overrides: HashMap<String, &str> = stdout\n         .lines()\n         .filter_map(|line| {\n             let (dir, toolchain) = line.split_once('\\t')?;\n-            Some((dir.trim(), toolchain.trim()))\n+            Some((path_to_key(Path::new(dir.trim())), toolchain.trim()))\n         })\n-        // find most specific match\n-        .filter(|(dir, _)| cwd.starts_with(dir))\n-        .max_by_key(|(dir, _)| dir.len())\n-        .map(|(_, toolchain)| toolchain.to_owned())\n+        .collect();\n+\n+    let mut dir = Some(cwd);\n+\n+    while let Some(d) = dir {\n+        let key = path_to_key(d);",
+    "path": "src/modules/rust.rs",
+    "commit_id": "9910cd8b7e987dad94d8b5bb1ddd8db0fa73202d",
+    "original_commit_id": "25cfa38169e893f3c9463c41d5a1fd84737d48e9",
+    "user": {
+      "login": "syphar",
+      "id": 540890,
+      "node_id": "MDQ6VXNlcjU0MDg5MA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/540890?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/syphar",
+      "html_url": "https://github.com/syphar",
+      "followers_url": "https://api.github.com/users/syphar/followers",
+      "following_url": "https://api.github.com/users/syphar/following{/other_user}",
+      "gists_url": "https://api.github.com/users/syphar/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/syphar/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/syphar/subscriptions",
+      "organizations_url": "https://api.github.com/users/syphar/orgs",
+      "repos_url": "https://api.github.com/users/syphar/repos",
+      "events_url": "https://api.github.com/users/syphar/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/syphar/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "> Rustup unconditionally removes the verbatim path prefix. The canonicalization adds back the prefix back to both `current_dir` and the override and makes them match (this code is doing the opposite of rustup).\r\n\r\nI thought I read the rustup code correctly and mimicked its behaviour. I will check this again. ",
+    "created_at": "2022-03-08T09:48:40Z",
+    "updated_at": "2022-03-08T09:48:40Z",
+    "html_url": "https://github.com/starship/starship/pull/3668#discussion_r821494562",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3668",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/821494562"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3668#discussion_r821494562"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3668"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/821494562/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 157,
+    "side": "RIGHT",
+    "in_reply_to_id": 818079985,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/821521137",
+    "pull_request_review_id": 902817543,
+    "id": 821521137,
+    "node_id": "PRRC_kwDOCqswNs4w92rx",
+    "diff_hunk": "@@ -119,26 +120,48 @@ fn execute_rustup_default(context: &Context) -> Option<String> {\n         .map(str::to_owned)\n }\n \n+// convert a path to a key in rustup `settings.toml`.\n+// Mimics rustup:\n+// * `settings::Settings::path_to_key`\n+// * `utils::utils::canonicalize_path`\n+fn path_to_key(path: &Path) -> String {\n+    if path.exists() {\n+        // allow disallowed method since we want to mimic\n+        // rustup exactly.\n+        #[allow(clippy::disallowed_methods)]\n+        fs::canonicalize(path)\n+            .unwrap_or_else(|_| PathBuf::from(path))\n+            .display()\n+            .to_string()\n+    } else {\n+        path.display().to_string()\n+    }\n+}\n+\n fn extract_toolchain_from_rustup_override_list(stdout: &str, cwd: &Path) -> Option<String> {\n     if stdout == \"no overrides\\n\" {\n         return None;\n     }\n-    // use display version of path, also allows stripping \\\\?\\\n-    let cwd = cwd.to_string_lossy();\n-    // rustup strips \\\\?\\ prefix\n-    #[cfg(windows)]\n-    let cwd = cwd.strip_prefix(r\"\\\\?\\\").unwrap_or(&cwd);\n \n-    stdout\n+    let overrides: HashMap<String, &str> = stdout\n         .lines()\n         .filter_map(|line| {\n             let (dir, toolchain) = line.split_once('\\t')?;\n-            Some((dir.trim(), toolchain.trim()))\n+            Some((path_to_key(Path::new(dir.trim())), toolchain.trim()))\n         })\n-        // find most specific match\n-        .filter(|(dir, _)| cwd.starts_with(dir))\n-        .max_by_key(|(dir, _)| dir.len())\n-        .map(|(_, toolchain)| toolchain.to_owned())\n+        .collect();\n+\n+    let mut dir = Some(cwd);\n+\n+    while let Some(d) = dir {\n+        let key = path_to_key(d);",
+    "path": "src/modules/rust.rs",
+    "commit_id": "9910cd8b7e987dad94d8b5bb1ddd8db0fa73202d",
+    "original_commit_id": "25cfa38169e893f3c9463c41d5a1fd84737d48e9",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "> Are you sure this works on windows too?\r\n\r\nThere's room for improvement, but it should work most of the time because the verbatim path prefix is usually stripped by `dunce` now.",
+    "created_at": "2022-03-08T10:19:00Z",
+    "updated_at": "2022-03-08T10:19:01Z",
+    "html_url": "https://github.com/starship/starship/pull/3668#discussion_r821521137",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3668",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/821521137"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3668#discussion_r821521137"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3668"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/821521137/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 157,
+    "side": "RIGHT",
+    "in_reply_to_id": 818079985,
+    "author_association": "MEMBER",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/821524872",
+    "pull_request_review_id": 902822724,
+    "id": 821524872,
+    "node_id": "PRRC_kwDOCqswNs4w93mI",
+    "diff_hunk": "@@ -119,26 +120,48 @@ fn execute_rustup_default(context: &Context) -> Option<String> {\n         .map(str::to_owned)\n }\n \n+// convert a path to a key in rustup `settings.toml`.\n+// Mimics rustup:\n+// * `settings::Settings::path_to_key`\n+// * `utils::utils::canonicalize_path`\n+fn path_to_key(path: &Path) -> String {\n+    if path.exists() {\n+        // allow disallowed method since we want to mimic\n+        // rustup exactly.\n+        #[allow(clippy::disallowed_methods)]\n+        fs::canonicalize(path)\n+            .unwrap_or_else(|_| PathBuf::from(path))\n+            .display()\n+            .to_string()\n+    } else {\n+        path.display().to_string()\n+    }\n+}\n+\n fn extract_toolchain_from_rustup_override_list(stdout: &str, cwd: &Path) -> Option<String> {\n     if stdout == \"no overrides\\n\" {\n         return None;\n     }\n-    // use display version of path, also allows stripping \\\\?\\\n-    let cwd = cwd.to_string_lossy();\n-    // rustup strips \\\\?\\ prefix\n-    #[cfg(windows)]\n-    let cwd = cwd.strip_prefix(r\"\\\\?\\\").unwrap_or(&cwd);\n \n-    stdout\n+    let overrides: HashMap<String, &str> = stdout\n         .lines()\n         .filter_map(|line| {\n             let (dir, toolchain) = line.split_once('\\t')?;\n-            Some((dir.trim(), toolchain.trim()))\n+            Some((path_to_key(Path::new(dir.trim())), toolchain.trim()))\n         })\n-        // find most specific match\n-        .filter(|(dir, _)| cwd.starts_with(dir))\n-        .max_by_key(|(dir, _)| dir.len())\n-        .map(|(_, toolchain)| toolchain.to_owned())\n+        .collect();\n+\n+    let mut dir = Some(cwd);\n+\n+    while let Some(d) = dir {\n+        let key = path_to_key(d);",
+    "path": "src/modules/rust.rs",
+    "commit_id": "9910cd8b7e987dad94d8b5bb1ddd8db0fa73202d",
+    "original_commit_id": "25cfa38169e893f3c9463c41d5a1fd84737d48e9",
+    "user": {
+      "login": "syphar",
+      "id": 540890,
+      "node_id": "MDQ6VXNlcjU0MDg5MA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/540890?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/syphar",
+      "html_url": "https://github.com/syphar",
+      "followers_url": "https://api.github.com/users/syphar/followers",
+      "following_url": "https://api.github.com/users/syphar/following{/other_user}",
+      "gists_url": "https://api.github.com/users/syphar/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/syphar/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/syphar/subscriptions",
+      "organizations_url": "https://api.github.com/users/syphar/orgs",
+      "repos_url": "https://api.github.com/users/syphar/repos",
+      "events_url": "https://api.github.com/users/syphar/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/syphar/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "@davidkna ah, I think I understand now, please correct me if I'm wrong (and sorry for the long discussion): \r\n\r\nThe introduction of `dunce` ( #3638 ) actually makes stripping the prefix in #3359 unnecessary because the prefix is stripped in the `Context`. Correct? \r\n\r\nThen I can just change this PR to use normal `Path::starts_with` again. ",
+    "created_at": "2022-03-08T10:23:37Z",
+    "updated_at": "2022-03-08T10:23:37Z",
+    "html_url": "https://github.com/starship/starship/pull/3668#discussion_r821524872",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3668",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/821524872"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3668#discussion_r821524872"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3668"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/821524872/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 157,
+    "side": "RIGHT",
+    "in_reply_to_id": 818079985,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/821545918",
+    "pull_request_review_id": 902851592,
+    "id": 821545918,
+    "node_id": "PRRC_kwDOCqswNs4w98u-",
+    "diff_hunk": "@@ -119,26 +120,48 @@ fn execute_rustup_default(context: &Context) -> Option<String> {\n         .map(str::to_owned)\n }\n \n+// convert a path to a key in rustup `settings.toml`.\n+// Mimics rustup:\n+// * `settings::Settings::path_to_key`\n+// * `utils::utils::canonicalize_path`\n+fn path_to_key(path: &Path) -> String {\n+    if path.exists() {\n+        // allow disallowed method since we want to mimic\n+        // rustup exactly.\n+        #[allow(clippy::disallowed_methods)]\n+        fs::canonicalize(path)\n+            .unwrap_or_else(|_| PathBuf::from(path))\n+            .display()\n+            .to_string()\n+    } else {\n+        path.display().to_string()\n+    }\n+}\n+\n fn extract_toolchain_from_rustup_override_list(stdout: &str, cwd: &Path) -> Option<String> {\n     if stdout == \"no overrides\\n\" {\n         return None;\n     }\n-    // use display version of path, also allows stripping \\\\?\\\n-    let cwd = cwd.to_string_lossy();\n-    // rustup strips \\\\?\\ prefix\n-    #[cfg(windows)]\n-    let cwd = cwd.strip_prefix(r\"\\\\?\\\").unwrap_or(&cwd);\n \n-    stdout\n+    let overrides: HashMap<String, &str> = stdout\n         .lines()\n         .filter_map(|line| {\n             let (dir, toolchain) = line.split_once('\\t')?;\n-            Some((dir.trim(), toolchain.trim()))\n+            Some((path_to_key(Path::new(dir.trim())), toolchain.trim()))\n         })\n-        // find most specific match\n-        .filter(|(dir, _)| cwd.starts_with(dir))\n-        .max_by_key(|(dir, _)| dir.len())\n-        .map(|(_, toolchain)| toolchain.to_owned())\n+        .collect();\n+\n+    let mut dir = Some(cwd);\n+\n+    while let Some(d) = dir {\n+        let key = path_to_key(d);",
+    "path": "src/modules/rust.rs",
+    "commit_id": "9910cd8b7e987dad94d8b5bb1ddd8db0fa73202d",
+    "original_commit_id": "25cfa38169e893f3c9463c41d5a1fd84737d48e9",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Stripping the prefix is still somewhat more correct, because paths that are potentially invalid without the verbatim prefix will not have it stripped by dunce, whereas IIRC rustup is doing it unconditionally.\r\n\r\nIt would be better to convert the Path to `&str`, strip the prefix and convert it back to `Path` for `Path::starts_with`.",
+    "created_at": "2022-03-08T10:49:51Z",
+    "updated_at": "2022-03-08T10:49:52Z",
+    "html_url": "https://github.com/starship/starship/pull/3668#discussion_r821545918",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3668",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/821545918"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3668#discussion_r821545918"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3668"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/821545918/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 157,
+    "side": "RIGHT",
+    "in_reply_to_id": 818079985,
+    "author_association": "MEMBER",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

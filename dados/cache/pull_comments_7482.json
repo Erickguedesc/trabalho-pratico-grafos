@@ -1,0 +1,209 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3254903059",
+    "pull_request_review_id": 4305671266,
+    "id": 3254903059,
+    "node_id": "PRRC_kwDOCqswNs7CAeET",
+    "diff_hunk": "@@ -268,39 +268,82 @@ where\n }\n \n #[derive(Clone, Copy, Debug, PartialEq)]\n-enum PrevColor {\n-    Fg,\n-    Bg,\n+pub enum RefColor {\n+    PrevFg,\n+    PrevBg,\n+    NextFg,\n+    NextBg,\n }\n \n #[derive(Clone, Copy, Debug, Default, PartialEq)]\n /// Wrapper for `nu_ansi_term::Style` that supports referencing the previous style's foreground/background color.\n pub struct Style {\n     style: nu_ansi_term::Style,\n-    bg: Option<PrevColor>,\n-    fg: Option<PrevColor>,\n+    bg: Option<RefColor>,\n+    fg: Option<RefColor>,\n+}\n+\n+#[derive(Clone, Copy, Debug, Default, PartialEq)]\n+pub struct StyleRefs {\n+    prev: Option<AnsiStyle>,\n+    next: Option<AnsiStyle>,\n+}\n+\n+impl StyleRefs {\n+    pub fn new(prev: Option<AnsiStyle>, next: Option<AnsiStyle>) -> Self {\n+        Self { prev, next }\n+    }\n+\n+    pub fn prev(&self) -> Option<AnsiStyle> {\n+        self.prev\n+    }\n+\n+    pub fn next(&self) -> Option<AnsiStyle> {\n+        self.next\n+    }\n+\n+    pub fn with_prev(&self, prev: Option<AnsiStyle>) -> Self {\n+        Self {\n+            prev,\n+            next: self.next,\n+        }\n+    }\n+\n+    pub fn with_next(&self, next: Option<AnsiStyle>) -> Self {\n+        Self {\n+            prev: self.prev,\n+            next,\n+        }\n+    }\n+\n+    pub fn to_ansi_style(&self, ref_color: RefColor) -> Option<nu_ansi_term::Color> {\n+        match ref_color {\n+            RefColor::PrevFg => self.prev.and_then(|s| s.foreground),\n+            RefColor::PrevBg => self.prev.and_then(|s| s.background),\n+            RefColor::NextFg => self.next.and_then(|s| s.foreground),\n+            RefColor::NextBg => self.next.and_then(|s| s.background),\n+        }\n+    }\n }\n \n impl Style {\n-    pub fn to_ansi_style(&self, prev: Option<&nu_ansi_term::Style>) -> nu_ansi_term::Style {\n-        let Some(prev_style) = prev else {\n-            return self.style;\n-        };\n+    pub fn has_ref_color(&self) -> bool {\n+        self.fg.is_some() || self.bg.is_some()\n+    }\n \n+    pub fn to_ansi_style(&self, ref_styles: Option<StyleRefs>) -> AnsiStyle {\n         let mut current = self.style;\n \n-        if let Some(prev_color) = self.bg {\n-            match prev_color {\n-                PrevColor::Fg => current.background = prev_style.foreground,\n-                PrevColor::Bg => current.background = prev_style.background,\n-            }\n+        if let Some(prev_color) = self.bg\n+            && let Some(s) = ref_styles\n+        {\n+            current.background = s.to_ansi_style(prev_color);\n         }\n \n-        if let Some(prev_color) = self.fg {\n-            match prev_color {\n-                PrevColor::Fg => current.foreground = prev_style.foreground,\n-                PrevColor::Bg => current.foreground = prev_style.background,\n-            }\n+        if let Some(prev_color) = self.fg\n+            && let Some(s) = ref_styles\n+        {\n+            current.foreground = s.to_ansi_style(prev_color);\n         }",
+    "path": "src/config.rs",
+    "commit_id": "f53a03929d34eb5d8b0a9dc0b75a77af54aa4420",
+    "original_commit_id": "60f2e99af91cac6717e3c5e7fb2c1a83256cfb4b",
+    "user": {
+      "login": "cubic-dev-ai[bot]",
+      "id": 191113872,
+      "node_id": "BOT_kgDOC2QqkA",
+      "avatar_url": "https://avatars.githubusercontent.com/in/1082092?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D",
+      "html_url": "https://github.com/apps/cubic-dev-ai",
+      "followers_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/followers",
+      "following_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/subscriptions",
+      "organizations_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/orgs",
+      "repos_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/repos",
+      "events_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "<!-- metadata:{\"confidence\":8} -->\nP2: Reference color resolution clears existing fg/bg when only one side of `StyleRefs` is present, causing boundary segments to lose fallback colors.\n\n<details>\n<summary>Prompt for AI agents</summary>\n\n```text\nCheck if this issue is valid — if so, understand the root cause and fix it. At src/config.rs, line 337:\n\n<comment>Reference color resolution clears existing fg/bg when only one side of `StyleRefs` is present, causing boundary segments to lose fallback colors.</comment>\n\n<file context>\n@@ -268,39 +268,82 @@ where\n-                PrevColor::Fg => current.background = prev_style.foreground,\n-                PrevColor::Bg => current.background = prev_style.background,\n-            }\n+        if let Some(prev_color) = self.bg\n+            && let Some(s) = ref_styles\n+        {\n</file context>\n```\n\n</details>\n\n```suggestion\n        if let Some(ref_color) = self.bg\n            && let Some(s) = ref_styles\n        {\n            let should_apply = match ref_color {\n                RefColor::PrevFg | RefColor::PrevBg => s.prev().is_some(),\n                RefColor::NextFg | RefColor::NextBg => s.next().is_some(),\n            };\n            if should_apply {\n                current.background = s.to_ansi_style(ref_color);\n            }\n        }\n\n        if let Some(ref_color) = self.fg\n            && let Some(s) = ref_styles\n        {\n            let should_apply = match ref_color {\n                RefColor::PrevFg | RefColor::PrevBg => s.prev().is_some(),\n                RefColor::NextFg | RefColor::NextBg => s.next().is_some(),\n            };\n            if should_apply {\n                current.foreground = s.to_ansi_style(ref_color);\n            }\n        }\n```\n\n✅ Addressed in [`447606a`](https://github.com/starship/starship/commit/447606ab8811b70e66ace992f172a1ea763d15a4)",
+    "created_at": "2026-05-17T15:43:39Z",
+    "updated_at": "2026-05-17T15:57:41Z",
+    "html_url": "https://github.com/starship/starship/pull/7482#discussion_r3254903059",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7482",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3254903059"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7482#discussion_r3254903059"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7482"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3254903059/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 337,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 347,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 108,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3254903063",
+    "pull_request_review_id": 4305671266,
+    "id": 3254903063,
+    "node_id": "PRRC_kwDOCqswNs7CAeEX",
+    "diff_hunk": "@@ -231,28 +236,50 @@ where\n     }\n \n     if chunks.is_empty() {\n-        current\n-    } else {\n-        let fill_size = term_width\n-            .and_then(|tw| if tw > used { Some(tw - used) } else { None })\n-            .map(|remaining| remaining / chunks.len());\n-        chunks\n-            .into_iter()\n-            .flat_map(|(strs, fill)| {\n-                let fill_string = fill.ansi_string(\n-                    fill_size,\n-                    strs.last().map(nu_ansi_term::AnsiGenericString::style_ref),\n-                );\n-                strs.into_iter().chain(std::iter::once(fill_string))\n-            })\n-            .chain(current)\n-            .collect::<Vec<AnsiString>>()\n+        return current;\n     }\n+\n+    let (fill_size, mut fill_remainder) = term_width\n+        .and_then(|tw| if tw > used { Some(tw - used) } else {  None })\n+        .map(|remaining| (Some(remaining / chunks.len()), remaining % chunks.len()))\n+        .unwrap_or((None, 0));\n+    let mut fill_slack = 0usize;\n+\n+    let mut chunk_iter = chunks.iter_mut().peekable();\n+    let mut output = Vec::new();\n+\n+    while let Some((strs, fill)) = chunk_iter.next() {\n+        if fill_remainder > 0 {\n+            fill_remainder -= 1;\n+            fill_slack += 1;\n+        }\n+\n+        let wanted_len = fill_size.map(|s| s + fill_slack);\n+        prev_style = strs.last().map(|s| *s.style_ref());\n+        let next_style = chunk_iter\n+            .peek()\n+            .and_then(|(s, _)| s.first().map(|s| *s.style_ref()))\n+            // For the last fill there is no next chunk; the trailing text is in `current`.\n+            .or_else(|| current.first().map(|s| *s.style_ref()));",
+    "path": "src/module.rs",
+    "commit_id": "f36a2dae66573fd66dbf1cce16faff6c7aaacfdc",
+    "original_commit_id": "60f2e99af91cac6717e3c5e7fb2c1a83256cfb4b",
+    "user": {
+      "login": "cubic-dev-ai[bot]",
+      "id": 191113872,
+      "node_id": "BOT_kgDOC2QqkA",
+      "avatar_url": "https://avatars.githubusercontent.com/in/1082092?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D",
+      "html_url": "https://github.com/apps/cubic-dev-ai",
+      "followers_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/followers",
+      "following_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/subscriptions",
+      "organizations_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/orgs",
+      "repos_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/repos",
+      "events_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "<!-- metadata:{\"confidence\":8} -->\nP2: Adjacent fill segments can resolve `next_*` styles from trailing text instead of the immediate next segment.\n\n<details>\n<summary>Prompt for AI agents</summary>\n\n```text\nCheck if this issue is valid — if so, understand the root cause and fix it. At src/module.rs, line 259:\n\n<comment>Adjacent fill segments can resolve `next_*` styles from trailing text instead of the immediate next segment.</comment>\n\n<file context>\n@@ -231,28 +236,50 @@ where\n+\n+        let wanted_len = fill_size.map(|s| s + fill_slack);\n+        prev_style = strs.last().map(|s| *s.style_ref());\n+        let next_style = chunk_iter\n+            .peek()\n+            .and_then(|(s, _)| s.first().map(|s| *s.style_ref()))\n</file context>\n```\n\n</details>\n\n```suggestion\n        let next_style = if let Some((s, _)) = chunk_iter.peek() {\n            s.first().map(|s| *s.style_ref())\n        } else {\n            // For the last fill there is no next chunk; the trailing text is in `current`.\n            current.first().map(|s| *s.style_ref())\n        };\n```\n\n✅ Addressed in [`71ab8cb`](https://github.com/starship/starship/commit/71ab8cbd2f674e143ef62e97e49eab2730f04ea4)",
+    "created_at": "2026-05-17T15:43:39Z",
+    "updated_at": "2026-05-17T15:46:01Z",
+    "html_url": "https://github.com/starship/starship/pull/7482#discussion_r3254903063",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7482",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3254903063"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7482#discussion_r3254903063"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7482"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3254903063/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 259,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 263,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 84,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3254903066",
+    "pull_request_review_id": 4305671266,
+    "id": 3254903066,
+    "node_id": "PRRC_kwDOCqswNs7CAeEa",
+    "diff_hunk": "@@ -666,7 +666,7 @@ Style strings are a list of words, separated by whitespace. The words are not ca\n - `none`\n \n where `<color>` is a color specifier (discussed below). `fg:<color>` and `<color>` currently do the same thing, though this may change in the future.\n-`<color>` can also be set to `prev_fg` or `prev_bg` which evaluates to the previous item's foreground or background color respectively if available or `none` otherwise.\n+`<color>` can also be set to `prev_fg`, `prev_bg`, `next_fg` or `next_bg`, which evaluates to, respectively, the previous and next item's foreground or background color if available or `none` otherwise. `prev_fg` and `prev_bg` can be used transitively, whereas `next_fg` and `next_bg` can not be be used transitively.",
+    "path": "docs/advanced-config/README.md",
+    "commit_id": "71ab8cbd2f674e143ef62e97e49eab2730f04ea4",
+    "original_commit_id": "60f2e99af91cac6717e3c5e7fb2c1a83256cfb4b",
+    "user": {
+      "login": "cubic-dev-ai[bot]",
+      "id": 191113872,
+      "node_id": "BOT_kgDOC2QqkA",
+      "avatar_url": "https://avatars.githubusercontent.com/in/1082092?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D",
+      "html_url": "https://github.com/apps/cubic-dev-ai",
+      "followers_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/followers",
+      "following_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/subscriptions",
+      "organizations_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/orgs",
+      "repos_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/repos",
+      "events_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "<!-- metadata:{\"confidence\":10} -->\nP3: Fix duplicated wording in the new style-token documentation (`can not be be`).\n\n<details>\n<summary>Prompt for AI agents</summary>\n\n```text\nCheck if this issue is valid — if so, understand the root cause and fix it. At docs/advanced-config/README.md, line 669:\n\n<comment>Fix duplicated wording in the new style-token documentation (`can not be be`).</comment>\n\n<file context>\n@@ -666,7 +666,7 @@ Style strings are a list of words, separated by whitespace. The words are not ca\n \n where `<color>` is a color specifier (discussed below). `fg:<color>` and `<color>` currently do the same thing, though this may change in the future.\n-`<color>` can also be set to `prev_fg` or `prev_bg` which evaluates to the previous item's foreground or background color respectively if available or `none` otherwise.\n+`<color>` can also be set to `prev_fg`, `prev_bg`, `next_fg` or `next_bg`, which evaluates to, respectively, the previous and next item's foreground or background color if available or `none` otherwise. `prev_fg` and `prev_bg` can be used transitively, whereas `next_fg` and `next_bg` can not be be used transitively.\n `inverted` swaps the background and foreground colors. The order of words in the string does not matter.\n \n</file context>\n```\n\n</details>\n\n```suggestion\n`<color>` can also be set to `prev_fg`, `prev_bg`, `next_fg` or `next_bg`, which evaluates to, respectively, the previous and next item's foreground or background color if available or `none` otherwise. `prev_fg` and `prev_bg` can be used transitively, whereas `next_fg` and `next_bg` cannot be used transitively.\n```\n\n✅ Addressed in [`71ab8cb`](https://github.com/starship/starship/commit/71ab8cbd2f674e143ef62e97e49eab2730f04ea4)",
+    "created_at": "2026-05-17T15:43:39Z",
+    "updated_at": "2026-05-17T15:46:02Z",
+    "html_url": "https://github.com/starship/starship/pull/7482#discussion_r3254903066",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7482",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3254903066"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7482#discussion_r3254903066"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7482"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3254903066/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 669,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 5,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

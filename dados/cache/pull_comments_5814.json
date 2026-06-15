@@ -1,0 +1,209 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1581856292",
+    "pull_request_review_id": 2026675995,
+    "id": 1581856292,
+    "node_id": "PRRC_kwDOCqswNs5eSTYk",
+    "diff_hunk": "@@ -363,6 +368,19 @@ impl<'a> Context<'a> {\n             })\n     }\n \n+    pub fn get_jj_repo(&self) -> Option<&str> {\n+        self.jj_repo\n+            .get_or_init(|| {\n+                let out = self.exec_cmd(\"jj\", &[\"root\", \"--ignore-working-copy\"])?;\n+                let root = out.stdout.lines().next()?;\n+                match root.is_empty() {\n+                    true => None,\n+                    false => Some(Box::from(root)),\n+                }",
+    "path": "src/context.rs",
+    "commit_id": "c9cec66e3cbc60788e9fb9e3212b30bd825f318d",
+    "original_commit_id": "c9cec66e3cbc60788e9fb9e3212b30bd825f318d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n                (!root.is_empty()).then_some(Box::from(root))\r\n```",
+    "created_at": "2024-04-27T16:37:44Z",
+    "updated_at": "2024-06-10T18:35:19Z",
+    "html_url": "https://github.com/starship/starship/pull/5814#discussion_r1581856292",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5814",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1581856292"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5814#discussion_r1581856292"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5814"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1581856292/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 376,
+    "original_start_line": 376,
+    "start_side": "RIGHT",
+    "line": 379,
+    "original_line": 379,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 31,
+    "position": 31,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1633584510",
+    "pull_request_review_id": 2026675995,
+    "id": 1633584510,
+    "node_id": "PRRC_kwDOCqswNs5hXoV-",
+    "diff_hunk": "@@ -0,0 +1,151 @@\n+use super::{Context, Module};\n+use crate::config::ModuleConfig;\n+use crate::configs::jj_change::JujutsuChangeConfig;\n+use crate::formatter::StringFormatter;\n+\n+const MOD_NAME: &str = \"jj_change\";\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(MOD_NAME);\n+    let config = JujutsuChangeConfig::try_load(module.config);\n+\n+    // Default is `true` so it must be checked here\n+    if config.disabled {\n+        return None;\n+    }\n+    let root = context.get_jj_repo()?;\n+\n+    // If the change ID is not found (not in a JJ repo), just return none and don't display the module\n+    let current_jj_change = {\n+        let template = format!(\"change_id.shortest({})\", config.change_id_length);\n+        let out = context.exec_cmd(\n+            \"jj\",\n+            &[\n+                \"--repository\",\n+                root,\n+                \"log\",\n+                \"--color\",\n+                \"never\",\n+                \"--revisions\",\n+                \"@\", // Only display the current revision\n+                \"--no-graph\",\n+                \"--template\",\n+                &template,\n+                \"--ignore-working-copy\",\n+            ],\n+        )?;\n+        out.stdout.lines().next().map(ToString::to_string)?\n+    };",
+    "path": "src/modules/jj_change.rs",
+    "commit_id": "c9cec66e3cbc60788e9fb9e3212b30bd825f318d",
+    "original_commit_id": "c9cec66e3cbc60788e9fb9e3212b30bd825f318d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I would prefer moving this into the `map`",
+    "created_at": "2024-06-10T17:15:36Z",
+    "updated_at": "2024-06-10T18:35:19Z",
+    "html_url": "https://github.com/starship/starship/pull/5814#discussion_r1633584510",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5814",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1633584510"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5814#discussion_r1633584510"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5814"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1633584510/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 19,
+    "original_start_line": 19,
+    "start_side": "RIGHT",
+    "line": 38,
+    "original_line": 38,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 38,
+    "position": 38,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1633675610",
+    "pull_request_review_id": 2026675995,
+    "id": 1633675610,
+    "node_id": "PRRC_kwDOCqswNs5hX-la",
+    "diff_hunk": "@@ -363,6 +368,19 @@ impl<'a> Context<'a> {\n             })\n     }\n \n+    pub fn get_jj_repo(&self) -> Option<&str> {\n+        self.jj_repo\n+            .get_or_init(|| {\n+                let out = self.exec_cmd(\"jj\", &[\"root\", \"--ignore-working-copy\"])?;",
+    "path": "src/context.rs",
+    "commit_id": "c9cec66e3cbc60788e9fb9e3212b30bd825f318d",
+    "original_commit_id": "c9cec66e3cbc60788e9fb9e3212b30bd825f318d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think it might be better to do `begin_ancestor_scan` first for better performance.",
+    "created_at": "2024-06-10T18:32:11Z",
+    "updated_at": "2024-06-10T18:35:19Z",
+    "html_url": "https://github.com/starship/starship/pull/5814#discussion_r1633675610",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5814",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1633675610"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5814#discussion_r1633675610"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5814"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1633675610/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 374,
+    "original_line": 374,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 26,
+    "position": 26,
+    "subject_type": "line"
+  }
+]

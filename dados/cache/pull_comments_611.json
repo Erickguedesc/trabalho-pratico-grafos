@@ -1,0 +1,769 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/341365276",
+    "pull_request_review_id": 310181715,
+    "id": 341365276,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MTM2NTI3Ng==",
+    "diff_hunk": "@@ -0,0 +1,80 @@\n+use std::process::Command;\n+\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::dart::DartConfig;\n+\n+/// Creates a module with the current Dart version\n+///\n+/// Will display the Dart version if any of the following criteria are met:\n+///     - Current directory contains a `.dart` file\n+///     - Current directory contains a `pubspec.yaml` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_dart_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"pubspec.yaml\"])\n+        .set_extensions(&[\"dart\"])\n+        .is_match();\n+\n+    if !is_dart_project {\n+        return None;\n+    }\n+\n+    match get_dart_version() {\n+        Some(dart_version) => {\n+            let mut module = context.new_module(\"dartlang\");\n+            let config: DartConfig = DartConfig::try_load(module.config);\n+\n+            module.set_style(config.style);\n+            module.create_segment(\"symbol\", &config.symbol);\n+\n+            let formatted_version = format_dart_version(&dart_version)?;\n+            module.create_segment(\"version\", &config.version.with_value(&formatted_version));\n+\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn get_dart_version() -> Option<String> {\n+    match Command::new(\"dart\").arg(\"--version\").output() {\n+        Ok(output) => {\n+            if !output.status.success() {\n+                log::warn!(\n+                    \"Non-Zero exit code '{}' when executing `dart --version`\",\n+                    output.status\n+                );\n+                return None;\n+            }\n+\n+            Some(String::from_utf8(output.stderr).unwrap())\n+        }\n+        Err(_) => None,\n+    }\n+}\n+\n+fn format_dart_version(dart_stdout: &str) -> Option<String> {",
+    "path": "src/modules/dart.rs",
+    "commit_id": "643eb111fd39cadc666970e4fed6e2533294ca17",
+    "original_commit_id": "3168cf76e62159a7cd62c2f8d2a7be6f1780d2fa",
+    "user": {
+      "login": "matiaskotlik",
+      "id": 20362627,
+      "node_id": "MDQ6VXNlcjIwMzYyNjI3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20362627?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matiaskotlik",
+      "html_url": "https://github.com/matiaskotlik",
+      "followers_url": "https://api.github.com/users/matiaskotlik/followers",
+      "following_url": "https://api.github.com/users/matiaskotlik/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matiaskotlik/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matiaskotlik/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matiaskotlik/subscriptions",
+      "organizations_url": "https://api.github.com/users/matiaskotlik/orgs",
+      "repos_url": "https://api.github.com/users/matiaskotlik/repos",
+      "events_url": "https://api.github.com/users/matiaskotlik/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matiaskotlik/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "this function could look like this:\r\n```rust\r\nfn format_dart_version(dart_stdout: &str) -> Option<String> {\r\n    // `dart --version` output will look somthing like this:\r\n    // Dart VM version: 2.5.2 (Tue Apr 20 04:20:00 2019 +0200) on \"macos_x64\"\r\n\r\n    let version = dart_stdout.split(' ').nth(3)?;\r\n\r\n    Some(format!(\"v{}\", version))\r\n}\r\n```\r\nI think this way might be better than creating a new mutable String and appending to it.",
+    "created_at": "2019-10-31T21:05:15Z",
+    "updated_at": "2019-10-31T21:56:48Z",
+    "html_url": "https://github.com/starship/starship/pull/611#discussion_r341365276",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/611",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/341365276"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/611#discussion_r341365276"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/611"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/341365276/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 49,
+    "original_line": 57,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 57,
+    "position": 49,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/341366470",
+    "pull_request_review_id": 310183326,
+    "id": 341366470,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MTM2NjQ3MA==",
+    "diff_hunk": "@@ -0,0 +1,80 @@\n+use std::process::Command;\n+\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::dart::DartConfig;\n+\n+/// Creates a module with the current Dart version\n+///\n+/// Will display the Dart version if any of the following criteria are met:\n+///     - Current directory contains a `.dart` file\n+///     - Current directory contains a `pubspec.yaml` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_dart_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"pubspec.yaml\"])\n+        .set_extensions(&[\"dart\"])\n+        .is_match();\n+\n+    if !is_dart_project {\n+        return None;\n+    }\n+\n+    match get_dart_version() {\n+        Some(dart_version) => {\n+            let mut module = context.new_module(\"dartlang\");\n+            let config: DartConfig = DartConfig::try_load(module.config);\n+\n+            module.set_style(config.style);\n+            module.create_segment(\"symbol\", &config.symbol);\n+\n+            let formatted_version = format_dart_version(&dart_version)?;\n+            module.create_segment(\"version\", &config.version.with_value(&formatted_version));\n+\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn get_dart_version() -> Option<String> {",
+    "path": "src/modules/dart.rs",
+    "commit_id": "643eb111fd39cadc666970e4fed6e2533294ca17",
+    "original_commit_id": "3168cf76e62159a7cd62c2f8d2a7be6f1780d2fa",
+    "user": {
+      "login": "matiaskotlik",
+      "id": 20362627,
+      "node_id": "MDQ6VXNlcjIwMzYyNjI3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20362627?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matiaskotlik",
+      "html_url": "https://github.com/matiaskotlik",
+      "followers_url": "https://api.github.com/users/matiaskotlik/followers",
+      "following_url": "https://api.github.com/users/matiaskotlik/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matiaskotlik/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matiaskotlik/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matiaskotlik/subscriptions",
+      "organizations_url": "https://api.github.com/users/matiaskotlik/orgs",
+      "repos_url": "https://api.github.com/users/matiaskotlik/repos",
+      "events_url": "https://api.github.com/users/matiaskotlik/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matiaskotlik/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This function can also be simplified a bit, the `match` is not necessary here.\r\n```rust\r\nfn get_dart_version() -> Option<String> {\r\n    let output = Command::new(\"dart\").arg(\"--version\").output().ok()?;\r\n    if !output.status.success() {\r\n        log::warn!(\r\n            \"Non-Zero exit code '{}' when executing `dart --version`\",\r\n            output.status\r\n        );\r\n        return None;\r\n    }\r\n\r\n    String::from_utf8(output.stderr).ok()\r\n}\r\n``` \r\nAnother notable change is propagating None instead of panicing when the utf-8 decode fails, so that starship won't break if dart is really screwed up.",
+    "created_at": "2019-10-31T21:08:34Z",
+    "updated_at": "2019-10-31T21:56:48Z",
+    "html_url": "https://github.com/starship/starship/pull/611#discussion_r341366470",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/611",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/341366470"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/611#discussion_r341366470"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/611"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/341366470/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 35,
+    "original_line": 40,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 40,
+    "position": 35,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/341367134",
+    "pull_request_review_id": 310184232,
+    "id": 341367134,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MTM2NzEzNA==",
+    "diff_hunk": "@@ -0,0 +1,80 @@\n+use std::process::Command;\n+\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::dart::DartConfig;\n+\n+/// Creates a module with the current Dart version\n+///\n+/// Will display the Dart version if any of the following criteria are met:\n+///     - Current directory contains a `.dart` file\n+///     - Current directory contains a `pubspec.yaml` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_dart_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"pubspec.yaml\"])\n+        .set_extensions(&[\"dart\"])\n+        .is_match();\n+\n+    if !is_dart_project {\n+        return None;\n+    }\n+\n+    match get_dart_version() {",
+    "path": "src/modules/dart.rs",
+    "commit_id": "643eb111fd39cadc666970e4fed6e2533294ca17",
+    "original_commit_id": "3168cf76e62159a7cd62c2f8d2a7be6f1780d2fa",
+    "user": {
+      "login": "matiaskotlik",
+      "id": 20362627,
+      "node_id": "MDQ6VXNlcjIwMzYyNjI3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20362627?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matiaskotlik",
+      "html_url": "https://github.com/matiaskotlik",
+      "followers_url": "https://api.github.com/users/matiaskotlik/followers",
+      "following_url": "https://api.github.com/users/matiaskotlik/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matiaskotlik/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matiaskotlik/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matiaskotlik/subscriptions",
+      "organizations_url": "https://api.github.com/users/matiaskotlik/orgs",
+      "repos_url": "https://api.github.com/users/matiaskotlik/repos",
+      "events_url": "https://api.github.com/users/matiaskotlik/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matiaskotlik/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "the match is not needed here, you can just use `?` to propagate the errors instead of using match\r\n```rust\r\nlet formatted_version = format_dart_version(&get_dart_version()?)?;\r\n\r\nlet mut module = context.new_module(\"dartlang\");\r\nlet config: DartConfig = DartConfig::try_load(module.config);\r\n\r\nmodule.set_style(config.style);\r\nmodule.create_segment(\"symbol\", &config.symbol);\r\n\r\nmodule.create_segment(\"version\", &config.version.with_value(&formatted_version));\r\nSome(module)\r\n```",
+    "created_at": "2019-10-31T21:10:24Z",
+    "updated_at": "2019-10-31T21:56:48Z",
+    "html_url": "https://github.com/starship/starship/pull/611#discussion_r341367134",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/611",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/341367134"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/611#discussion_r341367134"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/611"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/341367134/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 23,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/341374006",
+    "pull_request_review_id": 310193313,
+    "id": 341374006,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MTM3NDAwNg==",
+    "diff_hunk": "@@ -0,0 +1,80 @@\n+use std::process::Command;\n+\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::dart::DartConfig;\n+\n+/// Creates a module with the current Dart version\n+///\n+/// Will display the Dart version if any of the following criteria are met:\n+///     - Current directory contains a `.dart` file\n+///     - Current directory contains a `pubspec.yaml` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_dart_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"pubspec.yaml\"])\n+        .set_extensions(&[\"dart\"])\n+        .is_match();\n+\n+    if !is_dart_project {\n+        return None;\n+    }\n+\n+    match get_dart_version() {",
+    "path": "src/modules/dart.rs",
+    "commit_id": "643eb111fd39cadc666970e4fed6e2533294ca17",
+    "original_commit_id": "3168cf76e62159a7cd62c2f8d2a7be6f1780d2fa",
+    "user": {
+      "login": "HofmannZ",
+      "id": 17142193,
+      "node_id": "MDQ6VXNlcjE3MTQyMTkz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17142193?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/HofmannZ",
+      "html_url": "https://github.com/HofmannZ",
+      "followers_url": "https://api.github.com/users/HofmannZ/followers",
+      "following_url": "https://api.github.com/users/HofmannZ/following{/other_user}",
+      "gists_url": "https://api.github.com/users/HofmannZ/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/HofmannZ/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/HofmannZ/subscriptions",
+      "organizations_url": "https://api.github.com/users/HofmannZ/orgs",
+      "repos_url": "https://api.github.com/users/HofmannZ/repos",
+      "events_url": "https://api.github.com/users/HofmannZ/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/HofmannZ/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Thanks for the tip! Will refactor that.",
+    "created_at": "2019-10-31T21:29:40Z",
+    "updated_at": "2019-10-31T21:56:48Z",
+    "html_url": "https://github.com/starship/starship/pull/611#discussion_r341374006",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/611",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/341374006"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/611#discussion_r341374006"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/611"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/341374006/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 23,
+    "side": "RIGHT",
+    "in_reply_to_id": 341367134,
+    "author_association": "NONE",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/341378400",
+    "pull_request_review_id": 310199064,
+    "id": 341378400,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MTM3ODQwMA==",
+    "diff_hunk": "@@ -0,0 +1,80 @@\n+use std::process::Command;\n+\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::dart::DartConfig;\n+\n+/// Creates a module with the current Dart version\n+///\n+/// Will display the Dart version if any of the following criteria are met:\n+///     - Current directory contains a `.dart` file\n+///     - Current directory contains a `pubspec.yaml` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_dart_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"pubspec.yaml\"])\n+        .set_extensions(&[\"dart\"])\n+        .is_match();\n+\n+    if !is_dart_project {\n+        return None;\n+    }\n+\n+    match get_dart_version() {\n+        Some(dart_version) => {\n+            let mut module = context.new_module(\"dartlang\");\n+            let config: DartConfig = DartConfig::try_load(module.config);\n+\n+            module.set_style(config.style);\n+            module.create_segment(\"symbol\", &config.symbol);\n+\n+            let formatted_version = format_dart_version(&dart_version)?;\n+            module.create_segment(\"version\", &config.version.with_value(&formatted_version));\n+\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn get_dart_version() -> Option<String> {",
+    "path": "src/modules/dart.rs",
+    "commit_id": "643eb111fd39cadc666970e4fed6e2533294ca17",
+    "original_commit_id": "3168cf76e62159a7cd62c2f8d2a7be6f1780d2fa",
+    "user": {
+      "login": "HofmannZ",
+      "id": 17142193,
+      "node_id": "MDQ6VXNlcjE3MTQyMTkz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17142193?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/HofmannZ",
+      "html_url": "https://github.com/HofmannZ",
+      "followers_url": "https://api.github.com/users/HofmannZ/followers",
+      "following_url": "https://api.github.com/users/HofmannZ/following{/other_user}",
+      "gists_url": "https://api.github.com/users/HofmannZ/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/HofmannZ/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/HofmannZ/subscriptions",
+      "organizations_url": "https://api.github.com/users/HofmannZ/orgs",
+      "repos_url": "https://api.github.com/users/HofmannZ/repos",
+      "events_url": "https://api.github.com/users/HofmannZ/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/HofmannZ/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Thanks for the feedback! Just wondering how would `String::from_utf8(output.stderr).ok()` still propagate `None`? (I'm completely new, to Rust so probably it's newbie question.)",
+    "created_at": "2019-10-31T21:43:05Z",
+    "updated_at": "2019-10-31T21:56:48Z",
+    "html_url": "https://github.com/starship/starship/pull/611#discussion_r341378400",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/611",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/341378400"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/611#discussion_r341378400"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/611"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/341378400/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 35,
+    "original_line": 40,
+    "side": "RIGHT",
+    "in_reply_to_id": 341366470,
+    "author_association": "NONE",
+    "original_position": 40,
+    "position": 35,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/341381360",
+    "pull_request_review_id": 310202753,
+    "id": 341381360,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MTM4MTM2MA==",
+    "diff_hunk": "@@ -0,0 +1,80 @@\n+use std::process::Command;\n+\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::dart::DartConfig;\n+\n+/// Creates a module with the current Dart version\n+///\n+/// Will display the Dart version if any of the following criteria are met:\n+///     - Current directory contains a `.dart` file\n+///     - Current directory contains a `pubspec.yaml` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_dart_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"pubspec.yaml\"])\n+        .set_extensions(&[\"dart\"])\n+        .is_match();\n+\n+    if !is_dart_project {\n+        return None;\n+    }\n+\n+    match get_dart_version() {\n+        Some(dart_version) => {\n+            let mut module = context.new_module(\"dartlang\");\n+            let config: DartConfig = DartConfig::try_load(module.config);\n+\n+            module.set_style(config.style);\n+            module.create_segment(\"symbol\", &config.symbol);\n+\n+            let formatted_version = format_dart_version(&dart_version)?;\n+            module.create_segment(\"version\", &config.version.with_value(&formatted_version));\n+\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn get_dart_version() -> Option<String> {\n+    match Command::new(\"dart\").arg(\"--version\").output() {\n+        Ok(output) => {\n+            if !output.status.success() {\n+                log::warn!(\n+                    \"Non-Zero exit code '{}' when executing `dart --version`\",\n+                    output.status\n+                );\n+                return None;\n+            }\n+\n+            Some(String::from_utf8(output.stderr).unwrap())\n+        }\n+        Err(_) => None,\n+    }\n+}\n+\n+fn format_dart_version(dart_stdout: &str) -> Option<String> {",
+    "path": "src/modules/dart.rs",
+    "commit_id": "643eb111fd39cadc666970e4fed6e2533294ca17",
+    "original_commit_id": "3168cf76e62159a7cd62c2f8d2a7be6f1780d2fa",
+    "user": {
+      "login": "HofmannZ",
+      "id": 17142193,
+      "node_id": "MDQ6VXNlcjE3MTQyMTkz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17142193?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/HofmannZ",
+      "html_url": "https://github.com/HofmannZ",
+      "followers_url": "https://api.github.com/users/HofmannZ/followers",
+      "following_url": "https://api.github.com/users/HofmannZ/following{/other_user}",
+      "gists_url": "https://api.github.com/users/HofmannZ/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/HofmannZ/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/HofmannZ/subscriptions",
+      "organizations_url": "https://api.github.com/users/HofmannZ/orgs",
+      "repos_url": "https://api.github.com/users/HofmannZ/repos",
+      "events_url": "https://api.github.com/users/HofmannZ/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/HofmannZ/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I totally stole that from the [Go module](https://github.com/starship/starship/blob/f2cb529d1bd44f996ad60c2d27ae14d1f9ad44ba/src/modules/golang.rs#L54-L69). Should we change that there too?",
+    "created_at": "2019-10-31T21:51:54Z",
+    "updated_at": "2019-10-31T21:56:48Z",
+    "html_url": "https://github.com/starship/starship/pull/611#discussion_r341381360",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/611",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/341381360"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/611#discussion_r341381360"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/611"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/341381360/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 49,
+    "original_line": 57,
+    "side": "RIGHT",
+    "in_reply_to_id": 341365276,
+    "author_association": "NONE",
+    "original_position": 57,
+    "position": 49,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/341397172",
+    "pull_request_review_id": 310222804,
+    "id": 341397172,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MTM5NzE3Mg==",
+    "diff_hunk": "@@ -0,0 +1,80 @@\n+use std::process::Command;\n+\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::dart::DartConfig;\n+\n+/// Creates a module with the current Dart version\n+///\n+/// Will display the Dart version if any of the following criteria are met:\n+///     - Current directory contains a `.dart` file\n+///     - Current directory contains a `pubspec.yaml` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_dart_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"pubspec.yaml\"])\n+        .set_extensions(&[\"dart\"])\n+        .is_match();\n+\n+    if !is_dart_project {\n+        return None;\n+    }\n+\n+    match get_dart_version() {\n+        Some(dart_version) => {\n+            let mut module = context.new_module(\"dartlang\");\n+            let config: DartConfig = DartConfig::try_load(module.config);\n+\n+            module.set_style(config.style);\n+            module.create_segment(\"symbol\", &config.symbol);\n+\n+            let formatted_version = format_dart_version(&dart_version)?;\n+            module.create_segment(\"version\", &config.version.with_value(&formatted_version));\n+\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn get_dart_version() -> Option<String> {\n+    match Command::new(\"dart\").arg(\"--version\").output() {\n+        Ok(output) => {\n+            if !output.status.success() {\n+                log::warn!(\n+                    \"Non-Zero exit code '{}' when executing `dart --version`\",\n+                    output.status\n+                );\n+                return None;\n+            }\n+\n+            Some(String::from_utf8(output.stderr).unwrap())\n+        }\n+        Err(_) => None,\n+    }\n+}\n+\n+fn format_dart_version(dart_stdout: &str) -> Option<String> {",
+    "path": "src/modules/dart.rs",
+    "commit_id": "643eb111fd39cadc666970e4fed6e2533294ca17",
+    "original_commit_id": "3168cf76e62159a7cd62c2f8d2a7be6f1780d2fa",
+    "user": {
+      "login": "matiaskotlik",
+      "id": 20362627,
+      "node_id": "MDQ6VXNlcjIwMzYyNjI3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20362627?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matiaskotlik",
+      "html_url": "https://github.com/matiaskotlik",
+      "followers_url": "https://api.github.com/users/matiaskotlik/followers",
+      "following_url": "https://api.github.com/users/matiaskotlik/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matiaskotlik/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matiaskotlik/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matiaskotlik/subscriptions",
+      "organizations_url": "https://api.github.com/users/matiaskotlik/orgs",
+      "repos_url": "https://api.github.com/users/matiaskotlik/repos",
+      "events_url": "https://api.github.com/users/matiaskotlik/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matiaskotlik/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this way makes a lot more sense but ultimately they both work.\r\n\r\nEven though it's not the biggest of issues, I think I'll still open a PR for it. This way no one will copy that code again :)",
+    "created_at": "2019-10-31T22:51:25Z",
+    "updated_at": "2019-10-31T22:51:25Z",
+    "html_url": "https://github.com/starship/starship/pull/611#discussion_r341397172",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/611",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/341397172"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/611#discussion_r341397172"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/611"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/341397172/reactions",
+      "total_count": 1,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 1,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 49,
+    "original_line": 57,
+    "side": "RIGHT",
+    "in_reply_to_id": 341365276,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 57,
+    "position": 49,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/341398347",
+    "pull_request_review_id": 310224252,
+    "id": 341398347,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MTM5ODM0Nw==",
+    "diff_hunk": "@@ -0,0 +1,80 @@\n+use std::process::Command;\n+\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::dart::DartConfig;\n+\n+/// Creates a module with the current Dart version\n+///\n+/// Will display the Dart version if any of the following criteria are met:\n+///     - Current directory contains a `.dart` file\n+///     - Current directory contains a `pubspec.yaml` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_dart_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"pubspec.yaml\"])\n+        .set_extensions(&[\"dart\"])\n+        .is_match();\n+\n+    if !is_dart_project {\n+        return None;\n+    }\n+\n+    match get_dart_version() {\n+        Some(dart_version) => {\n+            let mut module = context.new_module(\"dartlang\");\n+            let config: DartConfig = DartConfig::try_load(module.config);\n+\n+            module.set_style(config.style);\n+            module.create_segment(\"symbol\", &config.symbol);\n+\n+            let formatted_version = format_dart_version(&dart_version)?;\n+            module.create_segment(\"version\", &config.version.with_value(&formatted_version));\n+\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn get_dart_version() -> Option<String> {",
+    "path": "src/modules/dart.rs",
+    "commit_id": "643eb111fd39cadc666970e4fed6e2533294ca17",
+    "original_commit_id": "3168cf76e62159a7cd62c2f8d2a7be6f1780d2fa",
+    "user": {
+      "login": "matiaskotlik",
+      "id": 20362627,
+      "node_id": "MDQ6VXNlcjIwMzYyNjI3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20362627?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matiaskotlik",
+      "html_url": "https://github.com/matiaskotlik",
+      "followers_url": "https://api.github.com/users/matiaskotlik/followers",
+      "following_url": "https://api.github.com/users/matiaskotlik/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matiaskotlik/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matiaskotlik/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matiaskotlik/subscriptions",
+      "organizations_url": "https://api.github.com/users/matiaskotlik/orgs",
+      "repos_url": "https://api.github.com/users/matiaskotlik/repos",
+      "events_url": "https://api.github.com/users/matiaskotlik/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matiaskotlik/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "whoops, I meant return. It's not propagating here, you are right :)\r\n\r\nEDIT: You could write it either way, but if you had a `?` at the end you would need to wrap everything in `Some` because you would be returning a `String` and not an `Option<String>`. So the line would look like this: `Some(String::from_utf8(output.stderr).ok()?)`",
+    "created_at": "2019-10-31T22:56:23Z",
+    "updated_at": "2019-10-31T22:58:05Z",
+    "html_url": "https://github.com/starship/starship/pull/611#discussion_r341398347",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/611",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/341398347"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/611#discussion_r341398347"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/611"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/341398347/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 35,
+    "original_line": 40,
+    "side": "RIGHT",
+    "in_reply_to_id": 341366470,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 40,
+    "position": 35,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/341571079",
+    "pull_request_review_id": 310451497,
+    "id": 341571079,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MTU3MTA3OQ==",
+    "diff_hunk": "@@ -0,0 +1,80 @@\n+use std::process::Command;\n+\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::dart::DartConfig;\n+\n+/// Creates a module with the current Dart version\n+///\n+/// Will display the Dart version if any of the following criteria are met:\n+///     - Current directory contains a `.dart` file\n+///     - Current directory contains a `pubspec.yaml` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_dart_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"pubspec.yaml\"])\n+        .set_extensions(&[\"dart\"])\n+        .is_match();\n+\n+    if !is_dart_project {\n+        return None;\n+    }\n+\n+    match get_dart_version() {\n+        Some(dart_version) => {\n+            let mut module = context.new_module(\"dartlang\");\n+            let config: DartConfig = DartConfig::try_load(module.config);\n+\n+            module.set_style(config.style);\n+            module.create_segment(\"symbol\", &config.symbol);\n+\n+            let formatted_version = format_dart_version(&dart_version)?;\n+            module.create_segment(\"version\", &config.version.with_value(&formatted_version));\n+\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn get_dart_version() -> Option<String> {",
+    "path": "src/modules/dart.rs",
+    "commit_id": "643eb111fd39cadc666970e4fed6e2533294ca17",
+    "original_commit_id": "3168cf76e62159a7cd62c2f8d2a7be6f1780d2fa",
+    "user": {
+      "login": "HofmannZ",
+      "id": 17142193,
+      "node_id": "MDQ6VXNlcjE3MTQyMTkz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17142193?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/HofmannZ",
+      "html_url": "https://github.com/HofmannZ",
+      "followers_url": "https://api.github.com/users/HofmannZ/followers",
+      "following_url": "https://api.github.com/users/HofmannZ/following{/other_user}",
+      "gists_url": "https://api.github.com/users/HofmannZ/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/HofmannZ/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/HofmannZ/subscriptions",
+      "organizations_url": "https://api.github.com/users/HofmannZ/orgs",
+      "repos_url": "https://api.github.com/users/HofmannZ/repos",
+      "events_url": "https://api.github.com/users/HofmannZ/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/HofmannZ/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ah okay, but performance-wise it's the same right?",
+    "created_at": "2019-11-01T13:28:11Z",
+    "updated_at": "2019-11-01T13:28:11Z",
+    "html_url": "https://github.com/starship/starship/pull/611#discussion_r341571079",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/611",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/341571079"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/611#discussion_r341571079"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/611"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/341571079/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 35,
+    "original_line": 40,
+    "side": "RIGHT",
+    "in_reply_to_id": 341366470,
+    "author_association": "NONE",
+    "original_position": 40,
+    "position": 35,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/341581382",
+    "pull_request_review_id": 310465636,
+    "id": 341581382,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MTU4MTM4Mg==",
+    "diff_hunk": "@@ -0,0 +1,80 @@\n+use std::process::Command;\n+\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::dart::DartConfig;\n+\n+/// Creates a module with the current Dart version\n+///\n+/// Will display the Dart version if any of the following criteria are met:\n+///     - Current directory contains a `.dart` file\n+///     - Current directory contains a `pubspec.yaml` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_dart_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"pubspec.yaml\"])\n+        .set_extensions(&[\"dart\"])\n+        .is_match();\n+\n+    if !is_dart_project {\n+        return None;\n+    }\n+\n+    match get_dart_version() {\n+        Some(dart_version) => {\n+            let mut module = context.new_module(\"dartlang\");\n+            let config: DartConfig = DartConfig::try_load(module.config);\n+\n+            module.set_style(config.style);\n+            module.create_segment(\"symbol\", &config.symbol);\n+\n+            let formatted_version = format_dart_version(&dart_version)?;\n+            module.create_segment(\"version\", &config.version.with_value(&formatted_version));\n+\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn get_dart_version() -> Option<String> {",
+    "path": "src/modules/dart.rs",
+    "commit_id": "643eb111fd39cadc666970e4fed6e2533294ca17",
+    "original_commit_id": "3168cf76e62159a7cd62c2f8d2a7be6f1780d2fa",
+    "user": {
+      "login": "matiaskotlik",
+      "id": 20362627,
+      "node_id": "MDQ6VXNlcjIwMzYyNjI3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20362627?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matiaskotlik",
+      "html_url": "https://github.com/matiaskotlik",
+      "followers_url": "https://api.github.com/users/matiaskotlik/followers",
+      "following_url": "https://api.github.com/users/matiaskotlik/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matiaskotlik/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matiaskotlik/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matiaskotlik/subscriptions",
+      "organizations_url": "https://api.github.com/users/matiaskotlik/orgs",
+      "repos_url": "https://api.github.com/users/matiaskotlik/repos",
+      "events_url": "https://api.github.com/users/matiaskotlik/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matiaskotlik/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "something like this is never gonna affect performance anyway, but the way I suggested should be more efficient unless Rust optimizes it because it only creates one `Option` (`.ok()` does this) while the way I described in my second comment creates two `Option`'s, one with the `.ok()` and another directly from the `Some` call.",
+    "created_at": "2019-11-01T13:54:36Z",
+    "updated_at": "2019-11-01T13:54:36Z",
+    "html_url": "https://github.com/starship/starship/pull/611#discussion_r341581382",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/611",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/341581382"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/611#discussion_r341581382"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/611"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/341581382/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 35,
+    "original_line": 40,
+    "side": "RIGHT",
+    "in_reply_to_id": 341366470,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 40,
+    "position": 35,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/341975613",
+    "pull_request_review_id": 310971905,
+    "id": 341975613,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM0MTk3NTYxMw==",
+    "diff_hunk": "@@ -0,0 +1,80 @@\n+use std::process::Command;\n+\n+use super::{Context, Module, RootModuleConfig, SegmentConfig};\n+\n+use crate::configs::dart::DartConfig;\n+\n+/// Creates a module with the current Dart version\n+///\n+/// Will display the Dart version if any of the following criteria are met:\n+///     - Current directory contains a `.dart` file\n+///     - Current directory contains a `pubspec.yaml` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_dart_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"pubspec.yaml\"])\n+        .set_extensions(&[\"dart\"])\n+        .is_match();\n+\n+    if !is_dart_project {\n+        return None;\n+    }\n+\n+    match get_dart_version() {\n+        Some(dart_version) => {\n+            let mut module = context.new_module(\"dartlang\");\n+            let config: DartConfig = DartConfig::try_load(module.config);\n+\n+            module.set_style(config.style);\n+            module.create_segment(\"symbol\", &config.symbol);\n+\n+            let formatted_version = format_dart_version(&dart_version)?;\n+            module.create_segment(\"version\", &config.version.with_value(&formatted_version));\n+\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn get_dart_version() -> Option<String> {",
+    "path": "src/modules/dart.rs",
+    "commit_id": "643eb111fd39cadc666970e4fed6e2533294ca17",
+    "original_commit_id": "3168cf76e62159a7cd62c2f8d2a7be6f1780d2fa",
+    "user": {
+      "login": "HofmannZ",
+      "id": 17142193,
+      "node_id": "MDQ6VXNlcjE3MTQyMTkz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17142193?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/HofmannZ",
+      "html_url": "https://github.com/HofmannZ",
+      "followers_url": "https://api.github.com/users/HofmannZ/followers",
+      "following_url": "https://api.github.com/users/HofmannZ/following{/other_user}",
+      "gists_url": "https://api.github.com/users/HofmannZ/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/HofmannZ/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/HofmannZ/subscriptions",
+      "organizations_url": "https://api.github.com/users/HofmannZ/orgs",
+      "repos_url": "https://api.github.com/users/HofmannZ/repos",
+      "events_url": "https://api.github.com/users/HofmannZ/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/HofmannZ/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "That's pretty cool thanks!",
+    "created_at": "2019-11-04T10:13:17Z",
+    "updated_at": "2019-11-04T10:13:17Z",
+    "html_url": "https://github.com/starship/starship/pull/611#discussion_r341975613",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/611",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/341975613"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/611#discussion_r341975613"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/611"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/341975613/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 35,
+    "original_line": 40,
+    "side": "RIGHT",
+    "in_reply_to_id": 341366470,
+    "author_association": "NONE",
+    "original_position": 40,
+    "position": 35,
+    "subject_type": "line"
+  }
+]

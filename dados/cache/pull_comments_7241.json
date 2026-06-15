@@ -1,0 +1,209 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2751911374",
+    "pull_request_review_id": 3736603634,
+    "id": 2751911374,
+    "node_id": "PRRC_kwDOCqswNs6kBtXO",
+    "diff_hunk": "@@ -957,6 +957,28 @@\n         \"contexts\": []\n       }\n     },\n+    \"lean\": {\n+      \"$ref\": \"#/$defs/LeanConfig\",\n+      \"default\": {\n+        \"format\": \"via [$symbol($version )]($style)\",\n+        \"version_format\": \"v${raw}\",\n+        \"symbol\": \" L∃∀N \",",
+    "path": ".github/config-schema.json",
+    "commit_id": "aef3467c97f522f0bcbcc6f9618331b98c6ba9ae",
+    "original_commit_id": "aef3467c97f522f0bcbcc6f9618331b98c6ba9ae",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "By default I would prefer a short symbol, most other symbols are single-letter or emoji.",
+    "created_at": "2026-02-01T20:27:43Z",
+    "updated_at": "2026-02-01T20:29:45Z",
+    "html_url": "https://github.com/starship/starship/pull/7241#discussion_r2751911374",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7241",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2751911374"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7241#discussion_r2751911374"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7241"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2751911374/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 965,
+    "original_line": 965,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 9,
+    "position": 9,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2751911760",
+    "pull_request_review_id": 3736603634,
+    "id": 2751911760,
+    "node_id": "PRRC_kwDOCqswNs6kBtdQ",
+    "diff_hunk": "@@ -0,0 +1,149 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::lean::LeanConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Lean version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"lean\");\n+    let config = LeanConfig::try_load(module.config);\n+\n+    let is_lean_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_lean_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => get_version(context).map(Ok),\n+                \"lean_version\" => get_lean_version(context).map(Ok),\n+                \"toolchain_version\" => get_toolchain(context).map(Ok),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `lean`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_lean_version(context: &Context) -> Option<String> {\n+    Some(\n+        context\n+            .exec_cmd(\"lean\", &[\"--short-version\"])?\n+            .stdout\n+            .trim()\n+            .to_string(),\n+    )\n+}\n+\n+fn get_toolchain(context: &Context) -> Option<String> {\n+    if !has_lean_toolchain_file(context) {\n+        return None;\n+    }\n+\n+    let file_contents = context.read_file_from_pwd(\"lean-toolchain\")?;\n+    let version = file_contents.split_once(\":\");\n+    match version {\n+        Some((\"leanprover/lean4\", version)) => Some(version[1..].trim().to_string()),\n+        Some((_, version)) => Some(format!(\"custom: {}\", version.trim().to_string())),",
+    "path": "src/modules/lean.rs",
+    "commit_id": "aef3467c97f522f0bcbcc6f9618331b98c6ba9ae",
+    "original_commit_id": "aef3467c97f522f0bcbcc6f9618331b98c6ba9ae",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please fix the clippy warnings and add a unit test for this case.\n\nDoes `v` also need to be trimmed in this case?",
+    "created_at": "2026-02-01T20:27:57Z",
+    "updated_at": "2026-02-01T20:29:45Z",
+    "html_url": "https://github.com/starship/starship/pull/7241#discussion_r2751911760",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7241",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2751911760"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7241#discussion_r2751911760"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7241"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2751911760/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 71,
+    "original_line": 71,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 71,
+    "position": 71,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2751913825",
+    "pull_request_review_id": 3736603634,
+    "id": 2751913825,
+    "node_id": "PRRC_kwDOCqswNs6kBt9h",
+    "diff_hunk": "@@ -0,0 +1,149 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::lean::LeanConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Lean version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"lean\");\n+    let config = LeanConfig::try_load(module.config);\n+\n+    let is_lean_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_lean_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => get_version(context).map(Ok),\n+                \"lean_version\" => get_lean_version(context).map(Ok),\n+                \"toolchain_version\" => get_toolchain(context).map(Ok),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `lean`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_lean_version(context: &Context) -> Option<String> {\n+    Some(\n+        context\n+            .exec_cmd(\"lean\", &[\"--short-version\"])?\n+            .stdout\n+            .trim()\n+            .to_string(),\n+    )\n+}\n+\n+fn get_toolchain(context: &Context) -> Option<String> {\n+    if !has_lean_toolchain_file(context) {\n+        return None;\n+    }\n+\n+    let file_contents = context.read_file_from_pwd(\"lean-toolchain\")?;\n+    let version = file_contents.split_once(\":\");\n+    match version {\n+        Some((\"leanprover/lean4\", version)) => Some(version[1..].trim().to_string()),",
+    "path": "src/modules/lean.rs",
+    "commit_id": "aef3467c97f522f0bcbcc6f9618331b98c6ba9ae",
+    "original_commit_id": "aef3467c97f522f0bcbcc6f9618331b98c6ba9ae",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I would prefer `strip_prefix(\"v\")` or at least `.get(1..)` here.",
+    "created_at": "2026-02-01T20:29:16Z",
+    "updated_at": "2026-02-01T20:29:45Z",
+    "html_url": "https://github.com/starship/starship/pull/7241#discussion_r2751913825",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7241",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2751913825"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7241#discussion_r2751913825"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7241"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2751913825/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 70,
+    "original_line": 70,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 70,
+    "position": 70,
+    "subject_type": "line"
+  }
+]

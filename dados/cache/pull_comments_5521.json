@@ -1,0 +1,141 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1379882338",
+    "pull_request_review_id": 1709894302,
+    "id": 1379882338,
+    "node_id": "PRRC_kwDOCqswNs5SP1Vi",
+    "diff_hunk": "@@ -2,22 +2,15 @@ use super::{Context, Module, ModuleConfig};\n \n use crate::configs::username::UsernameConfig;\n use crate::formatter::StringFormatter;\n+#[cfg(not(test))]\n+use whoami::username;\n \n-#[cfg(not(target_os = \"windows\"))]\n-const USERNAME_ENV_VAR: &str = \"USER\";\n-\n-#[cfg(target_os = \"windows\")]\n-const USERNAME_ENV_VAR: &str = \"USERNAME\";\n+#[cfg(test)]\n+use tests::username;",
+    "path": "src/modules/username.rs",
+    "commit_id": "b3089e3978510e2b347f5b4f53478d29aa364680",
+    "original_commit_id": "0acee7634fa191f025722f7f8e695a5726dfa7d8",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I would prefer handling this with a small wrapper function, and it seems like a good idea to keep around the possibility of overriding the username in the tests:\r\n```rust\r\nfn username() -> String {\r\n    #[cfg(test)]\r\n    if let Some(user) = context.get_env(\"USER\") {\r\n        return user;\r\n    };\r\n    whoami::username()\r\n}",
+    "created_at": "2023-11-02T10:16:42Z",
+    "updated_at": "2023-11-02T10:16:43Z",
+    "html_url": "https://github.com/starship/starship/pull/5521#discussion_r1379882338",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5521",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1379882338"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5521#discussion_r1379882338"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5521"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1379882338/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 8,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 9,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1380039068",
+    "pull_request_review_id": 1710142197,
+    "id": 1380039068,
+    "node_id": "PRRC_kwDOCqswNs5SQbmc",
+    "diff_hunk": "@@ -2,22 +2,15 @@ use super::{Context, Module, ModuleConfig};\n \n use crate::configs::username::UsernameConfig;\n use crate::formatter::StringFormatter;\n+#[cfg(not(test))]\n+use whoami::username;\n \n-#[cfg(not(target_os = \"windows\"))]\n-const USERNAME_ENV_VAR: &str = \"USER\";\n-\n-#[cfg(target_os = \"windows\")]\n-const USERNAME_ENV_VAR: &str = \"USERNAME\";\n+#[cfg(test)]\n+use tests::username;",
+    "path": "src/modules/username.rs",
+    "commit_id": "b3089e3978510e2b347f5b4f53478d29aa364680",
+    "original_commit_id": "0acee7634fa191f025722f7f8e695a5726dfa7d8",
+    "user": {
+      "login": "bestgopher",
+      "id": 36840497,
+      "node_id": "MDQ6VXNlcjM2ODQwNDk3",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36840497?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bestgopher",
+      "html_url": "https://github.com/bestgopher",
+      "followers_url": "https://api.github.com/users/bestgopher/followers",
+      "following_url": "https://api.github.com/users/bestgopher/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bestgopher/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bestgopher/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bestgopher/subscriptions",
+      "organizations_url": "https://api.github.com/users/bestgopher/orgs",
+      "repos_url": "https://api.github.com/users/bestgopher/repos",
+      "events_url": "https://api.github.com/users/bestgopher/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bestgopher/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Thanks for your suggest. I have  optimized the codes, and review again please.",
+    "created_at": "2023-11-02T12:38:59Z",
+    "updated_at": "2023-11-02T12:38:59Z",
+    "html_url": "https://github.com/starship/starship/pull/5521#discussion_r1380039068",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5521",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1380039068"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5521#discussion_r1380039068"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5521"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1380039068/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 8,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 9,
+    "side": "RIGHT",
+    "in_reply_to_id": 1379882338,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

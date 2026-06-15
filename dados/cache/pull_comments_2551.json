@@ -1,0 +1,280 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/606697320",
+    "pull_request_review_id": 627478739,
+    "id": 606697320,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYwNjY5NzMyMA==",
+    "diff_hunk": "@@ -365,6 +365,33 @@ prompt = 'foo'\n         dir.close()\n     }\n \n+    #[test]\n+    fn with_active_venv_and_dirty_prompt() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        create_dir_all(dir.path().join(\"my_venv\"))?;\n+        let mut venv_cfg = File::create(dir.path().join(\"my_venv\").join(\"pyvenv.cfg\"))?;\n+        venv_cfg.write_all(\n+            br#\"\n+home = something\n+prompt = '(foo) '\n+        \"#,\n+        )?;\n+        venv_cfg.sync_all()?;\n+\n+        let actual = ModuleRenderer::new(\"python\")\n+            .path(dir.path())\n+            .env(\"VIRTUAL_ENV\", dir.path().join(\"my_venv\").to_str().unwrap())\n+            .collect();\n+\n+        let expected = Some(format!(\n+            \"via {}\",\n+            Color::Yellow.bold().paint(\"🐍 v3.8.0 (foo) \")\n+        ));\n+\n+        assert_eq!(actual, expected);\n+        dir.close()\n+    }    ",
+    "path": "src/modules/python.rs",
+    "commit_id": "339712254a6909216a3a10e81e1d3c6f337893d9",
+    "original_commit_id": "2a44c6efe80d888159089e05ecc502c0808332bc",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`rustfmt` check fails due to trailing whitespace:\r\n```suggestion\r\n    }\r\n```",
+    "created_at": "2021-04-03T18:49:25Z",
+    "updated_at": "2021-04-03T20:14:43Z",
+    "html_url": "https://github.com/starship/starship/pull/2551#discussion_r606697320",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2551",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/606697320"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2551#discussion_r606697320"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2551"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/606697320/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 393,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 38,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/606697517",
+    "pull_request_review_id": 627478739,
+    "id": 606697517,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYwNjY5NzUxNw==",
+    "diff_hunk": "@@ -365,6 +365,33 @@ prompt = 'foo'\n         dir.close()\n     }\n \n+    #[test]\n+    fn with_active_venv_and_dirty_prompt() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        create_dir_all(dir.path().join(\"my_venv\"))?;\n+        let mut venv_cfg = File::create(dir.path().join(\"my_venv\").join(\"pyvenv.cfg\"))?;\n+        venv_cfg.write_all(\n+            br#\"\n+home = something\n+prompt = '(foo) '",
+    "path": "src/modules/python.rs",
+    "commit_id": "339712254a6909216a3a10e81e1d3c6f337893d9",
+    "original_commit_id": "2a44c6efe80d888159089e05ecc502c0808332bc",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Is whitespace after right paren intentional?",
+    "created_at": "2021-04-03T18:51:08Z",
+    "updated_at": "2021-04-03T20:14:43Z",
+    "html_url": "https://github.com/starship/starship/pull/2551#discussion_r606697517",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2551",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/606697517"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2551#discussion_r606697517"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2551"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/606697517/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 376,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 21,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/606697808",
+    "pull_request_review_id": 627479032,
+    "id": 606697808,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYwNjY5NzgwOA==",
+    "diff_hunk": "@@ -365,6 +365,33 @@ prompt = 'foo'\n         dir.close()\n     }\n \n+    #[test]\n+    fn with_active_venv_and_dirty_prompt() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        create_dir_all(dir.path().join(\"my_venv\"))?;\n+        let mut venv_cfg = File::create(dir.path().join(\"my_venv\").join(\"pyvenv.cfg\"))?;\n+        venv_cfg.write_all(\n+            br#\"\n+home = something\n+prompt = '(foo) '",
+    "path": "src/modules/python.rs",
+    "commit_id": "339712254a6909216a3a10e81e1d3c6f337893d9",
+    "original_commit_id": "2a44c6efe80d888159089e05ecc502c0808332bc",
+    "user": {
+      "login": "vladimyr",
+      "id": 1170440,
+      "node_id": "MDQ6VXNlcjExNzA0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1170440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vladimyr",
+      "html_url": "https://github.com/vladimyr",
+      "followers_url": "https://api.github.com/users/vladimyr/followers",
+      "following_url": "https://api.github.com/users/vladimyr/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vladimyr/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vladimyr/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vladimyr/subscriptions",
+      "organizations_url": "https://api.github.com/users/vladimyr/orgs",
+      "repos_url": "https://api.github.com/users/vladimyr/repos",
+      "events_url": "https://api.github.com/users/vladimyr/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vladimyr/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I guess not :upside_down_face: \r\n```suggestion\r\nprompt = '(foo)'\r\n```",
+    "created_at": "2021-04-03T18:54:31Z",
+    "updated_at": "2021-04-03T20:14:43Z",
+    "html_url": "https://github.com/starship/starship/pull/2551#discussion_r606697808",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2551",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/606697808"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2551#discussion_r606697808"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2551"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/606697808/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 376,
+    "side": "RIGHT",
+    "in_reply_to_id": 606697517,
+    "author_association": "MEMBER",
+    "original_position": 21,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/606705827",
+    "pull_request_review_id": 627483670,
+    "id": 606705827,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYwNjcwNTgyNw==",
+    "diff_hunk": "@@ -365,6 +365,33 @@ prompt = 'foo'\n         dir.close()\n     }\n \n+    #[test]\n+    fn with_active_venv_and_dirty_prompt() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        create_dir_all(dir.path().join(\"my_venv\"))?;\n+        let mut venv_cfg = File::create(dir.path().join(\"my_venv\").join(\"pyvenv.cfg\"))?;\n+        venv_cfg.write_all(\n+            br#\"\n+home = something\n+prompt = '(foo) '",
+    "path": "src/modules/python.rs",
+    "commit_id": "339712254a6909216a3a10e81e1d3c6f337893d9",
+    "original_commit_id": "2a44c6efe80d888159089e05ecc502c0808332bc",
+    "user": {
+      "login": "cswartzvi",
+      "id": 1111348,
+      "node_id": "MDQ6VXNlcjExMTEzNDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1111348?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cswartzvi",
+      "html_url": "https://github.com/cswartzvi",
+      "followers_url": "https://api.github.com/users/cswartzvi/followers",
+      "following_url": "https://api.github.com/users/cswartzvi/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cswartzvi/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cswartzvi/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cswartzvi/subscriptions",
+      "organizations_url": "https://api.github.com/users/cswartzvi/orgs",
+      "repos_url": "https://api.github.com/users/cswartzvi/repos",
+      "events_url": "https://api.github.com/users/cswartzvi/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cswartzvi/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "> I guess not 🙃\r\n\r\nOops! Good catch, that was unintentional. pipenv adds a trailing space to the prompt and I wanted make sure it was handled properly. Forgot to remove it 😕  ",
+    "created_at": "2021-04-03T20:14:07Z",
+    "updated_at": "2021-04-03T20:14:43Z",
+    "html_url": "https://github.com/starship/starship/pull/2551#discussion_r606705827",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2551",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/606705827"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2551#discussion_r606705827"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2551"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/606705827/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 376,
+    "side": "RIGHT",
+    "in_reply_to_id": 606697517,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 21,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

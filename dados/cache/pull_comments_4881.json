@@ -1,0 +1,768 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1094878975",
+    "pull_request_review_id": 1281590995,
+    "id": 1094878975,
+    "node_id": "PRRC_kwDOCqswNs5BQob_",
+    "diff_hunk": "@@ -98,6 +98,38 @@ mod tests {\n         repo_dir.close()\n     }\n \n+    #[test]\n+    fn test_ceiling_directory() -> io::Result<()> {\n+        let repo_dir = fixture_repo(FixtureProvider::Git)?;\n+        let level1 = repo_dir.path().join(\"level1\");\n+        let level2 = level1.join(\"level2\");\n+        std::fs::create_dir(&level1)?;\n+        std::fs::create_dir(&level2)?;\n+\n+        const CEILING_DIRECTORY_VAR: &str = \"GIT_CEILING_DIRECTORIES\";\n+\n+        let prev_ceiling = std::env::var_os(CEILING_DIRECTORY_VAR);\n+        std::env::set_var(CEILING_DIRECTORY_VAR, level1.as_os_str());",
+    "path": "src/modules/git_commit.rs",
+    "commit_id": "908d2393e7338f7681b9cbf0e91e181a198ef107",
+    "original_commit_id": "30d8e474bf55a990c5dea557fdf6fbe79b5fad1b",
+    "user": {
+      "login": "Nerixyz",
+      "id": 19953266,
+      "node_id": "MDQ6VXNlcjE5OTUzMjY2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19953266?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Nerixyz",
+      "html_url": "https://github.com/Nerixyz",
+      "followers_url": "https://api.github.com/users/Nerixyz/followers",
+      "following_url": "https://api.github.com/users/Nerixyz/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Nerixyz/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Nerixyz/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Nerixyz/subscriptions",
+      "organizations_url": "https://api.github.com/users/Nerixyz/orgs",
+      "repos_url": "https://api.github.com/users/Nerixyz/repos",
+      "events_url": "https://api.github.com/users/Nerixyz/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Nerixyz/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'm not really sure how else I should do this, since gitoxide [uses `std::env::var_os`](https://github.com/Byron/gitoxide/blob/78517a616b4b1b6fefc2367057a9b3b786d93750/git-discover/src/upwards/types.rs#L81-L87).",
+    "created_at": "2023-02-02T17:54:19Z",
+    "updated_at": "2023-02-02T17:54:20Z",
+    "html_url": "https://github.com/starship/starship/pull/4881#discussion_r1094878975",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1094878975"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4881#discussion_r1094878975"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1094878975/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 112,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1094907068",
+    "pull_request_review_id": 1281627511,
+    "id": 1094907068,
+    "node_id": "PRRC_kwDOCqswNs5BQvS8",
+    "diff_hunk": "@@ -280,7 +280,7 @@ impl<'a> Context<'a> {\n                 let shared_repo =\n                     match ThreadSafeRepository::discover_with_environment_overrides_opts(",
+    "path": "src/context.rs",
+    "commit_id": "908d2393e7338f7681b9cbf0e91e181a198ef107",
+    "original_commit_id": "30d8e474bf55a990c5dea557fdf6fbe79b5fad1b",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Per the docs, `discover_with_environment_overrides_opts` should already apply `GIT_CEILING_DIRECTORIES`. At a glance, it may not actually be doing this right now. Please try fixing the behavior in gitoxide first (or align the docs with the reality).",
+    "created_at": "2023-02-02T18:15:21Z",
+    "updated_at": "2023-02-02T18:17:17Z",
+    "html_url": "https://github.com/starship/starship/pull/4881#discussion_r1094907068",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1094907068"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4881#discussion_r1094907068"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1094907068/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 281,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 2,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1094908753",
+    "pull_request_review_id": 1281627511,
+    "id": 1094908753,
+    "node_id": "PRRC_kwDOCqswNs5BQvtR",
+    "diff_hunk": "@@ -98,6 +98,38 @@ mod tests {\n         repo_dir.close()\n     }\n \n+    #[test]\n+    fn test_ceiling_directory() -> io::Result<()> {\n+        let repo_dir = fixture_repo(FixtureProvider::Git)?;\n+        let level1 = repo_dir.path().join(\"level1\");\n+        let level2 = level1.join(\"level2\");\n+        std::fs::create_dir(&level1)?;\n+        std::fs::create_dir(&level2)?;\n+\n+        const CEILING_DIRECTORY_VAR: &str = \"GIT_CEILING_DIRECTORIES\";\n+\n+        let prev_ceiling = std::env::var_os(CEILING_DIRECTORY_VAR);\n+        std::env::set_var(CEILING_DIRECTORY_VAR, level1.as_os_str());",
+    "path": "src/modules/git_commit.rs",
+    "commit_id": "908d2393e7338f7681b9cbf0e91e181a198ef107",
+    "original_commit_id": "30d8e474bf55a990c5dea557fdf6fbe79b5fad1b",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I would rather not add any test that changes the environment, because it can cause various side effects, but as far as I can tell this particular instance might be fine. Please just add `#[clippy(allow)]`.",
+    "created_at": "2023-02-02T18:17:10Z",
+    "updated_at": "2023-02-02T18:17:17Z",
+    "html_url": "https://github.com/starship/starship/pull/4881#discussion_r1094908753",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1094908753"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4881#discussion_r1094908753"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1094908753/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 112,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1094931629",
+    "pull_request_review_id": 1281664095,
+    "id": 1094931629,
+    "node_id": "PRRC_kwDOCqswNs5BQ1St",
+    "diff_hunk": "@@ -280,7 +280,7 @@ impl<'a> Context<'a> {\n                 let shared_repo =\n                     match ThreadSafeRepository::discover_with_environment_overrides_opts(",
+    "path": "src/context.rs",
+    "commit_id": "908d2393e7338f7681b9cbf0e91e181a198ef107",
+    "original_commit_id": "30d8e474bf55a990c5dea557fdf6fbe79b5fad1b",
+    "user": {
+      "login": "Nerixyz",
+      "id": 19953266,
+      "node_id": "MDQ6VXNlcjE5OTUzMjY2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19953266?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Nerixyz",
+      "html_url": "https://github.com/Nerixyz",
+      "followers_url": "https://api.github.com/users/Nerixyz/followers",
+      "following_url": "https://api.github.com/users/Nerixyz/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Nerixyz/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Nerixyz/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Nerixyz/subscriptions",
+      "organizations_url": "https://api.github.com/users/Nerixyz/orgs",
+      "repos_url": "https://api.github.com/users/Nerixyz/repos",
+      "events_url": "https://api.github.com/users/Nerixyz/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Nerixyz/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "My bad, it actually reads the environment variables [here](https://github.com/Byron/gitoxide/blob/78517a616b4b1b6fefc2367057a9b3b786d93750/git-repository/src/discover.rs#L84), so this PR effectively only adds a test.",
+    "created_at": "2023-02-02T18:38:05Z",
+    "updated_at": "2023-02-02T18:38:05Z",
+    "html_url": "https://github.com/starship/starship/pull/4881#discussion_r1094931629",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1094931629"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4881#discussion_r1094931629"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1094931629/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 281,
+    "side": "RIGHT",
+    "in_reply_to_id": 1094907068,
+    "author_association": "NONE",
+    "original_position": 2,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1094960284",
+    "pull_request_review_id": 1281728748,
+    "id": 1094960284,
+    "node_id": "PRRC_kwDOCqswNs5BQ8Sc",
+    "diff_hunk": "@@ -98,6 +98,40 @@ mod tests {\n         repo_dir.close()\n     }\n \n+    #[test]\n+    fn test_ceiling_directory() -> io::Result<()> {\n+        let repo_dir = fixture_repo(FixtureProvider::Git)?;\n+        let level1 = repo_dir.path().join(\"level1\");\n+        let level2 = level1.join(\"level2\");\n+        std::fs::create_dir(&level1)?;\n+        std::fs::create_dir(&level2)?;\n+\n+        const CEILING_DIRECTORY_VAR: &str = \"GIT_CEILING_DIRECTORIES\";\n+\n+        let prev_ceiling = std::env::var_os(CEILING_DIRECTORY_VAR);\n+        #[allow(clippy::disallowed_methods)]\n+        std::env::set_var(CEILING_DIRECTORY_VAR, level1.as_os_str());",
+    "path": "src/modules/git_commit.rs",
+    "commit_id": "908d2393e7338f7681b9cbf0e91e181a198ef107",
+    "original_commit_id": "041b0e2dc9cb16a9341a23d787b998fb8376cf97",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think it might better to append the env value instead of replacing and restoring it, maybe even adding it twice to test your upstream PR (thanks for fixing the upstream bug I introduced!).\r\nBeyond that, shouldn't the tests already pass on Windows? You are only adding a single path (so there is no platform-specific delimiter), there might be more issues here.",
+    "created_at": "2023-02-02T19:07:51Z",
+    "updated_at": "2023-02-02T19:07:52Z",
+    "html_url": "https://github.com/starship/starship/pull/4881#discussion_r1094960284",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1094960284"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4881#discussion_r1094960284"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1094960284/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 111,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 113,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 16,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1094981277",
+    "pull_request_review_id": 1281751386,
+    "id": 1094981277,
+    "node_id": "PRRC_kwDOCqswNs5BRBad",
+    "diff_hunk": "@@ -98,6 +98,40 @@ mod tests {\n         repo_dir.close()\n     }\n \n+    #[test]\n+    fn test_ceiling_directory() -> io::Result<()> {\n+        let repo_dir = fixture_repo(FixtureProvider::Git)?;\n+        let level1 = repo_dir.path().join(\"level1\");\n+        let level2 = level1.join(\"level2\");\n+        std::fs::create_dir(&level1)?;\n+        std::fs::create_dir(&level2)?;\n+\n+        const CEILING_DIRECTORY_VAR: &str = \"GIT_CEILING_DIRECTORIES\";\n+\n+        let prev_ceiling = std::env::var_os(CEILING_DIRECTORY_VAR);\n+        #[allow(clippy::disallowed_methods)]\n+        std::env::set_var(CEILING_DIRECTORY_VAR, level1.as_os_str());",
+    "path": "src/modules/git_commit.rs",
+    "commit_id": "908d2393e7338f7681b9cbf0e91e181a198ef107",
+    "original_commit_id": "041b0e2dc9cb16a9341a23d787b998fb8376cf97",
+    "user": {
+      "login": "Nerixyz",
+      "id": 19953266,
+      "node_id": "MDQ6VXNlcjE5OTUzMjY2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19953266?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Nerixyz",
+      "html_url": "https://github.com/Nerixyz",
+      "followers_url": "https://api.github.com/users/Nerixyz/followers",
+      "following_url": "https://api.github.com/users/Nerixyz/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Nerixyz/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Nerixyz/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Nerixyz/subscriptions",
+      "organizations_url": "https://api.github.com/users/Nerixyz/orgs",
+      "repos_url": "https://api.github.com/users/Nerixyz/repos",
+      "events_url": "https://api.github.com/users/Nerixyz/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Nerixyz/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "\r\n> Beyond that, shouldn't the tests already pass on Windows?\r\n\r\nNo, since the paths on Windows include the Drive letter (e.g. `C:\\Users\\User` → `[\"C\", \"\\Users\\User\"]`).\r\n\r\n> You are only adding a single path (so there is no platform-specific delimiter), there might be more issues here.\r\n\r\nI could add more test-cases. If the tests are running concurrently, this could introduce flaky tests.\r\n\r\n> I think it might better to append the env value instead of replacing and restoring it, maybe even adding it twice to test your upstream PR (thanks for fixing the upstream bug I introduced!).\r\n\r\nWouldn't that make the tests dependent on the outside environment?",
+    "created_at": "2023-02-02T19:23:48Z",
+    "updated_at": "2023-02-02T19:23:48Z",
+    "html_url": "https://github.com/starship/starship/pull/4881#discussion_r1094981277",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1094981277"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4881#discussion_r1094981277"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1094981277/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 111,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 113,
+    "side": "RIGHT",
+    "in_reply_to_id": 1094960284,
+    "author_association": "NONE",
+    "original_position": 16,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1094988110",
+    "pull_request_review_id": 1281759969,
+    "id": 1094988110,
+    "node_id": "PRRC_kwDOCqswNs5BRDFO",
+    "diff_hunk": "@@ -98,6 +98,40 @@ mod tests {\n         repo_dir.close()\n     }\n \n+    #[test]\n+    fn test_ceiling_directory() -> io::Result<()> {\n+        let repo_dir = fixture_repo(FixtureProvider::Git)?;\n+        let level1 = repo_dir.path().join(\"level1\");\n+        let level2 = level1.join(\"level2\");\n+        std::fs::create_dir(&level1)?;\n+        std::fs::create_dir(&level2)?;\n+\n+        const CEILING_DIRECTORY_VAR: &str = \"GIT_CEILING_DIRECTORIES\";\n+\n+        let prev_ceiling = std::env::var_os(CEILING_DIRECTORY_VAR);\n+        #[allow(clippy::disallowed_methods)]\n+        std::env::set_var(CEILING_DIRECTORY_VAR, level1.as_os_str());",
+    "path": "src/modules/git_commit.rs",
+    "commit_id": "908d2393e7338f7681b9cbf0e91e181a198ef107",
+    "original_commit_id": "041b0e2dc9cb16a9341a23d787b998fb8376cf97",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ok, that sounds fine.\r\n\r\n> Wouldn't that make the tests dependent on the outside environment?\r\n\r\nThey were already included by the environment to begin with, and only changing the environment once feels less disruptive and makes any potential impact more observable.",
+    "created_at": "2023-02-02T19:27:59Z",
+    "updated_at": "2023-02-02T19:27:59Z",
+    "html_url": "https://github.com/starship/starship/pull/4881#discussion_r1094988110",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1094988110"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4881#discussion_r1094988110"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1094988110/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 111,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 113,
+    "side": "RIGHT",
+    "in_reply_to_id": 1094960284,
+    "author_association": "MEMBER",
+    "original_position": 16,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1095070756",
+    "pull_request_review_id": 1281872928,
+    "id": 1095070756,
+    "node_id": "PRRC_kwDOCqswNs5BRXQk",
+    "diff_hunk": "@@ -98,6 +98,40 @@ mod tests {\n         repo_dir.close()\n     }\n \n+    #[test]\n+    fn test_ceiling_directory() -> io::Result<()> {\n+        let repo_dir = fixture_repo(FixtureProvider::Git)?;\n+        let level1 = repo_dir.path().join(\"level1\");\n+        let level2 = level1.join(\"level2\");\n+        std::fs::create_dir(&level1)?;\n+        std::fs::create_dir(&level2)?;\n+\n+        const CEILING_DIRECTORY_VAR: &str = \"GIT_CEILING_DIRECTORIES\";\n+\n+        let prev_ceiling = std::env::var_os(CEILING_DIRECTORY_VAR);\n+        #[allow(clippy::disallowed_methods)]\n+        std::env::set_var(CEILING_DIRECTORY_VAR, level1.as_os_str());",
+    "path": "src/modules/git_commit.rs",
+    "commit_id": "908d2393e7338f7681b9cbf0e91e181a198ef107",
+    "original_commit_id": "041b0e2dc9cb16a9341a23d787b998fb8376cf97",
+    "user": {
+      "login": "Nerixyz",
+      "id": 19953266,
+      "node_id": "MDQ6VXNlcjE5OTUzMjY2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19953266?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Nerixyz",
+      "html_url": "https://github.com/Nerixyz",
+      "followers_url": "https://api.github.com/users/Nerixyz/followers",
+      "following_url": "https://api.github.com/users/Nerixyz/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Nerixyz/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Nerixyz/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Nerixyz/subscriptions",
+      "organizations_url": "https://api.github.com/users/Nerixyz/orgs",
+      "repos_url": "https://api.github.com/users/Nerixyz/repos",
+      "events_url": "https://api.github.com/users/Nerixyz/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Nerixyz/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Hmm, I can't really get the appending to work.\r\n\r\n<details>\r\n<summary>My current approach</summary>\r\n\r\n```diff\r\ndiff --git a/src/modules/git_commit.rs b/src/modules/git_commit.rs\r\nindex f9a18bc2..ada24996 100644\r\n--- a/src/modules/git_commit.rs\r\n+++ b/src/modules/git_commit.rs\r\n@@ -98,6 +98,22 @@ mod tests {\r\n         repo_dir.close()\r\n     }\r\n \r\n+    #[allow(clippy::disallowed_methods)]\r\n+    fn append_ceiling_directory(directory: &std::ffi::OsStr) {\r\n+        const CEILING_DIRECTORY_VAR: &str = \"GIT_CEILING_DIRECTORIES\";\r\n+\r\n+        let ceiling: std::borrow::Cow<std::ffi::OsStr> =\r\n+            match std::env::var_os(CEILING_DIRECTORY_VAR) {\r\n+                Some(mut var) => {\r\n+                    var.push(if cfg!(windows) { \";\" } else { \":\" });\r\n+                    var.push(directory);\r\n+                    var.into()\r\n+                }\r\n+                None => directory.into(),\r\n+            };\r\n+        std::env::set_var(CEILING_DIRECTORY_VAR, ceiling);\r\n+    }\r\n+\r\n     #[test]\r\n     fn test_ceiling_directory() -> io::Result<()> {\r\n         let repo_dir = fixture_repo(FixtureProvider::Git)?;\r\n@@ -106,11 +122,8 @@ mod tests {\r\n         std::fs::create_dir(&level1)?;\r\n         std::fs::create_dir(&level2)?;\r\n \r\n-        const CEILING_DIRECTORY_VAR: &str = \"GIT_CEILING_DIRECTORIES\";\r\n-\r\n-        let prev_ceiling = std::env::var_os(CEILING_DIRECTORY_VAR);\r\n-        #[allow(clippy::disallowed_methods)]\r\n-        std::env::set_var(CEILING_DIRECTORY_VAR, level1.as_os_str());\r\n+        append_ceiling_directory(level1.as_os_str());\r\n+        append_ceiling_directory(level1.as_os_str());\r\n \r\n         let actual = ModuleRenderer::new(\"git_commit\")\r\n             .config(toml::toml! {\r\n@@ -122,11 +135,40 @@ mod tests {\r\n \r\n         let expected = None;\r\n \r\n-        match prev_ceiling {\r\n-            #[allow(clippy::disallowed_methods)]\r\n-            Some(ceiling) => std::env::set_var(CEILING_DIRECTORY_VAR, ceiling),\r\n-            None => std::env::remove_var(CEILING_DIRECTORY_VAR),\r\n-        };\r\n+        assert_eq!(expected, actual);\r\n+        repo_dir.close()\r\n+    }\r\n+\r\n+    #[test]\r\n+    fn test_ceiling_directory_in_current_dir() -> io::Result<()> {\r\n+        let repo_dir = fixture_repo(FixtureProvider::Git)?;\r\n+        let level1 = repo_dir.path().join(\"level1\");\r\n+        let level2 = level1.join(\"level2\");\r\n+        std::fs::create_dir(&level1)?;\r\n+        std::fs::create_dir(&level2)?;\r\n+\r\n+        append_ceiling_directory(repo_dir.path().as_os_str());\r\n+\r\n+        let mut git_output = create_command(\"git\")?\r\n+            .args([\"rev-parse\", \"HEAD\"])\r\n+            .current_dir(repo_dir.path())\r\n+            .output()?\r\n+            .stdout;\r\n+        git_output.truncate(7);\r\n+        let expected_hash = str::from_utf8(&git_output).unwrap();\r\n+\r\n+        let actual = ModuleRenderer::new(\"git_commit\")\r\n+            .config(toml::toml! {\r\n+                [git_commit]\r\n+                    only_detached = false\r\n+            })\r\n+            .path(repo_dir.path())\r\n+            .collect();\r\n+\r\n+        let expected = Some(format!(\r\n+            \"{} \",\r\n+            Color::Green.bold().paint(format!(\"({expected_hash})\"))\r\n+        ));\r\n \r\n         assert_eq!(expected, actual);\r\n         repo_dir.close()\r\n```\r\n</details>\r\n\r\nAfter setting the ceiling directory to `C:\\Users\\User\\AppData\\Local\\Temp\\.tmpaSiHpn`, no other git repository can be discovered - even if the tempdir has a different name (e.g. `C:\\Users\\Johannes\\AppData\\Local\\Temp\\.tmpDHMU0f`), when running `cargo test --lib -- modules::git_commit::tests::test_render_commit_hash modules::git_commit::tests::test_ceiling_directory_in_current_dir --exact --nocapture `",
+    "created_at": "2023-02-02T20:47:02Z",
+    "updated_at": "2023-02-02T20:47:03Z",
+    "html_url": "https://github.com/starship/starship/pull/4881#discussion_r1095070756",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1095070756"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4881#discussion_r1095070756"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1095070756/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 111,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 113,
+    "side": "RIGHT",
+    "in_reply_to_id": 1094960284,
+    "author_association": "NONE",
+    "original_position": 16,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1096768820",
+    "pull_request_review_id": 1284320896,
+    "id": 1096768820,
+    "node_id": "PRRC_kwDOCqswNs5BX100",
+    "diff_hunk": "@@ -98,6 +98,40 @@ mod tests {\n         repo_dir.close()\n     }\n \n+    #[test]\n+    fn test_ceiling_directory() -> io::Result<()> {\n+        let repo_dir = fixture_repo(FixtureProvider::Git)?;\n+        let level1 = repo_dir.path().join(\"level1\");\n+        let level2 = level1.join(\"level2\");\n+        std::fs::create_dir(&level1)?;\n+        std::fs::create_dir(&level2)?;\n+\n+        const CEILING_DIRECTORY_VAR: &str = \"GIT_CEILING_DIRECTORIES\";\n+\n+        let prev_ceiling = std::env::var_os(CEILING_DIRECTORY_VAR);\n+        #[allow(clippy::disallowed_methods)]\n+        std::env::set_var(CEILING_DIRECTORY_VAR, level1.as_os_str());",
+    "path": "src/modules/git_commit.rs",
+    "commit_id": "908d2393e7338f7681b9cbf0e91e181a198ef107",
+    "original_commit_id": "041b0e2dc9cb16a9341a23d787b998fb8376cf97",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think that's a different issue (Byron/gitoxide#721). Still, I would prefer only setting the variable once to avoid any possible race-conditions between reading and writing the environment variable.",
+    "created_at": "2023-02-05T17:56:50Z",
+    "updated_at": "2023-02-05T17:56:50Z",
+    "html_url": "https://github.com/starship/starship/pull/4881#discussion_r1096768820",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1096768820"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4881#discussion_r1096768820"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1096768820/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 111,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 113,
+    "side": "RIGHT",
+    "in_reply_to_id": 1094960284,
+    "author_association": "MEMBER",
+    "original_position": 16,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1097513871",
+    "pull_request_review_id": 1285402647,
+    "id": 1097513871,
+    "node_id": "PRRC_kwDOCqswNs5BaruP",
+    "diff_hunk": "@@ -98,6 +98,40 @@ mod tests {\n         repo_dir.close()\n     }\n \n+    #[test]\n+    fn test_ceiling_directory() -> io::Result<()> {\n+        let repo_dir = fixture_repo(FixtureProvider::Git)?;\n+        let level1 = repo_dir.path().join(\"level1\");\n+        let level2 = level1.join(\"level2\");\n+        std::fs::create_dir(&level1)?;\n+        std::fs::create_dir(&level2)?;\n+\n+        const CEILING_DIRECTORY_VAR: &str = \"GIT_CEILING_DIRECTORIES\";\n+\n+        let prev_ceiling = std::env::var_os(CEILING_DIRECTORY_VAR);\n+        #[allow(clippy::disallowed_methods)]\n+        std::env::set_var(CEILING_DIRECTORY_VAR, level1.as_os_str());",
+    "path": "src/modules/git_commit.rs",
+    "commit_id": "908d2393e7338f7681b9cbf0e91e181a198ef107",
+    "original_commit_id": "041b0e2dc9cb16a9341a23d787b998fb8376cf97",
+    "user": {
+      "login": "Nerixyz",
+      "id": 19953266,
+      "node_id": "MDQ6VXNlcjE5OTUzMjY2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19953266?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Nerixyz",
+      "html_url": "https://github.com/Nerixyz",
+      "followers_url": "https://api.github.com/users/Nerixyz/followers",
+      "following_url": "https://api.github.com/users/Nerixyz/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Nerixyz/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Nerixyz/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Nerixyz/subscriptions",
+      "organizations_url": "https://api.github.com/users/Nerixyz/orgs",
+      "repos_url": "https://api.github.com/users/Nerixyz/repos",
+      "events_url": "https://api.github.com/users/Nerixyz/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Nerixyz/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "You mean there should be a single test that sets the variable and tests multiple things with it?",
+    "created_at": "2023-02-06T15:11:36Z",
+    "updated_at": "2023-02-06T15:11:37Z",
+    "html_url": "https://github.com/starship/starship/pull/4881#discussion_r1097513871",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1097513871"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4881#discussion_r1097513871"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1097513871/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 111,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 113,
+    "side": "RIGHT",
+    "in_reply_to_id": 1094960284,
+    "author_association": "NONE",
+    "original_position": 16,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1097805503",
+    "pull_request_review_id": 1285847110,
+    "id": 1097805503,
+    "node_id": "PRRC_kwDOCqswNs5Bby6_",
+    "diff_hunk": "@@ -98,6 +98,40 @@ mod tests {\n         repo_dir.close()\n     }\n \n+    #[test]\n+    fn test_ceiling_directory() -> io::Result<()> {\n+        let repo_dir = fixture_repo(FixtureProvider::Git)?;\n+        let level1 = repo_dir.path().join(\"level1\");\n+        let level2 = level1.join(\"level2\");\n+        std::fs::create_dir(&level1)?;\n+        std::fs::create_dir(&level2)?;\n+\n+        const CEILING_DIRECTORY_VAR: &str = \"GIT_CEILING_DIRECTORIES\";\n+\n+        let prev_ceiling = std::env::var_os(CEILING_DIRECTORY_VAR);\n+        #[allow(clippy::disallowed_methods)]\n+        std::env::set_var(CEILING_DIRECTORY_VAR, level1.as_os_str());",
+    "path": "src/modules/git_commit.rs",
+    "commit_id": "908d2393e7338f7681b9cbf0e91e181a198ef107",
+    "original_commit_id": "041b0e2dc9cb16a9341a23d787b998fb8376cf97",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Yes.",
+    "created_at": "2023-02-06T19:05:37Z",
+    "updated_at": "2023-02-06T19:05:37Z",
+    "html_url": "https://github.com/starship/starship/pull/4881#discussion_r1097805503",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4881",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1097805503"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4881#discussion_r1097805503"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4881"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1097805503/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 111,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 113,
+    "side": "RIGHT",
+    "in_reply_to_id": 1094960284,
+    "author_association": "MEMBER",
+    "original_position": 16,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

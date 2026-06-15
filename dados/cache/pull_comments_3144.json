@@ -1,0 +1,71 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/743999933",
+    "pull_request_review_id": 799354371,
+    "id": 743999933,
+    "node_id": "PRRC_kwDOCqswNs4sWIm9",
+    "diff_hunk": "@@ -76,12 +76,19 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n }\n \n fn get_pyenv_version(context: &Context) -> Option<String> {\n-    let version_name = context\n-        .exec_cmd(\"pyenv\", &[\"version-name\"])?\n-        .stdout\n-        .trim()\n-        .to_string();\n-    Some(version_name)\n+    let mut version_name = context.get_env(\"PYENV_VERSION\");\n+\n+    if version_name.is_none() {\n+        version_name = Some(\n+            context\n+                .exec_cmd(\"pyenv\", &[\"version-name\"])?\n+                .stdout\n+                .trim()\n+                .to_string(),\n+        )\n+    }\n+\n+    version_name",
+    "path": "src/modules/python.rs",
+    "commit_id": "204aa27667d2730f880b5af86386f16e1e262f90",
+    "original_commit_id": "204aa27667d2730f880b5af86386f16e1e262f90",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Not a blocker but I think this can be simplified to\r\n```suggestion\r\n    match context.get_env(\"PYENV_VERSION\") {                                                                                \r\n        Some(version) => Some(version),                                                                                     \r\n        _ => Some(                                                                                                          \r\n            context                                                                                                         \r\n                .exec_cmd(\"pyenv\", &[\"version-name\"])?                                                                      \r\n                .stdout                                                                                                     \r\n                .trim()                                                                                                     \r\n                .to_string(),                                                                                                                                                                                     \r\n        ),                                                                                                                  \r\n    }\r\n```",
+    "created_at": "2021-11-05T22:02:44Z",
+    "updated_at": "2021-11-05T22:10:44Z",
+    "html_url": "https://github.com/starship/starship/pull/3144#discussion_r743999933",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3144",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/743999933"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3144#discussion_r743999933"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3144"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/743999933/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 79,
+    "original_start_line": 79,
+    "start_side": "RIGHT",
+    "line": 91,
+    "original_line": 91,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 22,
+    "position": 22,
+    "subject_type": "line"
+  }
+]

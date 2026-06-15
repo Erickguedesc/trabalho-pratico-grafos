@@ -1,0 +1,210 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2920856447",
+    "pull_request_review_id": 3932388345,
+    "id": 2920856447,
+    "node_id": "PRRC_kwDOCqswNs6uGLt_",
+    "diff_hunk": "@@ -30,13 +30,24 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     // the `--json` flag is silently ignored for direnv versions <2.33.0\n     let direnv_status = &context.exec_cmd(\"direnv\", &[\"status\", \"--json\"])?.stdout;\n-    let state = match DirenvState::from_str(direnv_status) {\n-        Ok(s) => s,\n-        Err(e) => {\n-            log::warn!(\"{e}\");\n+    let state = match serde_json::from_str::<RawDirenvState>(direnv_status) {\n+        Ok(raw) => match raw.into_direnv_state() {\n+            Ok(Some(s)) => s,\n+            Ok(None) => return None,\n+            Err(e) => {\n+                log::warn!(\"{e}\");\n+\n+                return None;\n+            }\n+        },\n+        Err(_) => match DirenvState::from_str(direnv_status) {",
+    "path": "src/modules/direnv.rs",
+    "commit_id": "89e824616a0e68c2b1928401f0f635800b869b4d",
+    "original_commit_id": "89e824616a0e68c2b1928401f0f635800b869b4d",
+    "user": {
+      "login": "Copilot",
+      "id": 175728472,
+      "node_id": "BOT_kgDOCnlnWA",
+      "avatar_url": "https://avatars.githubusercontent.com/in/946600?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Copilot",
+      "html_url": "https://github.com/apps/copilot-pull-request-reviewer",
+      "followers_url": "https://api.github.com/users/Copilot/followers",
+      "following_url": "https://api.github.com/users/Copilot/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Copilot/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Copilot/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Copilot/subscriptions",
+      "organizations_url": "https://api.github.com/users/Copilot/orgs",
+      "repos_url": "https://api.github.com/users/Copilot/repos",
+      "events_url": "https://api.github.com/users/Copilot/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Copilot/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "In `module()`, the `Err(_)` branch re-calls `DirenvState::from_str(direnv_status)` after `serde_json::from_str::<RawDirenvState>(direnv_status)` has already failed, which causes an extra JSON parse attempt before falling back to the legacy line parser. Consider calling the legacy parser directly (e.g., `DirenvState::from_lines`) or restructuring the match so the input is only JSON-parsed once.\n```suggestion\n        Err(_) => match DirenvState::from_lines(direnv_status) {\n```",
+    "created_at": "2026-03-11T20:34:12Z",
+    "updated_at": "2026-03-11T20:34:12Z",
+    "html_url": "https://github.com/starship/starship/pull/7317#discussion_r2920856447",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7317",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2920856447"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7317#discussion_r2920856447"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7317"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2920856447/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 43,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 18,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2937189076",
+    "pull_request_review_id": 3950538806,
+    "id": 2937189076,
+    "node_id": "PRRC_kwDOCqswNs6vEfLU",
+    "diff_hunk": "@@ -30,13 +30,24 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     // the `--json` flag is silently ignored for direnv versions <2.33.0\n     let direnv_status = &context.exec_cmd(\"direnv\", &[\"status\", \"--json\"])?.stdout;\n-    let state = match DirenvState::from_str(direnv_status) {\n-        Ok(s) => s,\n-        Err(e) => {\n-            log::warn!(\"{e}\");\n+    let state = match serde_json::from_str::<RawDirenvState>(direnv_status) {\n+        Ok(raw) => match raw.into_direnv_state() {\n+            Ok(Some(s)) => s,\n+            Ok(None) => return None,\n+            Err(e) => {\n+                log::warn!(\"{e}\");\n+\n+                return None;\n+            }\n+        },\n+        Err(_) => match DirenvState::from_lines(direnv_status) {\n+            Ok(s) => s,\n+            Err(e) => {\n+                log::warn!(\"{e}\");\n \n-            return None;\n-        }\n+                return None;\n+            }\n+        },",
+    "path": "src/modules/direnv.rs",
+    "commit_id": "74f61285a15fd3a844f08c912e3c8b3df74267e6",
+    "original_commit_id": "74f61285a15fd3a844f08c912e3c8b3df74267e6",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please simplify this block a bit, it currently has some superfluous match arms, instead of `match` I feel like combinators are appropriate here:\n```rs\nlet state = serde_json::from_str::<RawDirenvState>(direnv_status)\n    .ok()\n    .and_then(|raw| raw.into_direnv_state().inspect_err(|e| log::warn!(\"Failed... :{e}\")).ok())\n    .flatten()\n    .or_else(|| {\n        DirenvState::from_lines(direnv_status)\n            .inspect_err(|e| log::warn!(\"Failed....: {e}\"))\n            .ok()\n    })?;\n```",
+    "created_at": "2026-03-15T19:02:38Z",
+    "updated_at": "2026-03-15T19:02:38Z",
+    "html_url": "https://github.com/starship/starship/pull/7317#discussion_r2937189076",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7317",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2937189076"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7317#discussion_r2937189076"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7317"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2937189076/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 33,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 50,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 27,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2946291583",
+    "pull_request_review_id": 3960245141,
+    "id": 2946291583,
+    "node_id": "PRRC_kwDOCqswNs6vnNd_",
+    "diff_hunk": "@@ -30,13 +30,24 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     // the `--json` flag is silently ignored for direnv versions <2.33.0\n     let direnv_status = &context.exec_cmd(\"direnv\", &[\"status\", \"--json\"])?.stdout;\n-    let state = match DirenvState::from_str(direnv_status) {\n-        Ok(s) => s,\n-        Err(e) => {\n-            log::warn!(\"{e}\");\n+    let state = match serde_json::from_str::<RawDirenvState>(direnv_status) {\n+        Ok(raw) => match raw.into_direnv_state() {\n+            Ok(Some(s)) => s,\n+            Ok(None) => return None,\n+            Err(e) => {\n+                log::warn!(\"{e}\");\n+\n+                return None;\n+            }\n+        },\n+        Err(_) => match DirenvState::from_lines(direnv_status) {\n+            Ok(s) => s,\n+            Err(e) => {\n+                log::warn!(\"{e}\");\n \n-            return None;\n-        }\n+                return None;\n+            }\n+        },",
+    "path": "src/modules/direnv.rs",
+    "commit_id": "74f61285a15fd3a844f08c912e3c8b3df74267e6",
+    "original_commit_id": "74f61285a15fd3a844f08c912e3c8b3df74267e6",
+    "user": {
+      "login": "Acture",
+      "id": 11632382,
+      "node_id": "MDQ6VXNlcjExNjMyMzgy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11632382?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Acture",
+      "html_url": "https://github.com/Acture",
+      "followers_url": "https://api.github.com/users/Acture/followers",
+      "following_url": "https://api.github.com/users/Acture/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Acture/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Acture/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Acture/subscriptions",
+      "organizations_url": "https://api.github.com/users/Acture/orgs",
+      "repos_url": "https://api.github.com/users/Acture/repos",
+      "events_url": "https://api.github.com/users/Acture/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Acture/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "should be fixed now",
+    "created_at": "2026-03-17T12:02:17Z",
+    "updated_at": "2026-03-17T12:02:17Z",
+    "html_url": "https://github.com/starship/starship/pull/7317#discussion_r2946291583",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7317",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2946291583"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7317#discussion_r2946291583"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7317"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2946291583/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 33,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 50,
+    "side": "RIGHT",
+    "in_reply_to_id": 2937189076,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 27,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

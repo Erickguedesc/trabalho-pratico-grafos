@@ -1,0 +1,71 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1000826803",
+    "pull_request_review_id": 1149542233,
+    "id": 1000826803,
+    "node_id": "PRRC_kwDOCqswNs47p2ez",
+    "diff_hunk": "@@ -301,14 +303,63 @@ $shell\\\n $character\"\"\"\n ```\n \n-If you just want to extend the default format, you can use `$all`;\n-modules you explicitly add to the format will not be duplicated. Eg.\n+If you want to extend the default format, you can use `$all`;\n+modules you explicitly add to the format will not be duplicated, but replace earlier declarations.\n+\n+For example, to move the directory to the end of the prompt (also moving it past `$line_break` onto the second line):\n \n ```toml\n-# Move the directory to the second line\n+# Move the directory to the end of the second line\n format = \"$all$directory$character\"\n ```\n \n+If you use only a subset of the modules you may prefer to use a much shorter format setting.\n+\n+Modules that are not referred in `format` will not query for status information. Reducing the number of modules in `format` (removing unused ones) leads to a performance improvement.\n+\n+Setting `format` to an empty string will lead to a completely empty prompt.\n+\n+```toml\n+format = ''\n+```\n+\n+To show only the directory and prompt character:\n+\n+```toml\n+format = '$directory$character'\n+```\n+\n+To show the directory and (some) git state information - on a separate line:\n+\n+```toml\n+format = '$directory$git_branch$git_commit$git_state$git_status$line_break$character'\n+```\n+\n+To show the directory and git state information, followed by conditional information about the last command (command duration, status), and shell and prompt character:\n+\n+```toml\n+format = '$directory$git_branch$git_commit$git_state$git_status(- $status$cmd_duration)$line_break$shell$character'\n+\n+[status]\n+# enable status, which is disabled by default\n+disabled = false",
+    "path": "docs/config/README.md",
+    "commit_id": "b19393ecd7e315da33196663a9b70636f5bcebfc",
+    "original_commit_id": "863a751fc009b5558e1d3e898a33a2846a87b76a",
+    "user": {
+      "login": "Kissaki",
+      "id": 93181,
+      "node_id": "MDQ6VXNlcjkzMTgx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/93181?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Kissaki",
+      "html_url": "https://github.com/Kissaki",
+      "followers_url": "https://api.github.com/users/Kissaki/followers",
+      "following_url": "https://api.github.com/users/Kissaki/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Kissaki/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Kissaki/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Kissaki/subscriptions",
+      "organizations_url": "https://api.github.com/users/Kissaki/orgs",
+      "repos_url": "https://api.github.com/users/Kissaki/repos",
+      "events_url": "https://api.github.com/users/Kissaki/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Kissaki/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think I would remove status now. On actual use, the exit code is often not useful, and the $character already shows state. The $cmd_duration will still show the concept. *(I removed it in my own config.)*\r\n\r\n```suggestion\r\nformat = '$directory$git_branch$git_commit$git_state$git_status(- $cmd_duration)$line_break$shell$character'\r\n```",
+    "created_at": "2022-10-20T15:55:47Z",
+    "updated_at": "2022-10-20T15:55:47Z",
+    "html_url": "https://github.com/starship/starship/pull/4511#discussion_r1000826803",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4511",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1000826803"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4511#discussion_r1000826803"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4511"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1000826803/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 341,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 345,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 69,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

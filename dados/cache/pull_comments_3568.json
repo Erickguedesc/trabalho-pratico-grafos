@@ -1,0 +1,348 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/800151993",
+    "pull_request_review_id": 874014309,
+    "id": 800151993,
+    "node_id": "PRRC_kwDOCqswNs4vsVm5",
+    "diff_hunk": "@@ -0,0 +1,27 @@\n+use crate::config::ModuleConfig;\n+use serde::Serialize;\n+use starship_module_config_derive::ModuleConfig;\n+use std::collections::HashMap;\n+\n+#[derive(Clone, ModuleConfig, Serialize)]\n+pub struct HerokuConfig<'a> {\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+    pub app_aliases: HashMap<String, &'a str>,\n+    pub account_aliases: HashMap<String, &'a str>,\n+}\n+\n+impl<'a> Default for HerokuConfig<'a> {\n+    fn default() -> Self {\n+        HerokuConfig {\n+            format: \"[( $symbol on $app_name \\\\(via  $account\\\\) )]($style)\",\n+            symbol: \" \",",
+    "path": "src/configs/heroku.rs",
+    "commit_id": "4beecb61a81b4529980a649389153a0c808c7360",
+    "original_commit_id": "ffa5f0445ad4e187d5ac78c93d16079627801de8",
+    "user": {
+      "login": "syphar",
+      "id": 540890,
+      "node_id": "MDQ6VXNlcjU0MDg5MA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/540890?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/syphar",
+      "html_url": "https://github.com/syphar",
+      "followers_url": "https://api.github.com/users/syphar/followers",
+      "following_url": "https://api.github.com/users/syphar/following{/other_user}",
+      "gists_url": "https://api.github.com/users/syphar/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/syphar/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/syphar/subscriptions",
+      "organizations_url": "https://api.github.com/users/syphar/orgs",
+      "repos_url": "https://api.github.com/users/syphar/repos",
+      "events_url": "https://api.github.com/users/syphar/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/syphar/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "this is using nerdfont symbols. \r\n\r\nWhat is the policy here? Just use emojii in the default config, and provide an alternative nerdfont symbol in the nerdfont preset? ",
+    "created_at": "2022-02-06T09:28:24Z",
+    "updated_at": "2022-02-06T09:28:24Z",
+    "html_url": "https://github.com/starship/starship/pull/3568#discussion_r800151993",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3568",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/800151993"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3568#discussion_r800151993"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3568"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/800151993/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 19,
+    "original_line": 20,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 20,
+    "position": 19,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/800152078",
+    "pull_request_review_id": 874014397,
+    "id": 800152078,
+    "node_id": "PRRC_kwDOCqswNs4vsVoO",
+    "diff_hunk": "@@ -0,0 +1,501 @@\n+use super::{Context, Module, RootModuleConfig};\n+use crate::configs::heroku::HerokuConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils::read_file;\n+\n+/// Read environment settings.\n+/// mimics\n+/// https://github.com/heroku/heroku-cli-command/blob/3e13ae899f64616c316dcf05398724fdd53c4d8a/src/vars.ts#L1-L48\n+/// only the methods we use.\n+mod heroku_vars {\n+    use super::Context;\n+    use url::Url;\n+\n+    fn host(context: &Context) -> String {\n+        context\n+            .get_env(\"HEROKU_HOST\")\n+            .unwrap_or_else(|| \"heroku.com\".to_string())\n+    }\n+\n+    fn env_git_host(context: &Context) -> Option<String> {\n+        context.get_env(\"HEROKU_GIT_HOST\")\n+    }\n+\n+    fn git_host(context: &Context) -> String {\n+        if let Some(env_git_host) = env_git_host(context) {\n+            return env_git_host;\n+        }\n+\n+        let host = host(context);\n+        if host.starts_with(\"http\") {\n+            if let Ok(url) = Url::parse(&host) {\n+                if let Some(host) = url.host_str() {\n+                    return host.to_string();\n+                }\n+            }\n+        }\n+        host\n+    }\n+\n+    fn http_git_host(context: &Context) -> String {\n+        if let Some(git_host) = env_git_host(context) {\n+            return git_host;\n+        }\n+        let host = host(context);\n+        if host.starts_with(\"http\") {\n+            if let Ok(url) = Url::parse(&host) {\n+                if let Some(host) = url.host_str() {\n+                    return host.to_string();\n+                }\n+            }\n+        }\n+        format!(\"git.{}\", host)\n+    }\n+\n+    pub(super) fn git_prefixes(context: &Context) -> Vec<String> {\n+        vec![\n+            format!(\"git@{}:\", git_host(context)),\n+            format!(\"ssh://git@{}/\", git_host(context)),\n+            format!(\"https://{}/\", http_git_host(context)),\n+        ]\n+    }\n+\n+    #[cfg(test)]\n+    mod tests {\n+        use super::*;\n+        use crate::test::default_context;\n+\n+        #[test]\n+        fn test_default_prefixes() {\n+            let context = default_context();\n+\n+            assert_eq!(\n+                git_prefixes(&context),\n+                vec![\n+                    \"git@heroku.com:\",\n+                    \"ssh://git@heroku.com/\",\n+                    \"https://git.heroku.com/\",\n+                ]\n+            );\n+        }\n+\n+        #[test]\n+        fn test_git_heroku_host() {\n+            let mut context = default_context();\n+            context.env.insert(\"HEROKU_HOST\", \"will.be.ignored\".into());\n+            context\n+                .env\n+                .insert(\"HEROKU_GIT_HOST\", \"other.git.host\".into());\n+\n+            assert_eq!(\n+                git_prefixes(&context),\n+                vec![\n+                    \"git@other.git.host:\",\n+                    \"ssh://git@other.git.host/\",\n+                    \"https://other.git.host/\",\n+                ]\n+            );\n+        }\n+\n+        #[test]\n+        fn test_other_heroku_host() {\n+            let mut context = default_context();\n+            context.env.insert(\"HEROKU_HOST\", \"other.host\".into());\n+\n+            assert_eq!(\n+                git_prefixes(&context),\n+                vec![\n+                    \"git@other.host:\",\n+                    \"ssh://git@other.host/\",\n+                    \"https://git.other.host/\",\n+                ]\n+            );\n+        }\n+        #[test]\n+        fn test_other_heroku_host_with_http() {\n+            let mut context = default_context();\n+            context\n+                .env\n+                .insert(\"HEROKU_HOST\", \"https://other.host\".into());\n+\n+            assert_eq!(\n+                git_prefixes(&context),\n+                vec![\n+                    \"git@other.host:\",\n+                    \"ssh://git@other.host/\",\n+                    \"https://other.host/\",\n+                ]\n+            );\n+        }\n+    }\n+}\n+\n+/// find currently used Heroku app.\n+/// Mimics:\n+/// https://github.com/heroku/heroku-cli-command/blob/3e13ae899f64616c316dcf05398724fdd53c4d8a/src/flags/app.ts#L22-L40\n+/// with\n+/// https://github.com/heroku/heroku-cli-command/blob/5e13ae899f64616c316dcf05398724fdd53c4d8a/src/git.ts\n+mod heroku_app {\n+    use super::{heroku_vars, Context};\n+    use git2::Repository;\n+    use regex::Regex;\n+\n+    fn config_remote(repo: &Repository) -> Option<String> {\n+        let config = repo.config().ok()?;\n+        config.get_string(\"heroku.remote\").ok()\n+    }\n+\n+    fn get_apps_in_git_remotes(\n+        context: &Context,\n+        repo: &Repository,\n+        only_remote: Option<String>,\n+    ) -> Result<Vec<String>, git2::Error> {\n+        let prefixes = heroku_vars::git_prefixes(context);\n+        let remote_regexes: Vec<Regex> = prefixes\n+            .iter()\n+            .filter_map(|prefix| {\n+                let regex = format!(r\"{}(.*)\\.git\", prefix);\n+\n+                match Regex::new(&regex) {\n+                    Ok(re) => Some(re),\n+                    Err(err) => {\n+                        log::debug!(\n+                            \"could not parse regex \\\"{}\\\" for Heroku remotes: {:?}\",\n+                            regex,\n+                            err\n+                        );\n+                        None\n+                    }\n+                }\n+            })\n+            .collect();\n+\n+        let mut app_remotes = Vec::new();\n+        for remote_name in repo.remotes()?.iter().flatten() {",
+    "path": "src/modules/heroku.rs",
+    "commit_id": "4beecb61a81b4529980a649389153a0c808c7360",
+    "original_commit_id": "ffa5f0445ad4e187d5ac78c93d16079627801de8",
+    "user": {
+      "login": "syphar",
+      "id": 540890,
+      "node_id": "MDQ6VXNlcjU0MDg5MA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/540890?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/syphar",
+      "html_url": "https://github.com/syphar",
+      "followers_url": "https://api.github.com/users/syphar/followers",
+      "following_url": "https://api.github.com/users/syphar/following{/other_user}",
+      "gists_url": "https://api.github.com/users/syphar/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/syphar/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/syphar/subscriptions",
+      "organizations_url": "https://api.github.com/users/syphar/orgs",
+      "repos_url": "https://api.github.com/users/syphar/repos",
+      "events_url": "https://api.github.com/users/syphar/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/syphar/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "should the remotes be added to the `Context` and fetched with the other git details? \r\n\r\nProbably depends on how expensive opening the repo is",
+    "created_at": "2022-02-06T09:29:22Z",
+    "updated_at": "2022-02-06T09:29:23Z",
+    "html_url": "https://github.com/starship/starship/pull/3568#discussion_r800152078",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3568",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/800152078"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3568#discussion_r800152078"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3568"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/800152078/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 174,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 174,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/800152284",
+    "pull_request_review_id": 874014572,
+    "id": 800152284,
+    "node_id": "PRRC_kwDOCqswNs4vsVrc",
+    "diff_hunk": "@@ -0,0 +1,501 @@\n+use super::{Context, Module, RootModuleConfig};\n+use crate::configs::heroku::HerokuConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils::read_file;\n+\n+/// Read environment settings.\n+/// mimics\n+/// https://github.com/heroku/heroku-cli-command/blob/3e13ae899f64616c316dcf05398724fdd53c4d8a/src/vars.ts#L1-L48\n+/// only the methods we use.\n+mod heroku_vars {\n+    use super::Context;\n+    use url::Url;\n+\n+    fn host(context: &Context) -> String {\n+        context\n+            .get_env(\"HEROKU_HOST\")\n+            .unwrap_or_else(|| \"heroku.com\".to_string())\n+    }\n+\n+    fn env_git_host(context: &Context) -> Option<String> {\n+        context.get_env(\"HEROKU_GIT_HOST\")\n+    }\n+\n+    fn git_host(context: &Context) -> String {\n+        if let Some(env_git_host) = env_git_host(context) {\n+            return env_git_host;\n+        }\n+\n+        let host = host(context);\n+        if host.starts_with(\"http\") {\n+            if let Ok(url) = Url::parse(&host) {\n+                if let Some(host) = url.host_str() {\n+                    return host.to_string();\n+                }\n+            }\n+        }\n+        host\n+    }\n+\n+    fn http_git_host(context: &Context) -> String {\n+        if let Some(git_host) = env_git_host(context) {\n+            return git_host;\n+        }\n+        let host = host(context);\n+        if host.starts_with(\"http\") {\n+            if let Ok(url) = Url::parse(&host) {\n+                if let Some(host) = url.host_str() {\n+                    return host.to_string();\n+                }\n+            }\n+        }\n+        format!(\"git.{}\", host)\n+    }\n+\n+    pub(super) fn git_prefixes(context: &Context) -> Vec<String> {\n+        vec![\n+            format!(\"git@{}:\", git_host(context)),\n+            format!(\"ssh://git@{}/\", git_host(context)),\n+            format!(\"https://{}/\", http_git_host(context)),\n+        ]\n+    }\n+\n+    #[cfg(test)]\n+    mod tests {\n+        use super::*;\n+        use crate::test::default_context;\n+\n+        #[test]\n+        fn test_default_prefixes() {\n+            let context = default_context();\n+\n+            assert_eq!(\n+                git_prefixes(&context),\n+                vec![\n+                    \"git@heroku.com:\",\n+                    \"ssh://git@heroku.com/\",\n+                    \"https://git.heroku.com/\",\n+                ]\n+            );\n+        }\n+\n+        #[test]\n+        fn test_git_heroku_host() {\n+            let mut context = default_context();\n+            context.env.insert(\"HEROKU_HOST\", \"will.be.ignored\".into());\n+            context\n+                .env\n+                .insert(\"HEROKU_GIT_HOST\", \"other.git.host\".into());\n+\n+            assert_eq!(\n+                git_prefixes(&context),\n+                vec![\n+                    \"git@other.git.host:\",\n+                    \"ssh://git@other.git.host/\",\n+                    \"https://other.git.host/\",\n+                ]\n+            );\n+        }\n+\n+        #[test]\n+        fn test_other_heroku_host() {\n+            let mut context = default_context();\n+            context.env.insert(\"HEROKU_HOST\", \"other.host\".into());\n+\n+            assert_eq!(\n+                git_prefixes(&context),\n+                vec![\n+                    \"git@other.host:\",\n+                    \"ssh://git@other.host/\",\n+                    \"https://git.other.host/\",\n+                ]\n+            );\n+        }\n+        #[test]\n+        fn test_other_heroku_host_with_http() {\n+            let mut context = default_context();\n+            context\n+                .env\n+                .insert(\"HEROKU_HOST\", \"https://other.host\".into());\n+\n+            assert_eq!(\n+                git_prefixes(&context),\n+                vec![\n+                    \"git@other.host:\",\n+                    \"ssh://git@other.host/\",\n+                    \"https://other.host/\",\n+                ]\n+            );\n+        }\n+    }\n+}\n+\n+/// find currently used Heroku app.\n+/// Mimics:\n+/// https://github.com/heroku/heroku-cli-command/blob/3e13ae899f64616c316dcf05398724fdd53c4d8a/src/flags/app.ts#L22-L40\n+/// with\n+/// https://github.com/heroku/heroku-cli-command/blob/5e13ae899f64616c316dcf05398724fdd53c4d8a/src/git.ts\n+mod heroku_app {\n+    use super::{heroku_vars, Context};\n+    use git2::Repository;\n+    use regex::Regex;\n+\n+    fn config_remote(repo: &Repository) -> Option<String> {\n+        let config = repo.config().ok()?;\n+        config.get_string(\"heroku.remote\").ok()\n+    }\n+\n+    fn get_apps_in_git_remotes(\n+        context: &Context,\n+        repo: &Repository,\n+        only_remote: Option<String>,\n+    ) -> Result<Vec<String>, git2::Error> {\n+        let prefixes = heroku_vars::git_prefixes(context);\n+        let remote_regexes: Vec<Regex> = prefixes\n+            .iter()\n+            .filter_map(|prefix| {\n+                let regex = format!(r\"{}(.*)\\.git\", prefix);\n+\n+                match Regex::new(&regex) {\n+                    Ok(re) => Some(re),\n+                    Err(err) => {\n+                        log::debug!(\n+                            \"could not parse regex \\\"{}\\\" for Heroku remotes: {:?}\",\n+                            regex,\n+                            err\n+                        );\n+                        None\n+                    }\n+                }\n+            })\n+            .collect();\n+\n+        let mut app_remotes = Vec::new();\n+        for remote_name in repo.remotes()?.iter().flatten() {\n+            if let Some(ref only_remote) = only_remote {\n+                if remote_name != only_remote {\n+                    continue;\n+                }\n+            }\n+\n+            let remote = repo.find_remote(remote_name)?;\n+\n+            if let Some(url) = remote.url() {\n+                for regex in &remote_regexes {\n+                    if let Some(capture) = regex.captures_iter(url).next() {\n+                        app_remotes.push(capture[1].to_string());\n+                        break;\n+                    }\n+                }\n+            }\n+        }\n+\n+        Ok(app_remotes)\n+    }\n+\n+    pub(super) fn get_app(context: &Context) -> Option<String> {\n+        if let Some(env_app) = context.get_env(\"HEROKU_APP\") {\n+            return Some(env_app);\n+        }\n+\n+        // TODO: should fetching the remotes happen in the Context? So we don't open the repo again?\n+        let repository = context.get_repo().ok()?.open().ok()?;\n+\n+        if let Ok(apps) = get_apps_in_git_remotes(context, &repository, config_remote(&repository))\n+        {\n+            if apps.len() == 1 {\n+                return Some(apps[0].clone());\n+            }\n+            // there can be more than one valid app, in more than one git remote.\n+            // In Heroku commands you typically have to provide `--remote` to\n+            // define which remote (and through that the app) to use.\n+            // Here we don't show any app when there is more than one.\n+        }\n+\n+        None\n+    }\n+\n+    #[cfg(test)]\n+    mod tests {\n+        use super::*;\n+        use crate::{\n+            test::{default_context, fixture_repo, FixtureProvider},\n+            utils::create_command,\n+        };\n+        use std::io;\n+        use tempfile::TempDir;\n+\n+        fn add_remote(repo_dir: &TempDir, name: &str, url: &str) -> io::Result<()> {\n+            create_command(\"git\")?\n+                .args(&[\"remote\", \"add\", name, url])\n+                .current_dir(repo_dir.path())\n+                .output()?;\n+\n+            Ok(())\n+        }\n+\n+        #[test]\n+        fn everything_empty() {\n+            let context = default_context();\n+            assert!(get_app(&context).is_none());\n+        }\n+\n+        #[test]\n+        fn from_env() {\n+            let mut context = default_context();\n+            context.env.insert(\"HEROKU_APP\", \"some_app\".to_owned());\n+            assert_eq!(get_app(&context).unwrap(), \"some_app\");\n+        }\n+\n+        #[test]\n+        fn from_remote() -> io::Result<()> {\n+            let repo_dir = fixture_repo(FixtureProvider::Git)?;\n+            let mut context = default_context();\n+            context.current_dir = repo_dir.path().into();\n+\n+            add_remote(&repo_dir, \"some_name\", \"git@heroku.com:some_app_name.git\")?;\n+            add_remote(&repo_dir, \"some_other_name\", \"git@github.com:repo.git\")?;\n+\n+            assert_eq!(get_app(&context).unwrap(), \"some_app_name\");\n+\n+            Ok(())\n+        }\n+\n+        #[test]\n+        fn multiple_apps() -> io::Result<()> {\n+            let repo_dir = fixture_repo(FixtureProvider::Git)?;\n+            let mut context = default_context();\n+            context.current_dir = repo_dir.path().into();\n+\n+            add_remote(&repo_dir, \"some_name\", \"git@heroku.com:some_app_name.git\")?;\n+            add_remote(\n+                &repo_dir,\n+                \"some_other_name\",\n+                \"https://git.heroku.com/other_app_name.git\",\n+            )?;\n+\n+            assert!(get_app(&context).is_none());\n+\n+            Ok(())\n+        }\n+    }\n+}\n+\n+fn account_from_netrc_file(context: &Context) -> Option<String> {\n+    // https://linux.die.net/man/5/netrc\n+    // This parses simple .netrc files, it could return wrong\n+    // results for files with `macdef`.\n+    // We only look at explicit machine definitions, not at\n+    // defaults. Heroku doesn't use the netrc default section.\n+    // Lastly, Heroku uses the `netrc-parser` package to edit\n+    // the file, which also supports GPG encrypted netrc files.\n+    // This we also don't support right now.\n+",
+    "path": "src/modules/heroku.rs",
+    "commit_id": "4beecb61a81b4529980a649389153a0c808c7360",
+    "original_commit_id": "ffa5f0445ad4e187d5ac78c93d16079627801de8",
+    "user": {
+      "login": "syphar",
+      "id": 540890,
+      "node_id": "MDQ6VXNlcjU0MDg5MA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/540890?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/syphar",
+      "html_url": "https://github.com/syphar",
+      "followers_url": "https://api.github.com/users/syphar/followers",
+      "following_url": "https://api.github.com/users/syphar/following{/other_user}",
+      "gists_url": "https://api.github.com/users/syphar/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/syphar/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/syphar/subscriptions",
+      "organizations_url": "https://api.github.com/users/syphar/orgs",
+      "repos_url": "https://api.github.com/users/syphar/repos",
+      "events_url": "https://api.github.com/users/syphar/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/syphar/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This won't catch all edge-cases, is this OK? \r\n\r\nAlternative would be to write a small PEST grammar, or use the [netrc lib](docs.rs/netrc/) (while it wasn't updated in a while)",
+    "created_at": "2022-02-06T09:30:59Z",
+    "updated_at": "2022-02-06T09:31:00Z",
+    "html_url": "https://github.com/starship/starship/pull/3568#discussion_r800152284",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3568",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/800152284"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3568#discussion_r800152284"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3568"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/800152284/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 120,
+    "original_line": 292,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 293,
+    "position": 120,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/800201515",
+    "pull_request_review_id": 874057793,
+    "id": 800201515,
+    "node_id": "PRRC_kwDOCqswNs4vshsr",
+    "diff_hunk": "@@ -0,0 +1,27 @@\n+use crate::config::ModuleConfig;\n+use serde::Serialize;\n+use starship_module_config_derive::ModuleConfig;\n+use std::collections::HashMap;\n+\n+#[derive(Clone, ModuleConfig, Serialize)]\n+pub struct HerokuConfig<'a> {\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+    pub app_aliases: HashMap<String, &'a str>,",
+    "path": "src/configs/heroku.rs",
+    "commit_id": "4beecb61a81b4529980a649389153a0c808c7360",
+    "original_commit_id": "96adbb08d98d47736000ad673da1932c152b573f",
+    "user": {
+      "login": "syphar",
+      "id": 540890,
+      "node_id": "MDQ6VXNlcjU0MDg5MA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/540890?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/syphar",
+      "html_url": "https://github.com/syphar",
+      "followers_url": "https://api.github.com/users/syphar/followers",
+      "following_url": "https://api.github.com/users/syphar/following{/other_user}",
+      "gists_url": "https://api.github.com/users/syphar/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/syphar/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/syphar/subscriptions",
+      "organizations_url": "https://api.github.com/users/syphar/orgs",
+      "repos_url": "https://api.github.com/users/syphar/repos",
+      "events_url": "https://api.github.com/users/syphar/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/syphar/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "in #3569 I also see the kubernetes-module uses regexes for pattern replacements, which could be also interesting here. ( or for a later PR)",
+    "created_at": "2022-02-06T16:16:44Z",
+    "updated_at": "2022-02-06T16:16:44Z",
+    "html_url": "https://github.com/starship/starship/pull/3568#discussion_r800201515",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3568",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/800201515"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3568#discussion_r800201515"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3568"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/800201515/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 11,
+    "original_line": 12,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 12,
+    "position": 11,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/804415031",
+    "pull_request_review_id": 879850389,
+    "id": 804415031,
+    "node_id": "PRRC_kwDOCqswNs4v8mY3",
+    "diff_hunk": "@@ -0,0 +1,27 @@\n+use crate::config::ModuleConfig;\n+use serde::Serialize;\n+use starship_module_config_derive::ModuleConfig;\n+use std::collections::HashMap;\n+\n+#[derive(Clone, ModuleConfig, Serialize)]\n+pub struct HerokuConfig<'a> {\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+    pub app_aliases: HashMap<String, &'a str>,",
+    "path": "src/configs/heroku.rs",
+    "commit_id": "4beecb61a81b4529980a649389153a0c808c7360",
+    "original_commit_id": "96adbb08d98d47736000ad673da1932c152b573f",
+    "user": {
+      "login": "syphar",
+      "id": 540890,
+      "node_id": "MDQ6VXNlcjU0MDg5MA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/540890?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/syphar",
+      "html_url": "https://github.com/syphar",
+      "followers_url": "https://api.github.com/users/syphar/followers",
+      "following_url": "https://api.github.com/users/syphar/following{/other_user}",
+      "gists_url": "https://api.github.com/users/syphar/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/syphar/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/syphar/subscriptions",
+      "organizations_url": "https://api.github.com/users/syphar/orgs",
+      "repos_url": "https://api.github.com/users/syphar/repos",
+      "events_url": "https://api.github.com/users/syphar/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/syphar/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I added the regex pattern replacements now",
+    "created_at": "2022-02-11T07:44:50Z",
+    "updated_at": "2022-02-11T07:44:58Z",
+    "html_url": "https://github.com/starship/starship/pull/3568#discussion_r804415031",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3568",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/804415031"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3568#discussion_r804415031"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3568"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/804415031/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 11,
+    "original_line": 12,
+    "side": "RIGHT",
+    "in_reply_to_id": 800201515,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 12,
+    "position": 11,
+    "subject_type": "line"
+  }
+]

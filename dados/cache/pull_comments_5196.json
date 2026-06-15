@@ -1,0 +1,836 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1202714237",
+    "pull_request_review_id": 1440201180,
+    "id": 1202714237,
+    "node_id": "PRRC_kwDOCqswNs5Hr_Z9",
+    "diff_hunk": "@@ -235,8 +235,20 @@ impl<'a> Context<'a> {\n         disabled == Some(true)\n     }\n \n+    /// Returns true when no negated environment variable is defined in `env_vars`\n+    /// or none of the negated variables is set in the environment.\n+    fn has_no_negative_env_var(&self, env_vars: &'a [&'a str]) -> bool {\n+        !env_vars\n+            .iter()\n+            .any(|env_var| env_var.starts_with('!') && self.get_env(&env_var[1..]).is_some())\n+    }\n+\n+    /// Returns true if 'detect_env_vars' is empty,\n+    /// or if at least one environment variable is set and no negated environment variable is set\n     pub fn detect_env_vars(&'a self, env_vars: &'a [&'a str]) -> bool {\n-        env_vars.is_empty() || (env_vars.iter().any(|e| self.get_env(e).is_some()))\n+        env_vars.is_empty()\n+            || ((env_vars.iter().any(|e| self.get_env(e).is_some()))\n+                && self.has_no_negative_env_var(env_vars))",
+    "path": "src/context.rs",
+    "commit_id": "27901970bee06e539736271889961b0335997312",
+    "original_commit_id": "1375f68f19f581319d018a9c35ed4e17b62ce946",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Instead of `env_vars.is_empty()` it might be better to use `env_vars.any(|e| !e.starts_with('!'))` to better support negative-only matchers.",
+    "created_at": "2023-05-23T16:56:32Z",
+    "updated_at": "2023-05-23T17:01:19Z",
+    "html_url": "https://github.com/starship/starship/pull/5196#discussion_r1202714237",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5196",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1202714237"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5196#discussion_r1202714237"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5196"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1202714237/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 249,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 251,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 18,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1202716043",
+    "pull_request_review_id": 1440201180,
+    "id": 1202716043,
+    "node_id": "PRRC_kwDOCqswNs5Hr_2L",
+    "diff_hunk": "@@ -2189,16 +2189,22 @@ format = 'via [⎈ $version](bold white) '\n \n The `hostname` module shows the system hostname.\n \n+::: warning\n+\n+The `detect_env_vars` is only recognized, if `ssh_only` is set to `false`.\n+You can still check for a ssh connection, add `SSH_CONNECTION` to `detect_env_vars`.",
+    "path": "docs/config/README.md",
+    "commit_id": "27901970bee06e539736271889961b0335997312",
+    "original_commit_id": "1375f68f19f581319d018a9c35ed4e17b62ce946",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think it makes more sense to join both with `AND` (or `OR`?) conditions.\r\nIf we decide to keep this behavior, it would warrant a `log::warn!` in the code.",
+    "created_at": "2023-05-23T16:57:54Z",
+    "updated_at": "2023-05-23T17:01:19Z",
+    "html_url": "https://github.com/starship/starship/pull/5196#discussion_r1202716043",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5196",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1202716043"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5196#discussion_r1202716043"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5196"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1202716043/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 2194,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 2195,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 7,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1204161184",
+    "pull_request_review_id": 1441887385,
+    "id": 1204161184,
+    "node_id": "PRRC_kwDOCqswNs5Hxgqg",
+    "diff_hunk": "@@ -2189,16 +2189,22 @@ format = 'via [⎈ $version](bold white) '\n \n The `hostname` module shows the system hostname.\n \n+::: warning\n+\n+The `detect_env_vars` is only recognized, if `ssh_only` is set to `false`.\n+You can still check for a ssh connection, add `SSH_CONNECTION` to `detect_env_vars`.",
+    "path": "docs/config/README.md",
+    "commit_id": "27901970bee06e539736271889961b0335997312",
+    "original_commit_id": "1375f68f19f581319d018a9c35ed4e17b62ce946",
+    "user": {
+      "login": "mickimnet",
+      "id": 2911922,
+      "node_id": "MDQ6VXNlcjI5MTE5MjI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2911922?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mickimnet",
+      "html_url": "https://github.com/mickimnet",
+      "followers_url": "https://api.github.com/users/mickimnet/followers",
+      "following_url": "https://api.github.com/users/mickimnet/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mickimnet/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mickimnet/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mickimnet/subscriptions",
+      "organizations_url": "https://api.github.com/users/mickimnet/orgs",
+      "repos_url": "https://api.github.com/users/mickimnet/repos",
+      "events_url": "https://api.github.com/users/mickimnet/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mickimnet/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "There is one combination, I'm unsure how to handle: what happens if an environment variable is configured for `detect_env_vars` and it is not set in the shell environment?\r\n\r\nWith `ssh_only = \"false\"`, my logic would say: hide the hostname. With `ssh_only = \"true\"` and an active `ssh` connection, what should take precedence: the `ssh_only` or the `detect_env_vars` option?\r\n\r\nSee [my comment](https://github.com/starship/starship/pull/5196#issuecomment-1561171181) for a new truth table.",
+    "created_at": "2023-05-24T13:39:42Z",
+    "updated_at": "2023-05-24T13:40:00Z",
+    "html_url": "https://github.com/starship/starship/pull/5196#discussion_r1204161184",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5196",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1204161184"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5196#discussion_r1204161184"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5196"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1204161184/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 2194,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 2195,
+    "side": "RIGHT",
+    "in_reply_to_id": 1202716043,
+    "author_association": "MEMBER",
+    "original_position": 7,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1248874821",
+    "pull_request_review_id": 1508669426,
+    "id": 1248874821,
+    "node_id": "PRRC_kwDOCqswNs5KcFFF",
+    "diff_hunk": "@@ -235,8 +235,20 @@ impl<'a> Context<'a> {\n         disabled == Some(true)\n     }\n \n+    /// Returns true when no negated environment variable is defined in `env_vars`\n+    /// or none of the negated variables is set in the environment.\n+    fn has_no_negative_env_var(&self, env_vars: &'a [&'a str]) -> bool {\n+        !env_vars\n+            .iter()\n+            .any(|env_var| env_var.starts_with('!') && self.get_env(&env_var[1..]).is_some())\n+    }\n+\n+    /// Returns true if 'detect_env_vars' is empty,\n+    /// or if at least one environment variable is set and no negated environment variable is set\n     pub fn detect_env_vars(&'a self, env_vars: &'a [&'a str]) -> bool {\n-        env_vars.is_empty() || (env_vars.iter().any(|e| self.get_env(e).is_some()))\n+        env_vars.is_empty()\n+            || ((env_vars.iter().any(|e| self.get_env(e).is_some()))\n+                && self.has_no_negative_env_var(env_vars))",
+    "path": "src/context.rs",
+    "commit_id": "27901970bee06e539736271889961b0335997312",
+    "original_commit_id": "1375f68f19f581319d018a9c35ed4e17b62ce946",
+    "user": {
+      "login": "mickimnet",
+      "id": 2911922,
+      "node_id": "MDQ6VXNlcjI5MTE5MjI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2911922?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mickimnet",
+      "html_url": "https://github.com/mickimnet",
+      "followers_url": "https://api.github.com/users/mickimnet/followers",
+      "following_url": "https://api.github.com/users/mickimnet/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mickimnet/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mickimnet/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mickimnet/subscriptions",
+      "organizations_url": "https://api.github.com/users/mickimnet/orgs",
+      "repos_url": "https://api.github.com/users/mickimnet/repos",
+      "events_url": "https://api.github.com/users/mickimnet/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mickimnet/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Because of the supposed formula in https://github.com/starship/starship/pull/5196#issuecomment-1566228913 we decided to leave it in.",
+    "created_at": "2023-07-01T15:37:28Z",
+    "updated_at": "2023-07-01T15:37:28Z",
+    "html_url": "https://github.com/starship/starship/pull/5196#discussion_r1248874821",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5196",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1248874821"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5196#discussion_r1248874821"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5196"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1248874821/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 249,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 251,
+    "side": "RIGHT",
+    "in_reply_to_id": 1202714237,
+    "author_association": "MEMBER",
+    "original_position": 18,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1284051206",
+    "pull_request_review_id": 1562281947,
+    "id": 1284051206,
+    "node_id": "PRRC_kwDOCqswNs5MiREG",
+    "diff_hunk": "@@ -8,14 +8,18 @@ use crate::formatter::StringFormatter;\n /// Creates a module with the system hostname\n ///\n /// Will display the hostname if all of the following criteria are met:\n-///     - hostname.disabled is absent or false\n+///     - `hostname.disabled` is absent or false\n ///     - `hostname.ssh_only` is false OR the user is currently connected as an SSH session (`$SSH_CONNECTION`)\n+///     - `hostname.ssh_only` is false AND `hostname.detect_env_vars` is either empty or contains a defined environment variable\n pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let mut module = context.new_module(\"hostname\");\n     let config: HostnameConfig = HostnameConfig::try_load(module.config);\n \n     let ssh_connection = context.get_env(\"SSH_CONNECTION\");\n-    if config.ssh_only && ssh_connection.is_none() {\n+\n+    if !((!config.ssh_only || ssh_connection.is_some())\n+        && context.detect_env_vars(&config.detect_env_vars))",
+    "path": "src/modules/hostname.rs",
+    "commit_id": "27901970bee06e539736271889961b0335997312",
+    "original_commit_id": "949661d97058d569c04ce1e3c4979a4dd5d85bba",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think we should reduce the amount of negation here.\r\n```suggestion\r\n    if (config.ssh_only && ssh_connection.is_none())\r\n        || !context.detect_env_vars(&config.detect_env_vars))\r\n```",
+    "created_at": "2023-08-04T06:53:20Z",
+    "updated_at": "2023-08-04T07:03:34Z",
+    "html_url": "https://github.com/starship/starship/pull/5196#discussion_r1284051206",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5196",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1284051206"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5196#discussion_r1284051206"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5196"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1284051206/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 20,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 21,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 16,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1284057363",
+    "pull_request_review_id": 1562281947,
+    "id": 1284057363,
+    "node_id": "PRRC_kwDOCqswNs5MiSkT",
+    "diff_hunk": "@@ -235,8 +235,31 @@ impl<'a> Context<'a> {\n         disabled == Some(true)\n     }\n \n+    /// Returns true when a negated environment variable is defined in `env_vars` and is present\n+    fn has_negated_env_var(&self, env_vars: &'a [&'a str]) -> bool {\n+        env_vars\n+            .iter()\n+            .any(|env_var| env_var.starts_with('!') && self.get_env(&env_var[1..]).is_some())\n+    }\n+\n+    /// Returns true if 'detect_env_vars' is empty,\n+    /// or if at least one environment variable is set and no negated environment variable is set\n+    /// or if there are only negated environment variable provided (which are not set)\n     pub fn detect_env_vars(&'a self, env_vars: &'a [&'a str]) -> bool {\n-        env_vars.is_empty() || (env_vars.iter().any(|e| self.get_env(e).is_some()))\n+        if env_vars.is_empty() {\n+            return true;\n+        }\n+\n+        if self.has_negated_env_var(env_vars) {\n+            return false;\n+        }\n+\n+        // Returns true if all environment variables start with a \"!\",\n+        // or if at least one environment variable is set\n+        env_vars.iter().all(|env_var| env_var.starts_with('!'))\n+            || env_vars\n+                .iter()\n+                .any(|env_var| self.get_env(env_var).is_some())",
+    "path": "src/context.rs",
+    "commit_id": "27901970bee06e539736271889961b0335997312",
+    "original_commit_id": "949661d97058d569c04ce1e3c4979a4dd5d85bba",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "What do you think about this?\r\n\r\n```suggestion\r\n        let mut iter = env_vars\r\n            .iter()\r\n            .filter(|env_var| !env_var.starts_with('!'))\r\n            .peekable();\r\n\r\n        iter.peek().is_none() || iter.any(|env_var| self.get_env(env_var).is_some())\r\n```",
+    "created_at": "2023-08-04T07:01:00Z",
+    "updated_at": "2023-08-04T07:03:34Z",
+    "html_url": "https://github.com/starship/starship/pull/5196#discussion_r1284057363",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5196",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1284057363"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5196#discussion_r1284057363"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5196"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1284057363/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 259,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 262,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 29,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1284058447",
+    "pull_request_review_id": 1562281947,
+    "id": 1284058447,
+    "node_id": "PRRC_kwDOCqswNs5MiS1P",
+    "diff_hunk": "@@ -235,8 +235,31 @@ impl<'a> Context<'a> {\n         disabled == Some(true)\n     }\n \n+    /// Returns true when a negated environment variable is defined in `env_vars` and is present\n+    fn has_negated_env_var(&self, env_vars: &'a [&'a str]) -> bool {\n+        env_vars\n+            .iter()\n+            .any(|env_var| env_var.starts_with('!') && self.get_env(&env_var[1..]).is_some())",
+    "path": "src/context.rs",
+    "commit_id": "27901970bee06e539736271889961b0335997312",
+    "original_commit_id": "949661d97058d569c04ce1e3c4979a4dd5d85bba",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`strip_prefix` can be used here to combine the `starts_with` and `[1..]` part:\r\n```suggestion\r\n        env_vars\r\n            .iter()\r\n            .filter_map(|env_var| env_var.strip_prefix('!'))\r\n            .any(|env_var| self.get_env(env_var).is_some())\r\n```",
+    "created_at": "2023-08-04T07:02:19Z",
+    "updated_at": "2023-08-04T07:03:34Z",
+    "html_url": "https://github.com/starship/starship/pull/5196#discussion_r1284058447",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5196",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1284058447"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5196#discussion_r1284058447"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5196"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1284058447/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 240,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 242,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1308676447",
+    "pull_request_review_id": 1600190115,
+    "id": 1308676447,
+    "node_id": "PRRC_kwDOCqswNs5OANFf",
+    "diff_hunk": "@@ -8,14 +8,18 @@ use crate::formatter::StringFormatter;\n /// Creates a module with the system hostname\n ///\n /// Will display the hostname if all of the following criteria are met:\n-///     - hostname.disabled is absent or false\n+///     - `hostname.disabled` is absent or false\n ///     - `hostname.ssh_only` is false OR the user is currently connected as an SSH session (`$SSH_CONNECTION`)\n+///     - `hostname.ssh_only` is false AND `hostname.detect_env_vars` is either empty or contains a defined environment variable\n pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let mut module = context.new_module(\"hostname\");\n     let config: HostnameConfig = HostnameConfig::try_load(module.config);\n \n     let ssh_connection = context.get_env(\"SSH_CONNECTION\");\n-    if config.ssh_only && ssh_connection.is_none() {\n+\n+    if !((!config.ssh_only || ssh_connection.is_some())\n+        && context.detect_env_vars(&config.detect_env_vars))",
+    "path": "src/modules/hostname.rs",
+    "commit_id": "27901970bee06e539736271889961b0335997312",
+    "original_commit_id": "949661d97058d569c04ce1e3c4979a4dd5d85bba",
+    "user": {
+      "login": "mickimnet",
+      "id": 2911922,
+      "node_id": "MDQ6VXNlcjI5MTE5MjI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2911922?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mickimnet",
+      "html_url": "https://github.com/mickimnet",
+      "followers_url": "https://api.github.com/users/mickimnet/followers",
+      "following_url": "https://api.github.com/users/mickimnet/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mickimnet/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mickimnet/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mickimnet/subscriptions",
+      "organizations_url": "https://api.github.com/users/mickimnet/orgs",
+      "repos_url": "https://api.github.com/users/mickimnet/repos",
+      "events_url": "https://api.github.com/users/mickimnet/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mickimnet/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Thank you very much. It is a lot easier to read! I needed some time to wrap my head around the changes in the boolean logic🫣",
+    "created_at": "2023-08-29T11:30:57Z",
+    "updated_at": "2023-08-29T11:30:57Z",
+    "html_url": "https://github.com/starship/starship/pull/5196#discussion_r1308676447",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5196",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1308676447"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5196#discussion_r1308676447"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5196"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1308676447/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 20,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 21,
+    "side": "RIGHT",
+    "in_reply_to_id": 1284051206,
+    "author_association": "MEMBER",
+    "original_position": 16,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1310248075",
+    "pull_request_review_id": 1602667996,
+    "id": 1310248075,
+    "node_id": "PRRC_kwDOCqswNs5OGMyL",
+    "diff_hunk": "@@ -235,8 +235,31 @@ impl<'a> Context<'a> {\n         disabled == Some(true)\n     }\n \n+    /// Returns true when a negated environment variable is defined in `env_vars` and is present\n+    fn has_negated_env_var(&self, env_vars: &'a [&'a str]) -> bool {\n+        env_vars\n+            .iter()\n+            .any(|env_var| env_var.starts_with('!') && self.get_env(&env_var[1..]).is_some())",
+    "path": "src/context.rs",
+    "commit_id": "27901970bee06e539736271889961b0335997312",
+    "original_commit_id": "949661d97058d569c04ce1e3c4979a4dd5d85bba",
+    "user": {
+      "login": "mickimnet",
+      "id": 2911922,
+      "node_id": "MDQ6VXNlcjI5MTE5MjI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2911922?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mickimnet",
+      "html_url": "https://github.com/mickimnet",
+      "followers_url": "https://api.github.com/users/mickimnet/followers",
+      "following_url": "https://api.github.com/users/mickimnet/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mickimnet/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mickimnet/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mickimnet/subscriptions",
+      "organizations_url": "https://api.github.com/users/mickimnet/orgs",
+      "repos_url": "https://api.github.com/users/mickimnet/repos",
+      "events_url": "https://api.github.com/users/mickimnet/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mickimnet/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Thank you! Very good recommendation. A lot better to read and probably faster as well.",
+    "created_at": "2023-08-30T13:06:37Z",
+    "updated_at": "2023-08-30T13:06:37Z",
+    "html_url": "https://github.com/starship/starship/pull/5196#discussion_r1310248075",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5196",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1310248075"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5196#discussion_r1310248075"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5196"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1310248075/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 240,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 242,
+    "side": "RIGHT",
+    "in_reply_to_id": 1284058447,
+    "author_association": "MEMBER",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1310355677",
+    "pull_request_review_id": 1602823184,
+    "id": 1310355677,
+    "node_id": "PRRC_kwDOCqswNs5OGnDd",
+    "diff_hunk": "@@ -235,8 +235,31 @@ impl<'a> Context<'a> {\n         disabled == Some(true)\n     }\n \n+    /// Returns true when a negated environment variable is defined in `env_vars` and is present\n+    fn has_negated_env_var(&self, env_vars: &'a [&'a str]) -> bool {\n+        env_vars\n+            .iter()\n+            .any(|env_var| env_var.starts_with('!') && self.get_env(&env_var[1..]).is_some())\n+    }\n+\n+    /// Returns true if 'detect_env_vars' is empty,\n+    /// or if at least one environment variable is set and no negated environment variable is set\n+    /// or if there are only negated environment variable provided (which are not set)\n     pub fn detect_env_vars(&'a self, env_vars: &'a [&'a str]) -> bool {\n-        env_vars.is_empty() || (env_vars.iter().any(|e| self.get_env(e).is_some()))\n+        if env_vars.is_empty() {\n+            return true;\n+        }\n+\n+        if self.has_negated_env_var(env_vars) {\n+            return false;\n+        }\n+\n+        // Returns true if all environment variables start with a \"!\",\n+        // or if at least one environment variable is set\n+        env_vars.iter().all(|env_var| env_var.starts_with('!'))\n+            || env_vars\n+                .iter()\n+                .any(|env_var| self.get_env(env_var).is_some())",
+    "path": "src/context.rs",
+    "commit_id": "27901970bee06e539736271889961b0335997312",
+    "original_commit_id": "949661d97058d569c04ce1e3c4979a4dd5d85bba",
+    "user": {
+      "login": "mickimnet",
+      "id": 2911922,
+      "node_id": "MDQ6VXNlcjI5MTE5MjI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2911922?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mickimnet",
+      "html_url": "https://github.com/mickimnet",
+      "followers_url": "https://api.github.com/users/mickimnet/followers",
+      "following_url": "https://api.github.com/users/mickimnet/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mickimnet/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mickimnet/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mickimnet/subscriptions",
+      "organizations_url": "https://api.github.com/users/mickimnet/orgs",
+      "repos_url": "https://api.github.com/users/mickimnet/repos",
+      "events_url": "https://api.github.com/users/mickimnet/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mickimnet/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Faster and more readable as well. I just need to rewrite the comments.",
+    "created_at": "2023-08-30T14:16:48Z",
+    "updated_at": "2023-08-30T14:16:48Z",
+    "html_url": "https://github.com/starship/starship/pull/5196#discussion_r1310355677",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5196",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1310355677"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5196#discussion_r1310355677"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5196"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1310355677/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 259,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 262,
+    "side": "RIGHT",
+    "in_reply_to_id": 1284057363,
+    "author_association": "MEMBER",
+    "original_position": 29,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1311947623",
+    "pull_request_review_id": 1605248643,
+    "id": 1311947623,
+    "node_id": "PRRC_kwDOCqswNs5OMrtn",
+    "diff_hunk": "@@ -2200,16 +2200,22 @@ format = 'via [⎈ $version](bold white) '\n \n The `hostname` module shows the system hostname.\n \n+::: warning\n+\n+The `detect_env_vars` is only used, if `ssh_only` is set to `false` or there\n+is an environment variable `SSH_CONNECTION` set.\n+",
+    "path": "docs/config/README.md",
+    "commit_id": "27901970bee06e539736271889961b0335997312",
+    "original_commit_id": "6bccee26636954f74a18f59d286826866004cc21",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this warning can be removed\r\n```suggestion\r\n```",
+    "created_at": "2023-08-31T17:11:28Z",
+    "updated_at": "2023-08-31T17:11:28Z",
+    "html_url": "https://github.com/starship/starship/pull/5196#discussion_r1311947623",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5196",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1311947623"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5196#discussion_r1311947623"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5196"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1311947623/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 2203,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 2207,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1312940240",
+    "pull_request_review_id": 1606814304,
+    "id": 1312940240,
+    "node_id": "PRRC_kwDOCqswNs5OQeDQ",
+    "diff_hunk": "@@ -2200,16 +2200,22 @@ format = 'via [⎈ $version](bold white) '\n \n The `hostname` module shows the system hostname.\n \n+::: warning\n+\n+The `detect_env_vars` is only used, if `ssh_only` is set to `false` or there\n+is an environment variable `SSH_CONNECTION` set.\n+",
+    "path": "docs/config/README.md",
+    "commit_id": "27901970bee06e539736271889961b0335997312",
+    "original_commit_id": "6bccee26636954f74a18f59d286826866004cc21",
+    "user": {
+      "login": "mickimnet",
+      "id": 2911922,
+      "node_id": "MDQ6VXNlcjI5MTE5MjI=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2911922?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mickimnet",
+      "html_url": "https://github.com/mickimnet",
+      "followers_url": "https://api.github.com/users/mickimnet/followers",
+      "following_url": "https://api.github.com/users/mickimnet/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mickimnet/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mickimnet/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mickimnet/subscriptions",
+      "organizations_url": "https://api.github.com/users/mickimnet/orgs",
+      "repos_url": "https://api.github.com/users/mickimnet/repos",
+      "events_url": "https://api.github.com/users/mickimnet/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mickimnet/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "True! Very good point.",
+    "created_at": "2023-09-01T12:02:03Z",
+    "updated_at": "2023-09-01T12:02:03Z",
+    "html_url": "https://github.com/starship/starship/pull/5196#discussion_r1312940240",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5196",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1312940240"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5196#discussion_r1312940240"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5196"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1312940240/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 2203,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 2207,
+    "side": "RIGHT",
+    "in_reply_to_id": 1311947623,
+    "author_association": "MEMBER",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

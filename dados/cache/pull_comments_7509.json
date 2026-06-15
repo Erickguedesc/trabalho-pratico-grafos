@@ -1,0 +1,71 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3300698309",
+    "pull_request_review_id": 4359793406,
+    "id": 3300698309,
+    "node_id": "PRRC_kwDOCqswNs7EvKjF",
+    "diff_hunk": "@@ -583,14 +583,67 @@ CMake suite maintained and supported by Kitware (kitware.com/cmake).\\n\",\n \n /// Wraps ANSI color escape sequences in the shell-appropriate wrappers.\n pub fn wrap_colorseq_for_shell(ansi: String, shell: Shell) -> String {\n-    const ESCAPE_BEGIN: char = '\\u{1b}';\n-    const ESCAPE_END: char = 'm';\n-    wrap_seq_for_shell(ansi, shell, ESCAPE_BEGIN, ESCAPE_END)\n+    let (beg, end) = match shell {\n+        Shell::Bash => (\"\\\\[\", \"\\\\]\"),\n+        Shell::Tcsh | Shell::Zsh => (\"%{\", \"%}\"),\n+        _ => return ansi,\n+    };\n+\n+    let mut out = String::new();\n+    let mut chars = ansi.chars().peekable();\n+\n+    while let Some(c) = chars.next() {\n+        if c == '\\u{1b}' {\n+            if chars.peek() == Some(&'[') {\n+                let mut sequence = String::from(c);\n+                sequence.push(chars.next().unwrap());\n+                for ch in chars.by_ref() {\n+                    sequence.push(ch);\n+                    if is_csi_final_byte(ch) {\n+                        break;\n+                    }\n+                }\n+                out.push_str(beg);\n+                out.push_str(&sequence);\n+                out.push_str(end);\n+                continue;\n+            }\n+\n+            // Legacy two-character SGR sequences like ESC + \"2m\" (no '[' prefix).\n+            let mut sequence = String::from(c);\n+            let mut escaped = true;\n+            while escaped {\n+                match chars.next() {\n+                    Some(ch) if ch == 'm' => {\n+                        sequence.push(ch);\n+                        escaped = false;\n+                    }\n+                    Some(ch) => sequence.push(ch),\n+                    None => escaped = false,\n+                }\n+            }\n+            if sequence.len() > 1 {\n+                out.push_str(beg);\n+                out.push_str(&sequence);\n+                out.push_str(end);\n+                continue;\n+            }\n+        }\n+\n+        out.push(c);\n+    }\n+\n+    out\n+}\n+\n+const fn is_csi_final_byte(c: char) -> bool {\n+    matches!(c, '\\u{0040}'..='\\u{007E}')\n }\n \n /// Many shells cannot deal with raw unprintable characters and miscompute the cursor position,\n /// leading to strange visual bugs like duplicated/missing chars. This function wraps a specified\n /// sequence in shell-specific escapes to avoid these problems.\n+#[allow(dead_code)] // exercised by unit tests; superseded by `wrap_colorseq_for_shell` in production",
+    "path": "src/utils/mod.rs",
+    "commit_id": "27196850e1b2e2f0cd6e8026d521808527cbf9b4",
+    "original_commit_id": "e2b249e5d74e9a06b71d4c94809252f4d517aa59",
+    "user": {
+      "login": "cubic-dev-ai[bot]",
+      "id": 191113872,
+      "node_id": "BOT_kgDOC2QqkA",
+      "avatar_url": "https://avatars.githubusercontent.com/in/1082092?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D",
+      "html_url": "https://github.com/apps/cubic-dev-ai",
+      "followers_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/followers",
+      "following_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/subscriptions",
+      "organizations_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/orgs",
+      "repos_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/repos",
+      "events_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "<!-- metadata:{\"confidence\":8} -->\nP2: Superseded `wrap_seq_for_shell` is kept only for tests while the production `wrap_colorseq_for_shell` has minimal test coverage, creating regression blind spots for CSI parsing logic.\n\n<details>\n<summary>Prompt for AI agents</summary>\n\n```text\nCheck if this issue is valid — if so, understand the root cause and fix it. At src/utils/mod.rs, line 646:\n\n<comment>Superseded `wrap_seq_for_shell` is kept only for tests while the production `wrap_colorseq_for_shell` has minimal test coverage, creating regression blind spots for CSI parsing logic.</comment>\n\n<file context>\n@@ -583,14 +583,67 @@ CMake suite maintained and supported by Kitware (kitware.com/cmake).\\n\",\n /// Many shells cannot deal with raw unprintable characters and miscompute the cursor position,\n /// leading to strange visual bugs like duplicated/missing chars. This function wraps a specified\n /// sequence in shell-specific escapes to avoid these problems.\n+#[allow(dead_code)] // exercised by unit tests; superseded by `wrap_colorseq_for_shell` in production\n pub fn wrap_seq_for_shell(\n     ansi: String,\n</file context>\n```\n\n</details>\n\n✅ Addressed in [`2719685`](https://github.com/starship/starship/commit/27196850e1b2e2f0cd6e8026d521808527cbf9b4)",
+    "created_at": "2026-05-26T01:44:52Z",
+    "updated_at": "2026-05-26T05:02:49Z",
+    "html_url": "https://github.com/starship/starship/pull/7509#discussion_r3300698309",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7509",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3300698309"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7509#discussion_r3300698309"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7509"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3300698309/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 646,
+    "original_line": 646,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 67,
+    "position": 67,
+    "subject_type": "line"
+  }
+]

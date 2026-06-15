@@ -1,0 +1,347 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2265322995",
+    "pull_request_review_id": 3103656487,
+    "id": 2265322995,
+    "node_id": "PRRC_kwDOCqswNs6HBhXz",
+    "diff_hunk": "@@ -2539,6 +2539,17 @@ number_threshold = 4\n symbol_threshold = 0\n ```\n \n+#### Fish shell behavior\n+\n+> [!NOTE]\n+> **Fish shell behavior:** In the Fish shell, Starship counts **job groups** by default instead of individual process IDs. This prevents overcounting when a pipeline has multiple processes but only one suspended group. To revert to the legacy PID-based counting, run:\n+>\n+> ```fish\n+> set -g __starship_fish_use_job_groups \"false\"\n+> ```\n+>\n+> This setting affects only Fish shell behavior and has no effect on other shells.",
+    "path": "docs/config/README.md",
+    "commit_id": "2703ddef5ededab008b8c28f3f6483e4a58f0c25",
+    "original_commit_id": "658189eaaf9b034856c6a4585c7f590d6abd9cf5",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\n#### Changing process grouping behavior in fish\n\nWhen using the Fish shell, Starship counts **job groups** instead of individual process IDs by default. This prevents overcounting when a pipeline has multiple processes but only one suspended group. To revert to the legacy PID-based counting, please add the following to your shell config:\n\n ```fish\nset -g __starship_fish_use_job_groups \"false\"\n ```\n",
+    "created_at": "2025-08-10T15:03:42Z",
+    "updated_at": "2025-08-10T15:17:20Z",
+    "html_url": "https://github.com/starship/starship/pull/6899#discussion_r2265322995",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6899",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2265322995"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6899#discussion_r2265322995"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6899"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2265322995/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 2542,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 2551,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 22,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2265323194",
+    "pull_request_review_id": 3103656487,
+    "id": 2265323194,
+    "node_id": "PRRC_kwDOCqswNs6HBha6",
+    "diff_hunk": "@@ -1,19 +1,32 @@\n+function __starship_set_job_count --description 'Set STARSHIP_JOBS using fish job groups (or legacy PIDs if toggled)'\n+    # To force legacy behavior (process PIDs), set this variable to \"false\":\n+    #   set -g __starship_fish_use_job_groups \"false\"\n+    if test \"$__starship_fish_use_job_groups\" = \"false\"\n+        # Legacy behavior: counts PIDs (may overcount pipelines with terminated producers)\n+        set -l __count (jobs -p 2>/dev/null | count)\n+    else\n+        # Default behavior: count job groups\n+        set -l __count (jobs -g 2>/dev/null | count)\n+    end\n+    set -gx STARSHIP_JOBS $__count\n+end\n+\n function fish_prompt\n     switch \"$fish_key_bindings\"\n         case fish_hybrid_key_bindings fish_vi_key_bindings\n             set STARSHIP_KEYMAP \"$fish_bind_mode\"\n         case '*'\n             set STARSHIP_KEYMAP insert\n     end\n+\n+    __starship_set_job_count\n+\n     set STARSHIP_CMD_PIPESTATUS $pipestatus\n     set STARSHIP_CMD_STATUS $status\n-    # Account for changes in variable name between v2.7 and v3.0",
+    "path": "src/init/starship.fish",
+    "commit_id": "2703ddef5ededab008b8c28f3f6483e4a58f0c25",
+    "original_commit_id": "658189eaaf9b034856c6a4585c7f590d6abd9cf5",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please don't remove unrelated comments.",
+    "created_at": "2025-08-10T15:04:09Z",
+    "updated_at": "2025-08-10T15:17:20Z",
+    "html_url": "https://github.com/starship/starship/pull/6899#discussion_r2265323194",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6899",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2265323194"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6899#discussion_r2265323194"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6899"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2265323194/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 10,
+    "original_line": 10,
+    "side": "LEFT",
+    "author_association": "MEMBER",
+    "original_position": 26,
+    "position": 24,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2265325151",
+    "pull_request_review_id": 3103656487,
+    "id": 2265325151,
+    "node_id": "PRRC_kwDOCqswNs6HBh5f",
+    "diff_hunk": "@@ -1,19 +1,32 @@\n+function __starship_set_job_count --description 'Set STARSHIP_JOBS using fish job groups (or legacy PIDs if toggled)'\n+    # To force legacy behavior (process PIDs), set this variable to \"false\":\n+    #   set -g __starship_fish_use_job_groups \"false\"\n+    if test \"$__starship_fish_use_job_groups\" = \"false\"\n+        # Legacy behavior: counts PIDs (may overcount pipelines with terminated producers)\n+        set -l __count (jobs -p 2>/dev/null | count)\n+    else\n+        # Default behavior: count job groups\n+        set -l __count (jobs -g 2>/dev/null | count)\n+    end\n+    set -gx STARSHIP_JOBS $__count\n+end\n+\n function fish_prompt\n     switch \"$fish_key_bindings\"\n         case fish_hybrid_key_bindings fish_vi_key_bindings\n             set STARSHIP_KEYMAP \"$fish_bind_mode\"\n         case '*'\n             set STARSHIP_KEYMAP insert\n     end\n+\n+    __starship_set_job_count\n+",
+    "path": "src/init/starship.fish",
+    "commit_id": "2703ddef5ededab008b8c28f3f6483e4a58f0c25",
+    "original_commit_id": "658189eaaf9b034856c6a4585c7f590d6abd9cf5",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I haven't tested this yet, but please but `__starship_set_job_count` where the previous `set STARSHIP_JOBS` line was; I am not certain, but calling it first may change `$status`.",
+    "created_at": "2025-08-10T15:10:17Z",
+    "updated_at": "2025-08-10T15:17:20Z",
+    "html_url": "https://github.com/starship/starship/pull/6899#discussion_r2265325151",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6899",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2265325151"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6899#discussion_r2265325151"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6899"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2265325151/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 21,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 23,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2265326528",
+    "pull_request_review_id": 3103656487,
+    "id": 2265326528,
+    "node_id": "PRRC_kwDOCqswNs6HBiPA",
+    "diff_hunk": "@@ -1,19 +1,32 @@\n+function __starship_set_job_count --description 'Set STARSHIP_JOBS using fish job groups (or legacy PIDs if toggled)'\n+    # To force legacy behavior (process PIDs), set this variable to \"false\":\n+    #   set -g __starship_fish_use_job_groups \"false\"\n+    if test \"$__starship_fish_use_job_groups\" = \"false\"\n+        # Legacy behavior: counts PIDs (may overcount pipelines with terminated producers)\n+        set -l __count (jobs -p 2>/dev/null | count)\n+    else\n+        # Default behavior: count job groups\n+        set -l __count (jobs -g 2>/dev/null | count)\n+    end\n+    set -gx STARSHIP_JOBS $__count",
+    "path": "src/init/starship.fish",
+    "commit_id": "2703ddef5ededab008b8c28f3f6483e4a58f0c25",
+    "original_commit_id": "658189eaaf9b034856c6a4585c7f590d6abd9cf5",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\n    set -g STARSHIP_JOBS $__count\n```\n\nAlso, in case that doesn't cause issues with counting, I would prefer doing the `set` in the `prompt*` function (e.g. `set STARSHIP_JOBS (count (__starship_list_jobs))`), but you can keep it like this to avoid undue changes.",
+    "created_at": "2025-08-10T15:13:58Z",
+    "updated_at": "2025-08-10T15:17:20Z",
+    "html_url": "https://github.com/starship/starship/pull/6899#discussion_r2265326528",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6899",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2265326528"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6899#discussion_r2265326528"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6899"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2265326528/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 11,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 11,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2265327474",
+    "pull_request_review_id": 3103656487,
+    "id": 2265327474,
+    "node_id": "PRRC_kwDOCqswNs6HBidy",
+    "diff_hunk": "@@ -88,4 +103,4 @@ end\n \n # Set up the session key that will be used to store logs\n # We don't use `random [min] [max]` because it is unavailable in older versions of fish shell\n-set -gx STARSHIP_SESSION_KEY (string sub -s1 -l16 (random)(random)(random)(random)(random)0000000000000000)\n+set -gx STARSHIP_SESSION_KEY (string sub -s1 -l16 (random)(random)(random)(random)(random)0000000000000000)",
+    "path": "src/init/starship.fish",
+    "commit_id": "2703ddef5ededab008b8c28f3f6483e4a58f0c25",
+    "original_commit_id": "658189eaaf9b034856c6a4585c7f590d6abd9cf5",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please avoid changing the file formatting.\n```suggestion\nset -gx STARSHIP_SESSION_KEY (string sub -s1 -l16 (random)(random)(random)(random)(random)0000000000000000)\n\n```",
+    "created_at": "2025-08-10T15:16:31Z",
+    "updated_at": "2025-08-10T15:17:20Z",
+    "html_url": "https://github.com/starship/starship/pull/6899#discussion_r2265327474",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6899",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2265327474"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6899#discussion_r2265327474"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6899"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2265327474/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 111,
+    "original_line": 106,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 58,
+    "position": 55,
+    "subject_type": "line"
+  }
+]

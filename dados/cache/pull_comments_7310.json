@@ -1,0 +1,627 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2910531490",
+    "pull_request_review_id": 3921079752,
+    "id": 2910531490,
+    "node_id": "PRRC_kwDOCqswNs6tey-i",
+    "diff_hunk": "@@ -0,0 +1,193 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::godot::GodotConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+use regex::Regex;\n+\n+/// Creates a module with the current Godot version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"godot\");\n+    let config = GodotConfig::try_load(module.config);\n+\n+    let is_gd_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_gd_project {\n+        return None;\n+    }\n+\n+    let raw_godot_version = get_godot_version(config.godot_command, context)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    format_godot_version(raw_godot_version.as_str(), &config.version_format).map(Ok)\n+                }\n+                \"numver\" => {\n+                    format_godot_version(raw_godot_version.as_str(), \"${major}.${minor}.${patch}\")\n+                        .map(Ok)\n+                }\n+                \"fullver\" => Some(Ok(raw_godot_version.clone())),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `rust`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+/// Get the output for `godot --version`\n+fn get_godot_version(command: &str, context: &Context) -> Option<String> {\n+    context\n+        .exec_cmd(command, &[\"--version\"])?\n+        .stdout\n+        .split_whitespace()\n+        .next()\n+        .map(str::to_owned)\n+}\n+\n+fn format_godot_version(version: &str, version_format: &str) -> Option<String> {",
+    "path": "src/modules/godot.rs",
+    "commit_id": "9f117c478c0dd2f2a157c16eb2cc1e106f0e1648",
+    "original_commit_id": "60abcf7a8bf954dc5b2227742c7aaac51e9731fb",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please consider using the regular `VersionFormatter`",
+    "created_at": "2026-03-10T09:43:31Z",
+    "updated_at": "2026-03-10T09:44:29Z",
+    "html_url": "https://github.com/starship/starship/pull/7310#discussion_r2910531490",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7310",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2910531490"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7310#discussion_r2910531490"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7310"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2910531490/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 74,
+    "original_line": 71,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 71,
+    "position": 74,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2910533372",
+    "pull_request_review_id": 3921079752,
+    "id": 2910533372,
+    "node_id": "PRRC_kwDOCqswNs6tezb8",
+    "diff_hunk": "@@ -0,0 +1,193 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::godot::GodotConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+use regex::Regex;\n+\n+/// Creates a module with the current Godot version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"godot\");\n+    let config = GodotConfig::try_load(module.config);\n+\n+    let is_gd_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_gd_project {\n+        return None;\n+    }\n+\n+    let raw_godot_version = get_godot_version(config.godot_command, context)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    format_godot_version(raw_godot_version.as_str(), &config.version_format).map(Ok)",
+    "path": "src/modules/godot.rs",
+    "commit_id": "60abcf7a8bf954dc5b2227742c7aaac51e9731fb",
+    "original_commit_id": "60abcf7a8bf954dc5b2227742c7aaac51e9731fb",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please ensure that clippy warnings are addressed.",
+    "created_at": "2026-03-10T09:43:53Z",
+    "updated_at": "2026-03-10T09:44:29Z",
+    "html_url": "https://github.com/starship/starship/pull/7310#discussion_r2910533372",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7310",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2910533372"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7310#discussion_r2910533372"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7310"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2910533372/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 38,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 38,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2914122451",
+    "pull_request_review_id": 3925056602,
+    "id": 2914122451,
+    "node_id": "PRRC_kwDOCqswNs6tsfrT",
+    "diff_hunk": "@@ -0,0 +1,193 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::godot::GodotConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+use regex::Regex;\n+\n+/// Creates a module with the current Godot version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"godot\");\n+    let config = GodotConfig::try_load(module.config);\n+\n+    let is_gd_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_gd_project {\n+        return None;\n+    }\n+\n+    let raw_godot_version = get_godot_version(config.godot_command, context)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    format_godot_version(raw_godot_version.as_str(), &config.version_format).map(Ok)\n+                }\n+                \"numver\" => {\n+                    format_godot_version(raw_godot_version.as_str(), \"${major}.${minor}.${patch}\")\n+                        .map(Ok)\n+                }\n+                \"fullver\" => Some(Ok(raw_godot_version.clone())),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `rust`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+/// Get the output for `godot --version`\n+fn get_godot_version(command: &str, context: &Context) -> Option<String> {\n+    context\n+        .exec_cmd(command, &[\"--version\"])?\n+        .stdout\n+        .split_whitespace()\n+        .next()\n+        .map(str::to_owned)\n+}\n+\n+fn format_godot_version(version: &str, version_format: &str) -> Option<String> {",
+    "path": "src/modules/godot.rs",
+    "commit_id": "9f117c478c0dd2f2a157c16eb2cc1e106f0e1648",
+    "original_commit_id": "60abcf7a8bf954dc5b2227742c7aaac51e9731fb",
+    "user": {
+      "login": "BenBergman",
+      "id": 142754,
+      "node_id": "MDQ6VXNlcjE0Mjc1NA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/142754?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/BenBergman",
+      "html_url": "https://github.com/BenBergman",
+      "followers_url": "https://api.github.com/users/BenBergman/followers",
+      "following_url": "https://api.github.com/users/BenBergman/following{/other_user}",
+      "gists_url": "https://api.github.com/users/BenBergman/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/BenBergman/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/BenBergman/subscriptions",
+      "organizations_url": "https://api.github.com/users/BenBergman/orgs",
+      "repos_url": "https://api.github.com/users/BenBergman/repos",
+      "events_url": "https://api.github.com/users/BenBergman/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/BenBergman/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I am using the regular `VersionFormatter` within this function. The raw version number produced by godot has a dot and text following the major.minor.patch numbers which breaks `VersionFormatter`, so I had to wrap it to remove that component. Is there a different way I should have fixed that?",
+    "created_at": "2026-03-10T19:58:50Z",
+    "updated_at": "2026-03-10T19:58:51Z",
+    "html_url": "https://github.com/starship/starship/pull/7310#discussion_r2914122451",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7310",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2914122451"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7310#discussion_r2914122451"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7310"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2914122451/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 74,
+    "original_line": 71,
+    "side": "RIGHT",
+    "in_reply_to_id": 2910531490,
+    "author_association": "NONE",
+    "original_position": 71,
+    "position": 74,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2914125522",
+    "pull_request_review_id": 3925059860,
+    "id": 2914125522,
+    "node_id": "PRRC_kwDOCqswNs6tsgbS",
+    "diff_hunk": "@@ -0,0 +1,193 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::godot::GodotConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+use regex::Regex;\n+\n+/// Creates a module with the current Godot version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"godot\");\n+    let config = GodotConfig::try_load(module.config);\n+\n+    let is_gd_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_gd_project {\n+        return None;\n+    }\n+\n+    let raw_godot_version = get_godot_version(config.godot_command, context)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    format_godot_version(raw_godot_version.as_str(), &config.version_format).map(Ok)",
+    "path": "src/modules/godot.rs",
+    "commit_id": "60abcf7a8bf954dc5b2227742c7aaac51e9731fb",
+    "original_commit_id": "60abcf7a8bf954dc5b2227742c7aaac51e9731fb",
+    "user": {
+      "login": "BenBergman",
+      "id": 142754,
+      "node_id": "MDQ6VXNlcjE0Mjc1NA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/142754?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/BenBergman",
+      "html_url": "https://github.com/BenBergman",
+      "followers_url": "https://api.github.com/users/BenBergman/followers",
+      "following_url": "https://api.github.com/users/BenBergman/following{/other_user}",
+      "gists_url": "https://api.github.com/users/BenBergman/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/BenBergman/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/BenBergman/subscriptions",
+      "organizations_url": "https://api.github.com/users/BenBergman/orgs",
+      "repos_url": "https://api.github.com/users/BenBergman/repos",
+      "events_url": "https://api.github.com/users/BenBergman/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/BenBergman/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Change pushed. Thanks for catching this one!",
+    "created_at": "2026-03-10T19:59:27Z",
+    "updated_at": "2026-03-10T19:59:27Z",
+    "html_url": "https://github.com/starship/starship/pull/7310#discussion_r2914125522",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7310",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2914125522"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7310#discussion_r2914125522"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7310"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2914125522/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 38,
+    "side": "RIGHT",
+    "in_reply_to_id": 2910533372,
+    "author_association": "NONE",
+    "original_position": 38,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2937222536",
+    "pull_request_review_id": 3950562996,
+    "id": 2937222536,
+    "node_id": "PRRC_kwDOCqswNs6vEnWI",
+    "diff_hunk": "@@ -0,0 +1,192 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::godot::GodotConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+use regex::Regex;\n+\n+/// Creates a module with the current Godot version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"godot\");\n+    let config = GodotConfig::try_load(module.config);\n+\n+    let is_gd_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_gd_project {\n+        return None;\n+    }\n+\n+    let raw_godot_version = get_godot_version(config.godot_command, context)?;",
+    "path": "src/modules/godot.rs",
+    "commit_id": "f93073aa8e850811a0e6df7bcc7279298bfa860a",
+    "original_commit_id": "f93073aa8e850811a0e6df7bcc7279298bfa860a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\n    let raw_godot_version = LazyLock::new(|| get_godot_version(config.godot_command, context));\n```",
+    "created_at": "2026-03-15T19:18:33Z",
+    "updated_at": "2026-03-15T19:34:41Z",
+    "html_url": "https://github.com/starship/starship/pull/7310#discussion_r2937222536",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7310",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2937222536"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7310#discussion_r2937222536"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7310"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2937222536/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 24,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 24,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2937236765",
+    "pull_request_review_id": 3950562996,
+    "id": 2937236765,
+    "node_id": "PRRC_kwDOCqswNs6vEq0d",
+    "diff_hunk": "@@ -0,0 +1,193 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::godot::GodotConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+use regex::Regex;\n+\n+/// Creates a module with the current Godot version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"godot\");\n+    let config = GodotConfig::try_load(module.config);\n+\n+    let is_gd_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_gd_project {\n+        return None;\n+    }\n+\n+    let raw_godot_version = get_godot_version(config.godot_command, context)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    format_godot_version(raw_godot_version.as_str(), &config.version_format).map(Ok)\n+                }\n+                \"numver\" => {\n+                    format_godot_version(raw_godot_version.as_str(), \"${major}.${minor}.${patch}\")\n+                        .map(Ok)\n+                }\n+                \"fullver\" => Some(Ok(raw_godot_version.clone())),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `rust`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+/// Get the output for `godot --version`\n+fn get_godot_version(command: &str, context: &Context) -> Option<String> {\n+    context\n+        .exec_cmd(command, &[\"--version\"])?\n+        .stdout\n+        .split_whitespace()\n+        .next()\n+        .map(str::to_owned)\n+}\n+\n+fn format_godot_version(version: &str, version_format: &str) -> Option<String> {",
+    "path": "src/modules/godot.rs",
+    "commit_id": "9f117c478c0dd2f2a157c16eb2cc1e106f0e1648",
+    "original_commit_id": "60abcf7a8bf954dc5b2227742c7aaac51e9731fb",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "For the `Regex` I am a bit concerned about the current error handling approach and the fairly strict regex forcing a 3-number version. (I assume it's still parsable as `Complex`/`Mess`, so adding support for that into the formatter may work. Reformatting into a `General`/`Version`-style version string with just the version number and hash might be a good idea).\n\nIn general, for a prompt the full version feels too verbose by default so I would also prefer defaulting to `$numver` or a different `version_format`.",
+    "created_at": "2026-03-15T19:30:09Z",
+    "updated_at": "2026-03-15T19:34:41Z",
+    "html_url": "https://github.com/starship/starship/pull/7310#discussion_r2937236765",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7310",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2937236765"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7310#discussion_r2937236765"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7310"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2937236765/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 74,
+    "original_line": 71,
+    "side": "RIGHT",
+    "in_reply_to_id": 2910531490,
+    "author_association": "MEMBER",
+    "original_position": 71,
+    "position": 74,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2937238027",
+    "pull_request_review_id": 3950562996,
+    "id": 2937238027,
+    "node_id": "PRRC_kwDOCqswNs6vErIL",
+    "diff_hunk": "@@ -0,0 +1,36 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct GodotConfig<'a> {\n+    pub format: &'a str,\n+    pub version_format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+    pub detect_extensions: Vec<&'a str>,\n+    pub detect_files: Vec<&'a str>,\n+    pub detect_folders: Vec<&'a str>,\n+    pub godot_command: &'a str,\n+}\n+\n+impl Default for GodotConfig<'_> {\n+    fn default() -> Self {\n+        Self {\n+            format: \"via [$symbol($version )]($style)\",\n+            version_format: \"v${raw}\",\n+            symbol: \" \",",
+    "path": "src/configs/godot.rs",
+    "commit_id": "f93073aa8e850811a0e6df7bcc7279298bfa860a",
+    "original_commit_id": "f93073aa8e850811a0e6df7bcc7279298bfa860a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please don't default to nerd font icons by default, please replace it with an appropriate emoji.",
+    "created_at": "2026-03-15T19:31:06Z",
+    "updated_at": "2026-03-15T19:34:41Z",
+    "html_url": "https://github.com/starship/starship/pull/7310#discussion_r2937238027",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7310",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2937238027"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7310#discussion_r2937238027"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7310"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2937238027/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 27,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 27,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2937954354",
+    "pull_request_review_id": 3951241618,
+    "id": 2937954354,
+    "node_id": "PRRC_kwDOCqswNs6vHaAy",
+    "diff_hunk": "@@ -0,0 +1,193 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::godot::GodotConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+use regex::Regex;\n+\n+/// Creates a module with the current Godot version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"godot\");\n+    let config = GodotConfig::try_load(module.config);\n+\n+    let is_gd_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_gd_project {\n+        return None;\n+    }\n+\n+    let raw_godot_version = get_godot_version(config.godot_command, context)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    format_godot_version(raw_godot_version.as_str(), &config.version_format).map(Ok)\n+                }\n+                \"numver\" => {\n+                    format_godot_version(raw_godot_version.as_str(), \"${major}.${minor}.${patch}\")\n+                        .map(Ok)\n+                }\n+                \"fullver\" => Some(Ok(raw_godot_version.clone())),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `rust`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+/// Get the output for `godot --version`\n+fn get_godot_version(command: &str, context: &Context) -> Option<String> {\n+    context\n+        .exec_cmd(command, &[\"--version\"])?\n+        .stdout\n+        .split_whitespace()\n+        .next()\n+        .map(str::to_owned)\n+}\n+\n+fn format_godot_version(version: &str, version_format: &str) -> Option<String> {",
+    "path": "src/modules/godot.rs",
+    "commit_id": "9f117c478c0dd2f2a157c16eb2cc1e106f0e1648",
+    "original_commit_id": "60abcf7a8bf954dc5b2227742c7aaac51e9731fb",
+    "user": {
+      "login": "BenBergman",
+      "id": 142754,
+      "node_id": "MDQ6VXNlcjE0Mjc1NA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/142754?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/BenBergman",
+      "html_url": "https://github.com/BenBergman",
+      "followers_url": "https://api.github.com/users/BenBergman/followers",
+      "following_url": "https://api.github.com/users/BenBergman/following{/other_user}",
+      "gists_url": "https://api.github.com/users/BenBergman/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/BenBergman/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/BenBergman/subscriptions",
+      "organizations_url": "https://api.github.com/users/BenBergman/orgs",
+      "repos_url": "https://api.github.com/users/BenBergman/repos",
+      "events_url": "https://api.github.com/users/BenBergman/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/BenBergman/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "After messing around with it a bunch, I can get it to pass through the unmodified `VersionFormatter` after removing underscores and separating the `numver` portion from the rest with a `-` instead of a `.`, for example `4.6.1-stable.arch.linux.14d19694e`. I don't love that as my modifiers likely won't be sufficiently robust for all future formats, so I also modified the `VersionFormatter` to accept a `Complex`/`Mess`, but I'm not sure if that will have knock on effects (all tests pass on my machine though).\r\n\r\nI think I prefer the updated `VersionFormatter`, so I'm pushing that, but let me know if you'd prefer I go back to altering the string before passing it along.\r\n\r\nFor posterity, this is what I ended up with that worked when there were no underscores:\r\n\r\n```\r\n    let re = Regex::new(r\"(^(\\d|\\.)+)\\.([a-zA-Z].+)\").unwrap();\r\n    let ver = match re.captures(version) {\r\n        Some(caps) => caps[1].to_string() + \".\" + &caps[3].to_string(),\r\n        _ => version.to_string(),\r\n    };\r\n```",
+    "created_at": "2026-03-16T03:23:47Z",
+    "updated_at": "2026-03-16T03:23:47Z",
+    "html_url": "https://github.com/starship/starship/pull/7310#discussion_r2937954354",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7310",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2937954354"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7310#discussion_r2937954354"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7310"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2937954354/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 74,
+    "original_line": 71,
+    "side": "RIGHT",
+    "in_reply_to_id": 2910531490,
+    "author_association": "NONE",
+    "original_position": 71,
+    "position": 74,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3035877221",
+    "pull_request_review_id": 4058727828,
+    "id": 3035877221,
+    "node_id": "PRRC_kwDOCqswNs60889l",
+    "diff_hunk": "@@ -0,0 +1,208 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::godot::GodotConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+use std::sync::LazyLock;\n+\n+/// Creates a module with the current Godot version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"godot\");\n+    let config = GodotConfig::try_load(module.config);\n+\n+    let is_gd_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_gd_project {\n+        return None;\n+    }\n+\n+    let raw_godot_version = LazyLock::new(|| get_godot_version(config.godot_command, context));\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => format_godot_version(\n+                    raw_godot_version.as_ref().unwrap().as_str(),",
+    "path": "src/modules/godot.rs",
+    "commit_id": "9f117c478c0dd2f2a157c16eb2cc1e106f0e1648",
+    "original_commit_id": "9f117c478c0dd2f2a157c16eb2cc1e106f0e1648",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please don't unwrap here, instead handle errors by defaulting to `None`",
+    "created_at": "2026-04-04T18:11:23Z",
+    "updated_at": "2026-04-04T18:11:23Z",
+    "html_url": "https://github.com/starship/starship/pull/7310#discussion_r3035877221",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7310",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3035877221"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7310#discussion_r3035877221"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7310"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3035877221/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 38,
+    "original_line": 38,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 38,
+    "position": 38,
+    "subject_type": "line"
+  }
+]

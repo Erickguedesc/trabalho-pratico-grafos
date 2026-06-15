@@ -1,0 +1,1046 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491297057",
+    "pull_request_review_id": 491976572,
+    "id": 491297057,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTI5NzA1Nw==",
+    "diff_hunk": "@@ -94,6 +95,7 @@ pub fn handle<'a>(module: &str, context: &'a Context) -> Option<Module<'a>> {\n         \"nix_shell\" => nix_shell::module(context),\n         \"nodejs\" => nodejs::module(context),\n         \"ocaml\" => ocaml::module(context),\n+        \"openstack\" => openstack::module(context),\n         \"package\" => package::module(context),\n         \"perl\" => perl::module(context),\n         \"php\" => php::module(context),",
+    "path": "src/modules/mod.rs",
+    "commit_id": "10d345eba8110512676b3db4d8a63bc26925751c",
+    "original_commit_id": "7dd11fd435d64072485a38971e86790b6ac150f8",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Can you add a description for openstack below, this shows up when you run `starship explain`.",
+    "created_at": "2020-09-19T06:50:04Z",
+    "updated_at": "2020-10-20T13:29:51Z",
+    "html_url": "https://github.com/starship/starship/pull/1664#discussion_r491297057",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1664",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491297057"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1664#discussion_r491297057"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1664"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491297057/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 101,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491309262",
+    "pull_request_review_id": 491976572,
+    "id": 491309262,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTMwOTI2Mg==",
+    "diff_hunk": "@@ -0,0 +1,133 @@\n+use yaml_rust::YamlLoader;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::openstack::OspConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+type Cloud = String;\n+type Project = String;\n+\n+fn get_osp_project_from_config(context: &Context, osp_cloud: Option<&str>) -> Option<Project> {\n+    let config_local = context.get_env(\"PWD\").unwrap() + \"/clouds.yaml\";\n+    let config_user = dirs_next::home_dir()?.join(\".config/openstack/clouds.yaml\");\n+    let config_global = \"/etc/openstack/clouds.yaml\";\n+    // Attempt to follow OpenStack standards for clouds.yaml location:\n+    // 1st = $PWD/clouds.yaml, 2nd = $HOME/.config/openstack/clouds.yaml, 3rd = /etc/openstack/clouds.yaml\n+    // TODO: I'm sure there is a better way to do this.",
+    "path": "src/modules/openstack.rs",
+    "commit_id": "10d345eba8110512676b3db4d8a63bc26925751c",
+    "original_commit_id": "7dd11fd435d64072485a38971e86790b6ac150f8",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "You could try using an iterator and a [find_map](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.find_map) here? You could build an array of possible paths, then iterate through them using the find_map to grab the first one with content.",
+    "created_at": "2020-09-19T07:22:16Z",
+    "updated_at": "2020-10-20T13:29:51Z",
+    "html_url": "https://github.com/starship/starship/pull/1664#discussion_r491309262",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1664",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491309262"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1664#discussion_r491309262"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1664"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491309262/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 18,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 18,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491310032",
+    "pull_request_review_id": 491976572,
+    "id": 491310032,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTMxMDAzMg==",
+    "diff_hunk": "@@ -1760,6 +1761,42 @@ The module will be shown if any of the following conditions are met:\n format = \"via [🐪 $version]($style) \"\n ```\n \n+## OpenStack\n+\n+The `openstack` module shows the current OpenStack cloud and project . This is based on",
+    "path": "docs/config/README.md",
+    "commit_id": "10d345eba8110512676b3db4d8a63bc26925751c",
+    "original_commit_id": "7dd11fd435d64072485a38971e86790b6ac150f8",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Nitpick, but there is an extra space here.\r\n\r\n```suggestion\r\nThe `openstack` module shows the current OpenStack cloud and project. This is based on\r\n```",
+    "created_at": "2020-09-19T07:24:38Z",
+    "updated_at": "2020-10-20T13:29:51Z",
+    "html_url": "https://github.com/starship/starship/pull/1664#discussion_r491310032",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1664",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491310032"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1664#discussion_r491310032"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1664"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491310032/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1766,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 14,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491310660",
+    "pull_request_review_id": 491976572,
+    "id": 491310660,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTMxMDY2MA==",
+    "diff_hunk": "@@ -1760,6 +1761,42 @@ The module will be shown if any of the following conditions are met:\n format = \"via [🐪 $version]($style) \"\n ```\n \n+## OpenStack\n+\n+The `openstack` module shows the current OpenStack cloud and project . This is based on\n+`OS_CLOUD` env var with `clouds.yaml` file from any of the [default locations](https://docs.openstack.org/python-openstackclient/latest/configuration/index.html#configuration-files).",
+    "path": "docs/config/README.md",
+    "commit_id": "10d345eba8110512676b3db4d8a63bc26925751c",
+    "original_commit_id": "7dd11fd435d64072485a38971e86790b6ac150f8",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "From looking at the code it seems this module is only active if the `OS_CLOUD` env var is set, is this correct? If so might be worth add a note here to explain that.",
+    "created_at": "2020-09-19T07:26:27Z",
+    "updated_at": "2020-10-20T13:29:51Z",
+    "html_url": "https://github.com/starship/starship/pull/1664#discussion_r491310660",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1664",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491310660"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1664#discussion_r491310660"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1664"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491310660/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1767,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491311313",
+    "pull_request_review_id": 491976572,
+    "id": 491311313,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTMxMTMxMw==",
+    "diff_hunk": "@@ -0,0 +1,21 @@\n+use crate::config::{ModuleConfig, RootModuleConfig};\n+use starship_module_config_derive::ModuleConfig;\n+\n+#[derive(Clone, ModuleConfig)]\n+pub struct OspConfig<'a> {\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> RootModuleConfig<'a> for OspConfig<'a> {\n+    fn new() -> Self {\n+        OspConfig {\n+            format: \"on [$symbol$cloud(\\\\($project\\\\))]($style) \",\n+            symbol: \"☁️  \",\n+            style: \"bold yellow\",",
+    "path": "src/configs/openstack.rs",
+    "commit_id": "10d345eba8110512676b3db4d8a63bc26925751c",
+    "original_commit_id": "7dd11fd435d64072485a38971e86790b6ac150f8",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Nitpick but I always thought of OpenStack as having a red/white colour scheme would it be better to use one of those colours?",
+    "created_at": "2020-09-19T07:28:18Z",
+    "updated_at": "2020-10-20T13:29:51Z",
+    "html_url": "https://github.com/starship/starship/pull/1664#discussion_r491311313",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1664",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491311313"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1664#discussion_r491311313"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1664"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491311313/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 17,
+    "original_line": 17,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 17,
+    "position": 17,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491311938",
+    "pull_request_review_id": 491976572,
+    "id": 491311938,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTMxMTkzOA==",
+    "diff_hunk": "@@ -0,0 +1,133 @@\n+use yaml_rust::YamlLoader;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::openstack::OspConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+type Cloud = String;\n+type Project = String;\n+\n+fn get_osp_project_from_config(context: &Context, osp_cloud: Option<&str>) -> Option<Project> {\n+    let config_local = context.get_env(\"PWD\").unwrap() + \"/clouds.yaml\";\n+    let config_user = dirs_next::home_dir()?.join(\".config/openstack/clouds.yaml\");\n+    let config_global = \"/etc/openstack/clouds.yaml\";\n+    // Attempt to follow OpenStack standards for clouds.yaml location:\n+    // 1st = $PWD/clouds.yaml, 2nd = $HOME/.config/openstack/clouds.yaml, 3rd = /etc/openstack/clouds.yaml\n+    // TODO: I'm sure there is a better way to do this.\n+    let contents = match utils::read_file(&config_local) {\n+        Ok(content) => {\n+            //log::debug!(\"clouds.yaml from local directory\");\n+            Some(content)\n+        }\n+        Err(_e) => {\n+            match utils::read_file(&config_user) {\n+                Ok(content) => {\n+                    //log::debug!(\"clouds.yaml from home dir\");\n+                    Some(content)\n+                }\n+                Err(_e) => {\n+                    match utils::read_file(&config_global) {\n+                        Ok(content) => {\n+                            //log::debug!(\"clouds.yaml from etc\");\n+                            Some(content)\n+                        }\n+                        Err(_e) => return None,\n+                    }\n+                }\n+            }\n+        }\n+    }?;\n+    let clouds = YamlLoader::load_from_str(&contents).ok()?;\n+    let project = &clouds[0][\"clouds\"][osp_cloud.unwrap()][\"auth\"][\"project_name\"]\n+        .as_str()\n+        .unwrap_or(\"\");\n+    if project.is_empty() {\n+        return None;\n+    }\n+    Some(project.to_string())\n+}\n+\n+fn get_osp_cloud_and_project(context: &Context) -> (Option<Cloud>, Option<Project>) {\n+    match (\n+        context.get_env(\"OS_CLOUD\"),\n+        context.get_env(\"OS_PROJECT_NAME\"),\n+    ) {\n+        (Some(p), Some(r)) => (Some(p), Some(r)),\n+        (None, Some(r)) => (None, Some(r)),\n+        (Some(ref p), None) => (\n+            Some(p.to_owned()),\n+            get_osp_project_from_config(context, Some(p)),\n+        ),\n+        (None, None) => (None, None),\n+    }\n+}\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"openstack\");\n+    let config: OspConfig = OspConfig::try_load(module.config);\n+\n+    let (osp_cloud, osp_project) = get_osp_cloud_and_project(context);\n+\n+    osp_cloud.as_ref()?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"cloud\" => osp_cloud.as_ref().map(Ok),\n+                \"project\" => osp_project.as_ref().map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::error!(\"Error in module `openstack`: \\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io::{self, Write};\n+",
+    "path": "src/modules/openstack.rs",
+    "commit_id": "10d345eba8110512676b3db4d8a63bc26925751c",
+    "original_commit_id": "7dd11fd435d64072485a38971e86790b6ac150f8",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Would it be possible to add a test for valid config too?",
+    "created_at": "2020-09-19T07:30:08Z",
+    "updated_at": "2020-10-20T13:29:51Z",
+    "html_url": "https://github.com/starship/starship/pull/1664#discussion_r491311938",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1664",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491311938"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1664#discussion_r491311938"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1664"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491311938/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 89,
+    "original_line": 110,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 110,
+    "position": 89,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491700308",
+    "pull_request_review_id": 492200834,
+    "id": 491700308,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTcwMDMwOA==",
+    "diff_hunk": "@@ -94,6 +95,7 @@ pub fn handle<'a>(module: &str, context: &'a Context) -> Option<Module<'a>> {\n         \"nix_shell\" => nix_shell::module(context),\n         \"nodejs\" => nodejs::module(context),\n         \"ocaml\" => ocaml::module(context),\n+        \"openstack\" => openstack::module(context),\n         \"package\" => package::module(context),\n         \"perl\" => perl::module(context),\n         \"php\" => php::module(context),",
+    "path": "src/modules/mod.rs",
+    "commit_id": "10d345eba8110512676b3db4d8a63bc26925751c",
+    "original_commit_id": "7dd11fd435d64072485a38971e86790b6ac150f8",
+    "user": {
+      "login": "badnetmask",
+      "id": 1847440,
+      "node_id": "MDQ6VXNlcjE4NDc0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1847440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/badnetmask",
+      "html_url": "https://github.com/badnetmask",
+      "followers_url": "https://api.github.com/users/badnetmask/followers",
+      "following_url": "https://api.github.com/users/badnetmask/following{/other_user}",
+      "gists_url": "https://api.github.com/users/badnetmask/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/badnetmask/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/badnetmask/subscriptions",
+      "organizations_url": "https://api.github.com/users/badnetmask/orgs",
+      "repos_url": "https://api.github.com/users/badnetmask/repos",
+      "events_url": "https://api.github.com/users/badnetmask/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/badnetmask/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Fixed on my side. Will push later.",
+    "created_at": "2020-09-20T15:07:10Z",
+    "updated_at": "2020-10-20T13:29:51Z",
+    "html_url": "https://github.com/starship/starship/pull/1664#discussion_r491700308",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1664",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491700308"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1664#discussion_r491700308"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1664"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491700308/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 101,
+    "side": "RIGHT",
+    "in_reply_to_id": 491297057,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491700320",
+    "pull_request_review_id": 492200845,
+    "id": 491700320,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTcwMDMyMA==",
+    "diff_hunk": "@@ -1760,6 +1761,42 @@ The module will be shown if any of the following conditions are met:\n format = \"via [🐪 $version]($style) \"\n ```\n \n+## OpenStack\n+\n+The `openstack` module shows the current OpenStack cloud and project . This is based on",
+    "path": "docs/config/README.md",
+    "commit_id": "10d345eba8110512676b3db4d8a63bc26925751c",
+    "original_commit_id": "7dd11fd435d64072485a38971e86790b6ac150f8",
+    "user": {
+      "login": "badnetmask",
+      "id": 1847440,
+      "node_id": "MDQ6VXNlcjE4NDc0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1847440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/badnetmask",
+      "html_url": "https://github.com/badnetmask",
+      "followers_url": "https://api.github.com/users/badnetmask/followers",
+      "following_url": "https://api.github.com/users/badnetmask/following{/other_user}",
+      "gists_url": "https://api.github.com/users/badnetmask/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/badnetmask/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/badnetmask/subscriptions",
+      "organizations_url": "https://api.github.com/users/badnetmask/orgs",
+      "repos_url": "https://api.github.com/users/badnetmask/repos",
+      "events_url": "https://api.github.com/users/badnetmask/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/badnetmask/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Fixed on my side. Will push later.",
+    "created_at": "2020-09-20T15:07:26Z",
+    "updated_at": "2020-10-20T13:29:51Z",
+    "html_url": "https://github.com/starship/starship/pull/1664#discussion_r491700320",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1664",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491700320"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1664#discussion_r491700320"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1664"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491700320/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1766,
+    "side": "RIGHT",
+    "in_reply_to_id": 491310032,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 14,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491700478",
+    "pull_request_review_id": 492200956,
+    "id": 491700478,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTcwMDQ3OA==",
+    "diff_hunk": "@@ -1760,6 +1761,42 @@ The module will be shown if any of the following conditions are met:\n format = \"via [🐪 $version]($style) \"\n ```\n \n+## OpenStack\n+\n+The `openstack` module shows the current OpenStack cloud and project . This is based on\n+`OS_CLOUD` env var with `clouds.yaml` file from any of the [default locations](https://docs.openstack.org/python-openstackclient/latest/configuration/index.html#configuration-files).",
+    "path": "docs/config/README.md",
+    "commit_id": "10d345eba8110512676b3db4d8a63bc26925751c",
+    "original_commit_id": "7dd11fd435d64072485a38971e86790b6ac150f8",
+    "user": {
+      "login": "badnetmask",
+      "id": 1847440,
+      "node_id": "MDQ6VXNlcjE4NDc0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1847440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/badnetmask",
+      "html_url": "https://github.com/badnetmask",
+      "followers_url": "https://api.github.com/users/badnetmask/followers",
+      "following_url": "https://api.github.com/users/badnetmask/following{/other_user}",
+      "gists_url": "https://api.github.com/users/badnetmask/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/badnetmask/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/badnetmask/subscriptions",
+      "organizations_url": "https://api.github.com/users/badnetmask/orgs",
+      "repos_url": "https://api.github.com/users/badnetmask/repos",
+      "events_url": "https://api.github.com/users/badnetmask/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/badnetmask/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Fixed on my side. Will push later.",
+    "created_at": "2020-09-20T15:08:49Z",
+    "updated_at": "2020-10-20T13:29:51Z",
+    "html_url": "https://github.com/starship/starship/pull/1664#discussion_r491700478",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1664",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491700478"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1664#discussion_r491700478"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1664"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491700478/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1767,
+    "side": "RIGHT",
+    "in_reply_to_id": 491310660,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491700553",
+    "pull_request_review_id": 492201001,
+    "id": 491700553,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTcwMDU1Mw==",
+    "diff_hunk": "@@ -0,0 +1,21 @@\n+use crate::config::{ModuleConfig, RootModuleConfig};\n+use starship_module_config_derive::ModuleConfig;\n+\n+#[derive(Clone, ModuleConfig)]\n+pub struct OspConfig<'a> {\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> RootModuleConfig<'a> for OspConfig<'a> {\n+    fn new() -> Self {\n+        OspConfig {\n+            format: \"on [$symbol$cloud(\\\\($project\\\\))]($style) \",\n+            symbol: \"☁️  \",\n+            style: \"bold yellow\",",
+    "path": "src/configs/openstack.rs",
+    "commit_id": "10d345eba8110512676b3db4d8a63bc26925751c",
+    "original_commit_id": "7dd11fd435d64072485a38971e86790b6ac150f8",
+    "user": {
+      "login": "badnetmask",
+      "id": 1847440,
+      "node_id": "MDQ6VXNlcjE4NDc0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1847440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/badnetmask",
+      "html_url": "https://github.com/badnetmask",
+      "followers_url": "https://api.github.com/users/badnetmask/followers",
+      "following_url": "https://api.github.com/users/badnetmask/following{/other_user}",
+      "gists_url": "https://api.github.com/users/badnetmask/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/badnetmask/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/badnetmask/subscriptions",
+      "organizations_url": "https://api.github.com/users/badnetmask/orgs",
+      "repos_url": "https://api.github.com/users/badnetmask/repos",
+      "events_url": "https://api.github.com/users/badnetmask/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/badnetmask/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I didn't want to put a red symbol here because, to me, red means bad. But I am open to suggestions. What would be the best place to choose symbols from?",
+    "created_at": "2020-09-20T15:09:31Z",
+    "updated_at": "2020-10-20T13:29:51Z",
+    "html_url": "https://github.com/starship/starship/pull/1664#discussion_r491700553",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1664",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491700553"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1664#discussion_r491700553"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1664"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491700553/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 17,
+    "original_line": 17,
+    "side": "RIGHT",
+    "in_reply_to_id": 491311313,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 17,
+    "position": 17,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491707163",
+    "pull_request_review_id": 492205308,
+    "id": 491707163,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTcwNzE2Mw==",
+    "diff_hunk": "@@ -0,0 +1,21 @@\n+use crate::config::{ModuleConfig, RootModuleConfig};\n+use starship_module_config_derive::ModuleConfig;\n+\n+#[derive(Clone, ModuleConfig)]\n+pub struct OspConfig<'a> {\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> RootModuleConfig<'a> for OspConfig<'a> {\n+    fn new() -> Self {\n+        OspConfig {\n+            format: \"on [$symbol$cloud(\\\\($project\\\\))]($style) \",\n+            symbol: \"☁️  \",\n+            style: \"bold yellow\",",
+    "path": "src/configs/openstack.rs",
+    "commit_id": "10d345eba8110512676b3db4d8a63bc26925751c",
+    "original_commit_id": "7dd11fd435d64072485a38971e86790b6ac150f8",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ah that makes sense. Normally we use emoji for the default symbols and save the more exotic icons like [nerdfont](https://www.nerdfonts.com/cheat-sheet) for the examples.",
+    "created_at": "2020-09-20T16:19:43Z",
+    "updated_at": "2020-10-20T13:29:51Z",
+    "html_url": "https://github.com/starship/starship/pull/1664#discussion_r491707163",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1664",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491707163"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1664#discussion_r491707163"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1664"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491707163/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 17,
+    "original_line": 17,
+    "side": "RIGHT",
+    "in_reply_to_id": 491311313,
+    "author_association": "MEMBER",
+    "original_position": 17,
+    "position": 17,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491708047",
+    "pull_request_review_id": 492205907,
+    "id": 491708047,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTcwODA0Nw==",
+    "diff_hunk": "@@ -0,0 +1,21 @@\n+use crate::config::{ModuleConfig, RootModuleConfig};\n+use starship_module_config_derive::ModuleConfig;\n+\n+#[derive(Clone, ModuleConfig)]\n+pub struct OspConfig<'a> {\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> RootModuleConfig<'a> for OspConfig<'a> {\n+    fn new() -> Self {\n+        OspConfig {\n+            format: \"on [$symbol$cloud(\\\\($project\\\\))]($style) \",\n+            symbol: \"☁️  \",\n+            style: \"bold yellow\",",
+    "path": "src/configs/openstack.rs",
+    "commit_id": "10d345eba8110512676b3db4d8a63bc26925751c",
+    "original_commit_id": "7dd11fd435d64072485a38971e86790b6ac150f8",
+    "user": {
+      "login": "badnetmask",
+      "id": 1847440,
+      "node_id": "MDQ6VXNlcjE4NDc0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1847440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/badnetmask",
+      "html_url": "https://github.com/badnetmask",
+      "followers_url": "https://api.github.com/users/badnetmask/followers",
+      "following_url": "https://api.github.com/users/badnetmask/following{/other_user}",
+      "gists_url": "https://api.github.com/users/badnetmask/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/badnetmask/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/badnetmask/subscriptions",
+      "organizations_url": "https://api.github.com/users/badnetmask/orgs",
+      "repos_url": "https://api.github.com/users/badnetmask/repos",
+      "events_url": "https://api.github.com/users/badnetmask/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/badnetmask/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I could not find a suitable Emoji for this. The closest one seems to be 🟥, but that's more like a \"record\" button than anything. I'm open to suggestions.",
+    "created_at": "2020-09-20T16:29:15Z",
+    "updated_at": "2020-10-20T13:29:51Z",
+    "html_url": "https://github.com/starship/starship/pull/1664#discussion_r491708047",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1664",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491708047"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1664#discussion_r491708047"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1664"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491708047/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 17,
+    "original_line": 17,
+    "side": "RIGHT",
+    "in_reply_to_id": 491311313,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 17,
+    "position": 17,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491708078",
+    "pull_request_review_id": 492205920,
+    "id": 491708078,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTcwODA3OA==",
+    "diff_hunk": "@@ -0,0 +1,133 @@\n+use yaml_rust::YamlLoader;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::openstack::OspConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+type Cloud = String;\n+type Project = String;\n+\n+fn get_osp_project_from_config(context: &Context, osp_cloud: Option<&str>) -> Option<Project> {\n+    let config_local = context.get_env(\"PWD\").unwrap() + \"/clouds.yaml\";\n+    let config_user = dirs_next::home_dir()?.join(\".config/openstack/clouds.yaml\");\n+    let config_global = \"/etc/openstack/clouds.yaml\";\n+    // Attempt to follow OpenStack standards for clouds.yaml location:\n+    // 1st = $PWD/clouds.yaml, 2nd = $HOME/.config/openstack/clouds.yaml, 3rd = /etc/openstack/clouds.yaml\n+    // TODO: I'm sure there is a better way to do this.",
+    "path": "src/modules/openstack.rs",
+    "commit_id": "10d345eba8110512676b3db4d8a63bc26925751c",
+    "original_commit_id": "7dd11fd435d64072485a38971e86790b6ac150f8",
+    "user": {
+      "login": "badnetmask",
+      "id": 1847440,
+      "node_id": "MDQ6VXNlcjE4NDc0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1847440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/badnetmask",
+      "html_url": "https://github.com/badnetmask",
+      "followers_url": "https://api.github.com/users/badnetmask/followers",
+      "following_url": "https://api.github.com/users/badnetmask/following{/other_user}",
+      "gists_url": "https://api.github.com/users/badnetmask/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/badnetmask/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/badnetmask/subscriptions",
+      "organizations_url": "https://api.github.com/users/badnetmask/orgs",
+      "repos_url": "https://api.github.com/users/badnetmask/repos",
+      "events_url": "https://api.github.com/users/badnetmask/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/badnetmask/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Fixed. Please review.",
+    "created_at": "2020-09-20T16:29:28Z",
+    "updated_at": "2020-10-20T13:29:51Z",
+    "html_url": "https://github.com/starship/starship/pull/1664#discussion_r491708078",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1664",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491708078"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1664#discussion_r491708078"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1664"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491708078/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 18,
+    "side": "RIGHT",
+    "in_reply_to_id": 491309262,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 18,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/491708084",
+    "pull_request_review_id": 492205927,
+    "id": 491708084,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQ5MTcwODA4NA==",
+    "diff_hunk": "@@ -0,0 +1,133 @@\n+use yaml_rust::YamlLoader;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::openstack::OspConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+type Cloud = String;\n+type Project = String;\n+\n+fn get_osp_project_from_config(context: &Context, osp_cloud: Option<&str>) -> Option<Project> {\n+    let config_local = context.get_env(\"PWD\").unwrap() + \"/clouds.yaml\";\n+    let config_user = dirs_next::home_dir()?.join(\".config/openstack/clouds.yaml\");\n+    let config_global = \"/etc/openstack/clouds.yaml\";\n+    // Attempt to follow OpenStack standards for clouds.yaml location:\n+    // 1st = $PWD/clouds.yaml, 2nd = $HOME/.config/openstack/clouds.yaml, 3rd = /etc/openstack/clouds.yaml\n+    // TODO: I'm sure there is a better way to do this.\n+    let contents = match utils::read_file(&config_local) {\n+        Ok(content) => {\n+            //log::debug!(\"clouds.yaml from local directory\");\n+            Some(content)\n+        }\n+        Err(_e) => {\n+            match utils::read_file(&config_user) {\n+                Ok(content) => {\n+                    //log::debug!(\"clouds.yaml from home dir\");\n+                    Some(content)\n+                }\n+                Err(_e) => {\n+                    match utils::read_file(&config_global) {\n+                        Ok(content) => {\n+                            //log::debug!(\"clouds.yaml from etc\");\n+                            Some(content)\n+                        }\n+                        Err(_e) => return None,\n+                    }\n+                }\n+            }\n+        }\n+    }?;\n+    let clouds = YamlLoader::load_from_str(&contents).ok()?;\n+    let project = &clouds[0][\"clouds\"][osp_cloud.unwrap()][\"auth\"][\"project_name\"]\n+        .as_str()\n+        .unwrap_or(\"\");\n+    if project.is_empty() {\n+        return None;\n+    }\n+    Some(project.to_string())\n+}\n+\n+fn get_osp_cloud_and_project(context: &Context) -> (Option<Cloud>, Option<Project>) {\n+    match (\n+        context.get_env(\"OS_CLOUD\"),\n+        context.get_env(\"OS_PROJECT_NAME\"),\n+    ) {\n+        (Some(p), Some(r)) => (Some(p), Some(r)),\n+        (None, Some(r)) => (None, Some(r)),\n+        (Some(ref p), None) => (\n+            Some(p.to_owned()),\n+            get_osp_project_from_config(context, Some(p)),\n+        ),\n+        (None, None) => (None, None),\n+    }\n+}\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"openstack\");\n+    let config: OspConfig = OspConfig::try_load(module.config);\n+\n+    let (osp_cloud, osp_project) = get_osp_cloud_and_project(context);\n+\n+    osp_cloud.as_ref()?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"cloud\" => osp_cloud.as_ref().map(Ok),\n+                \"project\" => osp_project.as_ref().map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::error!(\"Error in module `openstack`: \\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io::{self, Write};\n+",
+    "path": "src/modules/openstack.rs",
+    "commit_id": "10d345eba8110512676b3db4d8a63bc26925751c",
+    "original_commit_id": "7dd11fd435d64072485a38971e86790b6ac150f8",
+    "user": {
+      "login": "badnetmask",
+      "id": 1847440,
+      "node_id": "MDQ6VXNlcjE4NDc0NDA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1847440?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/badnetmask",
+      "html_url": "https://github.com/badnetmask",
+      "followers_url": "https://api.github.com/users/badnetmask/followers",
+      "following_url": "https://api.github.com/users/badnetmask/following{/other_user}",
+      "gists_url": "https://api.github.com/users/badnetmask/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/badnetmask/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/badnetmask/subscriptions",
+      "organizations_url": "https://api.github.com/users/badnetmask/orgs",
+      "repos_url": "https://api.github.com/users/badnetmask/repos",
+      "events_url": "https://api.github.com/users/badnetmask/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/badnetmask/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Added.",
+    "created_at": "2020-09-20T16:29:34Z",
+    "updated_at": "2020-10-20T13:29:51Z",
+    "html_url": "https://github.com/starship/starship/pull/1664#discussion_r491708084",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1664",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/491708084"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1664#discussion_r491708084"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1664"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/491708084/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 89,
+    "original_line": 110,
+    "side": "RIGHT",
+    "in_reply_to_id": 491311938,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 110,
+    "position": 89,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/505286174",
+    "pull_request_review_id": 509104531,
+    "id": 505286174,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDUwNTI4NjE3NA==",
+    "diff_hunk": "@@ -0,0 +1,21 @@\n+use crate::config::{ModuleConfig, RootModuleConfig};\n+use starship_module_config_derive::ModuleConfig;\n+\n+#[derive(Clone, ModuleConfig)]\n+pub struct OspConfig<'a> {\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> RootModuleConfig<'a> for OspConfig<'a> {\n+    fn new() -> Self {\n+        OspConfig {\n+            format: \"on [$symbol$cloud(\\\\($project\\\\))]($style) \",\n+            symbol: \"☁️  \",\n+            style: \"bold yellow\",",
+    "path": "src/configs/openstack.rs",
+    "commit_id": "10d345eba8110512676b3db4d8a63bc26925751c",
+    "original_commit_id": "7dd11fd435d64072485a38971e86790b6ac150f8",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Hmm, I can't see anything else either. Let's leave this as it is for now, I'm sure someone in the community will suggest something better when they start using it.",
+    "created_at": "2020-10-15T07:47:03Z",
+    "updated_at": "2020-10-20T13:29:51Z",
+    "html_url": "https://github.com/starship/starship/pull/1664#discussion_r505286174",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1664",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/505286174"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1664#discussion_r505286174"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1664"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/505286174/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 17,
+    "original_line": 17,
+    "side": "RIGHT",
+    "in_reply_to_id": 491311313,
+    "author_association": "MEMBER",
+    "original_position": 17,
+    "position": 17,
+    "subject_type": "line"
+  }
+]

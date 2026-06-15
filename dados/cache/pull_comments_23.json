@@ -1,0 +1,140 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/278311795",
+    "pull_request_review_id": 230348464,
+    "id": 278311795,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI3ODMxMTc5NQ==",
+    "diff_hunk": "@@ -0,0 +1,76 @@\n+use super::Segment;\n+use crate::context::Context;\n+use ansi_term::Color;\n+use std::path::PathBuf;\n+use std::process::Command;\n+\n+/// Creates a segment with the current Python version\n+///\n+/// Will display the Python version if any of the following criteria are met:\n+///     - Current directory contains a `.py` file\n+///     - Current directory contains a `.python-version` file\n+///     - Current directory contains a `requirements.txt` file\n+///     - Current directory contains a `pyproject.toml` file\n+pub fn segment(context: &Context) -> Option<Segment> {\n+    let is_py_project = context.dir_files.iter().any(has_py_files);\n+    if !is_py_project {\n+        return None;\n+    }\n+\n+    match get_python_version() {\n+        Some(python_version) => {\n+            const PYTHON_CHAR: &str = \"🐍\";\n+            const SEGMENT_COLOR: Color = Color::Yellow;\n+\n+            let mut segment = Segment::new(\"python\");\n+            segment.set_style(SEGMENT_COLOR);\n+\n+            let formatted_version = format_python_version(python_version);\n+            segment.set_value(format!(\"{} {}\", PYTHON_CHAR, formatted_version));\n+\n+            Some(segment)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn has_py_files(dir_entry: &PathBuf) -> bool {\n+    let is_py_file =\n+        |d: &PathBuf| -> bool { d.is_file() && d.extension().unwrap_or_default() == \"py\" };\n+    let is_python_version = |d: &PathBuf| -> bool {\n+        d.is_file() && d.file_name().unwrap_or_default() == \".python-version\"\n+    };\n+    let is_requirements_txt = |d: &PathBuf| -> bool {\n+        d.is_file() && d.file_name().unwrap_or_default() == \"requirements.txt\"\n+    };\n+    let is_py_project = |d: &PathBuf| -> bool {\n+        d.is_file() && d.file_name().unwrap_or_default() == \"pyproject.toml\"\n+    };\n+\n+    is_py_file(&dir_entry)\n+        || is_python_version(&dir_entry)\n+        || is_requirements_txt(&dir_entry)\n+        || is_py_project(&dir_entry)\n+}\n+\n+fn get_python_version() -> Option<String> {\n+    match Command::new(\"python\").arg(\"-V\").output() {",
+    "path": "src/modules/python.rs",
+    "commit_id": "dd1c8c9876ed389225e8447fcab4494a95496114",
+    "original_commit_id": "afe55bf553ff418b4a5a00d90ff06b1a8f4b47cf",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Total nitpick, but I'd personally use `--version` over `-V` to make it explicit. `-V` can often be the flag for \"verbose\".\r\n\r\n```suggestion\r\n    match Command::new(\"python\").arg(\"--version\").output() {\r\n```",
+    "created_at": "2019-04-24T20:49:04Z",
+    "updated_at": "2019-04-25T06:17:48Z",
+    "html_url": "https://github.com/starship/starship/pull/23#discussion_r278311795",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/23",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/278311795"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/23#discussion_r278311795"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/23"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/278311795/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 57,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/278312888",
+    "pull_request_review_id": 230348464,
+    "id": 278312888,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI3ODMxMjg4OA==",
+    "diff_hunk": "@@ -0,0 +1,76 @@\n+use super::Segment;\n+use crate::context::Context;\n+use ansi_term::Color;\n+use std::path::PathBuf;\n+use std::process::Command;\n+\n+/// Creates a segment with the current Python version\n+///\n+/// Will display the Python version if any of the following criteria are met:\n+///     - Current directory contains a `.py` file\n+///     - Current directory contains a `.python-version` file\n+///     - Current directory contains a `requirements.txt` file\n+///     - Current directory contains a `pyproject.toml` file\n+pub fn segment(context: &Context) -> Option<Segment> {\n+    let is_py_project = context.dir_files.iter().any(has_py_files);\n+    if !is_py_project {\n+        return None;\n+    }\n+\n+    match get_python_version() {\n+        Some(python_version) => {\n+            const PYTHON_CHAR: &str = \"🐍\";\n+            const SEGMENT_COLOR: Color = Color::Yellow;\n+\n+            let mut segment = Segment::new(\"python\");\n+            segment.set_style(SEGMENT_COLOR);\n+\n+            let formatted_version = format_python_version(python_version);\n+            segment.set_value(format!(\"{} {}\", PYTHON_CHAR, formatted_version));\n+\n+            Some(segment)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn has_py_files(dir_entry: &PathBuf) -> bool {\n+    let is_py_file =\n+        |d: &PathBuf| -> bool { d.is_file() && d.extension().unwrap_or_default() == \"py\" };\n+    let is_python_version = |d: &PathBuf| -> bool {\n+        d.is_file() && d.file_name().unwrap_or_default() == \".python-version\"\n+    };\n+    let is_requirements_txt = |d: &PathBuf| -> bool {\n+        d.is_file() && d.file_name().unwrap_or_default() == \"requirements.txt\"\n+    };\n+    let is_py_project = |d: &PathBuf| -> bool {\n+        d.is_file() && d.file_name().unwrap_or_default() == \"pyproject.toml\"\n+    };\n+\n+    is_py_file(&dir_entry)\n+        || is_python_version(&dir_entry)\n+        || is_requirements_txt(&dir_entry)\n+        || is_py_project(&dir_entry)\n+}\n+\n+fn get_python_version() -> Option<String> {\n+    match Command::new(\"python\").arg(\"-V\").output() {\n+        Ok(output) => Some(String::from_utf8(output.stdout).unwrap()),\n+        Err(_) => None,\n+    }\n+}\n+\n+fn format_python_version(python_stdout: String) -> String {\n+    format!(\"v{}\", python_stdout.replace(\"Python \", \"\").trim())",
+    "path": "src/modules/python.rs",
+    "commit_id": "dd1c8c9876ed389225e8447fcab4494a95496114",
+    "original_commit_id": "afe55bf553ff418b4a5a00d90ff06b1a8f4b47cf",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Another total nitpick. I'd use `trim_start_matches` over `replace` for a little more explicitness.\r\n```suggestion\r\n    format!(\"v{}\", python_stdout.trim_start_matches(\"Python \").trim())\r\n```",
+    "created_at": "2019-04-24T20:51:59Z",
+    "updated_at": "2019-04-25T06:17:48Z",
+    "html_url": "https://github.com/starship/starship/pull/23#discussion_r278312888",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/23",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/278312888"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/23#discussion_r278312888"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/23"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/278312888/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 64,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 64,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

@@ -1,0 +1,1673 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491726245",
+    "pull_request_review_id": 3418216508,
+    "id": 2491726245,
+    "node_id": "PRRC_kwDOCqswNs6UhLml",
+    "diff_hunk": "@@ -19,17 +19,37 @@ pub struct StarshipLogger {\n     log_level: Level,\n }\n \n+fn cleanup_old_log_dir(log_dir: &Path) -> io::Result<()> {",
+    "path": "src/logger.rs",
+    "commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "original_commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This should be tested.",
+    "created_at": "2025-11-04T18:54:37Z",
+    "updated_at": "2025-11-04T19:02:20Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2491726245",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2491726245"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2491726245"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491726245/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 22,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491729592",
+    "pull_request_review_id": 3418216508,
+    "id": 2491729592,
+    "node_id": "PRRC_kwDOCqswNs6UhMa4",
+    "diff_hunk": "@@ -19,17 +19,37 @@ pub struct StarshipLogger {\n     log_level: Level,\n }\n \n+fn cleanup_old_log_dir(log_dir: &Path) -> io::Result<()> {\n+    if !log_dir.join(\".migrated\").exists()\n+        && let Some(home_dir) = utils::home_dir()\n+    {\n+        let _ = fs::File::create(log_dir.join(\".migrated\"))?;\n+        #[cfg(target_os = \"linux\")]\n+        {\n+            if let Some(xdg_cache_home) = env::var_os(\"XDG_CACHE_HOME\").map(PathBuf::from)\n+                && xdg_cache_home == home_dir.join(\".cache\")\n+            {\n+                return Ok(());\n+            }\n+        }",
+    "path": "src/logger.rs",
+    "commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "original_commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Linux should not need special handling here.",
+    "created_at": "2025-11-04T18:55:50Z",
+    "updated_at": "2025-11-04T19:02:20Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2491729592",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2491729592"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2491729592"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491729592/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 27,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 34,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 25,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491731578",
+    "pull_request_review_id": 3418216508,
+    "id": 2491731578,
+    "node_id": "PRRC_kwDOCqswNs6UhM56",
+    "diff_hunk": "@@ -19,17 +19,37 @@ pub struct StarshipLogger {\n     log_level: Level,\n }\n \n+fn cleanup_old_log_dir(log_dir: &Path) -> io::Result<()> {\n+    if !log_dir.join(\".migrated\").exists()\n+        && let Some(home_dir) = utils::home_dir()\n+    {\n+        let _ = fs::File::create(log_dir.join(\".migrated\"))?;\n+        #[cfg(target_os = \"linux\")]\n+        {\n+            if let Some(xdg_cache_home) = env::var_os(\"XDG_CACHE_HOME\").map(PathBuf::from)\n+                && xdg_cache_home == home_dir.join(\".cache\")\n+            {\n+                return Ok(());\n+            }\n+        }\n+        fs::remove_dir_all(home_dir.join(\".cache/starship\"))?;",
+    "path": "src/logger.rs",
+    "commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "original_commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This could lead to issue with nushell set-ups based on previous instructions that put the init file there. I suppose having the log file cleaner looking at both paths could work.",
+    "created_at": "2025-11-04T18:56:33Z",
+    "updated_at": "2025-11-04T19:02:20Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2491731578",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2491731578"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2491731578"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491731578/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 26,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491733512",
+    "pull_request_review_id": 3418216508,
+    "id": 2491733512,
+    "node_id": "PRRC_kwDOCqswNs6UhNYI",
+    "diff_hunk": "@@ -19,17 +19,37 @@ pub struct StarshipLogger {\n     log_level: Level,\n }\n \n+fn cleanup_old_log_dir(log_dir: &Path) -> io::Result<()> {\n+    if !log_dir.join(\".migrated\").exists()\n+        && let Some(home_dir) = utils::home_dir()\n+    {\n+        let _ = fs::File::create(log_dir.join(\".migrated\"))?;\n+        #[cfg(target_os = \"linux\")]\n+        {\n+            if let Some(xdg_cache_home) = env::var_os(\"XDG_CACHE_HOME\").map(PathBuf::from)\n+                && xdg_cache_home == home_dir.join(\".cache\")\n+            {\n+                return Ok(());\n+            }\n+        }\n+        fs::remove_dir_all(home_dir.join(\".cache/starship\"))?;\n+    }\n+    Ok(())\n+}\n+\n /// Returns the path to the log directory.\n pub fn get_log_dir() -> PathBuf {\n-    env::var_os(\"STARSHIP_CACHE\")\n+    let log_dir = env::var_os(\"STARSHIP_CACHE\")\n         .map(PathBuf::from)\n-        .unwrap_or_else(|| {\n-            utils::home_dir()\n-                .map(|home| home.join(\".cache\"))\n-                .or_else(dirs::cache_dir)\n-                .unwrap_or_else(std::env::temp_dir)\n-                .join(\"starship\")\n-        })",
+    "path": "src/logger.rs",
+    "commit_id": "60401a0c4b699e8aa67e1e7165d68d0828b318a6",
+    "original_commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Might as well keep this in the fallback list?",
+    "created_at": "2025-11-04T18:57:16Z",
+    "updated_at": "2025-11-04T19:02:20Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2491733512",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2491733512"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2491733512"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491733512/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 26,
+    "original_start_line": 26,
+    "start_side": "LEFT",
+    "line": 32,
+    "original_line": 32,
+    "side": "LEFT",
+    "author_association": "MEMBER",
+    "original_position": 42,
+    "position": 13,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491735702",
+    "pull_request_review_id": 3418216508,
+    "id": 2491735702,
+    "node_id": "PRRC_kwDOCqswNs6UhN6W",
+    "diff_hunk": "@@ -250,6 +270,20 @@ mod test {\n     use std::io;\n     use std::time::SystemTime;\n \n+    #[test]\n+    fn test_log_file_path() -> () {\n+        assert_eq!(get_log_dir(), utils::cache_dir().unwrap().join(\"starship\"));\n+\n+        #[cfg(target_os = \"linux\")]\n+        {\n+            let xdg_cache_home = std::env::temp_dir();\n+            unsafe {\n+                env::set_var(\"XDG_CACHE_HOME\", xdg_cache_home.to_str().unwrap());",
+    "path": "src/logger.rs",
+    "commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "original_commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Do not set env vars in tests.",
+    "created_at": "2025-11-04T18:58:09Z",
+    "updated_at": "2025-11-04T19:02:20Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2491735702",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2491735702"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2491735702"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491735702/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 281,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 67,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491737985",
+    "pull_request_review_id": 3418216508,
+    "id": 2491737985,
+    "node_id": "PRRC_kwDOCqswNs6UhOeB",
+    "diff_hunk": "@@ -739,6 +739,10 @@ pub fn home_dir() -> Option<PathBuf> {\n     dirs::home_dir()\n }\n \n+pub fn cache_dir() -> Option<PathBuf> {\n+    dirs::cache_dir()\n+}\n+",
+    "path": "src/utils.rs",
+    "commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "original_commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This does not seem necessary, the `home_dir` helper mostly exists due to historical reasons.\n```suggestion\n```",
+    "created_at": "2025-11-04T18:58:59Z",
+    "updated_at": "2025-11-04T19:02:20Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2491737985",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2491737985"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2491737985"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491737985/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 742,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 745,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 7,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491765671",
+    "pull_request_review_id": 3418272047,
+    "id": 2491765671,
+    "node_id": "PRRC_kwDOCqswNs6UhVOn",
+    "diff_hunk": "@@ -250,6 +270,20 @@ mod test {\n     use std::io;\n     use std::time::SystemTime;\n \n+    #[test]\n+    fn test_log_file_path() -> () {\n+        assert_eq!(get_log_dir(), utils::cache_dir().unwrap().join(\"starship\"));\n+\n+        #[cfg(target_os = \"linux\")]\n+        {\n+            let xdg_cache_home = std::env::temp_dir();\n+            unsafe {\n+                env::set_var(\"XDG_CACHE_HOME\", xdg_cache_home.to_str().unwrap());",
+    "path": "src/logger.rs",
+    "commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "original_commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "user": {
+      "login": "pantheraleo-7",
+      "id": 159872817,
+      "node_id": "U_kgDOCYd3MQ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/159872817?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/pantheraleo-7",
+      "html_url": "https://github.com/pantheraleo-7",
+      "followers_url": "https://api.github.com/users/pantheraleo-7/followers",
+      "following_url": "https://api.github.com/users/pantheraleo-7/following{/other_user}",
+      "gists_url": "https://api.github.com/users/pantheraleo-7/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/pantheraleo-7/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/pantheraleo-7/subscriptions",
+      "organizations_url": "https://api.github.com/users/pantheraleo-7/orgs",
+      "repos_url": "https://api.github.com/users/pantheraleo-7/repos",
+      "events_url": "https://api.github.com/users/pantheraleo-7/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/pantheraleo-7/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ok, but what else is there to test even haha",
+    "created_at": "2025-11-04T19:09:43Z",
+    "updated_at": "2025-11-04T19:09:43Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2491765671",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2491765671"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2491765671"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491765671/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 281,
+    "side": "RIGHT",
+    "in_reply_to_id": 2491735702,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 67,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491779271",
+    "pull_request_review_id": 3418291173,
+    "id": 2491779271,
+    "node_id": "PRRC_kwDOCqswNs6UhYjH",
+    "diff_hunk": "@@ -19,17 +19,37 @@ pub struct StarshipLogger {\n     log_level: Level,\n }\n \n+fn cleanup_old_log_dir(log_dir: &Path) -> io::Result<()> {\n+    if !log_dir.join(\".migrated\").exists()\n+        && let Some(home_dir) = utils::home_dir()\n+    {\n+        let _ = fs::File::create(log_dir.join(\".migrated\"))?;\n+        #[cfg(target_os = \"linux\")]\n+        {\n+            if let Some(xdg_cache_home) = env::var_os(\"XDG_CACHE_HOME\").map(PathBuf::from)\n+                && xdg_cache_home == home_dir.join(\".cache\")\n+            {\n+                return Ok(());\n+            }\n+        }\n+        fs::remove_dir_all(home_dir.join(\".cache/starship\"))?;\n+    }\n+    Ok(())\n+}\n+\n /// Returns the path to the log directory.\n pub fn get_log_dir() -> PathBuf {\n-    env::var_os(\"STARSHIP_CACHE\")\n+    let log_dir = env::var_os(\"STARSHIP_CACHE\")\n         .map(PathBuf::from)\n-        .unwrap_or_else(|| {\n-            utils::home_dir()\n-                .map(|home| home.join(\".cache\"))\n-                .or_else(dirs::cache_dir)\n-                .unwrap_or_else(std::env::temp_dir)\n-                .join(\"starship\")\n-        })",
+    "path": "src/logger.rs",
+    "commit_id": "60401a0c4b699e8aa67e1e7165d68d0828b318a6",
+    "original_commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "user": {
+      "login": "pantheraleo-7",
+      "id": 159872817,
+      "node_id": "U_kgDOCYd3MQ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/159872817?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/pantheraleo-7",
+      "html_url": "https://github.com/pantheraleo-7",
+      "followers_url": "https://api.github.com/users/pantheraleo-7/followers",
+      "following_url": "https://api.github.com/users/pantheraleo-7/following{/other_user}",
+      "gists_url": "https://api.github.com/users/pantheraleo-7/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/pantheraleo-7/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/pantheraleo-7/subscriptions",
+      "organizations_url": "https://api.github.com/users/pantheraleo-7/orgs",
+      "repos_url": "https://api.github.com/users/pantheraleo-7/repos",
+      "events_url": "https://api.github.com/users/pantheraleo-7/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/pantheraleo-7/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Seems unnecessary. Because `~/Library/Caches` and `~/AppData/Local` are practically guaranteed to exist.",
+    "created_at": "2025-11-04T19:15:05Z",
+    "updated_at": "2025-11-04T19:15:06Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2491779271",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2491779271"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2491779271"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491779271/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 26,
+    "original_start_line": 26,
+    "start_side": "LEFT",
+    "line": 32,
+    "original_line": 32,
+    "side": "LEFT",
+    "in_reply_to_id": 2491733512,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 42,
+    "position": 13,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491805915",
+    "pull_request_review_id": 3418326841,
+    "id": 2491805915,
+    "node_id": "PRRC_kwDOCqswNs6UhfDb",
+    "diff_hunk": "@@ -19,17 +19,37 @@ pub struct StarshipLogger {\n     log_level: Level,\n }\n \n+fn cleanup_old_log_dir(log_dir: &Path) -> io::Result<()> {\n+    if !log_dir.join(\".migrated\").exists()\n+        && let Some(home_dir) = utils::home_dir()\n+    {\n+        let _ = fs::File::create(log_dir.join(\".migrated\"))?;\n+        #[cfg(target_os = \"linux\")]\n+        {\n+            if let Some(xdg_cache_home) = env::var_os(\"XDG_CACHE_HOME\").map(PathBuf::from)\n+                && xdg_cache_home == home_dir.join(\".cache\")\n+            {\n+                return Ok(());\n+            }\n+        }\n+        fs::remove_dir_all(home_dir.join(\".cache/starship\"))?;",
+    "path": "src/logger.rs",
+    "commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "original_commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "user": {
+      "login": "pantheraleo-7",
+      "id": 159872817,
+      "node_id": "U_kgDOCYd3MQ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/159872817?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/pantheraleo-7",
+      "html_url": "https://github.com/pantheraleo-7",
+      "followers_url": "https://api.github.com/users/pantheraleo-7/followers",
+      "following_url": "https://api.github.com/users/pantheraleo-7/following{/other_user}",
+      "gists_url": "https://api.github.com/users/pantheraleo-7/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/pantheraleo-7/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/pantheraleo-7/subscriptions",
+      "organizations_url": "https://api.github.com/users/pantheraleo-7/orgs",
+      "repos_url": "https://api.github.com/users/pantheraleo-7/repos",
+      "events_url": "https://api.github.com/users/pantheraleo-7/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/pantheraleo-7/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I have no experience with nushell, could you elaborate more? Are you saying that there might be a ~init~ `starship.nu` file in `~/.cache/starship`?",
+    "created_at": "2025-11-04T19:25:24Z",
+    "updated_at": "2025-11-04T19:34:28Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2491805915",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2491805915"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2491805915"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491805915/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 2491731578,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 26,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491836561",
+    "pull_request_review_id": 3418368328,
+    "id": 2491836561,
+    "node_id": "PRRC_kwDOCqswNs6UhmiR",
+    "diff_hunk": "@@ -250,6 +270,20 @@ mod test {\n     use std::io;\n     use std::time::SystemTime;\n \n+    #[test]\n+    fn test_log_file_path() -> () {\n+        assert_eq!(get_log_dir(), utils::cache_dir().unwrap().join(\"starship\"));\n+\n+        #[cfg(target_os = \"linux\")]\n+        {\n+            let xdg_cache_home = std::env::temp_dir();\n+            unsafe {\n+                env::set_var(\"XDG_CACHE_HOME\", xdg_cache_home.to_str().unwrap());",
+    "path": "src/logger.rs",
+    "commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "original_commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Some other tests also use env file mocking that does not rely on `Context`",
+    "created_at": "2025-11-04T19:37:30Z",
+    "updated_at": "2025-11-04T19:37:30Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2491836561",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2491836561"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2491836561"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491836561/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 281,
+    "side": "RIGHT",
+    "in_reply_to_id": 2491735702,
+    "author_association": "MEMBER",
+    "original_position": 67,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491844249",
+    "pull_request_review_id": 3418378575,
+    "id": 2491844249,
+    "node_id": "PRRC_kwDOCqswNs6UhoaZ",
+    "diff_hunk": "@@ -19,17 +19,37 @@ pub struct StarshipLogger {\n     log_level: Level,\n }\n \n+fn cleanup_old_log_dir(log_dir: &Path) -> io::Result<()> {\n+    if !log_dir.join(\".migrated\").exists()\n+        && let Some(home_dir) = utils::home_dir()\n+    {\n+        let _ = fs::File::create(log_dir.join(\".migrated\"))?;\n+        #[cfg(target_os = \"linux\")]\n+        {\n+            if let Some(xdg_cache_home) = env::var_os(\"XDG_CACHE_HOME\").map(PathBuf::from)\n+                && xdg_cache_home == home_dir.join(\".cache\")\n+            {\n+                return Ok(());\n+            }\n+        }\n+        fs::remove_dir_all(home_dir.join(\".cache/starship\"))?;",
+    "path": "src/logger.rs",
+    "commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "original_commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Nushell does not have `eval`, so past instructions lead to a first nu init-file (env.nu?) creating a `starship.nu` in the cache directory that was sourced in the second init-file (init.nu?). Sourcing and creating the same file isn't possible with nushell in the same invocation.",
+    "created_at": "2025-11-04T19:40:39Z",
+    "updated_at": "2025-11-04T19:40:39Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2491844249",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2491844249"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2491844249"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2491844249/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 2491731578,
+    "author_association": "MEMBER",
+    "original_position": 26,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2494849125",
+    "pull_request_review_id": 3422532920,
+    "id": 2494849125,
+    "node_id": "PRRC_kwDOCqswNs6UtGBl",
+    "diff_hunk": "@@ -19,17 +19,37 @@ pub struct StarshipLogger {\n     log_level: Level,\n }\n \n+fn cleanup_old_log_dir(log_dir: &Path) -> io::Result<()> {\n+    if !log_dir.join(\".migrated\").exists()\n+        && let Some(home_dir) = utils::home_dir()\n+    {\n+        let _ = fs::File::create(log_dir.join(\".migrated\"))?;\n+        #[cfg(target_os = \"linux\")]\n+        {\n+            if let Some(xdg_cache_home) = env::var_os(\"XDG_CACHE_HOME\").map(PathBuf::from)\n+                && xdg_cache_home == home_dir.join(\".cache\")\n+            {\n+                return Ok(());\n+            }\n+        }",
+    "path": "src/logger.rs",
+    "commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "original_commit_id": "115100648c66984eb17586c6f69015436cc53030",
+    "user": {
+      "login": "pantheraleo-7",
+      "id": 159872817,
+      "node_id": "U_kgDOCYd3MQ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/159872817?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/pantheraleo-7",
+      "html_url": "https://github.com/pantheraleo-7",
+      "followers_url": "https://api.github.com/users/pantheraleo-7/followers",
+      "following_url": "https://api.github.com/users/pantheraleo-7/following{/other_user}",
+      "gists_url": "https://api.github.com/users/pantheraleo-7/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/pantheraleo-7/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/pantheraleo-7/subscriptions",
+      "organizations_url": "https://api.github.com/users/pantheraleo-7/orgs",
+      "repos_url": "https://api.github.com/users/pantheraleo-7/repos",
+      "events_url": "https://api.github.com/users/pantheraleo-7/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/pantheraleo-7/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The old and new log dir is the same on Linux (if `XDG_CACHE_HOME` is not set to a different location) and since we rely on `new_log_dir/.migrated`, we can't unconditionally remove the old log dir.\r\n\r\nThough I'm trying a different approach, so we don't have to do this. Let's see...",
+    "created_at": "2025-11-05T14:44:38Z",
+    "updated_at": "2025-11-05T14:44:38Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2494849125",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2494849125"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2494849125"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2494849125/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 27,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 34,
+    "side": "RIGHT",
+    "in_reply_to_id": 2491729592,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 25,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2506987533",
+    "pull_request_review_id": 3438452779,
+    "id": 2506987533,
+    "node_id": "PRRC_kwDOCqswNs6VbZgN",
+    "diff_hunk": "@@ -21,15 +21,28 @@ pub struct StarshipLogger {\n \n /// Returns the path to the log directory.\n pub fn get_log_dir() -> PathBuf {\n-    env::var_os(\"STARSHIP_CACHE\")\n+    let log_dir = env::var_os(\"STARSHIP_CACHE\")\n         .map(PathBuf::from)\n-        .unwrap_or_else(|| {\n-            utils::home_dir()\n-                .map(|home| home.join(\".cache\"))\n-                .or_else(dirs::cache_dir)\n-                .unwrap_or_else(std::env::temp_dir)\n-                .join(\"starship\")\n-        })\n+        .or_else(dirs::cache_dir)\n+        .unwrap_or_else(std::env::temp_dir)\n+        .join(\"starship\");\n+\n+    if !log_dir.join(\".migrated\").exists()\n+        && let Some(home_dir) = utils::home_dir()\n+    {\n+        let _ = fs::File::create(log_dir.join(\".migrated\"));\n+        let old_log_dir = home_dir.join(\".cache/starship\");\n+        cleanup_log_files(&old_log_dir);\n+        if let Err(err) = fs::remove_dir(&old_log_dir) {\n+            eprintln!(\n+                \"Failed to cleanup old log dir {}: {}!\",\n+                old_log_dir.display(),\n+                err\n+            );\n+        }",
+    "path": "src/logger.rs",
+    "commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "original_commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Let's avoid printing an error if it's non-empty.\n```suggestion\n        let _ = fs::remove_dir(&old_log_dir);\n```",
+    "created_at": "2025-11-08T15:47:54Z",
+    "updated_at": "2025-11-09T19:05:36Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2506987533",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2506987533"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2506987533"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2506987533/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 36,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 42,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 30,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2506988181",
+    "pull_request_review_id": 3438452779,
+    "id": 2506988181,
+    "node_id": "PRRC_kwDOCqswNs6VbZqV",
+    "diff_hunk": "@@ -21,15 +21,28 @@ pub struct StarshipLogger {\n \n /// Returns the path to the log directory.\n pub fn get_log_dir() -> PathBuf {\n-    env::var_os(\"STARSHIP_CACHE\")\n+    let log_dir = env::var_os(\"STARSHIP_CACHE\")\n         .map(PathBuf::from)\n-        .unwrap_or_else(|| {\n-            utils::home_dir()\n-                .map(|home| home.join(\".cache\"))\n-                .or_else(dirs::cache_dir)\n-                .unwrap_or_else(std::env::temp_dir)\n-                .join(\"starship\")\n-        })\n+        .or_else(dirs::cache_dir)\n+        .unwrap_or_else(std::env::temp_dir)\n+        .join(\"starship\");\n+\n+    if !log_dir.join(\".migrated\").exists()\n+        && let Some(home_dir) = utils::home_dir()\n+    {\n+        let _ = fs::File::create(log_dir.join(\".migrated\"));\n+        let old_log_dir = home_dir.join(\".cache/starship\");\n+        cleanup_log_files(&old_log_dir);",
+    "path": "src/logger.rs",
+    "commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "original_commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I would prefer handling this together with the other call to `clean_log_files`.",
+    "created_at": "2025-11-08T15:49:31Z",
+    "updated_at": "2025-11-09T19:05:36Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2506988181",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2506988181"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2506988181"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2506988181/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2508261838",
+    "pull_request_review_id": 3438452779,
+    "id": 2508261838,
+    "node_id": "PRRC_kwDOCqswNs6VgQnO",
+    "diff_hunk": "@@ -21,15 +21,28 @@ pub struct StarshipLogger {\n \n /// Returns the path to the log directory.\n pub fn get_log_dir() -> PathBuf {\n-    env::var_os(\"STARSHIP_CACHE\")\n+    let log_dir = env::var_os(\"STARSHIP_CACHE\")\n         .map(PathBuf::from)\n-        .unwrap_or_else(|| {\n-            utils::home_dir()\n-                .map(|home| home.join(\".cache\"))\n-                .or_else(dirs::cache_dir)\n-                .unwrap_or_else(std::env::temp_dir)\n-                .join(\"starship\")\n-        })\n+        .or_else(dirs::cache_dir)\n+        .unwrap_or_else(std::env::temp_dir)\n+        .join(\"starship\");\n+\n+    if !log_dir.join(\".migrated\").exists()\n+        && let Some(home_dir) = utils::home_dir()\n+    {\n+        let _ = fs::File::create(log_dir.join(\".migrated\"));\n+        let old_log_dir = home_dir.join(\".cache/starship\");",
+    "path": "src/logger.rs",
+    "commit_id": "60401a0c4b699e8aa67e1e7165d68d0828b318a6",
+    "original_commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It looks like this may actually delete the new location on Linux?",
+    "created_at": "2025-11-09T19:02:33Z",
+    "updated_at": "2025-11-09T19:05:36Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2508261838",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2508261838"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2508261838"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2508261838/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 33,
+    "original_line": 34,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 22,
+    "position": 21,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2729893382",
+    "pull_request_review_id": 3708729915,
+    "id": 2729893382,
+    "node_id": "PRRC_kwDOCqswNs6itt4G",
+    "diff_hunk": "@@ -21,15 +21,28 @@ pub struct StarshipLogger {\n \n /// Returns the path to the log directory.\n pub fn get_log_dir() -> PathBuf {\n-    env::var_os(\"STARSHIP_CACHE\")\n+    let log_dir = env::var_os(\"STARSHIP_CACHE\")\n         .map(PathBuf::from)\n-        .unwrap_or_else(|| {\n-            utils::home_dir()\n-                .map(|home| home.join(\".cache\"))\n-                .or_else(dirs::cache_dir)\n-                .unwrap_or_else(std::env::temp_dir)\n-                .join(\"starship\")\n-        })\n+        .or_else(dirs::cache_dir)\n+        .unwrap_or_else(std::env::temp_dir)\n+        .join(\"starship\");\n+\n+    if !log_dir.join(\".migrated\").exists()\n+        && let Some(home_dir) = utils::home_dir()\n+    {\n+        let _ = fs::File::create(log_dir.join(\".migrated\"));\n+        let old_log_dir = home_dir.join(\".cache/starship\");\n+        cleanup_log_files(&old_log_dir);\n+        if let Err(err) = fs::remove_dir(&old_log_dir) {\n+            eprintln!(\n+                \"Failed to cleanup old log dir {}: {}!\",\n+                old_log_dir.display(),\n+                err\n+            );\n+        }",
+    "path": "src/logger.rs",
+    "commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "original_commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "user": {
+      "login": "pantheraleo-7",
+      "id": 159872817,
+      "node_id": "U_kgDOCYd3MQ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/159872817?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/pantheraleo-7",
+      "html_url": "https://github.com/pantheraleo-7",
+      "followers_url": "https://api.github.com/users/pantheraleo-7/followers",
+      "following_url": "https://api.github.com/users/pantheraleo-7/following{/other_user}",
+      "gists_url": "https://api.github.com/users/pantheraleo-7/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/pantheraleo-7/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/pantheraleo-7/subscriptions",
+      "organizations_url": "https://api.github.com/users/pantheraleo-7/orgs",
+      "repos_url": "https://api.github.com/users/pantheraleo-7/repos",
+      "events_url": "https://api.github.com/users/pantheraleo-7/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/pantheraleo-7/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I did this for 2 reasons:\n- logs newer than 24 hours won't be cleaned up, so alerting users to do it manually seems like a good idea\n- IIRC [some] nushell users may have non-log files?",
+    "created_at": "2026-01-27T01:32:52Z",
+    "updated_at": "2026-01-27T01:32:52Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2729893382",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2729893382"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2729893382"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2729893382/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 36,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 42,
+    "side": "RIGHT",
+    "in_reply_to_id": 2506987533,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 30,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2729894504",
+    "pull_request_review_id": 3708731157,
+    "id": 2729894504,
+    "node_id": "PRRC_kwDOCqswNs6ituJo",
+    "diff_hunk": "@@ -21,15 +21,28 @@ pub struct StarshipLogger {\n \n /// Returns the path to the log directory.\n pub fn get_log_dir() -> PathBuf {\n-    env::var_os(\"STARSHIP_CACHE\")\n+    let log_dir = env::var_os(\"STARSHIP_CACHE\")\n         .map(PathBuf::from)\n-        .unwrap_or_else(|| {\n-            utils::home_dir()\n-                .map(|home| home.join(\".cache\"))\n-                .or_else(dirs::cache_dir)\n-                .unwrap_or_else(std::env::temp_dir)\n-                .join(\"starship\")\n-        })\n+        .or_else(dirs::cache_dir)\n+        .unwrap_or_else(std::env::temp_dir)\n+        .join(\"starship\");\n+\n+    if !log_dir.join(\".migrated\").exists()\n+        && let Some(home_dir) = utils::home_dir()\n+    {\n+        let _ = fs::File::create(log_dir.join(\".migrated\"));\n+        let old_log_dir = home_dir.join(\".cache/starship\");",
+    "path": "src/logger.rs",
+    "commit_id": "60401a0c4b699e8aa67e1e7165d68d0828b318a6",
+    "original_commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "user": {
+      "login": "pantheraleo-7",
+      "id": 159872817,
+      "node_id": "U_kgDOCYd3MQ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/159872817?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/pantheraleo-7",
+      "html_url": "https://github.com/pantheraleo-7",
+      "followers_url": "https://api.github.com/users/pantheraleo-7/followers",
+      "following_url": "https://api.github.com/users/pantheraleo-7/following{/other_user}",
+      "gists_url": "https://api.github.com/users/pantheraleo-7/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/pantheraleo-7/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/pantheraleo-7/subscriptions",
+      "organizations_url": "https://api.github.com/users/pantheraleo-7/orgs",
+      "repos_url": "https://api.github.com/users/pantheraleo-7/repos",
+      "events_url": "https://api.github.com/users/pantheraleo-7/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/pantheraleo-7/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "does it matter? wouldn't it get recreated?",
+    "created_at": "2026-01-27T01:33:34Z",
+    "updated_at": "2026-01-27T01:33:34Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2729894504",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2729894504"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2729894504"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2729894504/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 33,
+    "original_line": 34,
+    "side": "RIGHT",
+    "in_reply_to_id": 2508261838,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 22,
+    "position": 21,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2729897077",
+    "pull_request_review_id": 3708733766,
+    "id": 2729897077,
+    "node_id": "PRRC_kwDOCqswNs6itux1",
+    "diff_hunk": "@@ -21,15 +21,28 @@ pub struct StarshipLogger {\n \n /// Returns the path to the log directory.\n pub fn get_log_dir() -> PathBuf {\n-    env::var_os(\"STARSHIP_CACHE\")\n+    let log_dir = env::var_os(\"STARSHIP_CACHE\")\n         .map(PathBuf::from)\n-        .unwrap_or_else(|| {\n-            utils::home_dir()\n-                .map(|home| home.join(\".cache\"))\n-                .or_else(dirs::cache_dir)\n-                .unwrap_or_else(std::env::temp_dir)\n-                .join(\"starship\")\n-        })\n+        .or_else(dirs::cache_dir)\n+        .unwrap_or_else(std::env::temp_dir)\n+        .join(\"starship\");\n+\n+    if !log_dir.join(\".migrated\").exists()\n+        && let Some(home_dir) = utils::home_dir()\n+    {\n+        let _ = fs::File::create(log_dir.join(\".migrated\"));\n+        let old_log_dir = home_dir.join(\".cache/starship\");\n+        cleanup_log_files(&old_log_dir);",
+    "path": "src/logger.rs",
+    "commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "original_commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "user": {
+      "login": "pantheraleo-7",
+      "id": 159872817,
+      "node_id": "U_kgDOCYd3MQ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/159872817?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/pantheraleo-7",
+      "html_url": "https://github.com/pantheraleo-7",
+      "followers_url": "https://api.github.com/users/pantheraleo-7/followers",
+      "following_url": "https://api.github.com/users/pantheraleo-7/following{/other_user}",
+      "gists_url": "https://api.github.com/users/pantheraleo-7/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/pantheraleo-7/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/pantheraleo-7/subscriptions",
+      "organizations_url": "https://api.github.com/users/pantheraleo-7/orgs",
+      "repos_url": "https://api.github.com/users/pantheraleo-7/repos",
+      "events_url": "https://api.github.com/users/pantheraleo-7/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/pantheraleo-7/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "what do you mean? there's only one call to `cleanup_log_files()`...",
+    "created_at": "2026-01-27T01:34:42Z",
+    "updated_at": "2026-01-27T01:34:42Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2729897077",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2729897077"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2729897077"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2729897077/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 2506988181,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2751797060",
+    "pull_request_review_id": 3736458787,
+    "id": 2751797060,
+    "node_id": "PRRC_kwDOCqswNs6kBRdE",
+    "diff_hunk": "@@ -21,15 +21,28 @@ pub struct StarshipLogger {\n \n /// Returns the path to the log directory.\n pub fn get_log_dir() -> PathBuf {\n-    env::var_os(\"STARSHIP_CACHE\")\n+    let log_dir = env::var_os(\"STARSHIP_CACHE\")\n         .map(PathBuf::from)\n-        .unwrap_or_else(|| {\n-            utils::home_dir()\n-                .map(|home| home.join(\".cache\"))\n-                .or_else(dirs::cache_dir)\n-                .unwrap_or_else(std::env::temp_dir)\n-                .join(\"starship\")\n-        })\n+        .or_else(dirs::cache_dir)\n+        .unwrap_or_else(std::env::temp_dir)\n+        .join(\"starship\");\n+\n+    if !log_dir.join(\".migrated\").exists()\n+        && let Some(home_dir) = utils::home_dir()\n+    {\n+        let _ = fs::File::create(log_dir.join(\".migrated\"));\n+        let old_log_dir = home_dir.join(\".cache/starship\");\n+        cleanup_log_files(&old_log_dir);\n+        if let Err(err) = fs::remove_dir(&old_log_dir) {\n+            eprintln!(\n+                \"Failed to cleanup old log dir {}: {}!\",\n+                old_log_dir.display(),\n+                err\n+            );\n+        }",
+    "path": "src/logger.rs",
+    "commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "original_commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`fs::remove_dir` is not recursive.",
+    "created_at": "2026-02-01T18:32:59Z",
+    "updated_at": "2026-02-01T18:32:59Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2751797060",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2751797060"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2751797060"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2751797060/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 36,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 42,
+    "side": "RIGHT",
+    "in_reply_to_id": 2506987533,
+    "author_association": "MEMBER",
+    "original_position": 30,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2751798305",
+    "pull_request_review_id": 3736460728,
+    "id": 2751798305,
+    "node_id": "PRRC_kwDOCqswNs6kBRwh",
+    "diff_hunk": "@@ -21,15 +21,28 @@ pub struct StarshipLogger {\n \n /// Returns the path to the log directory.\n pub fn get_log_dir() -> PathBuf {\n-    env::var_os(\"STARSHIP_CACHE\")\n+    let log_dir = env::var_os(\"STARSHIP_CACHE\")\n         .map(PathBuf::from)\n-        .unwrap_or_else(|| {\n-            utils::home_dir()\n-                .map(|home| home.join(\".cache\"))\n-                .or_else(dirs::cache_dir)\n-                .unwrap_or_else(std::env::temp_dir)\n-                .join(\"starship\")\n-        })\n+        .or_else(dirs::cache_dir)\n+        .unwrap_or_else(std::env::temp_dir)\n+        .join(\"starship\");\n+\n+    if !log_dir.join(\".migrated\").exists()\n+        && let Some(home_dir) = utils::home_dir()\n+    {\n+        let _ = fs::File::create(log_dir.join(\".migrated\"));\n+        let old_log_dir = home_dir.join(\".cache/starship\");",
+    "path": "src/logger.rs",
+    "commit_id": "60401a0c4b699e8aa67e1e7165d68d0828b318a6",
+    "original_commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Performance is the first thing that comes to mind.",
+    "created_at": "2026-02-01T18:34:43Z",
+    "updated_at": "2026-02-01T18:34:43Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2751798305",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2751798305"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2751798305"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2751798305/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 33,
+    "original_line": 34,
+    "side": "RIGHT",
+    "in_reply_to_id": 2508261838,
+    "author_association": "MEMBER",
+    "original_position": 22,
+    "position": 21,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2751798671",
+    "pull_request_review_id": 3736461335,
+    "id": 2751798671,
+    "node_id": "PRRC_kwDOCqswNs6kBR2P",
+    "diff_hunk": "@@ -21,15 +21,28 @@ pub struct StarshipLogger {\n \n /// Returns the path to the log directory.\n pub fn get_log_dir() -> PathBuf {\n-    env::var_os(\"STARSHIP_CACHE\")\n+    let log_dir = env::var_os(\"STARSHIP_CACHE\")\n         .map(PathBuf::from)\n-        .unwrap_or_else(|| {\n-            utils::home_dir()\n-                .map(|home| home.join(\".cache\"))\n-                .or_else(dirs::cache_dir)\n-                .unwrap_or_else(std::env::temp_dir)\n-                .join(\"starship\")\n-        })\n+        .or_else(dirs::cache_dir)\n+        .unwrap_or_else(std::env::temp_dir)\n+        .join(\"starship\");\n+\n+    if !log_dir.join(\".migrated\").exists()\n+        && let Some(home_dir) = utils::home_dir()\n+    {\n+        let _ = fs::File::create(log_dir.join(\".migrated\"));\n+        let old_log_dir = home_dir.join(\".cache/starship\");\n+        cleanup_log_files(&old_log_dir);",
+    "path": "src/logger.rs",
+    "commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "original_commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "That's a problem in itself.",
+    "created_at": "2026-02-01T18:35:20Z",
+    "updated_at": "2026-02-01T18:35:21Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2751798671",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2751798671"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2751798671"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2751798671/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 2506988181,
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2753332099",
+    "pull_request_review_id": 3738184231,
+    "id": 2753332099,
+    "node_id": "PRRC_kwDOCqswNs6kHIOD",
+    "diff_hunk": "@@ -21,15 +21,28 @@ pub struct StarshipLogger {\n \n /// Returns the path to the log directory.\n pub fn get_log_dir() -> PathBuf {\n-    env::var_os(\"STARSHIP_CACHE\")\n+    let log_dir = env::var_os(\"STARSHIP_CACHE\")\n         .map(PathBuf::from)\n-        .unwrap_or_else(|| {\n-            utils::home_dir()\n-                .map(|home| home.join(\".cache\"))\n-                .or_else(dirs::cache_dir)\n-                .unwrap_or_else(std::env::temp_dir)\n-                .join(\"starship\")\n-        })\n+        .or_else(dirs::cache_dir)\n+        .unwrap_or_else(std::env::temp_dir)\n+        .join(\"starship\");\n+\n+    if !log_dir.join(\".migrated\").exists()\n+        && let Some(home_dir) = utils::home_dir()\n+    {\n+        let _ = fs::File::create(log_dir.join(\".migrated\"));\n+        let old_log_dir = home_dir.join(\".cache/starship\");\n+        cleanup_log_files(&old_log_dir);\n+        if let Err(err) = fs::remove_dir(&old_log_dir) {\n+            eprintln!(\n+                \"Failed to cleanup old log dir {}: {}!\",\n+                old_log_dir.display(),\n+                err\n+            );\n+        }",
+    "path": "src/logger.rs",
+    "commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "original_commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "user": {
+      "login": "pantheraleo-7",
+      "id": 159872817,
+      "node_id": "U_kgDOCYd3MQ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/159872817?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/pantheraleo-7",
+      "html_url": "https://github.com/pantheraleo-7",
+      "followers_url": "https://api.github.com/users/pantheraleo-7/followers",
+      "following_url": "https://api.github.com/users/pantheraleo-7/following{/other_user}",
+      "gists_url": "https://api.github.com/users/pantheraleo-7/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/pantheraleo-7/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/pantheraleo-7/subscriptions",
+      "organizations_url": "https://api.github.com/users/pantheraleo-7/orgs",
+      "repos_url": "https://api.github.com/users/pantheraleo-7/repos",
+      "events_url": "https://api.github.com/users/pantheraleo-7/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/pantheraleo-7/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "yes, exactly. The intended behaviour is to fail if there are non-log files (one known issue is that log files newer than 24 hours will cause failure too).",
+    "created_at": "2026-02-02T09:15:21Z",
+    "updated_at": "2026-02-02T09:15:21Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2753332099",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2753332099"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2753332099"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2753332099/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 36,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 42,
+    "side": "RIGHT",
+    "in_reply_to_id": 2506987533,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 30,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2753333747",
+    "pull_request_review_id": 3738186083,
+    "id": 2753333747,
+    "node_id": "PRRC_kwDOCqswNs6kHInz",
+    "diff_hunk": "@@ -21,15 +21,28 @@ pub struct StarshipLogger {\n \n /// Returns the path to the log directory.\n pub fn get_log_dir() -> PathBuf {\n-    env::var_os(\"STARSHIP_CACHE\")\n+    let log_dir = env::var_os(\"STARSHIP_CACHE\")\n         .map(PathBuf::from)\n-        .unwrap_or_else(|| {\n-            utils::home_dir()\n-                .map(|home| home.join(\".cache\"))\n-                .or_else(dirs::cache_dir)\n-                .unwrap_or_else(std::env::temp_dir)\n-                .join(\"starship\")\n-        })\n+        .or_else(dirs::cache_dir)\n+        .unwrap_or_else(std::env::temp_dir)\n+        .join(\"starship\");\n+\n+    if !log_dir.join(\".migrated\").exists()\n+        && let Some(home_dir) = utils::home_dir()\n+    {\n+        let _ = fs::File::create(log_dir.join(\".migrated\"));\n+        let old_log_dir = home_dir.join(\".cache/starship\");\n+        cleanup_log_files(&old_log_dir);",
+    "path": "src/logger.rs",
+    "commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "original_commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "user": {
+      "login": "pantheraleo-7",
+      "id": 159872817,
+      "node_id": "U_kgDOCYd3MQ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/159872817?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/pantheraleo-7",
+      "html_url": "https://github.com/pantheraleo-7",
+      "followers_url": "https://api.github.com/users/pantheraleo-7/followers",
+      "following_url": "https://api.github.com/users/pantheraleo-7/following{/other_user}",
+      "gists_url": "https://api.github.com/users/pantheraleo-7/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/pantheraleo-7/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/pantheraleo-7/subscriptions",
+      "organizations_url": "https://api.github.com/users/pantheraleo-7/orgs",
+      "repos_url": "https://api.github.com/users/pantheraleo-7/repos",
+      "events_url": "https://api.github.com/users/pantheraleo-7/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/pantheraleo-7/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This isn't a helpful response, is it?",
+    "created_at": "2026-02-02T09:15:50Z",
+    "updated_at": "2026-02-02T09:15:50Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2753333747",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2753333747"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2753333747"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2753333747/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 2506988181,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2753334000",
+    "pull_request_review_id": 3738186353,
+    "id": 2753334000,
+    "node_id": "PRRC_kwDOCqswNs6kHIrw",
+    "diff_hunk": "@@ -21,15 +21,28 @@ pub struct StarshipLogger {\n \n /// Returns the path to the log directory.\n pub fn get_log_dir() -> PathBuf {\n-    env::var_os(\"STARSHIP_CACHE\")\n+    let log_dir = env::var_os(\"STARSHIP_CACHE\")\n         .map(PathBuf::from)\n-        .unwrap_or_else(|| {\n-            utils::home_dir()\n-                .map(|home| home.join(\".cache\"))\n-                .or_else(dirs::cache_dir)\n-                .unwrap_or_else(std::env::temp_dir)\n-                .join(\"starship\")\n-        })\n+        .or_else(dirs::cache_dir)\n+        .unwrap_or_else(std::env::temp_dir)\n+        .join(\"starship\");\n+\n+    if !log_dir.join(\".migrated\").exists()\n+        && let Some(home_dir) = utils::home_dir()\n+    {\n+        let _ = fs::File::create(log_dir.join(\".migrated\"));\n+        let old_log_dir = home_dir.join(\".cache/starship\");",
+    "path": "src/logger.rs",
+    "commit_id": "60401a0c4b699e8aa67e1e7165d68d0828b318a6",
+    "original_commit_id": "92c99c7b19c6ca46a19477adfce2e3491173ce0d",
+    "user": {
+      "login": "pantheraleo-7",
+      "id": 159872817,
+      "node_id": "U_kgDOCYd3MQ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/159872817?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/pantheraleo-7",
+      "html_url": "https://github.com/pantheraleo-7",
+      "followers_url": "https://api.github.com/users/pantheraleo-7/followers",
+      "following_url": "https://api.github.com/users/pantheraleo-7/following{/other_user}",
+      "gists_url": "https://api.github.com/users/pantheraleo-7/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/pantheraleo-7/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/pantheraleo-7/subscriptions",
+      "organizations_url": "https://api.github.com/users/pantheraleo-7/orgs",
+      "repos_url": "https://api.github.com/users/pantheraleo-7/repos",
+      "events_url": "https://api.github.com/users/pantheraleo-7/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/pantheraleo-7/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "well I was initially special-casing Linux for precisely this reason, but you said no to.",
+    "created_at": "2026-02-02T09:15:54Z",
+    "updated_at": "2026-02-02T09:15:54Z",
+    "html_url": "https://github.com/starship/starship/pull/7092#discussion_r2753334000",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2753334000"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7092#discussion_r2753334000"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2753334000/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 33,
+    "original_line": 34,
+    "side": "RIGHT",
+    "in_reply_to_id": 2508261838,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 22,
+    "position": 21,
+    "subject_type": "line"
+  }
+]

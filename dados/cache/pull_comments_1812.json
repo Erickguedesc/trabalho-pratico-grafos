@@ -1,0 +1,418 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/566447074",
+    "pull_request_review_id": 578790598,
+    "id": 566447074,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU2NjQ0NzA3NA==",
+    "diff_hunk": "@@ -0,0 +1,105 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::vagrant::VagrantConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+/// Creates a module with the current Vagrant version\n+///\n+/// Will display the Vagrant version if any of the following criteria are met:\n+///     - Current directory contains a `Vagrantfile` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_vagrant_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"Vagrantfile\"])\n+        .is_match();\n+\n+    if !is_vagrant_project {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"vagrant\");\n+    let config = VagrantConfig::try_load(module.config);\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => format_vagrant_version(\n+                    &utils::exec_cmd(\"vagrant\", &[\"--version\"])?.stdout.as_str(),\n+                )\n+                .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `vagrant`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn format_vagrant_version(vagrant_stdout: &str) -> Option<String> {\n+    // `vagrant --version` output looks like this:\n+    // Vagrant 2.2.10\n+    let version = vagrant_stdout\n+        // split into [\"Vagrant\",\"2.2.10\"]\n+        .split_whitespace()\n+        // return \"2.2.10\"\n+        .nth(1)?;\n+\n+    let mut formatted_version = String::with_capacity(version.len() + 1);\n+    formatted_version.push('v');\n+    formatted_version.push_str(version);\n+    Some(formatted_version)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::*;\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn folder_without_vagrant_files() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+\n+        let actual = ModuleRenderer::new(\"vagrant\").path(dir.path()).collect();\n+\n+        let expected = None;\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_vagrant_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"Vagrantfile\"))?.sync_all()?;\n+\n+        let actual = ModuleRenderer::new(\"vagrant\").path(dir.path()).collect();\n+\n+        let expected = Some(format!(\"via {} \", Color::Cyan.bold().paint(\"⍱ v2.2.10\")));\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn test_format_vagrant_version() {\n+        let vagrant = \"Vagrant 2.2.10\";",
+    "path": "src/modules/vagrant.rs",
+    "commit_id": "86f6278953dcade19e0c1fadcaaa29c17b246ff8",
+    "original_commit_id": "6d9807a8480c88d1ee6a217f6db1a1c30c907717",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Nitpick but I think this should have a trailing `\\n`\r\n\r\n```suggestion\r\n        let vagrant = \"Vagrant 2.2.10\\n\";\r\n```",
+    "created_at": "2021-01-28T22:21:07Z",
+    "updated_at": "2021-01-29T11:44:28Z",
+    "html_url": "https://github.com/starship/starship/pull/1812#discussion_r566447074",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1812",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/566447074"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1812#discussion_r566447074"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1812"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/566447074/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 102,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 102,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/566447337",
+    "pull_request_review_id": 578790598,
+    "id": 566447337,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU2NjQ0NzMzNw==",
+    "diff_hunk": "@@ -2284,6 +2285,41 @@ disabled = false\n show_always = true\n ```\n \n+## Vagrant\n+\n+The `vagrant` module shows the currently installed version of Vagrant.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `Vagrantfile` file\n+\n+### Options\n+\n+| Option     | Default                            | Description                                         |\n+| ---------- | ---------------------------------- | --------------------------------------------------- |\n+| `format`   | `\"via [$symbol$version]($style) \"` | The format for the module.                          |",
+    "path": "docs/config/README.md",
+    "commit_id": "86f6278953dcade19e0c1fadcaaa29c17b246ff8",
+    "original_commit_id": "6d9807a8480c88d1ee6a217f6db1a1c30c907717",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "We have been changing the default format string to handle failures if fetching the version fails for some other reason more gracefully.\r\n```suggestion\r\n| `format`   | `\"via [$symbol($version )]($style)\"` | The format for the module.                          |\r\n```",
+    "created_at": "2021-01-28T22:21:43Z",
+    "updated_at": "2021-01-29T11:44:28Z",
+    "html_url": "https://github.com/starship/starship/pull/1812#discussion_r566447337",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1812",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/566447337"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1812#discussion_r566447337"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1812"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/566447337/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 2299,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/566448446",
+    "pull_request_review_id": 578790598,
+    "id": 566448446,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU2NjQ0ODQ0Ng==",
+    "diff_hunk": "@@ -0,0 +1,22 @@\n+use crate::config::{ModuleConfig, RootModuleConfig};\n+\n+use starship_module_config_derive::ModuleConfig;\n+\n+#[derive(Clone, ModuleConfig)]\n+pub struct VagrantConfig<'a> {\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> RootModuleConfig<'a> for VagrantConfig<'a> {\n+    fn new() -> Self {\n+        VagrantConfig {\n+            format: \"via [$symbol$version]($style) \",",
+    "path": "src/configs/vagrant.rs",
+    "commit_id": "86f6278953dcade19e0c1fadcaaa29c17b246ff8",
+    "original_commit_id": "6d9807a8480c88d1ee6a217f6db1a1c30c907717",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Similar to above\r\n```suggestion\r\n            format: \"via [$symbol($version )]($style)\",\r\n```",
+    "created_at": "2021-01-28T22:24:01Z",
+    "updated_at": "2021-01-29T11:44:28Z",
+    "html_url": "https://github.com/starship/starship/pull/1812#discussion_r566448446",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1812",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/566448446"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1812#discussion_r566448446"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1812"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/566448446/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 16,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 16,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/566448794",
+    "pull_request_review_id": 578790598,
+    "id": 566448794,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU2NjQ0ODc5NA==",
+    "diff_hunk": "@@ -0,0 +1,105 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::vagrant::VagrantConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+/// Creates a module with the current Vagrant version\n+///\n+/// Will display the Vagrant version if any of the following criteria are met:\n+///     - Current directory contains a `Vagrantfile` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_vagrant_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"Vagrantfile\"])\n+        .is_match();\n+\n+    if !is_vagrant_project {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"vagrant\");\n+    let config = VagrantConfig::try_load(module.config);\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => format_vagrant_version(\n+                    &utils::exec_cmd(\"vagrant\", &[\"--version\"])?.stdout.as_str(),\n+                )\n+                .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `vagrant`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn format_vagrant_version(vagrant_stdout: &str) -> Option<String> {\n+    // `vagrant --version` output looks like this:\n+    // Vagrant 2.2.10\n+    let version = vagrant_stdout\n+        // split into [\"Vagrant\",\"2.2.10\"]\n+        .split_whitespace()\n+        // return \"2.2.10\"\n+        .nth(1)?;\n+\n+    let mut formatted_version = String::with_capacity(version.len() + 1);\n+    formatted_version.push('v');\n+    formatted_version.push_str(version);\n+    Some(formatted_version)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::*;\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn folder_without_vagrant_files() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+\n+        let actual = ModuleRenderer::new(\"vagrant\").path(dir.path()).collect();\n+\n+        let expected = None;\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_vagrant_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"Vagrantfile\"))?.sync_all()?;\n+\n+        let actual = ModuleRenderer::new(\"vagrant\").path(dir.path()).collect();\n+\n+        let expected = Some(format!(\"via {} \", Color::Cyan.bold().paint(\"⍱ v2.2.10\")));",
+    "path": "src/modules/vagrant.rs",
+    "commit_id": "86f6278953dcade19e0c1fadcaaa29c17b246ff8",
+    "original_commit_id": "6d9807a8480c88d1ee6a217f6db1a1c30c907717",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Same as above\r\n```suggestion\r\n        let expected = Some(format!(\"via {}\", Color::Cyan.bold().paint(\"⍱ v2.2.10 \")));\r\n```",
+    "created_at": "2021-01-28T22:24:44Z",
+    "updated_at": "2021-01-29T11:44:28Z",
+    "html_url": "https://github.com/starship/starship/pull/1812#discussion_r566448794",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1812",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/566448794"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1812#discussion_r566448794"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1812"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/566448794/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 95,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 95,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/566618434",
+    "pull_request_review_id": 578988722,
+    "id": 566618434,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU2NjYxODQzNA==",
+    "diff_hunk": "@@ -0,0 +1,105 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::vagrant::VagrantConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+/// Creates a module with the current Vagrant version\n+///\n+/// Will display the Vagrant version if any of the following criteria are met:\n+///     - Current directory contains a `Vagrantfile` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_vagrant_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"Vagrantfile\"])\n+        .is_match();\n+\n+    if !is_vagrant_project {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"vagrant\");\n+    let config = VagrantConfig::try_load(module.config);\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => format_vagrant_version(\n+                    &utils::exec_cmd(\"vagrant\", &[\"--version\"])?.stdout.as_str(),\n+                )\n+                .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `vagrant`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn format_vagrant_version(vagrant_stdout: &str) -> Option<String> {\n+    // `vagrant --version` output looks like this:\n+    // Vagrant 2.2.10\n+    let version = vagrant_stdout\n+        // split into [\"Vagrant\",\"2.2.10\"]\n+        .split_whitespace()\n+        // return \"2.2.10\"\n+        .nth(1)?;\n+\n+    let mut formatted_version = String::with_capacity(version.len() + 1);\n+    formatted_version.push('v');\n+    formatted_version.push_str(version);\n+    Some(formatted_version)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::*;\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn folder_without_vagrant_files() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+\n+        let actual = ModuleRenderer::new(\"vagrant\").path(dir.path()).collect();\n+\n+        let expected = None;\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_vagrant_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"Vagrantfile\"))?.sync_all()?;\n+\n+        let actual = ModuleRenderer::new(\"vagrant\").path(dir.path()).collect();\n+\n+        let expected = Some(format!(\"via {} \", Color::Cyan.bold().paint(\"⍱ v2.2.10\")));",
+    "path": "src/modules/vagrant.rs",
+    "commit_id": "86f6278953dcade19e0c1fadcaaa29c17b246ff8",
+    "original_commit_id": "6d9807a8480c88d1ee6a217f6db1a1c30c907717",
+    "user": {
+      "login": "Dentrax",
+      "id": 16493751,
+      "node_id": "MDQ6VXNlcjE2NDkzNzUx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16493751?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Dentrax",
+      "html_url": "https://github.com/Dentrax",
+      "followers_url": "https://api.github.com/users/Dentrax/followers",
+      "following_url": "https://api.github.com/users/Dentrax/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Dentrax/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Dentrax/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Dentrax/subscriptions",
+      "organizations_url": "https://api.github.com/users/Dentrax/orgs",
+      "repos_url": "https://api.github.com/users/Dentrax/repos",
+      "events_url": "https://api.github.com/users/Dentrax/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Dentrax/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I do not understand exactly why we need to append whitespace at the end of the version: `Color::Cyan.bold().paint(\"⍱ v2.2.10 \")` 🤔 ",
+    "created_at": "2021-01-29T07:08:40Z",
+    "updated_at": "2021-01-29T11:44:28Z",
+    "html_url": "https://github.com/starship/starship/pull/1812#discussion_r566618434",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1812",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/566618434"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1812#discussion_r566618434"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1812"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/566618434/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 95,
+    "side": "RIGHT",
+    "in_reply_to_id": 566448794,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 95,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/566751137",
+    "pull_request_review_id": 579162628,
+    "id": 566751137,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU2Njc1MTEzNw==",
+    "diff_hunk": "@@ -0,0 +1,105 @@\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::vagrant::VagrantConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils;\n+\n+/// Creates a module with the current Vagrant version\n+///\n+/// Will display the Vagrant version if any of the following criteria are met:\n+///     - Current directory contains a `Vagrantfile` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_vagrant_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"Vagrantfile\"])\n+        .is_match();\n+\n+    if !is_vagrant_project {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"vagrant\");\n+    let config = VagrantConfig::try_load(module.config);\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => format_vagrant_version(\n+                    &utils::exec_cmd(\"vagrant\", &[\"--version\"])?.stdout.as_str(),\n+                )\n+                .map(Ok),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `vagrant`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn format_vagrant_version(vagrant_stdout: &str) -> Option<String> {\n+    // `vagrant --version` output looks like this:\n+    // Vagrant 2.2.10\n+    let version = vagrant_stdout\n+        // split into [\"Vagrant\",\"2.2.10\"]\n+        .split_whitespace()\n+        // return \"2.2.10\"\n+        .nth(1)?;\n+\n+    let mut formatted_version = String::with_capacity(version.len() + 1);\n+    formatted_version.push('v');\n+    formatted_version.push_str(version);\n+    Some(formatted_version)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::*;\n+    use crate::test::ModuleRenderer;\n+    use ansi_term::Color;\n+    use std::fs::File;\n+    use std::io;\n+\n+    #[test]\n+    fn folder_without_vagrant_files() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+\n+        let actual = ModuleRenderer::new(\"vagrant\").path(dir.path()).collect();\n+\n+        let expected = None;\n+        assert_eq!(expected, actual);\n+        dir.close()\n+    }\n+\n+    #[test]\n+    fn folder_with_vagrant_file() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+        File::create(dir.path().join(\"Vagrantfile\"))?.sync_all()?;\n+\n+        let actual = ModuleRenderer::new(\"vagrant\").path(dir.path()).collect();\n+\n+        let expected = Some(format!(\"via {} \", Color::Cyan.bold().paint(\"⍱ v2.2.10\")));",
+    "path": "src/modules/vagrant.rs",
+    "commit_id": "86f6278953dcade19e0c1fadcaaa29c17b246ff8",
+    "original_commit_id": "6d9807a8480c88d1ee6a217f6db1a1c30c907717",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It's because with the format string change, the space at the end is covered by the `$style`. I believe that `$style`/`Color::paint` both append and prepend values to the string which is why the space needs to be added to styled part of the string.",
+    "created_at": "2021-01-29T11:17:28Z",
+    "updated_at": "2021-01-29T11:44:28Z",
+    "html_url": "https://github.com/starship/starship/pull/1812#discussion_r566751137",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1812",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/566751137"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1812#discussion_r566751137"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1812"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/566751137/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 95,
+    "side": "RIGHT",
+    "in_reply_to_id": 566448794,
+    "author_association": "MEMBER",
+    "original_position": 95,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

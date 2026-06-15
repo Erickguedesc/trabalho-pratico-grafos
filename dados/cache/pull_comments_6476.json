@@ -1,0 +1,487 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1938492983",
+    "pull_request_review_id": 2588555169,
+    "id": 1938492983,
+    "node_id": "PRRC_kwDOCqswNs5ziw43",
+    "diff_hunk": "@@ -219,40 +245,225 @@ fn get_repo_status(\n     log::debug!(\"New repo status created\");\n \n     let mut repo_status = RepoStatus::default();\n-    let mut args = vec![\"status\", \"--porcelain=2\"];\n+    let gix_repo = repo.open();\n+    // TODO: remove this special case once `gitoxide` can handle sparse indices for tree-index comparisons.\n+    let has_untracked = !config.untracked.is_empty();\n+    let git_config = gix_repo.config_snapshot();\n+    if config.use_git_executable\n+        || gix_repo.index_or_empty().ok()?.is_sparse()\n+        || (git_config.string(\"core.fsmonitor\").is_some() // can be path to monitor executable\n+            && git_config                                 // or can be boolean which should be true\n+                .boolean(\"core.fsmonitor\")                // and any boolean is a valid string, and we get None if a path is used.\n+                .map_or(true, std::convert::identity))",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "a74bef5034175d86f77030a2acf5f9d025897dd2",
+    "original_commit_id": "a57d18da9160c4aeb8df1437e14d4ff780c7ef72",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`Repo` already keeps track of this:\r\n```suggestion\r\n        || repo.fs_monitor_value_is_true\r\n```",
+    "created_at": "2025-02-02T13:31:47Z",
+    "updated_at": "2025-02-09T19:06:01Z",
+    "html_url": "https://github.com/starship/starship/pull/6476#discussion_r1938492983",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6476",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1938492983"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6476#discussion_r1938492983"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6476"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1938492983/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 254,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 257,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 120,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1938493297",
+    "pull_request_review_id": 2588555169,
+    "id": 1938493297,
+    "node_id": "PRRC_kwDOCqswNs5ziw9x",
+    "diff_hunk": "@@ -20,14 +24,224 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     };\n \n     let repo = context.get_repo().ok()?;\n-    let mut git_args = vec![\"diff\", \"--shortstat\"];\n-    if config.ignore_submodules {\n-        git_args.push(\"--ignore-submodules\");\n-    }\n+    let gix_repo = repo.open();\n+    // TODO: remove this special case once `gitoxide` can handle sparse indices for tree-index comparisons.\n+    let stats = if gix_repo.index_or_empty().ok()?.is_sparse() {",
+    "path": "src/modules/git_metrics.rs",
+    "commit_id": "a74bef5034175d86f77030a2acf5f9d025897dd2",
+    "original_commit_id": "a57d18da9160c4aeb8df1437e14d4ff780c7ef72",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n    let stats = if gix_repo.index_or_empty().ok()?.is_sparse() || repo.fs_monitor_value_is_true {\r\n```",
+    "created_at": "2025-02-02T13:32:52Z",
+    "updated_at": "2025-02-09T19:06:01Z",
+    "html_url": "https://github.com/starship/starship/pull/6476#discussion_r1938493297",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6476",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1938493297"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6476#discussion_r1938493297"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6476"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1938493297/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 29,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 29,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2046380847",
+    "pull_request_review_id": 2771630056,
+    "id": 2046380847,
+    "node_id": "PRRC_kwDOCqswNs55-Usv",
+    "diff_hunk": "@@ -20,14 +24,224 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     };\n \n     let repo = context.get_repo().ok()?;\n-    let mut git_args = vec![\"diff\", \"--shortstat\"];\n-    if config.ignore_submodules {\n-        git_args.push(\"--ignore-submodules\");\n-    }\n+    let gix_repo = repo.open();\n+    // TODO: remove this special case once `gitoxide` can handle sparse indices for tree-index comparisons.\n+    let stats = if gix_repo.index_or_empty().ok()?.is_sparse() {",
+    "path": "src/modules/git_metrics.rs",
+    "commit_id": "a74bef5034175d86f77030a2acf5f9d025897dd2",
+    "original_commit_id": "a57d18da9160c4aeb8df1437e14d4ff780c7ef72",
+    "user": {
+      "login": "Byron",
+      "id": 63622,
+      "node_id": "MDQ6VXNlcjYzNjIy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/63622?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Byron",
+      "html_url": "https://github.com/Byron",
+      "followers_url": "https://api.github.com/users/Byron/followers",
+      "following_url": "https://api.github.com/users/Byron/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Byron/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Byron/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Byron/subscriptions",
+      "organizations_url": "https://api.github.com/users/Byron/orgs",
+      "repos_url": "https://api.github.com/users/Byron/repos",
+      "events_url": "https://api.github.com/users/Byron/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Byron/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "A great catch!",
+    "created_at": "2025-04-16T08:25:13Z",
+    "updated_at": "2025-04-16T08:25:13Z",
+    "html_url": "https://github.com/starship/starship/pull/6476#discussion_r2046380847",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6476",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2046380847"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6476#discussion_r2046380847"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6476"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2046380847/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 29,
+    "side": "RIGHT",
+    "in_reply_to_id": 1938493297,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 29,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2046481601",
+    "pull_request_review_id": 2771786934,
+    "id": 2046481601,
+    "node_id": "PRRC_kwDOCqswNs55-tTB",
+    "diff_hunk": "@@ -652,7 +653,7 @@ pub struct Repo {\n \n     /// Contains `true` if the value of `core.fsmonitor` is set to `true`.\n     /// If not `true`, `fsmonitor` is explicitly disabled in git commands.\n-    fs_monitor_value_is_true: bool,\n+    pub(crate) fs_monitor_value_is_true: bool,",
+    "path": "src/context.rs",
+    "commit_id": "a74bef5034175d86f77030a2acf5f9d025897dd2",
+    "original_commit_id": "da37f125d8b878eb97aff823f7127cc38528a8a5",
+    "user": {
+      "login": "Byron",
+      "id": 63622,
+      "node_id": "MDQ6VXNlcjYzNjIy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/63622?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Byron",
+      "html_url": "https://github.com/Byron",
+      "followers_url": "https://api.github.com/users/Byron/followers",
+      "following_url": "https://api.github.com/users/Byron/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Byron/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Byron/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Byron/subscriptions",
+      "organizations_url": "https://api.github.com/users/Byron/orgs",
+      "repos_url": "https://api.github.com/users/Byron/repos",
+      "events_url": "https://api.github.com/users/Byron/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Byron/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This was a quick-fix to allow using the field, I hope it's alright.",
+    "created_at": "2025-04-16T09:17:19Z",
+    "updated_at": "2025-04-16T09:17:42Z",
+    "html_url": "https://github.com/starship/starship/pull/6476#discussion_r2046481601",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6476",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2046481601"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6476#discussion_r2046481601"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6476"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2046481601/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 656,
+    "original_line": 656,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 24,
+    "position": 24,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2050896986",
+    "pull_request_review_id": 2779057540,
+    "id": 2050896986,
+    "node_id": "PRRC_kwDOCqswNs56PjRa",
+    "diff_hunk": "@@ -1960,25 +1960,26 @@ You can disable the module or use the `windows_starship` option to use a Windows\n \n ### Options\n \n-| Option              | Default                                       | Description                                                                                                 |\n-| ------------------- | --------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |\n-| `format`            | `'([\\[$all_status$ahead_behind\\]]($style) )'` | The default format for `git_status`                                                                         |\n-| `conflicted`        | `'='`                                         | This branch has merge conflicts.                                                                            |\n-| `ahead`             | `'⇡'`                                         | The format of `ahead`                                                                                       |\n-| `behind`            | `'⇣'`                                         | The format of `behind`                                                                                      |\n-| `diverged`          | `'⇕'`                                         | The format of `diverged`                                                                                    |\n-| `up_to_date`        | `''`                                          | The format of `up_to_date`                                                                                  |\n-| `untracked`         | `'?'`                                         | The format of `untracked`                                                                                   |\n-| `stashed`           | `'$'`                                         | The format of `stashed`                                                                                     |\n-| `modified`          | `'!'`                                         | The format of `modified`                                                                                    |\n-| `staged`            | `'+'`                                         | The format of `staged`                                                                                      |\n-| `renamed`           | `'»'`                                         | The format of `renamed`                                                                                     |\n-| `deleted`           | `'✘'`                                         | The format of `deleted`                                                                                     |\n-| `typechanged`       | `\"\"`                                          | The format of `typechanged`                                                                                 |\n-| `style`             | `'bold red'`                                  | The style for the module.                                                                                   |\n-| `ignore_submodules` | `false`                                       | Ignore changes to submodules.                                                                               |\n-| `disabled`          | `false`                                       | Disables the `git_status` module.                                                                           |\n-| `windows_starship`  |                                               | Use this (Linux) path to a Windows Starship executable to render `git_status` when on Windows paths in WSL. |\n+| Option               | Default                                       | Description                                                                                                 |\n+| -------------------- | --------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |\n+| `format`             | `'([\\[$all_status$ahead_behind\\]]($style) )'` | The default format for `git_status`                                                                         |\n+| `conflicted`         | `'='`                                         | This branch has merge conflicts.                                                                            |\n+| `ahead`              | `'⇡'`                                         | The format of `ahead`                                                                                       |\n+| `behind`             | `'⇣'`                                         | The format of `behind`                                                                                      |\n+| `diverged`           | `'⇕'`                                         | The format of `diverged`                                                                                    |\n+| `up_to_date`         | `''`                                          | The format of `up_to_date`                                                                                  |\n+| `untracked`          | `'?'`                                         | The format of `untracked`                                                                                   |\n+| `stashed`            | `'$'`                                         | The format of `stashed`                                                                                     |\n+| `modified`           | `'!'`                                         | The format of `modified`                                                                                    |\n+| `staged`             | `'+'`                                         | The format of `staged`                                                                                      |\n+| `renamed`            | `'»'`                                         | The format of `renamed`                                                                                     |\n+| `deleted`            | `'✘'`                                         | The format of `deleted`                                                                                     |\n+| `typechanged`        | `\"\"`                                          | The format of `typechanged`                                                                                 |\n+| `style`              | `'bold red'`                                  | The style for the module.                                                                                   |\n+| `ignore_submodules`  | `false`                                       | Ignore changes to submodules.                                                                               |\n+| `disabled`           | `false`                                       | Disables the `git_status` module.                                                                           |\n+| `windows_starship`   |                                               | Use this (Linux) path to a Windows Starship executable to render `git_status` when on Windows paths in WSL. |\n+| `use_git_executable` |                                               | Do not use `gitoxide` for computing the status, but use the `git` executable instead.                       |",
+    "path": "docs/config/README.md",
+    "commit_id": "a74bef5034175d86f77030a2acf5f9d025897dd2",
+    "original_commit_id": "da37f125d8b878eb97aff823f7127cc38528a8a5",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n| `use_git_executable` | `false`                                       | Do not use `gitoxide` for computing the status, but use the `git` executable instead.                       |\r\n```",
+    "created_at": "2025-04-18T17:23:26Z",
+    "updated_at": "2025-04-19T16:46:11Z",
+    "html_url": "https://github.com/starship/starship/pull/6476#discussion_r2050896986",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6476",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2050896986"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6476#discussion_r2050896986"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6476"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2050896986/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1982,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 42,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2051522926",
+    "pull_request_review_id": 2779057540,
+    "id": 2051522926,
+    "node_id": "PRRC_kwDOCqswNs56R8Fu",
+    "diff_hunk": "@@ -219,40 +245,224 @@ fn get_repo_status(\n     log::debug!(\"New repo status created\");\n \n     let mut repo_status = RepoStatus::default();\n-    let mut args = vec![\"status\", \"--porcelain=2\"];\n+    let gix_repo = repo.open();\n+    // TODO: remove this special case once `gitoxide` can handle sparse indices for tree-index comparisons.\n+    let has_untracked = !config.untracked.is_empty();\n+    let git_config = gix_repo.config_snapshot();\n+    if config.use_git_executable\n+        || gix_repo.index_or_empty().ok()?.is_sparse()\n+        || repo.fs_monitor_value_is_true\n+    {\n+        let mut args = vec![\"status\", \"--porcelain=2\"];\n \n-    // for performance reasons, only pass flags if necessary...\n-    let has_ahead_behind = !config.ahead.is_empty() || !config.behind.is_empty();\n-    let has_up_to_date_diverged = !config.up_to_date.is_empty() || !config.diverged.is_empty();\n-    if has_ahead_behind || has_up_to_date_diverged {\n-        args.push(\"--branch\");\n-    }\n+        // for performance reasons, only pass flags if necessary...\n+        let has_ahead_behind = !config.ahead.is_empty() || !config.behind.is_empty();\n+        let has_up_to_date_diverged = !config.up_to_date.is_empty() || !config.diverged.is_empty();\n+        if has_ahead_behind || has_up_to_date_diverged {\n+            args.push(\"--branch\");\n+        }\n \n-    // ... and add flags that omit information the user doesn't want\n-    let has_untracked = !config.untracked.is_empty();\n-    if !has_untracked {\n-        args.push(\"--untracked-files=no\");\n-    }\n-    if config.ignore_submodules {\n-        args.push(\"--ignore-submodules=dirty\");\n-    } else if !has_untracked {\n-        args.push(\"--ignore-submodules=untracked\");\n-    }\n+        // ... and add flags that omit information the user doesn't want\n+        if !has_untracked {\n+            args.push(\"--untracked-files=no\");\n+        }\n+        if config.ignore_submodules {\n+            args.push(\"--ignore-submodules=dirty\");\n+        } else if !has_untracked {\n+            args.push(\"--ignore-submodules=untracked\");\n+        }\n+\n+        let status_output = repo.exec_git(context, &args)?;\n+        let statuses = status_output.stdout.lines();\n \n-    let status_output = repo.exec_git(context, &args)?;\n-    let statuses = status_output.stdout.lines();\n+        statuses.for_each(|status| {\n+            if status.starts_with(\"# branch.ab \") {\n+                repo_status.set_ahead_behind(status);\n+            } else if !status.starts_with('#') {\n+                repo_status.add(status);\n+            }\n+        });\n+    } else {\n+        let is_interrupted = Arc::new(AtomicBool::new(false));\n+        std::thread::Builder::new()\n+            .name(\"starship timer\".into())\n+            .stack_size(256 * 1024)\n+            .spawn({\n+                let is_interrupted = is_interrupted.clone();\n+                let abort_after =\n+                    std::time::Duration::from_millis(context.root_config.command_timeout);\n+                move || {\n+                    std::thread::sleep(abort_after);\n+                    is_interrupted.store(true, std::sync::atomic::Ordering::SeqCst);\n+                }\n+            })\n+            .expect(\"should be able to spawn timer thread\");\n+        // We don't show details in submodules.\n+        let check_dirty = true;\n+        let status = gix_repo\n+            .status(gix::features::progress::Discard)\n+            .ok()?\n+            .index_worktree_submodules(if config.ignore_submodules {\n+                Submodule::Given {\n+                    ignore: gix::submodule::config::Ignore::Dirty,\n+                    check_dirty,\n+                }\n+            } else if !has_untracked {\n+                Submodule::Given {\n+                    ignore: gix::submodule::config::Ignore::Untracked,\n+                    check_dirty,\n+                }\n+            } else {\n+                Submodule::AsConfigured { check_dirty }\n+            })\n+            .index_worktree_options_mut(|opts| {\n+                // TODO: figure out good defaults for other platforms, maybe make it configurable.\n+                //       Git uses everything (if repo-size permits), but that's not the best choice for MacOS.\n+                opts.thread_limit = if cfg!(target_os = \"macos\") {\n+                    Some(3)\n+                } else {\n+                    None\n+                };",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "a74bef5034175d86f77030a2acf5f9d025897dd2",
+    "original_commit_id": "ad3530741c70b2216f07272aac90ef287f953ec2",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I don't have my Windows system at hand right now, but I assume that Windows will also benefit from the lower thread limit. For other operating systems, this should probably be limited to [8 or `STARSHIP_NUM_THREADS`](https://github.com/starship/starship/blob/master/src/main.rs#L284-L290) like the global thread pool to avoid issues on systems with high core counts.",
+    "created_at": "2025-04-19T16:36:10Z",
+    "updated_at": "2025-04-19T16:46:11Z",
+    "html_url": "https://github.com/starship/starship/pull/6476#discussion_r2051522926",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6476",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2051522926"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6476#discussion_r2051522926"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6476"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2051522926/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 321,
+    "original_start_line": 321,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 325,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 206,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2051523420",
+    "pull_request_review_id": 2779057540,
+    "id": 2051523420,
+    "node_id": "PRRC_kwDOCqswNs56R8Nc",
+    "diff_hunk": "@@ -652,7 +653,7 @@ pub struct Repo {\n \n     /// Contains `true` if the value of `core.fsmonitor` is set to `true`.\n     /// If not `true`, `fsmonitor` is explicitly disabled in git commands.\n-    fs_monitor_value_is_true: bool,\n+    pub(crate) fs_monitor_value_is_true: bool,",
+    "path": "src/context.rs",
+    "commit_id": "a74bef5034175d86f77030a2acf5f9d025897dd2",
+    "original_commit_id": "da37f125d8b878eb97aff823f7127cc38528a8a5",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It's completely fine.",
+    "created_at": "2025-04-19T16:39:28Z",
+    "updated_at": "2025-04-19T16:46:11Z",
+    "html_url": "https://github.com/starship/starship/pull/6476#discussion_r2051523420",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6476",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2051523420"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6476#discussion_r2051523420"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6476"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2051523420/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 656,
+    "original_line": 656,
+    "side": "RIGHT",
+    "in_reply_to_id": 2046481601,
+    "author_association": "MEMBER",
+    "original_position": 24,
+    "position": 24,
+    "subject_type": "line"
+  }
+]

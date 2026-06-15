@@ -1,0 +1,209 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3097964715",
+    "pull_request_review_id": 4126169666,
+    "id": 3097964715,
+    "node_id": "PRRC_kwDOCqswNs64pzCr",
+    "diff_hunk": "@@ -346,6 +346,8 @@ impl<'a> StringFormatter<'a> {\n                             fn should_show_elements<'a>(\n                                 format_elements: &[FormatElement],",
+    "path": "src/formatter/string_formatter.rs",
+    "commit_id": "d30e2c530a235af826a790104c00f092e06b5e52",
+    "original_commit_id": "d30e2c530a235af826a790104c00f092e06b5e52",
+    "user": {
+      "login": "Copilot",
+      "id": 175728472,
+      "node_id": "BOT_kgDOCnlnWA",
+      "avatar_url": "https://avatars.githubusercontent.com/in/946600?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Copilot",
+      "html_url": "https://github.com/apps/copilot-pull-request-reviewer",
+      "followers_url": "https://api.github.com/users/Copilot/followers",
+      "following_url": "https://api.github.com/users/Copilot/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Copilot/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Copilot/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Copilot/subscriptions",
+      "organizations_url": "https://api.github.com/users/Copilot/orgs",
+      "repos_url": "https://api.github.com/users/Copilot/repos",
+      "events_url": "https://api.github.com/users/Copilot/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Copilot/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The preceding comment says the conditional shows when “all the variables inside are not none or empty”, but the implementation here uses `any(...)` (i.e., shows when at least one variable is non-empty). Please update the comment to match the actual behavior (or adjust the logic if the comment is the intended semantics).",
+    "created_at": "2026-04-17T04:59:51Z",
+    "updated_at": "2026-04-17T04:59:52Z",
+    "html_url": "https://github.com/starship/starship/pull/7401#discussion_r3097964715",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7401",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3097964715"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7401#discussion_r3097964715"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7401"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3097964715/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 346,
+    "original_start_line": 346,
+    "start_side": "RIGHT",
+    "line": 347,
+    "original_line": 347,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 2,
+    "position": 2,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3097964763",
+    "pull_request_review_id": 4126169666,
+    "id": 3097964763,
+    "node_id": "PRRC_kwDOCqswNs64pzDb",
+    "diff_hunk": "@@ -359,14 +361,23 @@ impl<'a> StringFormatter<'a> {\n                                                 // that shouldn't show\n                                                 .is_some_and(|result| match result {\n                                                     // If the variable is a meta variable, also\n-                                                    // check the format string inside it.\n+                                                    // check the rendered output inside it.\n                                                     VariableValue::Meta(meta_elements) => {\n                                                         let meta_variables =\n                                                             clone_without_meta(variables);\n-                                                        should_show_elements(\n-                                                            meta_elements,\n+                                                        parse_format(\n+                                                            meta_elements.clone(),\n+                                                            None,\n                                                             &meta_variables,\n+                                                            style_variables,\n+                                                            context,\n                                                         )\n+                                                        .map(|segments| {\n+                                                            segments.iter().any(|segment| {\n+                                                                !segment.value().is_empty()\n+                                                            })\n+                                                        })\n+                                                        .unwrap_or(false)",
+    "path": "src/formatter/string_formatter.rs",
+    "commit_id": "d30e2c530a235af826a790104c00f092e06b5e52",
+    "original_commit_id": "d30e2c530a235af826a790104c00f092e06b5e52",
+    "user": {
+      "login": "Copilot",
+      "id": 175728472,
+      "node_id": "BOT_kgDOCnlnWA",
+      "avatar_url": "https://avatars.githubusercontent.com/in/946600?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Copilot",
+      "html_url": "https://github.com/apps/copilot-pull-request-reviewer",
+      "followers_url": "https://api.github.com/users/Copilot/followers",
+      "following_url": "https://api.github.com/users/Copilot/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Copilot/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Copilot/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Copilot/subscriptions",
+      "organizations_url": "https://api.github.com/users/Copilot/orgs",
+      "repos_url": "https://api.github.com/users/Copilot/repos",
+      "events_url": "https://api.github.com/users/Copilot/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Copilot/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "In the meta-variable branch, `parse_format(...)` can return `Err` (e.g., from invalid style strings / style variables). Using `unwrap_or(false)` here will silently hide that error by treating it as “empty” and skipping the whole conditional segment, which changes error propagation semantics vs. rendering the conditional. Consider propagating the error (e.g., make this path return a `Result<bool, _>`) or, at minimum, treating an error as “should_show = true” so the error is surfaced during the real render.\n```suggestion\n                                                        // If parsing fails here, do not hide the\n                                                        // error by treating the meta variable as\n                                                        // empty; allow the conditional to render so\n                                                        // the real render path can surface it.\n                                                        .unwrap_or(true)\n```",
+    "created_at": "2026-04-17T04:59:51Z",
+    "updated_at": "2026-04-17T04:59:52Z",
+    "html_url": "https://github.com/starship/starship/pull/7401#discussion_r3097964763",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7401",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3097964763"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7401#discussion_r3097964763"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7401"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3097964763/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 380,
+    "original_line": 380,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 32,
+    "position": 32,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3097964788",
+    "pull_request_review_id": 4126169666,
+    "id": 3097964788,
+    "node_id": "PRRC_kwDOCqswNs64pzD0",
+    "diff_hunk": "@@ -359,14 +361,23 @@ impl<'a> StringFormatter<'a> {\n                                                 // that shouldn't show\n                                                 .is_some_and(|result| match result {\n                                                     // If the variable is a meta variable, also\n-                                                    // check the format string inside it.\n+                                                    // check the rendered output inside it.\n                                                     VariableValue::Meta(meta_elements) => {\n                                                         let meta_variables =\n                                                             clone_without_meta(variables);\n-                                                        should_show_elements(\n-                                                            meta_elements,\n+                                                        parse_format(\n+                                                            meta_elements.clone(),\n+                                                            None,\n                                                             &meta_variables,\n+                                                            style_variables,",
+    "path": "src/formatter/string_formatter.rs",
+    "commit_id": "d30e2c530a235af826a790104c00f092e06b5e52",
+    "original_commit_id": "d30e2c530a235af826a790104c00f092e06b5e52",
+    "user": {
+      "login": "Copilot",
+      "id": 175728472,
+      "node_id": "BOT_kgDOCnlnWA",
+      "avatar_url": "https://avatars.githubusercontent.com/in/946600?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Copilot",
+      "html_url": "https://github.com/apps/copilot-pull-request-reviewer",
+      "followers_url": "https://api.github.com/users/Copilot/followers",
+      "following_url": "https://api.github.com/users/Copilot/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Copilot/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Copilot/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Copilot/subscriptions",
+      "organizations_url": "https://api.github.com/users/Copilot/orgs",
+      "repos_url": "https://api.github.com/users/Copilot/repos",
+      "events_url": "https://api.github.com/users/Copilot/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Copilot/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This `parse_format(meta_elements.clone(), ...)` call fully renders the meta variable just to decide whether to show the conditional, and then the same meta variable will be rendered again when the conditional is actually parsed. That introduces extra work for every conditional meta variable; consider restructuring so meta output is computed once (or using a cheaper “non-empty” check that doesn’t require full formatting) to avoid double rendering.",
+    "created_at": "2026-04-17T04:59:51Z",
+    "updated_at": "2026-04-17T04:59:52Z",
+    "html_url": "https://github.com/starship/starship/pull/7401#discussion_r3097964788",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7401",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3097964788"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7401#discussion_r3097964788"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7401"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3097964788/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 368,
+    "original_start_line": 368,
+    "start_side": "RIGHT",
+    "line": 372,
+    "original_line": 372,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 24,
+    "position": 24,
+    "subject_type": "line"
+  }
+]

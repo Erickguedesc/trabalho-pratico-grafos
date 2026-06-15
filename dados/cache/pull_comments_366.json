@@ -1,0 +1,768 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/324347443",
+    "pull_request_review_id": 288224481,
+    "id": 324347443,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNDM0NzQ0Mw==",
+    "diff_hunk": "@@ -32,8 +32,23 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         .config_value_i64(\"fish_style_pwd_dir_length\")\n         .unwrap_or(FISH_STYLE_PWD_DIR_LENGTH);\n \n+    // If use_logical_path is set, read from the envar PWD. This is done by many\n+    // logical path tools, including coreutils pwd when run as `pwd -L`. If this\n+    // fails, log an error and fall back to the path from context.\n+    let use_logical_path = module.config_value_bool(\"use_logical_path\").unwrap_or(true);\n+    let current_dir = if use_logical_path {",
+    "path": "src/modules/directory.rs",
+    "commit_id": "7bb06c9e242a2270f3768552c5fda4abf1ced6de",
+    "original_commit_id": "387a0d3d184d05e107f6aa0cdbaff8562b82e03c",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I had to change from taking a borrow of the context variable to taking a clone. Here's why: when using the logical path, we read `$PWD` from the environment to construct a PathBuf. Since the PathBuf is created within the scope of the match, it's dropped at the closing brace, so there's no way to return a borrow of it without having the reference outlive the data.\r\n\r\nThere are two alternate solutions to this:\r\n  - Set up `use_logical_path` as a prompt-wide config which controls how the `context` determines the `current_dir`\r\n  - Declare a mutable outside the match block, set its value within the match, then return a reference to it.",
+    "created_at": "2019-09-13T20:01:45Z",
+    "updated_at": "2019-09-20T16:00:31Z",
+    "html_url": "https://github.com/starship/starship/pull/366#discussion_r324347443",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/366",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/324347443"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/366#discussion_r324347443"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/366"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/324347443/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 39,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/324413709",
+    "pull_request_review_id": 288308980,
+    "id": 324413709,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNDQxMzcwOQ==",
+    "diff_hunk": "@@ -32,8 +32,23 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         .config_value_i64(\"fish_style_pwd_dir_length\")\n         .unwrap_or(FISH_STYLE_PWD_DIR_LENGTH);\n \n+    // If use_logical_path is set, read from the envar PWD. This is done by many\n+    // logical path tools, including coreutils pwd when run as `pwd -L`. If this\n+    // fails, log an error and fall back to the path from context.\n+    let use_logical_path = module.config_value_bool(\"use_logical_path\").unwrap_or(true);\n+    let current_dir = if use_logical_path {",
+    "path": "src/modules/directory.rs",
+    "commit_id": "7bb06c9e242a2270f3768552c5fda4abf1ced6de",
+    "original_commit_id": "387a0d3d184d05e107f6aa0cdbaff8562b82e03c",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Here's another option which doesn't require a copy:\r\n\r\n```rust\r\nlet use_logical_path = module.config_value_bool(\"use_logical_path\").unwrap_or(true);\r\nlet pwd_dir = if use_logical_path { std::env::var(\"PWD\").ok() } else { None };\r\nlet current_dir = pwd_dir\r\n    .as_ref()\r\n    .map(|d| Path::new(d))\r\n    .unwrap_or_else(|| context.current_dir.as_ref());\r\n```\r\n\r\nEDIT: Forgot to check `use_logical_path`",
+    "created_at": "2019-09-14T05:59:53Z",
+    "updated_at": "2019-09-20T16:00:31Z",
+    "html_url": "https://github.com/starship/starship/pull/366#discussion_r324413709",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/366",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/324413709"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/366#discussion_r324413709"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/366"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/324413709/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 39,
+    "side": "RIGHT",
+    "in_reply_to_id": 324347443,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/324426073",
+    "pull_request_review_id": 288323071,
+    "id": 324426073,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNDQyNjA3Mw==",
+    "diff_hunk": "@@ -32,8 +32,23 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         .config_value_i64(\"fish_style_pwd_dir_length\")\n         .unwrap_or(FISH_STYLE_PWD_DIR_LENGTH);\n \n+    // If use_logical_path is set, read from the envar PWD. This is done by many\n+    // logical path tools, including coreutils pwd when run as `pwd -L`. If this\n+    // fails, log an error and fall back to the path from context.\n+    let use_logical_path = module.config_value_bool(\"use_logical_path\").unwrap_or(true);\n+    let current_dir = if use_logical_path {",
+    "path": "src/modules/directory.rs",
+    "commit_id": "7bb06c9e242a2270f3768552c5fda4abf1ced6de",
+    "original_commit_id": "387a0d3d184d05e107f6aa0cdbaff8562b82e03c",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Thanks! I had the idea to use something like this while I was developing this thing, but I couldn't quite work out how to get the ownership to work.",
+    "created_at": "2019-09-14T14:26:18Z",
+    "updated_at": "2019-09-20T16:00:31Z",
+    "html_url": "https://github.com/starship/starship/pull/366#discussion_r324426073",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/366",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/324426073"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/366#discussion_r324426073"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/366"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/324426073/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 39,
+    "side": "RIGHT",
+    "in_reply_to_id": 324347443,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/324916787",
+    "pull_request_review_id": 288939614,
+    "id": 324916787,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNDkxNjc4Nw==",
+    "diff_hunk": "@@ -245,13 +245,14 @@ it would have been `nixpkgs/pkgs`.\n \n ### Options\n \n-| Variable                    | Default       | Description                                                                      |\n-| --------------------------- | ------------- | -------------------------------------------------------------------------------- |\n-| `truncation_length`         | `3`           | The number of parent folders that the current directory should be truncated to.  |\n-| `truncate_to_repo`          | `true`        | Whether or not to truncate to the root of the git repo that you're currently in. |\n-| `fish_style_pwd_dir_length` | `0`           | The number of characters to use when applying fish shell pwd path logic.         |\n-| `style`                     | `\"bold cyan\"` | The style for the module.                                                        |\n-| `disabled`                  | `false`       | Disables the `directory` module.                                                 |\n+| Variable                    | Default       | Description                                                                              |\n+| --------------------------- | ------------- | ---------------------------------------------------------------------------------------- |\n+| `truncation_length`         | `3`           | The number of parent folders that the current directory should be truncated to.          |\n+| `truncate_to_repo`          | `true`        | Whether or not to truncate to the root of the git repo that you're currently in.         |\n+| `fish_style_pwd_dir_length` | `0`           | The number of characters to use when applying fish shell pwd path logic.                 |\n+| `use_logical_path`          | `true`        | Displays the logical path provided by the shell (`PWD`) instead of the path from the OS. |",
+    "path": "docs/config/README.md",
+    "commit_id": "7bb06c9e242a2270f3768552c5fda4abf1ced6de",
+    "original_commit_id": "f837a169272f8ddf4cf034160963c6aea8708eb2",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think the majority of users wouldn't be able to tell the difference, let alone knowing that they want to change this configuration option.\r\n\r\nI really like what was being done here: https://github.com/starship/starship/pull/316/files/29f07ff0956e6a086baa3eb5ab067acb36bcb02e#diff-170a3f2c0a87c4f6c25b4d944865f1c8R121-R131\r\nWhat are your thoughts around adding an \"Advanced configuration\" table that is hidden within a spoiler for configuration options that wouldn't be immediately visible to the average user?",
+    "created_at": "2019-09-16T22:45:15Z",
+    "updated_at": "2019-09-20T16:00:31Z",
+    "html_url": "https://github.com/starship/starship/pull/366#discussion_r324916787",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/366",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/324916787"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/366#discussion_r324916787"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/366"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/324916787/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 253,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 25,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/324917265",
+    "pull_request_review_id": 288939614,
+    "id": 324917265,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNDkxNzI2NQ==",
+    "diff_hunk": "@@ -32,8 +32,25 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         .config_value_i64(\"fish_style_pwd_dir_length\")\n         .unwrap_or(FISH_STYLE_PWD_DIR_LENGTH);\n \n+    // Using environment PWD is the standard approach for determining logical path\n+    let use_logical_path = module.config_value_bool(\"use_logical_path\").unwrap_or(true);\n+    let logical_current_dir = if use_logical_path {",
+    "path": "src/modules/directory.rs",
+    "commit_id": "7bb06c9e242a2270f3768552c5fda4abf1ced6de",
+    "original_commit_id": "f837a169272f8ddf4cf034160963c6aea8708eb2",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Do all shells update `$PWD`?\r\nI think that resorting to hiding the directory if `$PWD` is unavailable could make it difficult for users to fix the problem. What are your thoughts around falling back to the physical path rather than returning `None`?",
+    "created_at": "2019-09-16T22:47:38Z",
+    "updated_at": "2019-09-20T16:00:31Z",
+    "html_url": "https://github.com/starship/starship/pull/366#discussion_r324917265",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/366",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/324917265"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/366#discussion_r324917265"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/366"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/324917265/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 38,
+    "original_line": 38,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 6,
+    "position": 7,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/324918018",
+    "pull_request_review_id": 288939614,
+    "id": 324918018,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNDkxODAxOA==",
+    "diff_hunk": "@@ -418,3 +418,62 @@ fn directory_in_git_repo_truncate_to_repo_true() -> io::Result<()> {\n     assert_eq!(expected, actual);\n     Ok(())\n }\n+\n+#[test]\n+#[ignore]\n+fn use_logical_and_physical_paths() -> io::Result<()> {\n+    /* This test is a bit of a smoke + mirrors trick because all it shows is that\n+    the application is reading the PWD envar correctly (if the shell doesn't\n+    correctly set PWD, we're still in trouble). */\n+    let tmp_dir = Path::new(\"/tmp/starship/porthole/viewport\");\n+    let dir = tmp_dir.join(\"directory\");\n+    let sym = tmp_dir.join(\"symlink_to_directory\");\n+    fs::create_dir_all(&dir)?;\n+    std::os::unix::fs::symlink(&dir, &sym).unwrap();",
+    "path": "tests/testsuite/directory.rs",
+    "commit_id": "7bb06c9e242a2270f3768552c5fda4abf1ced6de",
+    "original_commit_id": "f837a169272f8ddf4cf034160963c6aea8708eb2",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Could we add conditional compilation to use `std::os::windows::fs::{symlink_file, symlink_dir}` so that we don't have to revisit this test when adding Windows support?",
+    "created_at": "2019-09-16T22:50:43Z",
+    "updated_at": "2019-09-20T16:00:31Z",
+    "html_url": "https://github.com/starship/starship/pull/366#discussion_r324918018",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/366",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/324918018"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/366#discussion_r324918018"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/366"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/324918018/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 434,
+    "original_line": 434,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 15,
+    "position": 17,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/324920315",
+    "pull_request_review_id": 288944034,
+    "id": 324920315,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNDkyMDMxNQ==",
+    "diff_hunk": "@@ -245,13 +245,14 @@ it would have been `nixpkgs/pkgs`.\n \n ### Options\n \n-| Variable                    | Default       | Description                                                                      |\n-| --------------------------- | ------------- | -------------------------------------------------------------------------------- |\n-| `truncation_length`         | `3`           | The number of parent folders that the current directory should be truncated to.  |\n-| `truncate_to_repo`          | `true`        | Whether or not to truncate to the root of the git repo that you're currently in. |\n-| `fish_style_pwd_dir_length` | `0`           | The number of characters to use when applying fish shell pwd path logic.         |\n-| `style`                     | `\"bold cyan\"` | The style for the module.                                                        |\n-| `disabled`                  | `false`       | Disables the `directory` module.                                                 |\n+| Variable                    | Default       | Description                                                                              |\n+| --------------------------- | ------------- | ---------------------------------------------------------------------------------------- |\n+| `truncation_length`         | `3`           | The number of parent folders that the current directory should be truncated to.          |\n+| `truncate_to_repo`          | `true`        | Whether or not to truncate to the root of the git repo that you're currently in.         |\n+| `fish_style_pwd_dir_length` | `0`           | The number of characters to use when applying fish shell pwd path logic.                 |\n+| `use_logical_path`          | `true`        | Displays the logical path provided by the shell (`PWD`) instead of the path from the OS. |",
+    "path": "docs/config/README.md",
+    "commit_id": "7bb06c9e242a2270f3768552c5fda4abf1ced6de",
+    "original_commit_id": "f837a169272f8ddf4cf034160963c6aea8708eb2",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think that makes sense.",
+    "created_at": "2019-09-16T23:00:13Z",
+    "updated_at": "2019-09-20T16:00:31Z",
+    "html_url": "https://github.com/starship/starship/pull/366#discussion_r324920315",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/366",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/324920315"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/366#discussion_r324920315"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/366"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/324920315/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 253,
+    "side": "RIGHT",
+    "in_reply_to_id": 324916787,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 25,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/324920592",
+    "pull_request_review_id": 288944355,
+    "id": 324920592,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNDkyMDU5Mg==",
+    "diff_hunk": "@@ -32,8 +32,25 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         .config_value_i64(\"fish_style_pwd_dir_length\")\n         .unwrap_or(FISH_STYLE_PWD_DIR_LENGTH);\n \n+    // Using environment PWD is the standard approach for determining logical path\n+    let use_logical_path = module.config_value_bool(\"use_logical_path\").unwrap_or(true);\n+    let logical_current_dir = if use_logical_path {",
+    "path": "src/modules/directory.rs",
+    "commit_id": "7bb06c9e242a2270f3768552c5fda4abf1ced6de",
+    "original_commit_id": "f837a169272f8ddf4cf034160963c6aea8708eb2",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I can't guarantee that all shells update PWD, but the GNU Coreutils `pwd` specifically says in its manpage that it works by trying to read the value of the envar `PWD`. I figure if it's good enough for coreutils, it's good enough for us.\r\n\r\n",
+    "created_at": "2019-09-16T23:01:24Z",
+    "updated_at": "2019-09-20T16:00:31Z",
+    "html_url": "https://github.com/starship/starship/pull/366#discussion_r324920592",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/366",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/324920592"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/366#discussion_r324920592"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/366"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/324920592/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 38,
+    "original_line": 38,
+    "side": "RIGHT",
+    "in_reply_to_id": 324917265,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 6,
+    "position": 7,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/324922327",
+    "pull_request_review_id": 288946496,
+    "id": 324922327,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNDkyMjMyNw==",
+    "diff_hunk": "@@ -418,3 +418,62 @@ fn directory_in_git_repo_truncate_to_repo_true() -> io::Result<()> {\n     assert_eq!(expected, actual);\n     Ok(())\n }\n+\n+#[test]\n+#[ignore]\n+fn use_logical_and_physical_paths() -> io::Result<()> {\n+    /* This test is a bit of a smoke + mirrors trick because all it shows is that\n+    the application is reading the PWD envar correctly (if the shell doesn't\n+    correctly set PWD, we're still in trouble). */\n+    let tmp_dir = Path::new(\"/tmp/starship/porthole/viewport\");\n+    let dir = tmp_dir.join(\"directory\");\n+    let sym = tmp_dir.join(\"symlink_to_directory\");\n+    fs::create_dir_all(&dir)?;\n+    std::os::unix::fs::symlink(&dir, &sym).unwrap();",
+    "path": "tests/testsuite/directory.rs",
+    "commit_id": "7bb06c9e242a2270f3768552c5fda4abf1ced6de",
+    "original_commit_id": "f837a169272f8ddf4cf034160963c6aea8708eb2",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Can do! I just have no idea how to test it...",
+    "created_at": "2019-09-16T23:08:54Z",
+    "updated_at": "2019-09-20T16:00:31Z",
+    "html_url": "https://github.com/starship/starship/pull/366#discussion_r324922327",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/366",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/324922327"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/366#discussion_r324922327"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/366"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/324922327/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 434,
+    "original_line": 434,
+    "side": "RIGHT",
+    "in_reply_to_id": 324918018,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 15,
+    "position": 17,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/324927338",
+    "pull_request_review_id": 288952649,
+    "id": 324927338,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNDkyNzMzOA==",
+    "diff_hunk": "@@ -32,8 +32,25 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         .config_value_i64(\"fish_style_pwd_dir_length\")\n         .unwrap_or(FISH_STYLE_PWD_DIR_LENGTH);\n \n+    // Using environment PWD is the standard approach for determining logical path\n+    let use_logical_path = module.config_value_bool(\"use_logical_path\").unwrap_or(true);\n+    let logical_current_dir = if use_logical_path {",
+    "path": "src/modules/directory.rs",
+    "commit_id": "7bb06c9e242a2270f3768552c5fda4abf1ced6de",
+    "original_commit_id": "f837a169272f8ddf4cf034160963c6aea8708eb2",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "As far as falling back to physical path goes: that's actually the intention of this code, so I guess I need to add some comments to make that clear. If the logical path is unreadable, we log an error and ~return None~ assign `None` to the logical path value (this is just so that the user will have a clue as to why the behavior has changed).\r\n\r\nFurther down, `None` values are converted into the physical path (or at least, the path returned by `std::env::current_dir`, which might not actually be the physical path).\r\n\r\nThe total effect of this is that if `use_logical_path` is false OR `PWD` is unreadable, the prompt will fall back to the physical path.",
+    "created_at": "2019-09-16T23:31:46Z",
+    "updated_at": "2019-09-20T16:00:31Z",
+    "html_url": "https://github.com/starship/starship/pull/366#discussion_r324927338",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/366",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/324927338"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/366#discussion_r324927338"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/366"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/324927338/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 38,
+    "original_line": 38,
+    "side": "RIGHT",
+    "in_reply_to_id": 324917265,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 6,
+    "position": 7,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/325467134",
+    "pull_request_review_id": 289650295,
+    "id": 325467134,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyNTQ2NzEzNA==",
+    "diff_hunk": "@@ -418,3 +418,62 @@ fn directory_in_git_repo_truncate_to_repo_true() -> io::Result<()> {\n     assert_eq!(expected, actual);\n     Ok(())\n }\n+\n+#[test]\n+#[ignore]\n+fn use_logical_and_physical_paths() -> io::Result<()> {\n+    /* This test is a bit of a smoke + mirrors trick because all it shows is that\n+    the application is reading the PWD envar correctly (if the shell doesn't\n+    correctly set PWD, we're still in trouble). */\n+    let tmp_dir = Path::new(\"/tmp/starship/porthole/viewport\");\n+    let dir = tmp_dir.join(\"directory\");\n+    let sym = tmp_dir.join(\"symlink_to_directory\");\n+    fs::create_dir_all(&dir)?;\n+    std::os::unix::fs::symlink(&dir, &sym).unwrap();",
+    "path": "tests/testsuite/directory.rs",
+    "commit_id": "7bb06c9e242a2270f3768552c5fda4abf1ced6de",
+    "original_commit_id": "f837a169272f8ddf4cf034160963c6aea8708eb2",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "@matchai Done, but for now I'm just going to have to hope that this does what I want on Windows.",
+    "created_at": "2019-09-18T03:16:23Z",
+    "updated_at": "2019-09-20T16:00:31Z",
+    "html_url": "https://github.com/starship/starship/pull/366#discussion_r325467134",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/366",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/325467134"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/366#discussion_r325467134"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/366"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/325467134/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 434,
+    "original_line": 434,
+    "side": "RIGHT",
+    "in_reply_to_id": 324918018,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 15,
+    "position": 17,
+    "subject_type": "line"
+  }
+]

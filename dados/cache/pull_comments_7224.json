@@ -1,0 +1,1462 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2683305200",
+    "pull_request_review_id": 3651994893,
+    "id": 2683305200,
+    "node_id": "PRRC_kwDOCqswNs6f7_zw",
+    "diff_hunk": "",
+    "path": "src/modules/jujutsu_bookmark.rs",
+    "commit_id": "082349ac815e661846e9615f04b04dba687fd0e0",
+    "original_commit_id": "217698804f75372a8bd074a21038b55d9c88e605",
+    "user": {
+      "login": "johnstegeman",
+      "id": 6601691,
+      "node_id": "MDQ6VXNlcjY2MDE2OTE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6601691?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/johnstegeman",
+      "html_url": "https://github.com/johnstegeman",
+      "followers_url": "https://api.github.com/users/johnstegeman/followers",
+      "following_url": "https://api.github.com/users/johnstegeman/following{/other_user}",
+      "gists_url": "https://api.github.com/users/johnstegeman/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/johnstegeman/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/johnstegeman/subscriptions",
+      "organizations_url": "https://api.github.com/users/johnstegeman/orgs",
+      "repos_url": "https://api.github.com/users/johnstegeman/repos",
+      "events_url": "https://api.github.com/users/johnstegeman/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/johnstegeman/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think a more common workflow is when bookmarks dont point to the current change. Many people (myself included) move the bookmark just before pushing, so the bookmark is often on @-",
+    "created_at": "2026-01-12T17:56:05Z",
+    "updated_at": "2026-01-12T17:56:05Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2683305200",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2683305200"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2683305200"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2683305200/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1,
+    "original_line": 1,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 1,
+    "position": 1,
+    "subject_type": "file"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2683474821",
+    "pull_request_review_id": 3652210108,
+    "id": 2683474821,
+    "node_id": "PRRC_kwDOCqswNs6f8pOF",
+    "diff_hunk": "@@ -0,0 +1,578 @@\n+use super::{Context, Module, ModuleConfig, vcs};\n+\n+use crate::configs::jujutsu_status::JjStatusConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the Jujutsu status in the current directory\n+///\n+/// Will display the current change ID, bookmarks, and status if the current directory is a jj repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jujutsu_status\");\n+    let config: JjStatusConfig = JjStatusConfig::try_load(module.config);\n+\n+    // We default to disabled=true, so we have to check after loading our config module.\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    vcs::discover_repo_root(context, vcs::Vcs::Jujutsu)?;\n+\n+    let jujutsu_info = get_jujutsu_info(context)?;\n+\n+    let bookmarks = if jujutsu_info.bookmarks.is_empty() {\n+        None\n+    } else {\n+        Some(\n+            jujutsu_info\n+                .bookmarks\n+                .iter()\n+                .map(|b| {\n+                    let mut s = b.name.clone();\n+                    let local_ahead = b.remote_behind;\n+                    let local_behind = b.remote_ahead;\n+                    let tracked_diverged = b.is_tracked && (local_ahead > 0 || local_behind > 0);\n+                    if tracked_diverged {\n+                        s.push('*');\n+                    }\n+                    if b.is_tracked {\n+                        if local_ahead > 0 && local_behind > 0 {\n+                            s.push_str(&format!(\" ⇕⇡{}⇣{}\", local_ahead, local_behind));\n+                        } else if local_ahead > 0 {\n+                            s.push_str(&format!(\" ⇡{}\", local_ahead));\n+                        } else if local_behind > 0 {\n+                            s.push_str(&format!(\" ⇣{}\", local_behind));\n+                        }\n+                    }\n+                    s\n+                })\n+                .collect::<Vec<String>>()\n+                .join(\" \"),\n+        )\n+    };\n+\n+    let conflicted = if jujutsu_info.conflicted {\n+        Some(config.conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let divergent = if jujutsu_info.divergent {\n+        Some(config.divergent)\n+    } else {\n+        None\n+    };\n+\n+    let hidden = if jujutsu_info.hidden {\n+        Some(config.hidden)\n+    } else {\n+        None\n+    };\n+\n+    let immutable = if jujutsu_info.immutable {\n+        Some(config.immutable)\n+    } else {\n+        None\n+    };\n+\n+    let bookmark_conflicted = if jujutsu_info.bookmark_conflicted {\n+        Some(config.bookmark_conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                \"conflicted_style\" => Some(Ok(config.conflicted_style)),\n+                \"divergent_style\" => Some(Ok(config.divergent_style)),\n+                \"hidden_style\" => Some(Ok(config.hidden_style)),\n+                \"immutable_style\" => Some(Ok(config.immutable_style)),\n+                \"bookmark_conflicted_style\" => Some(Ok(config.bookmark_conflicted_style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"change_id\" => Some(Ok(jujutsu_info.change_id.as_str())),\n+                \"bookmarks\" => bookmarks.as_deref().map(Ok),\n+                \"conflicted\" => conflicted.map(Ok),\n+                \"divergent\" => divergent.map(Ok),\n+                \"hidden\" => hidden.map(Ok),\n+                \"immutable\" => immutable.map(Ok),\n+                \"bookmark_conflicted\" => bookmark_conflicted.map(Ok),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `jujutsu_status`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct JjRepoInfo {\n+    pub change_id: String,\n+    pub commit_id: String,\n+    pub bookmarks: Vec<BookmarkInfo>,\n+    pub conflicted: bool,\n+    pub divergent: bool,\n+    pub hidden: bool,\n+    pub immutable: bool,\n+    pub bookmark_conflicted: bool,\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct BookmarkInfo {\n+    pub name: String,\n+    pub remote_ahead: usize,\n+    pub remote_behind: usize,\n+    pub is_tracked: bool,\n+}\n+\n+fn normalize_id_length(label: &str, length: isize) -> isize {\n+    if length <= 0 {\n+        log::warn!(\"{label} should be a positive value, found {length}\");\n+        7 // default to 7\n+    } else {\n+        length\n+    }\n+}\n+\n+const TRACKED_BOOKMARKS_TEMPLATE: &str = r#\"if(remote, name ++ \"\\x1f\" ++ tracking_ahead_count.lower() ++ \"\\x1f\" ++ tracking_behind_count.lower() ++ \"\\n\", \"\")\"#;\n+\n+fn jujutsu_log_template(change_id_length: isize, commit_hash_length: isize) -> String {\n+    format!(",
+    "path": "src/modules/jujutsu_status.rs",
+    "commit_id": "745b366bb561e0edd7681f24d6b82b2a1ef0228b",
+    "original_commit_id": "217698804f75372a8bd074a21038b55d9c88e605",
+    "user": {
+      "login": "bryceberger",
+      "id": 9222441,
+      "node_id": "MDQ6VXNlcjkyMjI0NDE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9222441?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bryceberger",
+      "html_url": "https://github.com/bryceberger",
+      "followers_url": "https://api.github.com/users/bryceberger/followers",
+      "following_url": "https://api.github.com/users/bryceberger/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bryceberger/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bryceberger/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bryceberger/subscriptions",
+      "organizations_url": "https://api.github.com/users/bryceberger/orgs",
+      "repos_url": "https://api.github.com/users/bryceberger/repos",
+      "events_url": "https://api.github.com/users/bryceberger/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bryceberger/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```\njoin(\"\\n\",\n    change_id.short({}),\n    ...\n)\n```",
+    "created_at": "2026-01-12T18:47:16Z",
+    "updated_at": "2026-01-12T18:47:16Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2683474821",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2683474821"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2683474821"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2683474821/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 154,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 154,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2683483600",
+    "pull_request_review_id": 3652222607,
+    "id": 2683483600,
+    "node_id": "PRRC_kwDOCqswNs6f8rXQ",
+    "diff_hunk": "@@ -0,0 +1,578 @@\n+use super::{Context, Module, ModuleConfig, vcs};\n+\n+use crate::configs::jujutsu_status::JjStatusConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the Jujutsu status in the current directory\n+///\n+/// Will display the current change ID, bookmarks, and status if the current directory is a jj repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jujutsu_status\");\n+    let config: JjStatusConfig = JjStatusConfig::try_load(module.config);\n+\n+    // We default to disabled=true, so we have to check after loading our config module.\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    vcs::discover_repo_root(context, vcs::Vcs::Jujutsu)?;\n+\n+    let jujutsu_info = get_jujutsu_info(context)?;\n+\n+    let bookmarks = if jujutsu_info.bookmarks.is_empty() {\n+        None\n+    } else {\n+        Some(\n+            jujutsu_info\n+                .bookmarks\n+                .iter()\n+                .map(|b| {\n+                    let mut s = b.name.clone();\n+                    let local_ahead = b.remote_behind;\n+                    let local_behind = b.remote_ahead;\n+                    let tracked_diverged = b.is_tracked && (local_ahead > 0 || local_behind > 0);\n+                    if tracked_diverged {\n+                        s.push('*');\n+                    }\n+                    if b.is_tracked {\n+                        if local_ahead > 0 && local_behind > 0 {\n+                            s.push_str(&format!(\" ⇕⇡{}⇣{}\", local_ahead, local_behind));\n+                        } else if local_ahead > 0 {\n+                            s.push_str(&format!(\" ⇡{}\", local_ahead));\n+                        } else if local_behind > 0 {\n+                            s.push_str(&format!(\" ⇣{}\", local_behind));\n+                        }\n+                    }\n+                    s\n+                })\n+                .collect::<Vec<String>>()\n+                .join(\" \"),\n+        )\n+    };\n+\n+    let conflicted = if jujutsu_info.conflicted {\n+        Some(config.conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let divergent = if jujutsu_info.divergent {\n+        Some(config.divergent)\n+    } else {\n+        None\n+    };\n+\n+    let hidden = if jujutsu_info.hidden {\n+        Some(config.hidden)\n+    } else {\n+        None\n+    };\n+\n+    let immutable = if jujutsu_info.immutable {\n+        Some(config.immutable)\n+    } else {\n+        None\n+    };\n+\n+    let bookmark_conflicted = if jujutsu_info.bookmark_conflicted {\n+        Some(config.bookmark_conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                \"conflicted_style\" => Some(Ok(config.conflicted_style)),\n+                \"divergent_style\" => Some(Ok(config.divergent_style)),\n+                \"hidden_style\" => Some(Ok(config.hidden_style)),\n+                \"immutable_style\" => Some(Ok(config.immutable_style)),\n+                \"bookmark_conflicted_style\" => Some(Ok(config.bookmark_conflicted_style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"change_id\" => Some(Ok(jujutsu_info.change_id.as_str())),\n+                \"bookmarks\" => bookmarks.as_deref().map(Ok),\n+                \"conflicted\" => conflicted.map(Ok),\n+                \"divergent\" => divergent.map(Ok),\n+                \"hidden\" => hidden.map(Ok),\n+                \"immutable\" => immutable.map(Ok),\n+                \"bookmark_conflicted\" => bookmark_conflicted.map(Ok),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `jujutsu_status`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct JjRepoInfo {\n+    pub change_id: String,\n+    pub commit_id: String,\n+    pub bookmarks: Vec<BookmarkInfo>,\n+    pub conflicted: bool,\n+    pub divergent: bool,\n+    pub hidden: bool,\n+    pub immutable: bool,\n+    pub bookmark_conflicted: bool,\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct BookmarkInfo {\n+    pub name: String,\n+    pub remote_ahead: usize,\n+    pub remote_behind: usize,\n+    pub is_tracked: bool,\n+}\n+\n+fn normalize_id_length(label: &str, length: isize) -> isize {\n+    if length <= 0 {\n+        log::warn!(\"{label} should be a positive value, found {length}\");\n+        7 // default to 7\n+    } else {\n+        length\n+    }\n+}\n+\n+const TRACKED_BOOKMARKS_TEMPLATE: &str = r#\"if(remote, name ++ \"\\x1f\" ++ tracking_ahead_count.lower() ++ \"\\x1f\" ++ tracking_behind_count.lower() ++ \"\\n\", \"\")\"#;\n+\n+fn jujutsu_log_template(change_id_length: isize, commit_hash_length: isize) -> String {",
+    "path": "src/modules/jujutsu_status.rs",
+    "commit_id": "217698804f75372a8bd074a21038b55d9c88e605",
+    "original_commit_id": "217698804f75372a8bd074a21038b55d9c88e605",
+    "user": {
+      "login": "bryceberger",
+      "id": 9222441,
+      "node_id": "MDQ6VXNlcjkyMjI0NDE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9222441?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bryceberger",
+      "html_url": "https://github.com/bryceberger",
+      "followers_url": "https://api.github.com/users/bryceberger/followers",
+      "following_url": "https://api.github.com/users/bryceberger/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bryceberger/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bryceberger/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bryceberger/subscriptions",
+      "organizations_url": "https://api.github.com/users/bryceberger/orgs",
+      "repos_url": "https://api.github.com/users/bryceberger/repos",
+      "events_url": "https://api.github.com/users/bryceberger/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bryceberger/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`isize` seems like the wrong parameter for these. Negative values don't make sense.\n\nSeparately, you _could_ skip allocating this string by using the `config()` jj template function:\n\n```\njj --config custom.starship.change_id_length=... log -T \"config('custom.starship.change_id_length').as_integer()\"\n```",
+    "created_at": "2026-01-12T18:50:08Z",
+    "updated_at": "2026-01-12T18:50:08Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2683483600",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2683483600"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2683483600"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2683483600/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 153,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 153,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2683503346",
+    "pull_request_review_id": 3652249933,
+    "id": 2683503346,
+    "node_id": "PRRC_kwDOCqswNs6f8wLy",
+    "diff_hunk": "@@ -0,0 +1,578 @@\n+use super::{Context, Module, ModuleConfig, vcs};\n+\n+use crate::configs::jujutsu_status::JjStatusConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the Jujutsu status in the current directory\n+///\n+/// Will display the current change ID, bookmarks, and status if the current directory is a jj repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jujutsu_status\");\n+    let config: JjStatusConfig = JjStatusConfig::try_load(module.config);\n+\n+    // We default to disabled=true, so we have to check after loading our config module.\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    vcs::discover_repo_root(context, vcs::Vcs::Jujutsu)?;\n+\n+    let jujutsu_info = get_jujutsu_info(context)?;\n+\n+    let bookmarks = if jujutsu_info.bookmarks.is_empty() {\n+        None\n+    } else {\n+        Some(\n+            jujutsu_info\n+                .bookmarks\n+                .iter()\n+                .map(|b| {\n+                    let mut s = b.name.clone();\n+                    let local_ahead = b.remote_behind;\n+                    let local_behind = b.remote_ahead;\n+                    let tracked_diverged = b.is_tracked && (local_ahead > 0 || local_behind > 0);\n+                    if tracked_diverged {\n+                        s.push('*');\n+                    }\n+                    if b.is_tracked {\n+                        if local_ahead > 0 && local_behind > 0 {\n+                            s.push_str(&format!(\" ⇕⇡{}⇣{}\", local_ahead, local_behind));\n+                        } else if local_ahead > 0 {\n+                            s.push_str(&format!(\" ⇡{}\", local_ahead));\n+                        } else if local_behind > 0 {\n+                            s.push_str(&format!(\" ⇣{}\", local_behind));\n+                        }\n+                    }\n+                    s\n+                })\n+                .collect::<Vec<String>>()\n+                .join(\" \"),\n+        )\n+    };\n+\n+    let conflicted = if jujutsu_info.conflicted {\n+        Some(config.conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let divergent = if jujutsu_info.divergent {\n+        Some(config.divergent)\n+    } else {\n+        None\n+    };\n+\n+    let hidden = if jujutsu_info.hidden {\n+        Some(config.hidden)\n+    } else {\n+        None\n+    };\n+\n+    let immutable = if jujutsu_info.immutable {\n+        Some(config.immutable)\n+    } else {\n+        None\n+    };\n+\n+    let bookmark_conflicted = if jujutsu_info.bookmark_conflicted {\n+        Some(config.bookmark_conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                \"conflicted_style\" => Some(Ok(config.conflicted_style)),\n+                \"divergent_style\" => Some(Ok(config.divergent_style)),\n+                \"hidden_style\" => Some(Ok(config.hidden_style)),\n+                \"immutable_style\" => Some(Ok(config.immutable_style)),\n+                \"bookmark_conflicted_style\" => Some(Ok(config.bookmark_conflicted_style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"change_id\" => Some(Ok(jujutsu_info.change_id.as_str())),\n+                \"bookmarks\" => bookmarks.as_deref().map(Ok),\n+                \"conflicted\" => conflicted.map(Ok),\n+                \"divergent\" => divergent.map(Ok),\n+                \"hidden\" => hidden.map(Ok),\n+                \"immutable\" => immutable.map(Ok),\n+                \"bookmark_conflicted\" => bookmark_conflicted.map(Ok),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `jujutsu_status`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct JjRepoInfo {\n+    pub change_id: String,\n+    pub commit_id: String,\n+    pub bookmarks: Vec<BookmarkInfo>,\n+    pub conflicted: bool,\n+    pub divergent: bool,\n+    pub hidden: bool,\n+    pub immutable: bool,\n+    pub bookmark_conflicted: bool,\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct BookmarkInfo {\n+    pub name: String,\n+    pub remote_ahead: usize,\n+    pub remote_behind: usize,\n+    pub is_tracked: bool,\n+}\n+\n+fn normalize_id_length(label: &str, length: isize) -> isize {\n+    if length <= 0 {\n+        log::warn!(\"{label} should be a positive value, found {length}\");\n+        7 // default to 7\n+    } else {\n+        length\n+    }\n+}\n+\n+const TRACKED_BOOKMARKS_TEMPLATE: &str = r#\"if(remote, name ++ \"\\x1f\" ++ tracking_ahead_count.lower() ++ \"\\x1f\" ++ tracking_behind_count.lower() ++ \"\\n\", \"\")\"#;\n+\n+fn jujutsu_log_template(change_id_length: isize, commit_hash_length: isize) -> String {\n+    format!(\n+        r#\"change_id.short({}) ++ \"\\n\"\n+        ++ local_bookmarks.map(|b| b.name()).join(\"\\x1e\") ++ \"\\n\"\n+        ++ remote_bookmarks.filter(|b| b.tracked()).map(|b| b.name() ++ \"\\x1f\" ++ b.tracking_ahead_count().lower() ++ \"\\x1f\" ++ b.tracking_behind_count().lower()).join(\"\\x1e\") ++ \"\\n\"\n+        ++ commit_id.short({}) ++ \"\\n\"\n+        ++ conflict ++ \"\\n\"\n+        ++ divergent ++ \"\\n\"\n+        ++ hidden ++ \"\\n\"\n+        ++ immutable ++ \"\\n\"\n+        ++ (local_bookmarks.any(|b| b.conflict()) || remote_bookmarks.any(|b| b.conflict()))\"#,\n+        change_id_length, commit_hash_length\n+    )\n+}\n+\n+fn parse_tracked_bookmarks(output: &str) -> std::collections::HashMap<String, (usize, usize)> {\n+    output\n+        .split(|c| c == '\\n' || c == '\\x1e')\n+        .filter(|entry| !entry.is_empty())\n+        .filter_map(|entry| {\n+            let mut parts = entry.split('\\x1f');\n+            let name = parts.next()?.to_string();\n+            let ahead = parts.next().and_then(|s| s.parse().ok()).unwrap_or(0);\n+            let behind = parts.next().and_then(|s| s.parse().ok()).unwrap_or(0);\n+            Some((name, ahead, behind))\n+        })\n+        .fold(\n+            std::collections::HashMap::new(),\n+            |mut map, (name, ahead, behind)| {\n+                map.entry(name)\n+                    .and_modify(|counts: &mut (usize, usize)| {\n+                        counts.0 = counts.0.max(ahead);\n+                        counts.1 = counts.1.max(behind);\n+                    })\n+                    .or_insert((ahead, behind));\n+                map\n+            },\n+        )\n+}\n+\n+fn merge_tracked_bookmarks(\n+    target: &mut std::collections::HashMap<String, (usize, usize)>,\n+    incoming: std::collections::HashMap<String, (usize, usize)>,\n+) {\n+    for (name, (ahead, behind)) in incoming {\n+        target\n+            .entry(name)\n+            .and_modify(|counts| {\n+                counts.0 = counts.0.max(ahead);\n+                counts.1 = counts.1.max(behind);\n+            })\n+            .or_insert((ahead, behind));\n+    }\n+}\n+\n+pub(crate) fn get_jujutsu_info(ctx: &Context) -> Option<JjRepoInfo> {\n+    // Only run in jj repositories\n+    vcs::discover_repo_root(ctx, vcs::Vcs::Jujutsu)?;\n+\n+    let change_id_length = crate::configs::jujutsu_change::JujutsuChangeConfig::try_load(\n+        ctx.config.get_module_config(\"jujutsu_change\"),\n+    )\n+    .change_id_length;\n+    let commit_hash_length = crate::configs::jujutsu_commit::JujutsuCommitConfig::try_load(\n+        ctx.config.get_module_config(\"jujutsu_commit\"),\n+    )\n+    .commit_hash_length;\n+\n+    let change_id_length = normalize_id_length(\"change_id_length\", change_id_length);\n+    let commit_hash_length = normalize_id_length(\"commit_hash_length\", commit_hash_length);\n+\n+    // Use a single jj log command with a template to get all needed information\n+    // We use --ignore-working-copy to avoid automatic snapshotting\n+    let output = ctx\n+        .exec_cmd(\n+            \"jj\",\n+            &[\n+                \"log\",\n+                \"--no-graph\",\n+                \"-r\",\n+                \"@\",\n+                \"--ignore-working-copy\",\n+                \"-T\",\n+                &jujutsu_log_template(change_id_length, commit_hash_length),\n+            ],\n+        )?\n+        .stdout;\n+\n+    let mut lines = output.lines();\n+\n+    let change_id = lines.next()?.to_string();\n+    let bookmarks_str = lines.next().unwrap_or(\"\");",
+    "path": "src/modules/jujutsu_status.rs",
+    "commit_id": "745b366bb561e0edd7681f24d6b82b2a1ef0228b",
+    "original_commit_id": "217698804f75372a8bd074a21038b55d9c88e605",
+    "user": {
+      "login": "bryceberger",
+      "id": 9222441,
+      "node_id": "MDQ6VXNlcjkyMjI0NDE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9222441?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bryceberger",
+      "html_url": "https://github.com/bryceberger",
+      "followers_url": "https://api.github.com/users/bryceberger/followers",
+      "following_url": "https://api.github.com/users/bryceberger/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bryceberger/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bryceberger/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bryceberger/subscriptions",
+      "organizations_url": "https://api.github.com/users/bryceberger/orgs",
+      "repos_url": "https://api.github.com/users/bryceberger/repos",
+      "events_url": "https://api.github.com/users/bryceberger/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bryceberger/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "These should never be empty, based on the template given. You exit early if the `change_id` is unavailable, why not these?",
+    "created_at": "2026-01-12T18:56:38Z",
+    "updated_at": "2026-01-12T18:56:38Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2683503346",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2683503346"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2683503346"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2683503346/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 244,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 244,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2683505057",
+    "pull_request_review_id": 3652252197,
+    "id": 2683505057,
+    "node_id": "PRRC_kwDOCqswNs6f8wmh",
+    "diff_hunk": "@@ -0,0 +1,578 @@\n+use super::{Context, Module, ModuleConfig, vcs};\n+\n+use crate::configs::jujutsu_status::JjStatusConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the Jujutsu status in the current directory\n+///\n+/// Will display the current change ID, bookmarks, and status if the current directory is a jj repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jujutsu_status\");\n+    let config: JjStatusConfig = JjStatusConfig::try_load(module.config);\n+\n+    // We default to disabled=true, so we have to check after loading our config module.\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    vcs::discover_repo_root(context, vcs::Vcs::Jujutsu)?;\n+\n+    let jujutsu_info = get_jujutsu_info(context)?;\n+\n+    let bookmarks = if jujutsu_info.bookmarks.is_empty() {\n+        None\n+    } else {\n+        Some(\n+            jujutsu_info\n+                .bookmarks\n+                .iter()\n+                .map(|b| {\n+                    let mut s = b.name.clone();\n+                    let local_ahead = b.remote_behind;\n+                    let local_behind = b.remote_ahead;\n+                    let tracked_diverged = b.is_tracked && (local_ahead > 0 || local_behind > 0);\n+                    if tracked_diverged {\n+                        s.push('*');\n+                    }\n+                    if b.is_tracked {\n+                        if local_ahead > 0 && local_behind > 0 {\n+                            s.push_str(&format!(\" ⇕⇡{}⇣{}\", local_ahead, local_behind));\n+                        } else if local_ahead > 0 {\n+                            s.push_str(&format!(\" ⇡{}\", local_ahead));\n+                        } else if local_behind > 0 {\n+                            s.push_str(&format!(\" ⇣{}\", local_behind));\n+                        }\n+                    }\n+                    s\n+                })\n+                .collect::<Vec<String>>()\n+                .join(\" \"),\n+        )\n+    };\n+\n+    let conflicted = if jujutsu_info.conflicted {\n+        Some(config.conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let divergent = if jujutsu_info.divergent {\n+        Some(config.divergent)\n+    } else {\n+        None\n+    };\n+\n+    let hidden = if jujutsu_info.hidden {\n+        Some(config.hidden)\n+    } else {\n+        None\n+    };\n+\n+    let immutable = if jujutsu_info.immutable {\n+        Some(config.immutable)\n+    } else {\n+        None\n+    };\n+\n+    let bookmark_conflicted = if jujutsu_info.bookmark_conflicted {\n+        Some(config.bookmark_conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                \"conflicted_style\" => Some(Ok(config.conflicted_style)),\n+                \"divergent_style\" => Some(Ok(config.divergent_style)),\n+                \"hidden_style\" => Some(Ok(config.hidden_style)),\n+                \"immutable_style\" => Some(Ok(config.immutable_style)),\n+                \"bookmark_conflicted_style\" => Some(Ok(config.bookmark_conflicted_style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"change_id\" => Some(Ok(jujutsu_info.change_id.as_str())),\n+                \"bookmarks\" => bookmarks.as_deref().map(Ok),\n+                \"conflicted\" => conflicted.map(Ok),\n+                \"divergent\" => divergent.map(Ok),\n+                \"hidden\" => hidden.map(Ok),\n+                \"immutable\" => immutable.map(Ok),\n+                \"bookmark_conflicted\" => bookmark_conflicted.map(Ok),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `jujutsu_status`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct JjRepoInfo {\n+    pub change_id: String,\n+    pub commit_id: String,\n+    pub bookmarks: Vec<BookmarkInfo>,\n+    pub conflicted: bool,\n+    pub divergent: bool,\n+    pub hidden: bool,\n+    pub immutable: bool,\n+    pub bookmark_conflicted: bool,\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct BookmarkInfo {\n+    pub name: String,\n+    pub remote_ahead: usize,\n+    pub remote_behind: usize,\n+    pub is_tracked: bool,\n+}\n+\n+fn normalize_id_length(label: &str, length: isize) -> isize {\n+    if length <= 0 {\n+        log::warn!(\"{label} should be a positive value, found {length}\");\n+        7 // default to 7\n+    } else {\n+        length\n+    }\n+}\n+\n+const TRACKED_BOOKMARKS_TEMPLATE: &str = r#\"if(remote, name ++ \"\\x1f\" ++ tracking_ahead_count.lower() ++ \"\\x1f\" ++ tracking_behind_count.lower() ++ \"\\n\", \"\")\"#;\n+\n+fn jujutsu_log_template(change_id_length: isize, commit_hash_length: isize) -> String {\n+    format!(\n+        r#\"change_id.short({}) ++ \"\\n\"\n+        ++ local_bookmarks.map(|b| b.name()).join(\"\\x1e\") ++ \"\\n\"\n+        ++ remote_bookmarks.filter(|b| b.tracked()).map(|b| b.name() ++ \"\\x1f\" ++ b.tracking_ahead_count().lower() ++ \"\\x1f\" ++ b.tracking_behind_count().lower()).join(\"\\x1e\") ++ \"\\n\"\n+        ++ commit_id.short({}) ++ \"\\n\"\n+        ++ conflict ++ \"\\n\"\n+        ++ divergent ++ \"\\n\"\n+        ++ hidden ++ \"\\n\"\n+        ++ immutable ++ \"\\n\"\n+        ++ (local_bookmarks.any(|b| b.conflict()) || remote_bookmarks.any(|b| b.conflict()))\"#,\n+        change_id_length, commit_hash_length\n+    )\n+}\n+\n+fn parse_tracked_bookmarks(output: &str) -> std::collections::HashMap<String, (usize, usize)> {\n+    output\n+        .split(|c| c == '\\n' || c == '\\x1e')\n+        .filter(|entry| !entry.is_empty())\n+        .filter_map(|entry| {\n+            let mut parts = entry.split('\\x1f');\n+            let name = parts.next()?.to_string();\n+            let ahead = parts.next().and_then(|s| s.parse().ok()).unwrap_or(0);\n+            let behind = parts.next().and_then(|s| s.parse().ok()).unwrap_or(0);\n+            Some((name, ahead, behind))\n+        })\n+        .fold(\n+            std::collections::HashMap::new(),\n+            |mut map, (name, ahead, behind)| {\n+                map.entry(name)\n+                    .and_modify(|counts: &mut (usize, usize)| {\n+                        counts.0 = counts.0.max(ahead);\n+                        counts.1 = counts.1.max(behind);\n+                    })\n+                    .or_insert((ahead, behind));\n+                map\n+            },\n+        )\n+}\n+\n+fn merge_tracked_bookmarks(\n+    target: &mut std::collections::HashMap<String, (usize, usize)>,\n+    incoming: std::collections::HashMap<String, (usize, usize)>,\n+) {\n+    for (name, (ahead, behind)) in incoming {\n+        target\n+            .entry(name)\n+            .and_modify(|counts| {\n+                counts.0 = counts.0.max(ahead);\n+                counts.1 = counts.1.max(behind);\n+            })\n+            .or_insert((ahead, behind));\n+    }\n+}\n+\n+pub(crate) fn get_jujutsu_info(ctx: &Context) -> Option<JjRepoInfo> {\n+    // Only run in jj repositories\n+    vcs::discover_repo_root(ctx, vcs::Vcs::Jujutsu)?;\n+\n+    let change_id_length = crate::configs::jujutsu_change::JujutsuChangeConfig::try_load(\n+        ctx.config.get_module_config(\"jujutsu_change\"),\n+    )\n+    .change_id_length;\n+    let commit_hash_length = crate::configs::jujutsu_commit::JujutsuCommitConfig::try_load(\n+        ctx.config.get_module_config(\"jujutsu_commit\"),\n+    )\n+    .commit_hash_length;\n+\n+    let change_id_length = normalize_id_length(\"change_id_length\", change_id_length);\n+    let commit_hash_length = normalize_id_length(\"commit_hash_length\", commit_hash_length);\n+\n+    // Use a single jj log command with a template to get all needed information\n+    // We use --ignore-working-copy to avoid automatic snapshotting\n+    let output = ctx\n+        .exec_cmd(\n+            \"jj\",\n+            &[\n+                \"log\",\n+                \"--no-graph\",\n+                \"-r\",\n+                \"@\",\n+                \"--ignore-working-copy\",\n+                \"-T\",\n+                &jujutsu_log_template(change_id_length, commit_hash_length),\n+            ],\n+        )?\n+        .stdout;\n+\n+    let mut lines = output.lines();\n+\n+    let change_id = lines.next()?.to_string();\n+    let bookmarks_str = lines.next().unwrap_or(\"\");\n+    let tracked_bookmarks_str = lines.next().unwrap_or(\"\");\n+    let mut tracked_bookmarks = parse_tracked_bookmarks(tracked_bookmarks_str);\n+    let tracked_bookmarks_output = ctx\n+        .exec_cmd(\n+            \"jj\",\n+            &[\n+                \"bookmark\",\n+                \"list\",\n+                \"--tracked\",\n+                \"--ignore-working-copy\",\n+                \"-T\",\n+                TRACKED_BOOKMARKS_TEMPLATE,\n+            ],\n+        )\n+        .map(|output| output.stdout)\n+        .unwrap_or_default();\n+    merge_tracked_bookmarks(\n+        &mut tracked_bookmarks,\n+        parse_tracked_bookmarks(&tracked_bookmarks_output),\n+    );\n+    let bookmarks = if bookmarks_str.is_empty() {",
+    "path": "src/modules/jujutsu_status.rs",
+    "commit_id": "745b366bb561e0edd7681f24d6b82b2a1ef0228b",
+    "original_commit_id": "217698804f75372a8bd074a21038b55d9c88e605",
+    "user": {
+      "login": "bryceberger",
+      "id": 9222441,
+      "node_id": "MDQ6VXNlcjkyMjI0NDE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9222441?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bryceberger",
+      "html_url": "https://github.com/bryceberger",
+      "followers_url": "https://api.github.com/users/bryceberger/followers",
+      "following_url": "https://api.github.com/users/bryceberger/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bryceberger/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bryceberger/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bryceberger/subscriptions",
+      "organizations_url": "https://api.github.com/users/bryceberger/orgs",
+      "repos_url": "https://api.github.com/users/bryceberger/repos",
+      "events_url": "https://api.github.com/users/bryceberger/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bryceberger/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "You don't need this condition: `\"\".split('\\x1e').collect()` will result in an empty vec already.",
+    "created_at": "2026-01-12T18:57:16Z",
+    "updated_at": "2026-01-12T18:57:16Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2683505057",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2683505057"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2683505057"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2683505057/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 265,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 265,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2683610071",
+    "pull_request_review_id": 3652393809,
+    "id": 2683610071,
+    "node_id": "PRRC_kwDOCqswNs6f9KPX",
+    "diff_hunk": "",
+    "path": "src/modules/jujutsu_status.rs",
+    "commit_id": "745b366bb561e0edd7681f24d6b82b2a1ef0228b",
+    "original_commit_id": "217698804f75372a8bd074a21038b55d9c88e605",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'd prefer moving the shared implementation to `src/modules/utils/`",
+    "created_at": "2026-01-12T19:32:13Z",
+    "updated_at": "2026-01-12T19:32:13Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2683610071",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2683610071"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2683610071"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2683610071/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1,
+    "original_line": 1,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 1,
+    "position": 1,
+    "subject_type": "file"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2683670604",
+    "pull_request_review_id": 3652470392,
+    "id": 2683670604,
+    "node_id": "PRRC_kwDOCqswNs6f9ZBM",
+    "diff_hunk": "@@ -0,0 +1,578 @@\n+use super::{Context, Module, ModuleConfig, vcs};\n+\n+use crate::configs::jujutsu_status::JjStatusConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the Jujutsu status in the current directory\n+///\n+/// Will display the current change ID, bookmarks, and status if the current directory is a jj repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jujutsu_status\");\n+    let config: JjStatusConfig = JjStatusConfig::try_load(module.config);\n+\n+    // We default to disabled=true, so we have to check after loading our config module.\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    vcs::discover_repo_root(context, vcs::Vcs::Jujutsu)?;\n+\n+    let jujutsu_info = get_jujutsu_info(context)?;\n+\n+    let bookmarks = if jujutsu_info.bookmarks.is_empty() {\n+        None\n+    } else {\n+        Some(\n+            jujutsu_info\n+                .bookmarks\n+                .iter()\n+                .map(|b| {\n+                    let mut s = b.name.clone();\n+                    let local_ahead = b.remote_behind;\n+                    let local_behind = b.remote_ahead;\n+                    let tracked_diverged = b.is_tracked && (local_ahead > 0 || local_behind > 0);\n+                    if tracked_diverged {\n+                        s.push('*');\n+                    }\n+                    if b.is_tracked {\n+                        if local_ahead > 0 && local_behind > 0 {\n+                            s.push_str(&format!(\" ⇕⇡{}⇣{}\", local_ahead, local_behind));\n+                        } else if local_ahead > 0 {\n+                            s.push_str(&format!(\" ⇡{}\", local_ahead));\n+                        } else if local_behind > 0 {\n+                            s.push_str(&format!(\" ⇣{}\", local_behind));\n+                        }\n+                    }\n+                    s\n+                })\n+                .collect::<Vec<String>>()\n+                .join(\" \"),\n+        )\n+    };\n+\n+    let conflicted = if jujutsu_info.conflicted {\n+        Some(config.conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let divergent = if jujutsu_info.divergent {\n+        Some(config.divergent)\n+    } else {\n+        None\n+    };\n+\n+    let hidden = if jujutsu_info.hidden {\n+        Some(config.hidden)\n+    } else {\n+        None\n+    };\n+\n+    let immutable = if jujutsu_info.immutable {\n+        Some(config.immutable)\n+    } else {\n+        None\n+    };\n+\n+    let bookmark_conflicted = if jujutsu_info.bookmark_conflicted {\n+        Some(config.bookmark_conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                \"conflicted_style\" => Some(Ok(config.conflicted_style)),\n+                \"divergent_style\" => Some(Ok(config.divergent_style)),\n+                \"hidden_style\" => Some(Ok(config.hidden_style)),\n+                \"immutable_style\" => Some(Ok(config.immutable_style)),\n+                \"bookmark_conflicted_style\" => Some(Ok(config.bookmark_conflicted_style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"change_id\" => Some(Ok(jujutsu_info.change_id.as_str())),\n+                \"bookmarks\" => bookmarks.as_deref().map(Ok),\n+                \"conflicted\" => conflicted.map(Ok),\n+                \"divergent\" => divergent.map(Ok),\n+                \"hidden\" => hidden.map(Ok),\n+                \"immutable\" => immutable.map(Ok),\n+                \"bookmark_conflicted\" => bookmark_conflicted.map(Ok),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `jujutsu_status`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct JjRepoInfo {\n+    pub change_id: String,\n+    pub commit_id: String,\n+    pub bookmarks: Vec<BookmarkInfo>,\n+    pub conflicted: bool,\n+    pub divergent: bool,\n+    pub hidden: bool,\n+    pub immutable: bool,\n+    pub bookmark_conflicted: bool,\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct BookmarkInfo {\n+    pub name: String,\n+    pub remote_ahead: usize,\n+    pub remote_behind: usize,\n+    pub is_tracked: bool,\n+}\n+\n+fn normalize_id_length(label: &str, length: isize) -> isize {\n+    if length <= 0 {\n+        log::warn!(\"{label} should be a positive value, found {length}\");\n+        7 // default to 7\n+    } else {\n+        length\n+    }\n+}\n+\n+const TRACKED_BOOKMARKS_TEMPLATE: &str = r#\"if(remote, name ++ \"\\x1f\" ++ tracking_ahead_count.lower() ++ \"\\x1f\" ++ tracking_behind_count.lower() ++ \"\\n\", \"\")\"#;\n+\n+fn jujutsu_log_template(change_id_length: isize, commit_hash_length: isize) -> String {\n+    format!(\n+        r#\"change_id.short({}) ++ \"\\n\"\n+        ++ local_bookmarks.map(|b| b.name()).join(\"\\x1e\") ++ \"\\n\"\n+        ++ remote_bookmarks.filter(|b| b.tracked()).map(|b| b.name() ++ \"\\x1f\" ++ b.tracking_ahead_count().lower() ++ \"\\x1f\" ++ b.tracking_behind_count().lower()).join(\"\\x1e\") ++ \"\\n\"\n+        ++ commit_id.short({}) ++ \"\\n\"\n+        ++ conflict ++ \"\\n\"\n+        ++ divergent ++ \"\\n\"\n+        ++ hidden ++ \"\\n\"\n+        ++ immutable ++ \"\\n\"",
+    "path": "src/modules/jujutsu_status.rs",
+    "commit_id": "745b366bb561e0edd7681f24d6b82b2a1ef0228b",
+    "original_commit_id": "217698804f75372a8bd074a21038b55d9c88e605",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please consider using JSON output for more robust parsing.",
+    "created_at": "2026-01-12T19:46:53Z",
+    "updated_at": "2026-01-12T19:46:53Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2683670604",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2683670604"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2683670604"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2683670604/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 155,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 162,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 162,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2684080139",
+    "pull_request_review_id": 3652944330,
+    "id": 2684080139,
+    "node_id": "PRRC_kwDOCqswNs6f-9AL",
+    "diff_hunk": "@@ -0,0 +1,578 @@\n+use super::{Context, Module, ModuleConfig, vcs};\n+\n+use crate::configs::jujutsu_status::JjStatusConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the Jujutsu status in the current directory\n+///\n+/// Will display the current change ID, bookmarks, and status if the current directory is a jj repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jujutsu_status\");\n+    let config: JjStatusConfig = JjStatusConfig::try_load(module.config);\n+\n+    // We default to disabled=true, so we have to check after loading our config module.\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    vcs::discover_repo_root(context, vcs::Vcs::Jujutsu)?;\n+\n+    let jujutsu_info = get_jujutsu_info(context)?;\n+\n+    let bookmarks = if jujutsu_info.bookmarks.is_empty() {\n+        None\n+    } else {\n+        Some(\n+            jujutsu_info\n+                .bookmarks\n+                .iter()\n+                .map(|b| {\n+                    let mut s = b.name.clone();\n+                    let local_ahead = b.remote_behind;\n+                    let local_behind = b.remote_ahead;\n+                    let tracked_diverged = b.is_tracked && (local_ahead > 0 || local_behind > 0);\n+                    if tracked_diverged {\n+                        s.push('*');\n+                    }\n+                    if b.is_tracked {\n+                        if local_ahead > 0 && local_behind > 0 {\n+                            s.push_str(&format!(\" ⇕⇡{}⇣{}\", local_ahead, local_behind));\n+                        } else if local_ahead > 0 {\n+                            s.push_str(&format!(\" ⇡{}\", local_ahead));\n+                        } else if local_behind > 0 {\n+                            s.push_str(&format!(\" ⇣{}\", local_behind));\n+                        }\n+                    }\n+                    s\n+                })\n+                .collect::<Vec<String>>()\n+                .join(\" \"),\n+        )\n+    };\n+\n+    let conflicted = if jujutsu_info.conflicted {\n+        Some(config.conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let divergent = if jujutsu_info.divergent {\n+        Some(config.divergent)\n+    } else {\n+        None\n+    };\n+\n+    let hidden = if jujutsu_info.hidden {\n+        Some(config.hidden)\n+    } else {\n+        None\n+    };\n+\n+    let immutable = if jujutsu_info.immutable {\n+        Some(config.immutable)\n+    } else {\n+        None\n+    };\n+\n+    let bookmark_conflicted = if jujutsu_info.bookmark_conflicted {\n+        Some(config.bookmark_conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                \"conflicted_style\" => Some(Ok(config.conflicted_style)),\n+                \"divergent_style\" => Some(Ok(config.divergent_style)),\n+                \"hidden_style\" => Some(Ok(config.hidden_style)),\n+                \"immutable_style\" => Some(Ok(config.immutable_style)),\n+                \"bookmark_conflicted_style\" => Some(Ok(config.bookmark_conflicted_style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"change_id\" => Some(Ok(jujutsu_info.change_id.as_str())),\n+                \"bookmarks\" => bookmarks.as_deref().map(Ok),\n+                \"conflicted\" => conflicted.map(Ok),\n+                \"divergent\" => divergent.map(Ok),\n+                \"hidden\" => hidden.map(Ok),\n+                \"immutable\" => immutable.map(Ok),\n+                \"bookmark_conflicted\" => bookmark_conflicted.map(Ok),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `jujutsu_status`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct JjRepoInfo {\n+    pub change_id: String,\n+    pub commit_id: String,\n+    pub bookmarks: Vec<BookmarkInfo>,\n+    pub conflicted: bool,\n+    pub divergent: bool,\n+    pub hidden: bool,\n+    pub immutable: bool,\n+    pub bookmark_conflicted: bool,\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct BookmarkInfo {\n+    pub name: String,\n+    pub remote_ahead: usize,\n+    pub remote_behind: usize,\n+    pub is_tracked: bool,\n+}\n+\n+fn normalize_id_length(label: &str, length: isize) -> isize {\n+    if length <= 0 {\n+        log::warn!(\"{label} should be a positive value, found {length}\");\n+        7 // default to 7\n+    } else {\n+        length\n+    }\n+}\n+\n+const TRACKED_BOOKMARKS_TEMPLATE: &str = r#\"if(remote, name ++ \"\\x1f\" ++ tracking_ahead_count.lower() ++ \"\\x1f\" ++ tracking_behind_count.lower() ++ \"\\n\", \"\")\"#;\n+\n+fn jujutsu_log_template(change_id_length: isize, commit_hash_length: isize) -> String {\n+    format!(\n+        r#\"change_id.short({}) ++ \"\\n\"\n+        ++ local_bookmarks.map(|b| b.name()).join(\"\\x1e\") ++ \"\\n\"\n+        ++ remote_bookmarks.filter(|b| b.tracked()).map(|b| b.name() ++ \"\\x1f\" ++ b.tracking_ahead_count().lower() ++ \"\\x1f\" ++ b.tracking_behind_count().lower()).join(\"\\x1e\") ++ \"\\n\"\n+        ++ commit_id.short({}) ++ \"\\n\"\n+        ++ conflict ++ \"\\n\"\n+        ++ divergent ++ \"\\n\"\n+        ++ hidden ++ \"\\n\"\n+        ++ immutable ++ \"\\n\"",
+    "path": "src/modules/jujutsu_status.rs",
+    "commit_id": "745b366bb561e0edd7681f24d6b82b2a1ef0228b",
+    "original_commit_id": "217698804f75372a8bd074a21038b55d9c88e605",
+    "user": {
+      "login": "bryceberger",
+      "id": 9222441,
+      "node_id": "MDQ6VXNlcjkyMjI0NDE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9222441?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bryceberger",
+      "html_url": "https://github.com/bryceberger",
+      "followers_url": "https://api.github.com/users/bryceberger/followers",
+      "following_url": "https://api.github.com/users/bryceberger/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bryceberger/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bryceberger/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bryceberger/subscriptions",
+      "organizations_url": "https://api.github.com/users/bryceberger/orgs",
+      "repos_url": "https://api.github.com/users/bryceberger/repos",
+      "events_url": "https://api.github.com/users/bryceberger/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bryceberger/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Would JSON be more robust? Perhaps less code, if you can `#[derive(Deserialize)]` it, but RS is an illegal character for all the fields given, so will never be output, except from its use in the template.",
+    "created_at": "2026-01-12T22:11:14Z",
+    "updated_at": "2026-01-12T22:11:14Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2684080139",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2684080139"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2684080139"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2684080139/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 155,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 162,
+    "side": "RIGHT",
+    "in_reply_to_id": 2683670604,
+    "author_association": "NONE",
+    "original_position": 162,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2686765746",
+    "pull_request_review_id": 3656232513,
+    "id": 2686765746,
+    "node_id": "PRRC_kwDOCqswNs6gJMqy",
+    "diff_hunk": "@@ -0,0 +1,578 @@\n+use super::{Context, Module, ModuleConfig, vcs};\n+\n+use crate::configs::jujutsu_status::JjStatusConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the Jujutsu status in the current directory\n+///\n+/// Will display the current change ID, bookmarks, and status if the current directory is a jj repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jujutsu_status\");\n+    let config: JjStatusConfig = JjStatusConfig::try_load(module.config);\n+\n+    // We default to disabled=true, so we have to check after loading our config module.\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    vcs::discover_repo_root(context, vcs::Vcs::Jujutsu)?;\n+\n+    let jujutsu_info = get_jujutsu_info(context)?;\n+\n+    let bookmarks = if jujutsu_info.bookmarks.is_empty() {\n+        None\n+    } else {\n+        Some(\n+            jujutsu_info\n+                .bookmarks\n+                .iter()\n+                .map(|b| {\n+                    let mut s = b.name.clone();\n+                    let local_ahead = b.remote_behind;\n+                    let local_behind = b.remote_ahead;\n+                    let tracked_diverged = b.is_tracked && (local_ahead > 0 || local_behind > 0);\n+                    if tracked_diverged {\n+                        s.push('*');\n+                    }\n+                    if b.is_tracked {\n+                        if local_ahead > 0 && local_behind > 0 {\n+                            s.push_str(&format!(\" ⇕⇡{}⇣{}\", local_ahead, local_behind));\n+                        } else if local_ahead > 0 {\n+                            s.push_str(&format!(\" ⇡{}\", local_ahead));\n+                        } else if local_behind > 0 {\n+                            s.push_str(&format!(\" ⇣{}\", local_behind));\n+                        }\n+                    }\n+                    s\n+                })\n+                .collect::<Vec<String>>()\n+                .join(\" \"),\n+        )\n+    };\n+\n+    let conflicted = if jujutsu_info.conflicted {\n+        Some(config.conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let divergent = if jujutsu_info.divergent {\n+        Some(config.divergent)\n+    } else {\n+        None\n+    };\n+\n+    let hidden = if jujutsu_info.hidden {\n+        Some(config.hidden)\n+    } else {\n+        None\n+    };\n+\n+    let immutable = if jujutsu_info.immutable {\n+        Some(config.immutable)\n+    } else {\n+        None\n+    };\n+\n+    let bookmark_conflicted = if jujutsu_info.bookmark_conflicted {\n+        Some(config.bookmark_conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                \"conflicted_style\" => Some(Ok(config.conflicted_style)),\n+                \"divergent_style\" => Some(Ok(config.divergent_style)),\n+                \"hidden_style\" => Some(Ok(config.hidden_style)),\n+                \"immutable_style\" => Some(Ok(config.immutable_style)),\n+                \"bookmark_conflicted_style\" => Some(Ok(config.bookmark_conflicted_style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"change_id\" => Some(Ok(jujutsu_info.change_id.as_str())),\n+                \"bookmarks\" => bookmarks.as_deref().map(Ok),\n+                \"conflicted\" => conflicted.map(Ok),\n+                \"divergent\" => divergent.map(Ok),\n+                \"hidden\" => hidden.map(Ok),\n+                \"immutable\" => immutable.map(Ok),\n+                \"bookmark_conflicted\" => bookmark_conflicted.map(Ok),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `jujutsu_status`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct JjRepoInfo {\n+    pub change_id: String,\n+    pub commit_id: String,\n+    pub bookmarks: Vec<BookmarkInfo>,\n+    pub conflicted: bool,\n+    pub divergent: bool,\n+    pub hidden: bool,\n+    pub immutable: bool,\n+    pub bookmark_conflicted: bool,\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct BookmarkInfo {\n+    pub name: String,\n+    pub remote_ahead: usize,\n+    pub remote_behind: usize,\n+    pub is_tracked: bool,\n+}\n+\n+fn normalize_id_length(label: &str, length: isize) -> isize {\n+    if length <= 0 {\n+        log::warn!(\"{label} should be a positive value, found {length}\");\n+        7 // default to 7\n+    } else {\n+        length\n+    }\n+}\n+\n+const TRACKED_BOOKMARKS_TEMPLATE: &str = r#\"if(remote, name ++ \"\\x1f\" ++ tracking_ahead_count.lower() ++ \"\\x1f\" ++ tracking_behind_count.lower() ++ \"\\n\", \"\")\"#;\n+\n+fn jujutsu_log_template(change_id_length: isize, commit_hash_length: isize) -> String {\n+    format!(",
+    "path": "src/modules/jujutsu_status.rs",
+    "commit_id": "745b366bb561e0edd7681f24d6b82b2a1ef0228b",
+    "original_commit_id": "217698804f75372a8bd074a21038b55d9c88e605",
+    "user": {
+      "login": "RodEsp",
+      "id": 1084688,
+      "node_id": "MDQ6VXNlcjEwODQ2ODg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1084688?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/RodEsp",
+      "html_url": "https://github.com/RodEsp",
+      "followers_url": "https://api.github.com/users/RodEsp/followers",
+      "following_url": "https://api.github.com/users/RodEsp/following{/other_user}",
+      "gists_url": "https://api.github.com/users/RodEsp/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/RodEsp/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/RodEsp/subscriptions",
+      "organizations_url": "https://api.github.com/users/RodEsp/orgs",
+      "repos_url": "https://api.github.com/users/RodEsp/repos",
+      "events_url": "https://api.github.com/users/RodEsp/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/RodEsp/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Do you mean [slice.join()](https://doc.rust-lang.org/std/primitive.slice.html#method.join), or something else?\r\n\r\nI'm not sure `slice.join()` ends up being any cleaner.",
+    "created_at": "2026-01-13T14:50:36Z",
+    "updated_at": "2026-01-13T14:50:36Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2686765746",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2686765746"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2686765746"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2686765746/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 154,
+    "side": "RIGHT",
+    "in_reply_to_id": 2683474821,
+    "author_association": "NONE",
+    "original_position": 154,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2686767666",
+    "pull_request_review_id": 3656234669,
+    "id": 2686767666,
+    "node_id": "PRRC_kwDOCqswNs6gJNIy",
+    "diff_hunk": "@@ -0,0 +1,578 @@\n+use super::{Context, Module, ModuleConfig, vcs};\n+\n+use crate::configs::jujutsu_status::JjStatusConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the Jujutsu status in the current directory\n+///\n+/// Will display the current change ID, bookmarks, and status if the current directory is a jj repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jujutsu_status\");\n+    let config: JjStatusConfig = JjStatusConfig::try_load(module.config);\n+\n+    // We default to disabled=true, so we have to check after loading our config module.\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    vcs::discover_repo_root(context, vcs::Vcs::Jujutsu)?;\n+\n+    let jujutsu_info = get_jujutsu_info(context)?;\n+\n+    let bookmarks = if jujutsu_info.bookmarks.is_empty() {\n+        None\n+    } else {\n+        Some(\n+            jujutsu_info\n+                .bookmarks\n+                .iter()\n+                .map(|b| {\n+                    let mut s = b.name.clone();\n+                    let local_ahead = b.remote_behind;\n+                    let local_behind = b.remote_ahead;\n+                    let tracked_diverged = b.is_tracked && (local_ahead > 0 || local_behind > 0);\n+                    if tracked_diverged {\n+                        s.push('*');\n+                    }\n+                    if b.is_tracked {\n+                        if local_ahead > 0 && local_behind > 0 {\n+                            s.push_str(&format!(\" ⇕⇡{}⇣{}\", local_ahead, local_behind));\n+                        } else if local_ahead > 0 {\n+                            s.push_str(&format!(\" ⇡{}\", local_ahead));\n+                        } else if local_behind > 0 {\n+                            s.push_str(&format!(\" ⇣{}\", local_behind));\n+                        }\n+                    }\n+                    s\n+                })\n+                .collect::<Vec<String>>()\n+                .join(\" \"),\n+        )\n+    };\n+\n+    let conflicted = if jujutsu_info.conflicted {\n+        Some(config.conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let divergent = if jujutsu_info.divergent {\n+        Some(config.divergent)\n+    } else {\n+        None\n+    };\n+\n+    let hidden = if jujutsu_info.hidden {\n+        Some(config.hidden)\n+    } else {\n+        None\n+    };\n+\n+    let immutable = if jujutsu_info.immutable {\n+        Some(config.immutable)\n+    } else {\n+        None\n+    };\n+\n+    let bookmark_conflicted = if jujutsu_info.bookmark_conflicted {\n+        Some(config.bookmark_conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                \"conflicted_style\" => Some(Ok(config.conflicted_style)),\n+                \"divergent_style\" => Some(Ok(config.divergent_style)),\n+                \"hidden_style\" => Some(Ok(config.hidden_style)),\n+                \"immutable_style\" => Some(Ok(config.immutable_style)),\n+                \"bookmark_conflicted_style\" => Some(Ok(config.bookmark_conflicted_style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"change_id\" => Some(Ok(jujutsu_info.change_id.as_str())),\n+                \"bookmarks\" => bookmarks.as_deref().map(Ok),\n+                \"conflicted\" => conflicted.map(Ok),\n+                \"divergent\" => divergent.map(Ok),\n+                \"hidden\" => hidden.map(Ok),\n+                \"immutable\" => immutable.map(Ok),\n+                \"bookmark_conflicted\" => bookmark_conflicted.map(Ok),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `jujutsu_status`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct JjRepoInfo {\n+    pub change_id: String,\n+    pub commit_id: String,\n+    pub bookmarks: Vec<BookmarkInfo>,\n+    pub conflicted: bool,\n+    pub divergent: bool,\n+    pub hidden: bool,\n+    pub immutable: bool,\n+    pub bookmark_conflicted: bool,\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct BookmarkInfo {\n+    pub name: String,\n+    pub remote_ahead: usize,\n+    pub remote_behind: usize,\n+    pub is_tracked: bool,\n+}\n+\n+fn normalize_id_length(label: &str, length: isize) -> isize {\n+    if length <= 0 {\n+        log::warn!(\"{label} should be a positive value, found {length}\");\n+        7 // default to 7\n+    } else {\n+        length\n+    }\n+}\n+\n+const TRACKED_BOOKMARKS_TEMPLATE: &str = r#\"if(remote, name ++ \"\\x1f\" ++ tracking_ahead_count.lower() ++ \"\\x1f\" ++ tracking_behind_count.lower() ++ \"\\n\", \"\")\"#;\n+\n+fn jujutsu_log_template(change_id_length: isize, commit_hash_length: isize) -> String {",
+    "path": "src/modules/jujutsu_status.rs",
+    "commit_id": "217698804f75372a8bd074a21038b55d9c88e605",
+    "original_commit_id": "217698804f75372a8bd074a21038b55d9c88e605",
+    "user": {
+      "login": "RodEsp",
+      "id": 1084688,
+      "node_id": "MDQ6VXNlcjEwODQ2ODg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1084688?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/RodEsp",
+      "html_url": "https://github.com/RodEsp",
+      "followers_url": "https://api.github.com/users/RodEsp/followers",
+      "following_url": "https://api.github.com/users/RodEsp/following{/other_user}",
+      "gists_url": "https://api.github.com/users/RodEsp/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/RodEsp/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/RodEsp/subscriptions",
+      "organizations_url": "https://api.github.com/users/RodEsp/orgs",
+      "repos_url": "https://api.github.com/users/RodEsp/repos",
+      "events_url": "https://api.github.com/users/RodEsp/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/RodEsp/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "🤦🏼‍♂️ good catch, thanks.",
+    "created_at": "2026-01-13T14:51:01Z",
+    "updated_at": "2026-01-13T14:51:01Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2686767666",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2686767666"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2686767666"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2686767666/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 153,
+    "side": "RIGHT",
+    "in_reply_to_id": 2683483600,
+    "author_association": "NONE",
+    "original_position": 153,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2686931762",
+    "pull_request_review_id": 3656442785,
+    "id": 2686931762,
+    "node_id": "PRRC_kwDOCqswNs6gJ1My",
+    "diff_hunk": "@@ -0,0 +1,578 @@\n+use super::{Context, Module, ModuleConfig, vcs};\n+\n+use crate::configs::jujutsu_status::JjStatusConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the Jujutsu status in the current directory\n+///\n+/// Will display the current change ID, bookmarks, and status if the current directory is a jj repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jujutsu_status\");\n+    let config: JjStatusConfig = JjStatusConfig::try_load(module.config);\n+\n+    // We default to disabled=true, so we have to check after loading our config module.\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    vcs::discover_repo_root(context, vcs::Vcs::Jujutsu)?;\n+\n+    let jujutsu_info = get_jujutsu_info(context)?;\n+\n+    let bookmarks = if jujutsu_info.bookmarks.is_empty() {\n+        None\n+    } else {\n+        Some(\n+            jujutsu_info\n+                .bookmarks\n+                .iter()\n+                .map(|b| {\n+                    let mut s = b.name.clone();\n+                    let local_ahead = b.remote_behind;\n+                    let local_behind = b.remote_ahead;\n+                    let tracked_diverged = b.is_tracked && (local_ahead > 0 || local_behind > 0);\n+                    if tracked_diverged {\n+                        s.push('*');\n+                    }\n+                    if b.is_tracked {\n+                        if local_ahead > 0 && local_behind > 0 {\n+                            s.push_str(&format!(\" ⇕⇡{}⇣{}\", local_ahead, local_behind));\n+                        } else if local_ahead > 0 {\n+                            s.push_str(&format!(\" ⇡{}\", local_ahead));\n+                        } else if local_behind > 0 {\n+                            s.push_str(&format!(\" ⇣{}\", local_behind));\n+                        }\n+                    }\n+                    s\n+                })\n+                .collect::<Vec<String>>()\n+                .join(\" \"),\n+        )\n+    };\n+\n+    let conflicted = if jujutsu_info.conflicted {\n+        Some(config.conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let divergent = if jujutsu_info.divergent {\n+        Some(config.divergent)\n+    } else {\n+        None\n+    };\n+\n+    let hidden = if jujutsu_info.hidden {\n+        Some(config.hidden)\n+    } else {\n+        None\n+    };\n+\n+    let immutable = if jujutsu_info.immutable {\n+        Some(config.immutable)\n+    } else {\n+        None\n+    };\n+\n+    let bookmark_conflicted = if jujutsu_info.bookmark_conflicted {\n+        Some(config.bookmark_conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                \"conflicted_style\" => Some(Ok(config.conflicted_style)),\n+                \"divergent_style\" => Some(Ok(config.divergent_style)),\n+                \"hidden_style\" => Some(Ok(config.hidden_style)),\n+                \"immutable_style\" => Some(Ok(config.immutable_style)),\n+                \"bookmark_conflicted_style\" => Some(Ok(config.bookmark_conflicted_style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"change_id\" => Some(Ok(jujutsu_info.change_id.as_str())),\n+                \"bookmarks\" => bookmarks.as_deref().map(Ok),\n+                \"conflicted\" => conflicted.map(Ok),\n+                \"divergent\" => divergent.map(Ok),\n+                \"hidden\" => hidden.map(Ok),\n+                \"immutable\" => immutable.map(Ok),\n+                \"bookmark_conflicted\" => bookmark_conflicted.map(Ok),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `jujutsu_status`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct JjRepoInfo {\n+    pub change_id: String,\n+    pub commit_id: String,\n+    pub bookmarks: Vec<BookmarkInfo>,\n+    pub conflicted: bool,\n+    pub divergent: bool,\n+    pub hidden: bool,\n+    pub immutable: bool,\n+    pub bookmark_conflicted: bool,\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct BookmarkInfo {\n+    pub name: String,\n+    pub remote_ahead: usize,\n+    pub remote_behind: usize,\n+    pub is_tracked: bool,\n+}\n+\n+fn normalize_id_length(label: &str, length: isize) -> isize {\n+    if length <= 0 {\n+        log::warn!(\"{label} should be a positive value, found {length}\");\n+        7 // default to 7\n+    } else {\n+        length\n+    }\n+}\n+\n+const TRACKED_BOOKMARKS_TEMPLATE: &str = r#\"if(remote, name ++ \"\\x1f\" ++ tracking_ahead_count.lower() ++ \"\\x1f\" ++ tracking_behind_count.lower() ++ \"\\n\", \"\")\"#;\n+\n+fn jujutsu_log_template(change_id_length: isize, commit_hash_length: isize) -> String {\n+    format!(",
+    "path": "src/modules/jujutsu_status.rs",
+    "commit_id": "745b366bb561e0edd7681f24d6b82b2a1ef0228b",
+    "original_commit_id": "217698804f75372a8bd074a21038b55d9c88e605",
+    "user": {
+      "login": "bryceberger",
+      "id": 9222441,
+      "node_id": "MDQ6VXNlcjkyMjI0NDE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9222441?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bryceberger",
+      "html_url": "https://github.com/bryceberger",
+      "followers_url": "https://api.github.com/users/bryceberger/followers",
+      "following_url": "https://api.github.com/users/bryceberger/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bryceberger/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bryceberger/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bryceberger/subscriptions",
+      "organizations_url": "https://api.github.com/users/bryceberger/orgs",
+      "repos_url": "https://api.github.com/users/bryceberger/repos",
+      "events_url": "https://api.github.com/users/bryceberger/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bryceberger/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The template function in jj. See `jj help -k templates`",
+    "created_at": "2026-01-13T15:31:56Z",
+    "updated_at": "2026-01-13T15:31:56Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2686931762",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2686931762"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2686931762"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2686931762/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 154,
+    "side": "RIGHT",
+    "in_reply_to_id": 2683474821,
+    "author_association": "NONE",
+    "original_position": 154,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2687188839",
+    "pull_request_review_id": 3656761193,
+    "id": 2687188839,
+    "node_id": "PRRC_kwDOCqswNs6gKz9n",
+    "diff_hunk": "@@ -0,0 +1,578 @@\n+use super::{Context, Module, ModuleConfig, vcs};\n+\n+use crate::configs::jujutsu_status::JjStatusConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the Jujutsu status in the current directory\n+///\n+/// Will display the current change ID, bookmarks, and status if the current directory is a jj repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jujutsu_status\");\n+    let config: JjStatusConfig = JjStatusConfig::try_load(module.config);\n+\n+    // We default to disabled=true, so we have to check after loading our config module.\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    vcs::discover_repo_root(context, vcs::Vcs::Jujutsu)?;\n+\n+    let jujutsu_info = get_jujutsu_info(context)?;\n+\n+    let bookmarks = if jujutsu_info.bookmarks.is_empty() {\n+        None\n+    } else {\n+        Some(\n+            jujutsu_info\n+                .bookmarks\n+                .iter()\n+                .map(|b| {\n+                    let mut s = b.name.clone();\n+                    let local_ahead = b.remote_behind;\n+                    let local_behind = b.remote_ahead;\n+                    let tracked_diverged = b.is_tracked && (local_ahead > 0 || local_behind > 0);\n+                    if tracked_diverged {\n+                        s.push('*');\n+                    }\n+                    if b.is_tracked {\n+                        if local_ahead > 0 && local_behind > 0 {\n+                            s.push_str(&format!(\" ⇕⇡{}⇣{}\", local_ahead, local_behind));\n+                        } else if local_ahead > 0 {\n+                            s.push_str(&format!(\" ⇡{}\", local_ahead));\n+                        } else if local_behind > 0 {\n+                            s.push_str(&format!(\" ⇣{}\", local_behind));\n+                        }\n+                    }\n+                    s\n+                })\n+                .collect::<Vec<String>>()\n+                .join(\" \"),\n+        )\n+    };\n+\n+    let conflicted = if jujutsu_info.conflicted {\n+        Some(config.conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let divergent = if jujutsu_info.divergent {\n+        Some(config.divergent)\n+    } else {\n+        None\n+    };\n+\n+    let hidden = if jujutsu_info.hidden {\n+        Some(config.hidden)\n+    } else {\n+        None\n+    };\n+\n+    let immutable = if jujutsu_info.immutable {\n+        Some(config.immutable)\n+    } else {\n+        None\n+    };\n+\n+    let bookmark_conflicted = if jujutsu_info.bookmark_conflicted {\n+        Some(config.bookmark_conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                \"conflicted_style\" => Some(Ok(config.conflicted_style)),\n+                \"divergent_style\" => Some(Ok(config.divergent_style)),\n+                \"hidden_style\" => Some(Ok(config.hidden_style)),\n+                \"immutable_style\" => Some(Ok(config.immutable_style)),\n+                \"bookmark_conflicted_style\" => Some(Ok(config.bookmark_conflicted_style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"change_id\" => Some(Ok(jujutsu_info.change_id.as_str())),\n+                \"bookmarks\" => bookmarks.as_deref().map(Ok),\n+                \"conflicted\" => conflicted.map(Ok),\n+                \"divergent\" => divergent.map(Ok),\n+                \"hidden\" => hidden.map(Ok),\n+                \"immutable\" => immutable.map(Ok),\n+                \"bookmark_conflicted\" => bookmark_conflicted.map(Ok),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `jujutsu_status`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct JjRepoInfo {\n+    pub change_id: String,\n+    pub commit_id: String,\n+    pub bookmarks: Vec<BookmarkInfo>,\n+    pub conflicted: bool,\n+    pub divergent: bool,\n+    pub hidden: bool,\n+    pub immutable: bool,\n+    pub bookmark_conflicted: bool,\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct BookmarkInfo {\n+    pub name: String,\n+    pub remote_ahead: usize,\n+    pub remote_behind: usize,\n+    pub is_tracked: bool,\n+}\n+\n+fn normalize_id_length(label: &str, length: isize) -> isize {\n+    if length <= 0 {\n+        log::warn!(\"{label} should be a positive value, found {length}\");\n+        7 // default to 7\n+    } else {\n+        length\n+    }\n+}\n+\n+const TRACKED_BOOKMARKS_TEMPLATE: &str = r#\"if(remote, name ++ \"\\x1f\" ++ tracking_ahead_count.lower() ++ \"\\x1f\" ++ tracking_behind_count.lower() ++ \"\\n\", \"\")\"#;\n+\n+fn jujutsu_log_template(change_id_length: isize, commit_hash_length: isize) -> String {\n+    format!(\n+        r#\"change_id.short({}) ++ \"\\n\"\n+        ++ local_bookmarks.map(|b| b.name()).join(\"\\x1e\") ++ \"\\n\"\n+        ++ remote_bookmarks.filter(|b| b.tracked()).map(|b| b.name() ++ \"\\x1f\" ++ b.tracking_ahead_count().lower() ++ \"\\x1f\" ++ b.tracking_behind_count().lower()).join(\"\\x1e\") ++ \"\\n\"\n+        ++ commit_id.short({}) ++ \"\\n\"\n+        ++ conflict ++ \"\\n\"\n+        ++ divergent ++ \"\\n\"\n+        ++ hidden ++ \"\\n\"\n+        ++ immutable ++ \"\\n\"",
+    "path": "src/modules/jujutsu_status.rs",
+    "commit_id": "745b366bb561e0edd7681f24d6b82b2a1ef0228b",
+    "original_commit_id": "217698804f75372a8bd074a21038b55d9c88e605",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It's robust against re-ordering and I fee like some of the items could also contain newlines.",
+    "created_at": "2026-01-13T16:35:07Z",
+    "updated_at": "2026-01-13T16:35:08Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2687188839",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2687188839"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2687188839"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2687188839/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 155,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 162,
+    "side": "RIGHT",
+    "in_reply_to_id": 2683670604,
+    "author_association": "MEMBER",
+    "original_position": 162,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2687424947",
+    "pull_request_review_id": 3657045978,
+    "id": 2687424947,
+    "node_id": "PRRC_kwDOCqswNs6gLtmz",
+    "diff_hunk": "",
+    "path": "src/modules/jujutsu_bookmark.rs",
+    "commit_id": "082349ac815e661846e9615f04b04dba687fd0e0",
+    "original_commit_id": "217698804f75372a8bd074a21038b55d9c88e605",
+    "user": {
+      "login": "RodEsp",
+      "id": 1084688,
+      "node_id": "MDQ6VXNlcjEwODQ2ODg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1084688?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/RodEsp",
+      "html_url": "https://github.com/RodEsp",
+      "followers_url": "https://api.github.com/users/RodEsp/followers",
+      "following_url": "https://api.github.com/users/RodEsp/following{/other_user}",
+      "gists_url": "https://api.github.com/users/RodEsp/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/RodEsp/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/RodEsp/subscriptions",
+      "organizations_url": "https://api.github.com/users/RodEsp/orgs",
+      "repos_url": "https://api.github.com/users/RodEsp/repos",
+      "events_url": "https://api.github.com/users/RodEsp/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/RodEsp/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'm a little divided about this, I feel like this is not the right way of thinking when working with `jj`. Branches work differently for `git`, you're always on a branch at any given point, but that's not how bookmarks work in `jj` and I'd like the prompt to reflect the current state of the `jj` repo.\r\n\r\nBut I do sympathize with working on `git` forges, like GitHub, and how you do always kind of want to show what \"branch\" you're on with `jj`.\r\n\r\nMaybe someone could add a different module that does what you're saying and finds the closest bookmark for display, maybe called `jujutsu_branch`?\r\nThen you could customize your config to use that\r\ne.g.\r\n```toml\r\n[vcs]\r\n# jujutsu_branch instead of jujutsu_bookmark at the end\r\njujutsu_modules=\"$jujutsu_state$jujutsu_change$jujutsu_commit$jujutsu_branch\" \r\n```",
+    "created_at": "2026-01-13T17:37:42Z",
+    "updated_at": "2026-01-13T17:38:20Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2687424947",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2687424947"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2687424947"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2687424947/reactions",
+      "total_count": 2,
+      "+1": 2,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1,
+    "original_line": 1,
+    "side": "RIGHT",
+    "in_reply_to_id": 2683305200,
+    "author_association": "NONE",
+    "original_position": 1,
+    "position": 1,
+    "subject_type": "file"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2689110288",
+    "pull_request_review_id": 3659045903,
+    "id": 2689110288,
+    "node_id": "PRRC_kwDOCqswNs6gSJEQ",
+    "diff_hunk": "@@ -0,0 +1,578 @@\n+use super::{Context, Module, ModuleConfig, vcs};\n+\n+use crate::configs::jujutsu_status::JjStatusConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the Jujutsu status in the current directory\n+///\n+/// Will display the current change ID, bookmarks, and status if the current directory is a jj repo\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"jujutsu_status\");\n+    let config: JjStatusConfig = JjStatusConfig::try_load(module.config);\n+\n+    // We default to disabled=true, so we have to check after loading our config module.\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    vcs::discover_repo_root(context, vcs::Vcs::Jujutsu)?;\n+\n+    let jujutsu_info = get_jujutsu_info(context)?;\n+\n+    let bookmarks = if jujutsu_info.bookmarks.is_empty() {\n+        None\n+    } else {\n+        Some(\n+            jujutsu_info\n+                .bookmarks\n+                .iter()\n+                .map(|b| {\n+                    let mut s = b.name.clone();\n+                    let local_ahead = b.remote_behind;\n+                    let local_behind = b.remote_ahead;\n+                    let tracked_diverged = b.is_tracked && (local_ahead > 0 || local_behind > 0);\n+                    if tracked_diverged {\n+                        s.push('*');\n+                    }\n+                    if b.is_tracked {\n+                        if local_ahead > 0 && local_behind > 0 {\n+                            s.push_str(&format!(\" ⇕⇡{}⇣{}\", local_ahead, local_behind));\n+                        } else if local_ahead > 0 {\n+                            s.push_str(&format!(\" ⇡{}\", local_ahead));\n+                        } else if local_behind > 0 {\n+                            s.push_str(&format!(\" ⇣{}\", local_behind));\n+                        }\n+                    }\n+                    s\n+                })\n+                .collect::<Vec<String>>()\n+                .join(\" \"),\n+        )\n+    };\n+\n+    let conflicted = if jujutsu_info.conflicted {\n+        Some(config.conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let divergent = if jujutsu_info.divergent {\n+        Some(config.divergent)\n+    } else {\n+        None\n+    };\n+\n+    let hidden = if jujutsu_info.hidden {\n+        Some(config.hidden)\n+    } else {\n+        None\n+    };\n+\n+    let immutable = if jujutsu_info.immutable {\n+        Some(config.immutable)\n+    } else {\n+        None\n+    };\n+\n+    let bookmark_conflicted = if jujutsu_info.bookmark_conflicted {\n+        Some(config.bookmark_conflicted)\n+    } else {\n+        None\n+    };\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                \"conflicted_style\" => Some(Ok(config.conflicted_style)),\n+                \"divergent_style\" => Some(Ok(config.divergent_style)),\n+                \"hidden_style\" => Some(Ok(config.hidden_style)),\n+                \"immutable_style\" => Some(Ok(config.immutable_style)),\n+                \"bookmark_conflicted_style\" => Some(Ok(config.bookmark_conflicted_style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"change_id\" => Some(Ok(jujutsu_info.change_id.as_str())),\n+                \"bookmarks\" => bookmarks.as_deref().map(Ok),\n+                \"conflicted\" => conflicted.map(Ok),\n+                \"divergent\" => divergent.map(Ok),\n+                \"hidden\" => hidden.map(Ok),\n+                \"immutable\" => immutable.map(Ok),\n+                \"bookmark_conflicted\" => bookmark_conflicted.map(Ok),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `jujutsu_status`:\\n{error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct JjRepoInfo {\n+    pub change_id: String,\n+    pub commit_id: String,\n+    pub bookmarks: Vec<BookmarkInfo>,\n+    pub conflicted: bool,\n+    pub divergent: bool,\n+    pub hidden: bool,\n+    pub immutable: bool,\n+    pub bookmark_conflicted: bool,\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct BookmarkInfo {\n+    pub name: String,\n+    pub remote_ahead: usize,\n+    pub remote_behind: usize,\n+    pub is_tracked: bool,\n+}\n+\n+fn normalize_id_length(label: &str, length: isize) -> isize {\n+    if length <= 0 {\n+        log::warn!(\"{label} should be a positive value, found {length}\");\n+        7 // default to 7\n+    } else {\n+        length\n+    }\n+}\n+\n+const TRACKED_BOOKMARKS_TEMPLATE: &str = r#\"if(remote, name ++ \"\\x1f\" ++ tracking_ahead_count.lower() ++ \"\\x1f\" ++ tracking_behind_count.lower() ++ \"\\n\", \"\")\"#;\n+\n+fn jujutsu_log_template(change_id_length: isize, commit_hash_length: isize) -> String {\n+    format!(\n+        r#\"change_id.short({}) ++ \"\\n\"\n+        ++ local_bookmarks.map(|b| b.name()).join(\"\\x1e\") ++ \"\\n\"\n+        ++ remote_bookmarks.filter(|b| b.tracked()).map(|b| b.name() ++ \"\\x1f\" ++ b.tracking_ahead_count().lower() ++ \"\\x1f\" ++ b.tracking_behind_count().lower()).join(\"\\x1e\") ++ \"\\n\"\n+        ++ commit_id.short({}) ++ \"\\n\"\n+        ++ conflict ++ \"\\n\"\n+        ++ divergent ++ \"\\n\"\n+        ++ hidden ++ \"\\n\"\n+        ++ immutable ++ \"\\n\"",
+    "path": "src/modules/jujutsu_status.rs",
+    "commit_id": "745b366bb561e0edd7681f24d6b82b2a1ef0228b",
+    "original_commit_id": "217698804f75372a8bd074a21038b55d9c88e605",
+    "user": {
+      "login": "RodEsp",
+      "id": 1084688,
+      "node_id": "MDQ6VXNlcjEwODQ2ODg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1084688?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/RodEsp",
+      "html_url": "https://github.com/RodEsp",
+      "followers_url": "https://api.github.com/users/RodEsp/followers",
+      "following_url": "https://api.github.com/users/RodEsp/following{/other_user}",
+      "gists_url": "https://api.github.com/users/RodEsp/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/RodEsp/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/RodEsp/subscriptions",
+      "organizations_url": "https://api.github.com/users/RodEsp/orgs",
+      "repos_url": "https://api.github.com/users/RodEsp/repos",
+      "events_url": "https://api.github.com/users/RodEsp/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/RodEsp/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ok, I've switched this to output JSON that is then deserialized. Thanks for the suggestion!",
+    "created_at": "2026-01-14T06:19:59Z",
+    "updated_at": "2026-01-14T06:19:59Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2689110288",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2689110288"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2689110288"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2689110288/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 155,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 162,
+    "side": "RIGHT",
+    "in_reply_to_id": 2683670604,
+    "author_association": "NONE",
+    "original_position": 162,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2689111514",
+    "pull_request_review_id": 3659047636,
+    "id": 2689111514,
+    "node_id": "PRRC_kwDOCqswNs6gSJXa",
+    "diff_hunk": "",
+    "path": "src/modules/jujutsu_status.rs",
+    "commit_id": "745b366bb561e0edd7681f24d6b82b2a1ef0228b",
+    "original_commit_id": "217698804f75372a8bd074a21038b55d9c88e605",
+    "user": {
+      "login": "RodEsp",
+      "id": 1084688,
+      "node_id": "MDQ6VXNlcjEwODQ2ODg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1084688?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/RodEsp",
+      "html_url": "https://github.com/RodEsp",
+      "followers_url": "https://api.github.com/users/RodEsp/followers",
+      "following_url": "https://api.github.com/users/RodEsp/following{/other_user}",
+      "gists_url": "https://api.github.com/users/RodEsp/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/RodEsp/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/RodEsp/subscriptions",
+      "organizations_url": "https://api.github.com/users/RodEsp/orgs",
+      "repos_url": "https://api.github.com/users/RodEsp/repos",
+      "events_url": "https://api.github.com/users/RodEsp/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/RodEsp/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I've moved the shared code to `src/modules/utils/jujutsu.rs` and got rid of the `jujutsu_status` module all together since it wasn't really necessary.",
+    "created_at": "2026-01-14T06:20:36Z",
+    "updated_at": "2026-01-14T06:20:37Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2689111514",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2689111514"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2689111514"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2689111514/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1,
+    "original_line": 1,
+    "side": "RIGHT",
+    "in_reply_to_id": 2683610071,
+    "author_association": "NONE",
+    "original_position": 1,
+    "position": 1,
+    "subject_type": "file"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2702207076",
+    "pull_request_review_id": 3675311926,
+    "id": 2702207076,
+    "node_id": "PRRC_kwDOCqswNs6hEGhk",
+    "diff_hunk": "@@ -45,11 +49,12 @@ pub struct VcsConfig<'a> {\n impl Default for VcsConfig<'_> {\n     fn default() -> Self {\n         VcsConfig {\n-            order: vec![\"git\", \"hg\", \"pijul\", \"fossil\"],\n+            order: vec![\"git\", \"hg\", \"pijul\", \"fossil\", \"jujutsu\"],",
+    "path": "src/configs/vcs.rs",
+    "commit_id": "082349ac815e661846e9615f04b04dba687fd0e0",
+    "original_commit_id": "082349ac815e661846e9615f04b04dba687fd0e0",
+    "user": {
+      "login": "bryceberger",
+      "id": 9222441,
+      "node_id": "MDQ6VXNlcjkyMjI0NDE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9222441?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bryceberger",
+      "html_url": "https://github.com/bryceberger",
+      "followers_url": "https://api.github.com/users/bryceberger/followers",
+      "following_url": "https://api.github.com/users/bryceberger/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bryceberger/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bryceberger/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bryceberger/subscriptions",
+      "organizations_url": "https://api.github.com/users/bryceberger/orgs",
+      "repos_url": "https://api.github.com/users/bryceberger/repos",
+      "events_url": "https://api.github.com/users/bryceberger/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bryceberger/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`jujutsu` should have higher priority than `git` here. Due to colocation, it's likely that there will be both a `.jj` and a `.git`. Since the user is explicitly using `jj`, they would probably prefer to see information from `jj`.",
+    "created_at": "2026-01-18T08:04:50Z",
+    "updated_at": "2026-01-18T08:04:50Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2702207076",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2702207076"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2702207076"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2702207076/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 52,
+    "original_line": 52,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 16,
+    "position": 16,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2702210556",
+    "pull_request_review_id": 3675314894,
+    "id": 2702210556,
+    "node_id": "PRRC_kwDOCqswNs6hEHX8",
+    "diff_hunk": "@@ -45,11 +49,12 @@ pub struct VcsConfig<'a> {\n impl Default for VcsConfig<'_> {\n     fn default() -> Self {\n         VcsConfig {\n-            order: vec![\"git\", \"hg\", \"pijul\", \"fossil\"],\n+            order: vec![\"git\", \"hg\", \"pijul\", \"fossil\", \"jujutsu\"],",
+    "path": "src/configs/vcs.rs",
+    "commit_id": "082349ac815e661846e9615f04b04dba687fd0e0",
+    "original_commit_id": "082349ac815e661846e9615f04b04dba687fd0e0",
+    "user": {
+      "login": "bryceberger",
+      "id": 9222441,
+      "node_id": "MDQ6VXNlcjkyMjI0NDE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9222441?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bryceberger",
+      "html_url": "https://github.com/bryceberger",
+      "followers_url": "https://api.github.com/users/bryceberger/followers",
+      "following_url": "https://api.github.com/users/bryceberger/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bryceberger/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bryceberger/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bryceberger/subscriptions",
+      "organizations_url": "https://api.github.com/users/bryceberger/orgs",
+      "repos_url": "https://api.github.com/users/bryceberger/repos",
+      "events_url": "https://api.github.com/users/bryceberger/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bryceberger/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Similarly, (not on this line of code but in general), at least one of the jujutsu modules should be enabled by default. As it is, if the user happens to get the jj codepath, no information is displayed because all the configs are disabled by default.",
+    "created_at": "2026-01-18T08:11:21Z",
+    "updated_at": "2026-01-18T08:11:21Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2702210556",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2702210556"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2702210556"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2702210556/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 52,
+    "original_line": 52,
+    "side": "RIGHT",
+    "in_reply_to_id": 2702207076,
+    "author_association": "NONE",
+    "original_position": 16,
+    "position": 16,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2702559170",
+    "pull_request_review_id": 3675585461,
+    "id": 2702559170,
+    "node_id": "PRRC_kwDOCqswNs6hFcfC",
+    "diff_hunk": "@@ -45,11 +49,12 @@ pub struct VcsConfig<'a> {\n impl Default for VcsConfig<'_> {\n     fn default() -> Self {\n         VcsConfig {\n-            order: vec![\"git\", \"hg\", \"pijul\", \"fossil\"],\n+            order: vec![\"git\", \"hg\", \"pijul\", \"fossil\", \"jujutsu\"],",
+    "path": "src/configs/vcs.rs",
+    "commit_id": "082349ac815e661846e9615f04b04dba687fd0e0",
+    "original_commit_id": "082349ac815e661846e9615f04b04dba687fd0e0",
+    "user": {
+      "login": "RodEsp",
+      "id": 1084688,
+      "node_id": "MDQ6VXNlcjEwODQ2ODg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1084688?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/RodEsp",
+      "html_url": "https://github.com/RodEsp",
+      "followers_url": "https://api.github.com/users/RodEsp/followers",
+      "following_url": "https://api.github.com/users/RodEsp/following{/other_user}",
+      "gists_url": "https://api.github.com/users/RodEsp/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/RodEsp/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/RodEsp/subscriptions",
+      "organizations_url": "https://api.github.com/users/RodEsp/orgs",
+      "repos_url": "https://api.github.com/users/RodEsp/repos",
+      "events_url": "https://api.github.com/users/RodEsp/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/RodEsp/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I was going to leave that stuff up to the maintainers of Starship, since it's easy enough for users to modify their own configs to reorder VCSs and enable whatever they want. But I get your point. I'll change it before I mark this ready for review and see what the Starship peeps say.",
+    "created_at": "2026-01-18T16:45:11Z",
+    "updated_at": "2026-01-18T16:45:11Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2702559170",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2702559170"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2702559170"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2702559170/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 52,
+    "original_line": 52,
+    "side": "RIGHT",
+    "in_reply_to_id": 2702207076,
+    "author_association": "NONE",
+    "original_position": 16,
+    "position": 16,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2702889049",
+    "pull_request_review_id": 3675911653,
+    "id": 2702889049,
+    "node_id": "PRRC_kwDOCqswNs6hGtBZ",
+    "diff_hunk": "@@ -0,0 +1,413 @@\n+use crate::config::ModuleConfig;\n+use crate::context::Context;\n+use crate::modules::vcs;\n+use jj_lib::backend::CommitId;\n+use jj_lib::config::{ConfigLayer, ConfigSource, StackedConfig};\n+use jj_lib::object_id::ObjectId as _;\n+use jj_lib::op_store::RefTarget;\n+use jj_lib::op_store::RemoteRef;\n+use jj_lib::repo::ReadonlyRepo;\n+use jj_lib::repo::Repo as _;\n+use jj_lib::repo_path::RepoPathUiConverter;\n+use jj_lib::revset::RevsetDiagnostics;\n+use jj_lib::revset::RevsetParseContext;\n+use jj_lib::revset::RevsetWorkspaceContext;\n+use jj_lib::revset::SymbolResolver;\n+use jj_lib::revset::UserRevsetExpression;\n+use jj_lib::revset::{self, ResolvedRevsetExpression};\n+use jj_lib::revset::{RevsetAliasesMap, RevsetExtensions};\n+use jj_lib::settings::UserSettings;\n+use jj_lib::str_util::StringExpression;\n+use jj_lib::workspace::{Workspace, default_working_copy_factories};\n+use std::collections::HashMap;\n+use std::path::{Path, PathBuf};\n+use std::sync::Arc;\n+\n+const DEFAULT_REVSET_ALIASES: &str = r#\"\n+[revset-aliases]\n+'trunk()' = '''\n+latest(\n+  remote_bookmarks(exact:\"main\", exact:\"origin\") |\n+  remote_bookmarks(exact:\"master\", exact:\"origin\") |\n+  remote_bookmarks(exact:\"trunk\", exact:\"origin\") |\n+  remote_bookmarks(exact:\"main\", exact:\"upstream\") |\n+  remote_bookmarks(exact:\"master\", exact:\"upstream\") |\n+  remote_bookmarks(exact:\"trunk\", exact:\"upstream\") |\n+  root()\n+)\n+'''\n+'builtin_immutable_heads()' = 'trunk() | tags() | untracked_remote_bookmarks()'\n+'immutable_heads()' = 'builtin_immutable_heads()'\n+'immutable()' = '::(immutable_heads() | root())'\n+'mutable()' = '~immutable()'\n+\"#;\n+\n+pub struct JujutsuRepo {\n+    repo: Arc<ReadonlyRepo>,\n+    settings: UserSettings,\n+    workspace_name: jj_lib::ref_name::WorkspaceNameBuf,\n+    workspace_root: PathBuf,\n+    revset_aliases: RevsetAliasesMap,\n+    revset_extensions: RevsetExtensions,\n+}\n+\n+impl JujutsuRepo {\n+    pub(crate) fn load(context: &Context) -> Option<Self> {\n+        let workspace_root = context.begin_ancestor_scan().set_folders(&[\".jj\"]).scan()?;\n+        let settings = load_settings(context, &workspace_root)?;\n+\n+        let workspace = Workspace::load(\n+            &settings,\n+            &workspace_root,\n+            &jj_lib::repo::StoreFactories::default(),\n+            &default_working_copy_factories(),\n+        )\n+        .ok()?;\n+\n+        let workspace_name = workspace.workspace_name().to_owned();\n+        let repo = workspace.repo_loader().load_at_head().ok()?;\n+\n+        let revset_aliases = load_revset_aliases(&settings);\n+        let revset_extensions = RevsetExtensions::default();\n+\n+        Some(Self {\n+            repo,\n+            settings,\n+            workspace_name,\n+            workspace_root: workspace_root.to_path_buf(),\n+            revset_aliases,\n+            revset_extensions,\n+        })\n+    }\n+\n+    pub(crate) fn repo(&self) -> &Arc<ReadonlyRepo> {\n+        &self.repo\n+    }\n+\n+    pub(crate) fn settings(&self) -> &UserSettings {\n+        &self.settings\n+    }\n+\n+    pub(crate) fn workspace_name(&self) -> &jj_lib::ref_name::WorkspaceName {\n+        &self.workspace_name\n+    }\n+\n+    pub(crate) fn workspace_root(&self) -> &Path {\n+        &self.workspace_root\n+    }\n+\n+    pub(crate) fn revset_aliases(&self) -> &RevsetAliasesMap {\n+        &self.revset_aliases\n+    }\n+\n+    pub(crate) fn revset_extensions(&self) -> &RevsetExtensions {\n+        &self.revset_extensions\n+    }\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct JjRepoInfo {\n+    pub change_id: String,\n+    pub commit_id: String,\n+    pub bookmarks: Vec<BookmarkInfo>,\n+    pub conflicted: bool,\n+    pub divergent: bool,\n+    pub hidden: bool,\n+    pub immutable: bool,\n+    pub bookmark_conflicted: bool,\n+}\n+\n+pub(crate) struct JjClosestBookmarksInfo {\n+    pub bookmarks: Vec<BookmarkInfo>,\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct BookmarkInfo {\n+    pub name: String,\n+    pub remote_ahead: usize,\n+    pub remote_behind: usize,\n+    pub is_tracked: bool,\n+}\n+\n+pub(crate) fn get_jujutsu_info(ctx: &Context) -> Option<JjRepoInfo> {\n+    vcs::discover_repo_root(ctx, vcs::Vcs::Jujutsu)?;\n+    let repo = ctx.get_jujutsu_repo()?;\n+    let change_id_length = crate::configs::jujutsu_change::JujutsuChangeConfig::try_load(\n+        ctx.config.get_module_config(\"jujutsu_change\"),\n+    )\n+    .change_id_length;\n+\n+    let commit_hash_length = crate::configs::jujutsu_commit::JujutsuCommitConfig::try_load(\n+        ctx.config.get_module_config(\"jujutsu_commit\"),\n+    )\n+    .commit_hash_length;\n+\n+    let commit_id = working_copy_commit_id(repo)?;\n+    let commit = repo.repo().store().get_commit(&commit_id).ok()?;\n+\n+    let change_id = shorten_id(&commit.change_id().reverse_hex(), change_id_length);\n+    let commit_id_short = shorten_id(&commit.id().hex(), commit_hash_length);\n+\n+    let tracked_bookmarks = tracked_bookmarks(repo.repo());\n+    let (bookmarks, bookmark_conflicted) =\n+        commit_bookmarks(repo.repo(), &commit_id, &tracked_bookmarks);\n+\n+    let hidden = commit.is_hidden(repo.repo().as_ref()).ok()?;\n+    let divergent = repo\n+        .repo()\n+        .as_ref()\n+        .resolve_change_id(commit.change_id())\n+        .ok()\n+        .and_then(|targets| targets.map(|targets| targets.is_divergent()))\n+        .unwrap_or(false);\n+    let immutable = is_commit_immutable(repo, &commit_id).unwrap_or(false);\n+\n+    Some(JjRepoInfo {\n+        change_id,\n+        commit_id: commit_id_short,\n+        bookmarks,\n+        conflicted: commit.has_conflict(),\n+        divergent,\n+        hidden,\n+        immutable,\n+        bookmark_conflicted,\n+    })\n+}\n+\n+pub(crate) fn get_closest_jujutsu_bookmarks_info(ctx: &Context) -> Option<JjClosestBookmarksInfo> {\n+    vcs::discover_repo_root(ctx, vcs::Vcs::Jujutsu)?;\n+    let repo = ctx.get_jujutsu_repo()?;\n+    let commit_id = closest_bookmark_commit_id(repo)?;\n+    let tracked_bookmarks = tracked_bookmarks(repo.repo());\n+    let (bookmarks, _) = commit_bookmarks(repo.repo(), &commit_id, &tracked_bookmarks);\n+\n+    Some(JjClosestBookmarksInfo { bookmarks })\n+}\n+\n+fn working_copy_commit_id(repo: &JujutsuRepo) -> Option<CommitId> {\n+    repo.repo()\n+        .view()\n+        .get_wc_commit_id(repo.workspace_name())\n+        .cloned()\n+}\n+\n+fn tracked_bookmarks(repo: &ReadonlyRepo) -> HashMap<String, (usize, usize)> {\n+    let mut tracked = HashMap::new();\n+\n+    for (name, targets) in repo.view().bookmarks() {\n+        let local_target = targets.local_target;\n+        for (_, remote_ref) in targets.remote_refs {\n+            if let Some((ahead, behind)) = tracking_counts(repo, local_target, remote_ref)\n+                .ok()\n+                .flatten()\n+            {\n+                let counts = tracked\n+                    .entry(name.as_str().to_string())\n+                    .or_insert((ahead, behind));\n+                counts.0 = counts.0.max(ahead);\n+                counts.1 = counts.1.max(behind);\n+            }\n+        }\n+    }\n+\n+    tracked\n+}\n+\n+fn tracking_counts(\n+    repo: &dyn jj_lib::repo::Repo,\n+    local_target: &RefTarget,\n+    remote_ref: &RemoteRef,\n+) -> Result<Option<(usize, usize)>, jj_lib::revset::RevsetEvaluationError> {\n+    if !remote_ref.is_tracked() {\n+        return Ok(None);\n+    }\n+\n+    let local_ids: Vec<CommitId> = local_target.added_ids().cloned().collect();\n+    let remote_ids: Vec<CommitId> = remote_ref.target.added_ids().cloned().collect();\n+\n+    let ahead = revset::walk_revs(repo, &remote_ids, &local_ids)?\n+        .count_estimate()?\n+        .0;\n+    let behind = revset::walk_revs(repo, &local_ids, &remote_ids)?\n+        .count_estimate()?\n+        .0;\n+\n+    Ok(Some((ahead, behind)))\n+}\n+\n+fn commit_bookmarks(\n+    repo: &ReadonlyRepo,\n+    commit_id: &CommitId,\n+    tracked_bookmarks: &HashMap<String, (usize, usize)>,\n+) -> (Vec<BookmarkInfo>, bool) {\n+    let mut bookmark_conflicted = false;\n+    let mut bookmarks = Vec::new();\n+\n+    for (name, local_target) in repo.view().local_bookmarks_for_commit(commit_id) {\n+        let name_str = name.as_str().to_string();\n+        if local_target.has_conflict() {\n+            bookmark_conflicted = true;\n+        }\n+\n+        let remote_conflict = repo\n+            .view()\n+            .bookmarks()\n+            .filter(|(bookmark_name, _)| *bookmark_name == name)\n+            .flat_map(|(_, target)| target.remote_refs)\n+            .filter(|(_, remote_ref)| remote_ref.target.added_ids().any(|id| id == commit_id))\n+            .any(|(_, remote_ref)| remote_ref.target.has_conflict());\n+\n+        if remote_conflict {\n+            bookmark_conflicted = true;\n+        }\n+\n+        let (ahead, behind, is_tracked) = tracked_bookmarks\n+            .get(&name_str)\n+            .map(|(ahead, behind)| (*ahead, *behind, true))\n+            .unwrap_or((0, 0, false));\n+        bookmarks.push(BookmarkInfo {\n+            name: name_str,\n+            remote_ahead: ahead,\n+            remote_behind: behind,\n+            is_tracked,\n+        });\n+    }\n+\n+    (bookmarks, bookmark_conflicted)\n+}\n+\n+fn closest_bookmark_commit_id(repo: &JujutsuRepo) -> Option<CommitId> {\n+    let working_copy = UserRevsetExpression::working_copy(repo.workspace_name().to_owned());\n+    let bookmarks = UserRevsetExpression::bookmarks(StringExpression::all());\n+    let expr = working_copy.ancestors().intersection(&bookmarks).heads();\n+    let resolved = resolve_revset_expression(repo, expr)?;\n+    let revset = resolved.evaluate(repo.repo().as_ref()).ok()?;\n+\n+    revset.iter().find_map(|entry| entry.ok())\n+}\n+\n+fn resolve_revset_expression(\n+    repo: &JujutsuRepo,\n+    expr: Arc<UserRevsetExpression>,\n+) -> Option<Arc<ResolvedRevsetExpression>> {\n+    let resolver = SymbolResolver::new(\n+        repo.repo().as_ref(),\n+        repo.revset_extensions().symbol_resolvers(),\n+    );\n+    expr.resolve_user_expression(repo.repo().as_ref(), &resolver)\n+        .ok()\n+}\n+\n+fn parse_revset_expression(\n+    repo: &JujutsuRepo,\n+    expression: &str,\n+) -> Option<Arc<UserRevsetExpression>> {\n+    let mut diagnostics = RevsetDiagnostics::new();\n+    let path_converter = RepoPathUiConverter::Fs {\n+        cwd: repo.workspace_root().to_path_buf(),\n+        base: repo.workspace_root().to_path_buf(),\n+    };\n+    let context = RevsetParseContext {\n+        aliases_map: repo.revset_aliases(),\n+        local_variables: HashMap::new(),\n+        user_email: repo.settings().user_email(),\n+        date_pattern_context: chrono::Utc::now().fixed_offset().into(),\n+        default_ignored_remote: None,\n+        use_glob_by_default: true,\n+        extensions: repo.revset_extensions(),\n+        workspace: Some(RevsetWorkspaceContext {\n+            path_converter: &path_converter,\n+            workspace_name: repo.workspace_name(),\n+        }),\n+    };\n+\n+    revset::parse(&mut diagnostics, expression, &context).ok()\n+}\n+\n+fn is_commit_immutable(repo: &JujutsuRepo, commit_id: &CommitId) -> Option<bool> {\n+    let expr = parse_revset_expression(repo, \"immutable()\")?;\n+    let resolved = resolve_revset_expression(repo, expr)?;\n+    let revset = resolved.evaluate(repo.repo().as_ref()).ok()?;\n+    let contains = revset.containing_fn();\n+    contains(commit_id).ok()\n+}\n+\n+fn load_settings(context: &Context, workspace_root: &Path) -> Option<UserSettings> {\n+    let mut config = StackedConfig::with_defaults();\n+    let default_layer = ConfigLayer::parse(ConfigSource::Default, DEFAULT_REVSET_ALIASES).ok()?;\n+    config.add_layer(default_layer);\n+\n+    for path in user_config_paths(context) {\n+        if let Err(error) = config.load_file(ConfigSource::User, path) {\n+            log::debug!(\"Failed to read JJ config file: {error}\");\n+        }\n+    }\n+    for dir in user_config_dirs(context) {\n+        if let Err(error) = config.load_dir(ConfigSource::User, dir) {\n+            log::debug!(\"Failed to read JJ config dir: {error}\");\n+        }\n+    }\n+\n+    if let Some(path) = repo_config_path(workspace_root)\n+        && let Err(error) = config.load_file(ConfigSource::Repo, path)\n+    {\n+        log::debug!(\"Failed to read JJ repo config file: {error}\");\n+    }\n+\n+    UserSettings::from_config(config).ok()\n+}\n+\n+fn repo_config_path(workspace_root: &Path) -> Option<PathBuf> {\n+    let repo_config = workspace_root.join(\".jj\").join(\"repo\").join(\"config.toml\");",
+    "path": "src/modules/utils/jujutsu.rs",
+    "commit_id": "082349ac815e661846e9615f04b04dba687fd0e0",
+    "original_commit_id": "082349ac815e661846e9615f04b04dba687fd0e0",
+    "user": {
+      "login": "bryceberger",
+      "id": 9222441,
+      "node_id": "MDQ6VXNlcjkyMjI0NDE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9222441?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bryceberger",
+      "html_url": "https://github.com/bryceberger",
+      "followers_url": "https://api.github.com/users/bryceberger/followers",
+      "following_url": "https://api.github.com/users/bryceberger/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bryceberger/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bryceberger/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bryceberger/subscriptions",
+      "organizations_url": "https://api.github.com/users/bryceberger/orgs",
+      "repos_url": "https://api.github.com/users/bryceberger/repos",
+      "events_url": "https://api.github.com/users/bryceberger/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bryceberger/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This is incorrect as of https://github.com/jj-vcs/jj/pull/8222",
+    "created_at": "2026-01-19T00:09:25Z",
+    "updated_at": "2026-01-19T00:09:25Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2702889049",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2702889049"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2702889049"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2702889049/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 361,
+    "original_line": 361,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 361,
+    "position": 361,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2702892297",
+    "pull_request_review_id": 3675914912,
+    "id": 2702892297,
+    "node_id": "PRRC_kwDOCqswNs6hGt0J",
+    "diff_hunk": "@@ -0,0 +1,413 @@\n+use crate::config::ModuleConfig;\n+use crate::context::Context;\n+use crate::modules::vcs;\n+use jj_lib::backend::CommitId;\n+use jj_lib::config::{ConfigLayer, ConfigSource, StackedConfig};\n+use jj_lib::object_id::ObjectId as _;\n+use jj_lib::op_store::RefTarget;\n+use jj_lib::op_store::RemoteRef;\n+use jj_lib::repo::ReadonlyRepo;\n+use jj_lib::repo::Repo as _;\n+use jj_lib::repo_path::RepoPathUiConverter;\n+use jj_lib::revset::RevsetDiagnostics;\n+use jj_lib::revset::RevsetParseContext;\n+use jj_lib::revset::RevsetWorkspaceContext;\n+use jj_lib::revset::SymbolResolver;\n+use jj_lib::revset::UserRevsetExpression;\n+use jj_lib::revset::{self, ResolvedRevsetExpression};\n+use jj_lib::revset::{RevsetAliasesMap, RevsetExtensions};\n+use jj_lib::settings::UserSettings;\n+use jj_lib::str_util::StringExpression;\n+use jj_lib::workspace::{Workspace, default_working_copy_factories};\n+use std::collections::HashMap;\n+use std::path::{Path, PathBuf};\n+use std::sync::Arc;\n+\n+const DEFAULT_REVSET_ALIASES: &str = r#\"\n+[revset-aliases]\n+'trunk()' = '''\n+latest(\n+  remote_bookmarks(exact:\"main\", exact:\"origin\") |\n+  remote_bookmarks(exact:\"master\", exact:\"origin\") |\n+  remote_bookmarks(exact:\"trunk\", exact:\"origin\") |\n+  remote_bookmarks(exact:\"main\", exact:\"upstream\") |\n+  remote_bookmarks(exact:\"master\", exact:\"upstream\") |\n+  remote_bookmarks(exact:\"trunk\", exact:\"upstream\") |\n+  root()\n+)\n+'''\n+'builtin_immutable_heads()' = 'trunk() | tags() | untracked_remote_bookmarks()'\n+'immutable_heads()' = 'builtin_immutable_heads()'\n+'immutable()' = '::(immutable_heads() | root())'\n+'mutable()' = '~immutable()'\n+\"#;\n+\n+pub struct JujutsuRepo {\n+    repo: Arc<ReadonlyRepo>,\n+    settings: UserSettings,\n+    workspace_name: jj_lib::ref_name::WorkspaceNameBuf,\n+    workspace_root: PathBuf,\n+    revset_aliases: RevsetAliasesMap,\n+    revset_extensions: RevsetExtensions,\n+}\n+\n+impl JujutsuRepo {\n+    pub(crate) fn load(context: &Context) -> Option<Self> {\n+        let workspace_root = context.begin_ancestor_scan().set_folders(&[\".jj\"]).scan()?;\n+        let settings = load_settings(context, &workspace_root)?;\n+\n+        let workspace = Workspace::load(\n+            &settings,\n+            &workspace_root,\n+            &jj_lib::repo::StoreFactories::default(),\n+            &default_working_copy_factories(),\n+        )\n+        .ok()?;\n+\n+        let workspace_name = workspace.workspace_name().to_owned();\n+        let repo = workspace.repo_loader().load_at_head().ok()?;\n+\n+        let revset_aliases = load_revset_aliases(&settings);\n+        let revset_extensions = RevsetExtensions::default();\n+\n+        Some(Self {\n+            repo,\n+            settings,\n+            workspace_name,\n+            workspace_root: workspace_root.to_path_buf(),\n+            revset_aliases,\n+            revset_extensions,\n+        })\n+    }\n+\n+    pub(crate) fn repo(&self) -> &Arc<ReadonlyRepo> {\n+        &self.repo\n+    }\n+\n+    pub(crate) fn settings(&self) -> &UserSettings {\n+        &self.settings\n+    }\n+\n+    pub(crate) fn workspace_name(&self) -> &jj_lib::ref_name::WorkspaceName {\n+        &self.workspace_name\n+    }\n+\n+    pub(crate) fn workspace_root(&self) -> &Path {\n+        &self.workspace_root\n+    }\n+\n+    pub(crate) fn revset_aliases(&self) -> &RevsetAliasesMap {\n+        &self.revset_aliases\n+    }\n+\n+    pub(crate) fn revset_extensions(&self) -> &RevsetExtensions {\n+        &self.revset_extensions\n+    }\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct JjRepoInfo {\n+    pub change_id: String,\n+    pub commit_id: String,\n+    pub bookmarks: Vec<BookmarkInfo>,\n+    pub conflicted: bool,\n+    pub divergent: bool,\n+    pub hidden: bool,\n+    pub immutable: bool,\n+    pub bookmark_conflicted: bool,\n+}\n+\n+pub(crate) struct JjClosestBookmarksInfo {\n+    pub bookmarks: Vec<BookmarkInfo>,\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct BookmarkInfo {\n+    pub name: String,\n+    pub remote_ahead: usize,\n+    pub remote_behind: usize,\n+    pub is_tracked: bool,\n+}\n+\n+pub(crate) fn get_jujutsu_info(ctx: &Context) -> Option<JjRepoInfo> {\n+    vcs::discover_repo_root(ctx, vcs::Vcs::Jujutsu)?;\n+    let repo = ctx.get_jujutsu_repo()?;\n+    let change_id_length = crate::configs::jujutsu_change::JujutsuChangeConfig::try_load(\n+        ctx.config.get_module_config(\"jujutsu_change\"),\n+    )\n+    .change_id_length;\n+\n+    let commit_hash_length = crate::configs::jujutsu_commit::JujutsuCommitConfig::try_load(\n+        ctx.config.get_module_config(\"jujutsu_commit\"),\n+    )\n+    .commit_hash_length;\n+\n+    let commit_id = working_copy_commit_id(repo)?;\n+    let commit = repo.repo().store().get_commit(&commit_id).ok()?;\n+\n+    let change_id = shorten_id(&commit.change_id().reverse_hex(), change_id_length);\n+    let commit_id_short = shorten_id(&commit.id().hex(), commit_hash_length);\n+\n+    let tracked_bookmarks = tracked_bookmarks(repo.repo());\n+    let (bookmarks, bookmark_conflicted) =\n+        commit_bookmarks(repo.repo(), &commit_id, &tracked_bookmarks);\n+\n+    let hidden = commit.is_hidden(repo.repo().as_ref()).ok()?;\n+    let divergent = repo\n+        .repo()\n+        .as_ref()\n+        .resolve_change_id(commit.change_id())\n+        .ok()\n+        .and_then(|targets| targets.map(|targets| targets.is_divergent()))\n+        .unwrap_or(false);\n+    let immutable = is_commit_immutable(repo, &commit_id).unwrap_or(false);\n+\n+    Some(JjRepoInfo {\n+        change_id,\n+        commit_id: commit_id_short,\n+        bookmarks,\n+        conflicted: commit.has_conflict(),\n+        divergent,\n+        hidden,\n+        immutable,\n+        bookmark_conflicted,\n+    })\n+}\n+\n+pub(crate) fn get_closest_jujutsu_bookmarks_info(ctx: &Context) -> Option<JjClosestBookmarksInfo> {\n+    vcs::discover_repo_root(ctx, vcs::Vcs::Jujutsu)?;\n+    let repo = ctx.get_jujutsu_repo()?;\n+    let commit_id = closest_bookmark_commit_id(repo)?;\n+    let tracked_bookmarks = tracked_bookmarks(repo.repo());\n+    let (bookmarks, _) = commit_bookmarks(repo.repo(), &commit_id, &tracked_bookmarks);\n+\n+    Some(JjClosestBookmarksInfo { bookmarks })\n+}\n+\n+fn working_copy_commit_id(repo: &JujutsuRepo) -> Option<CommitId> {\n+    repo.repo()\n+        .view()\n+        .get_wc_commit_id(repo.workspace_name())\n+        .cloned()\n+}\n+\n+fn tracked_bookmarks(repo: &ReadonlyRepo) -> HashMap<String, (usize, usize)> {\n+    let mut tracked = HashMap::new();\n+\n+    for (name, targets) in repo.view().bookmarks() {\n+        let local_target = targets.local_target;\n+        for (_, remote_ref) in targets.remote_refs {\n+            if let Some((ahead, behind)) = tracking_counts(repo, local_target, remote_ref)\n+                .ok()\n+                .flatten()\n+            {\n+                let counts = tracked\n+                    .entry(name.as_str().to_string())\n+                    .or_insert((ahead, behind));\n+                counts.0 = counts.0.max(ahead);\n+                counts.1 = counts.1.max(behind);\n+            }\n+        }\n+    }\n+\n+    tracked\n+}\n+\n+fn tracking_counts(\n+    repo: &dyn jj_lib::repo::Repo,\n+    local_target: &RefTarget,\n+    remote_ref: &RemoteRef,\n+) -> Result<Option<(usize, usize)>, jj_lib::revset::RevsetEvaluationError> {\n+    if !remote_ref.is_tracked() {\n+        return Ok(None);\n+    }\n+\n+    let local_ids: Vec<CommitId> = local_target.added_ids().cloned().collect();\n+    let remote_ids: Vec<CommitId> = remote_ref.target.added_ids().cloned().collect();\n+\n+    let ahead = revset::walk_revs(repo, &remote_ids, &local_ids)?\n+        .count_estimate()?\n+        .0;\n+    let behind = revset::walk_revs(repo, &local_ids, &remote_ids)?\n+        .count_estimate()?\n+        .0;\n+\n+    Ok(Some((ahead, behind)))\n+}\n+\n+fn commit_bookmarks(\n+    repo: &ReadonlyRepo,\n+    commit_id: &CommitId,\n+    tracked_bookmarks: &HashMap<String, (usize, usize)>,\n+) -> (Vec<BookmarkInfo>, bool) {",
+    "path": "src/modules/utils/jujutsu.rs",
+    "commit_id": "082349ac815e661846e9615f04b04dba687fd0e0",
+    "original_commit_id": "082349ac815e661846e9615f04b04dba687fd0e0",
+    "user": {
+      "login": "bryceberger",
+      "id": 9222441,
+      "node_id": "MDQ6VXNlcjkyMjI0NDE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9222441?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bryceberger",
+      "html_url": "https://github.com/bryceberger",
+      "followers_url": "https://api.github.com/users/bryceberger/followers",
+      "following_url": "https://api.github.com/users/bryceberger/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bryceberger/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bryceberger/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bryceberger/subscriptions",
+      "organizations_url": "https://api.github.com/users/bryceberger/orgs",
+      "repos_url": "https://api.github.com/users/bryceberger/repos",
+      "events_url": "https://api.github.com/users/bryceberger/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bryceberger/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Why is this multiple bookmarks, but the conflicted info only corresponds to one of them?",
+    "created_at": "2026-01-19T00:13:51Z",
+    "updated_at": "2026-01-19T00:13:51Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2702892297",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2702892297"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2702892297"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2702892297/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 242,
+    "original_line": 242,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 242,
+    "position": 242,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2702996431",
+    "pull_request_review_id": 3676019782,
+    "id": 2702996431,
+    "node_id": "PRRC_kwDOCqswNs6hHHPP",
+    "diff_hunk": "@@ -0,0 +1,413 @@\n+use crate::config::ModuleConfig;\n+use crate::context::Context;\n+use crate::modules::vcs;\n+use jj_lib::backend::CommitId;\n+use jj_lib::config::{ConfigLayer, ConfigSource, StackedConfig};\n+use jj_lib::object_id::ObjectId as _;\n+use jj_lib::op_store::RefTarget;\n+use jj_lib::op_store::RemoteRef;\n+use jj_lib::repo::ReadonlyRepo;\n+use jj_lib::repo::Repo as _;\n+use jj_lib::repo_path::RepoPathUiConverter;\n+use jj_lib::revset::RevsetDiagnostics;\n+use jj_lib::revset::RevsetParseContext;\n+use jj_lib::revset::RevsetWorkspaceContext;\n+use jj_lib::revset::SymbolResolver;\n+use jj_lib::revset::UserRevsetExpression;\n+use jj_lib::revset::{self, ResolvedRevsetExpression};\n+use jj_lib::revset::{RevsetAliasesMap, RevsetExtensions};\n+use jj_lib::settings::UserSettings;\n+use jj_lib::str_util::StringExpression;\n+use jj_lib::workspace::{Workspace, default_working_copy_factories};\n+use std::collections::HashMap;\n+use std::path::{Path, PathBuf};\n+use std::sync::Arc;\n+\n+const DEFAULT_REVSET_ALIASES: &str = r#\"\n+[revset-aliases]\n+'trunk()' = '''\n+latest(\n+  remote_bookmarks(exact:\"main\", exact:\"origin\") |\n+  remote_bookmarks(exact:\"master\", exact:\"origin\") |\n+  remote_bookmarks(exact:\"trunk\", exact:\"origin\") |\n+  remote_bookmarks(exact:\"main\", exact:\"upstream\") |\n+  remote_bookmarks(exact:\"master\", exact:\"upstream\") |\n+  remote_bookmarks(exact:\"trunk\", exact:\"upstream\") |\n+  root()\n+)\n+'''\n+'builtin_immutable_heads()' = 'trunk() | tags() | untracked_remote_bookmarks()'\n+'immutable_heads()' = 'builtin_immutable_heads()'\n+'immutable()' = '::(immutable_heads() | root())'\n+'mutable()' = '~immutable()'\n+\"#;\n+\n+pub struct JujutsuRepo {\n+    repo: Arc<ReadonlyRepo>,\n+    settings: UserSettings,\n+    workspace_name: jj_lib::ref_name::WorkspaceNameBuf,\n+    workspace_root: PathBuf,\n+    revset_aliases: RevsetAliasesMap,\n+    revset_extensions: RevsetExtensions,\n+}\n+\n+impl JujutsuRepo {\n+    pub(crate) fn load(context: &Context) -> Option<Self> {\n+        let workspace_root = context.begin_ancestor_scan().set_folders(&[\".jj\"]).scan()?;\n+        let settings = load_settings(context, &workspace_root)?;\n+\n+        let workspace = Workspace::load(\n+            &settings,\n+            &workspace_root,\n+            &jj_lib::repo::StoreFactories::default(),\n+            &default_working_copy_factories(),\n+        )\n+        .ok()?;\n+\n+        let workspace_name = workspace.workspace_name().to_owned();\n+        let repo = workspace.repo_loader().load_at_head().ok()?;\n+\n+        let revset_aliases = load_revset_aliases(&settings);\n+        let revset_extensions = RevsetExtensions::default();\n+\n+        Some(Self {\n+            repo,\n+            settings,\n+            workspace_name,\n+            workspace_root: workspace_root.to_path_buf(),\n+            revset_aliases,\n+            revset_extensions,\n+        })\n+    }\n+\n+    pub(crate) fn repo(&self) -> &Arc<ReadonlyRepo> {\n+        &self.repo\n+    }\n+\n+    pub(crate) fn settings(&self) -> &UserSettings {\n+        &self.settings\n+    }\n+\n+    pub(crate) fn workspace_name(&self) -> &jj_lib::ref_name::WorkspaceName {\n+        &self.workspace_name\n+    }\n+\n+    pub(crate) fn workspace_root(&self) -> &Path {\n+        &self.workspace_root\n+    }\n+\n+    pub(crate) fn revset_aliases(&self) -> &RevsetAliasesMap {\n+        &self.revset_aliases\n+    }\n+\n+    pub(crate) fn revset_extensions(&self) -> &RevsetExtensions {\n+        &self.revset_extensions\n+    }\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct JjRepoInfo {\n+    pub change_id: String,\n+    pub commit_id: String,\n+    pub bookmarks: Vec<BookmarkInfo>,\n+    pub conflicted: bool,\n+    pub divergent: bool,\n+    pub hidden: bool,\n+    pub immutable: bool,\n+    pub bookmark_conflicted: bool,\n+}\n+\n+pub(crate) struct JjClosestBookmarksInfo {\n+    pub bookmarks: Vec<BookmarkInfo>,\n+}\n+\n+#[derive(Debug, Clone)]\n+pub(crate) struct BookmarkInfo {\n+    pub name: String,\n+    pub remote_ahead: usize,\n+    pub remote_behind: usize,\n+    pub is_tracked: bool,\n+}\n+\n+pub(crate) fn get_jujutsu_info(ctx: &Context) -> Option<JjRepoInfo> {\n+    vcs::discover_repo_root(ctx, vcs::Vcs::Jujutsu)?;\n+    let repo = ctx.get_jujutsu_repo()?;\n+    let change_id_length = crate::configs::jujutsu_change::JujutsuChangeConfig::try_load(\n+        ctx.config.get_module_config(\"jujutsu_change\"),\n+    )\n+    .change_id_length;\n+\n+    let commit_hash_length = crate::configs::jujutsu_commit::JujutsuCommitConfig::try_load(\n+        ctx.config.get_module_config(\"jujutsu_commit\"),\n+    )\n+    .commit_hash_length;\n+\n+    let commit_id = working_copy_commit_id(repo)?;\n+    let commit = repo.repo().store().get_commit(&commit_id).ok()?;\n+\n+    let change_id = shorten_id(&commit.change_id().reverse_hex(), change_id_length);\n+    let commit_id_short = shorten_id(&commit.id().hex(), commit_hash_length);\n+\n+    let tracked_bookmarks = tracked_bookmarks(repo.repo());\n+    let (bookmarks, bookmark_conflicted) =\n+        commit_bookmarks(repo.repo(), &commit_id, &tracked_bookmarks);\n+\n+    let hidden = commit.is_hidden(repo.repo().as_ref()).ok()?;\n+    let divergent = repo\n+        .repo()\n+        .as_ref()\n+        .resolve_change_id(commit.change_id())\n+        .ok()\n+        .and_then(|targets| targets.map(|targets| targets.is_divergent()))\n+        .unwrap_or(false);\n+    let immutable = is_commit_immutable(repo, &commit_id).unwrap_or(false);\n+\n+    Some(JjRepoInfo {\n+        change_id,\n+        commit_id: commit_id_short,\n+        bookmarks,\n+        conflicted: commit.has_conflict(),\n+        divergent,\n+        hidden,\n+        immutable,\n+        bookmark_conflicted,\n+    })\n+}\n+\n+pub(crate) fn get_closest_jujutsu_bookmarks_info(ctx: &Context) -> Option<JjClosestBookmarksInfo> {\n+    vcs::discover_repo_root(ctx, vcs::Vcs::Jujutsu)?;\n+    let repo = ctx.get_jujutsu_repo()?;\n+    let commit_id = closest_bookmark_commit_id(repo)?;\n+    let tracked_bookmarks = tracked_bookmarks(repo.repo());\n+    let (bookmarks, _) = commit_bookmarks(repo.repo(), &commit_id, &tracked_bookmarks);\n+\n+    Some(JjClosestBookmarksInfo { bookmarks })\n+}\n+\n+fn working_copy_commit_id(repo: &JujutsuRepo) -> Option<CommitId> {\n+    repo.repo()\n+        .view()\n+        .get_wc_commit_id(repo.workspace_name())\n+        .cloned()\n+}\n+\n+fn tracked_bookmarks(repo: &ReadonlyRepo) -> HashMap<String, (usize, usize)> {\n+    let mut tracked = HashMap::new();\n+\n+    for (name, targets) in repo.view().bookmarks() {\n+        let local_target = targets.local_target;\n+        for (_, remote_ref) in targets.remote_refs {\n+            if let Some((ahead, behind)) = tracking_counts(repo, local_target, remote_ref)\n+                .ok()\n+                .flatten()\n+            {\n+                let counts = tracked\n+                    .entry(name.as_str().to_string())\n+                    .or_insert((ahead, behind));\n+                counts.0 = counts.0.max(ahead);\n+                counts.1 = counts.1.max(behind);\n+            }\n+        }\n+    }\n+\n+    tracked\n+}\n+\n+fn tracking_counts(\n+    repo: &dyn jj_lib::repo::Repo,\n+    local_target: &RefTarget,\n+    remote_ref: &RemoteRef,\n+) -> Result<Option<(usize, usize)>, jj_lib::revset::RevsetEvaluationError> {\n+    if !remote_ref.is_tracked() {\n+        return Ok(None);\n+    }\n+\n+    let local_ids: Vec<CommitId> = local_target.added_ids().cloned().collect();\n+    let remote_ids: Vec<CommitId> = remote_ref.target.added_ids().cloned().collect();\n+\n+    let ahead = revset::walk_revs(repo, &remote_ids, &local_ids)?\n+        .count_estimate()?\n+        .0;\n+    let behind = revset::walk_revs(repo, &local_ids, &remote_ids)?\n+        .count_estimate()?\n+        .0;\n+\n+    Ok(Some((ahead, behind)))\n+}\n+\n+fn commit_bookmarks(\n+    repo: &ReadonlyRepo,\n+    commit_id: &CommitId,\n+    tracked_bookmarks: &HashMap<String, (usize, usize)>,\n+) -> (Vec<BookmarkInfo>, bool) {",
+    "path": "src/modules/utils/jujutsu.rs",
+    "commit_id": "082349ac815e661846e9615f04b04dba687fd0e0",
+    "original_commit_id": "082349ac815e661846e9615f04b04dba687fd0e0",
+    "user": {
+      "login": "RodEsp",
+      "id": 1084688,
+      "node_id": "MDQ6VXNlcjEwODQ2ODg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1084688?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/RodEsp",
+      "html_url": "https://github.com/RodEsp",
+      "followers_url": "https://api.github.com/users/RodEsp/followers",
+      "following_url": "https://api.github.com/users/RodEsp/following{/other_user}",
+      "gists_url": "https://api.github.com/users/RodEsp/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/RodEsp/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/RodEsp/subscriptions",
+      "organizations_url": "https://api.github.com/users/RodEsp/orgs",
+      "repos_url": "https://api.github.com/users/RodEsp/repos",
+      "events_url": "https://api.github.com/users/RodEsp/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/RodEsp/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Because I screwed that up and haven't written any tests 😅\n\nGood catch, thanks!",
+    "created_at": "2026-01-19T02:06:41Z",
+    "updated_at": "2026-01-19T02:06:41Z",
+    "html_url": "https://github.com/starship/starship/pull/7224#discussion_r2702996431",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7224",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2702996431"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7224#discussion_r2702996431"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7224"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2702996431/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 242,
+    "original_line": 242,
+    "side": "RIGHT",
+    "in_reply_to_id": 2702892297,
+    "author_association": "NONE",
+    "original_position": 242,
+    "position": 242,
+    "subject_type": "line"
+  }
+]

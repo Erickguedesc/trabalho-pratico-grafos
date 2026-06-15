@@ -1,0 +1,140 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1695602831",
+    "pull_request_review_id": 2205567598,
+    "id": 1695602831,
+    "node_id": "PRRC_kwDOCqswNs5lENiP",
+    "diff_hunk": "@@ -259,6 +263,54 @@ mod tests {\n         assert_eq!(expected, actual);\n     }\n \n+    #[test]\n+    fn test_alias() {\n+        let hostname = get_hostname!();\n+        let toml_config_string = format!(\n+            r#\"\n+            [hostname]\n+            ssh_only = false\n+            trim_at = \"\"\n+            aliases = {{ \"{}\" = \"homeworld\" }}\n+            \"#,\n+            hostname\n+        );\n+        let actual = ModuleRenderer::new(\"hostname\")\n+            .config(toml::from_str(&toml_config_string).unwrap())",
+    "path": "src/modules/hostname.rs",
+    "commit_id": "2536dc75e99ff554c6c661b5b8ae618b984cae7c",
+    "original_commit_id": "df7f7ce8b2a77c48e8ea05a251bbab289c36409c",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n        let mut toml_config = toml::toml!(\r\n            [hostname]\r\n            ssh_only = false\r\n            trim_at = \"\"\r\n            aliases = {}\r\n        );\r\n        toml_config[\"hostname\"][\"aliases\"].as_table_mut().unwrap().insert(\r\n            hostname.clone(),\r\n            toml::Value::String(\"homeworld\".to_string()),\r\n        );\r\n        let actual = ModuleRenderer::new(\"hostname\")\r\n            .config(toml_config)\r\n```",
+    "created_at": "2024-07-29T17:28:25Z",
+    "updated_at": "2024-07-29T17:42:30Z",
+    "html_url": "https://github.com/starship/starship/pull/6097#discussion_r1695602831",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6097",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1695602831"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6097#discussion_r1695602831"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6097"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1695602831/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 269,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 279,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 37,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1695627729",
+    "pull_request_review_id": 2205567598,
+    "id": 1695627729,
+    "node_id": "PRRC_kwDOCqswNs5lETnR",
+    "diff_hunk": "@@ -259,6 +263,54 @@ mod tests {\n         assert_eq!(expected, actual);\n     }\n \n+    #[test]\n+    fn test_alias() {\n+        let hostname = get_hostname!();\n+        let toml_config_string = format!(\n+            r#\"\n+            [hostname]\n+            ssh_only = false\n+            trim_at = \"\"\n+            aliases = {{ \"{}\" = \"homeworld\" }}\n+            \"#,\n+            hostname\n+        );\n+        let actual = ModuleRenderer::new(\"hostname\")\n+            .config(toml::from_str(&toml_config_string).unwrap())\n+            .collect();\n+\n+        let expected = Some(format!(\"{} in \", style().paint(\"homeworld\")));\n+        assert_eq!(expected, actual);\n+    }\n+\n+    #[test]\n+    fn test_alias_with_trim_at() {\n+        let hostname = get_hostname!();\n+        // Hostname needs to be at least 2 characters long for this test to work\n+        if hostname.len() < 2 {\n+            log::warn!(\"Skipping test_alias_with_trim_at because hostname is too short\");\n+            return;\n+        }\n+        let trim_at = &hostname[1..=1];\n+        let hostname_c = &hostname[..1];\n+        let toml_config_string = format!(\n+            r#\"\n+            [hostname]\n+            ssh_only = false\n+            trim_at = \"{char}\"\n+            aliases = {{ \"{hostname}\" = \"🌍\" }}\n+            \"#,\n+            char = trim_at,\n+            hostname = hostname_c,\n+        );\n+        let actual = ModuleRenderer::new(\"hostname\")\n+            .config(toml::from_str(&toml_config_string).unwrap())",
+    "path": "src/modules/hostname.rs",
+    "commit_id": "2536dc75e99ff554c6c661b5b8ae618b984cae7c",
+    "original_commit_id": "df7f7ce8b2a77c48e8ea05a251bbab289c36409c",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n        let hostname = get_hostname!();\r\n\r\n        let mut hostname_iter = hostname.graphemes(true);\r\n        let remainder = hostname_iter.next().unwrap_or_default();\r\n        let trim_at = hostname_iter.collect::<String>();\r\n\r\n        // Trimmed hostname needs to be non-empty\r\n        if remainder.is_empty() {\r\n            log::warn!(\"Skipping test_alias_with_trim_at because hostname is too short\");\r\n            return;\r\n        }\r\n        let mut toml_config = toml::toml!(\r\n            [hostname]\r\n            ssh_only = false\r\n            trim_at = trim_at\r\n            aliases = {}\r\n        );\r\n        toml_config[\"hostname\"][\"aliases\"].as_table_mut().unwrap().insert(\r\n            remainder.to_string(),\r\n            toml::Value::String(\"🌍\".to_string()),\r\n        );\r\n        let actual = ModuleRenderer::new(\"hostname\")\r\n            .config(toml_config)\r\n```",
+    "created_at": "2024-07-29T17:40:54Z",
+    "updated_at": "2024-07-29T17:42:30Z",
+    "html_url": "https://github.com/starship/starship/pull/6097#discussion_r1695627729",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6097",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1695627729"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6097#discussion_r1695627729"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6097"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1695627729/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 288,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 307,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 65,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

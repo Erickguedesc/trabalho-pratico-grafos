@@ -1,0 +1,280 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/898108840",
+    "pull_request_review_id": 1007686653,
+    "id": 898108840,
+    "node_id": "PRRC_kwDOCqswNs41iA2o",
+    "diff_hunk": "@@ -0,0 +1,138 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::raku::RakuConfig;\n+use crate::formatter::StringFormatter;\n+use crate::formatter::VersionFormatter;\n+\n+/// Creates a module with the current raku version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"raku\");\n+    let config: RakuConfig = RakuConfig::try_load(module.config);\n+    let is_raku_project = context\n+        .try_begin_scan()?\n+        .set_extensions(&config.detect_extensions)\n+        .set_files(&config.detect_files)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_raku_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let raku_version = context\n+                        .exec_cmd(\"raku\", &[\"-e\", \"printf q/%s-%s/, $*RAKU.version, $*VM;\"])?\n+                        .stdout;",
+    "path": "src/modules/raku.rs",
+    "commit_id": "bbf6720f65122617fa4cb1cf3dbababbdd2a59ec",
+    "original_commit_id": "6a52c25d7740f8496fd3b1d5a842c16f76bf3704",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please separate the different outputs into different variables, like the elixir module does. I also noticed `raku` has a `--version` flag, which is faster and exposes information about the runtime version:\r\n```\r\n❯ raku --version\r\nWelcome to Rakudo™ v2021.12.\r\nImplementing the Raku® Programming Language v6.d.\r\nBuilt on MoarVM version 2021.12.\r\n```",
+    "created_at": "2022-06-15T15:12:21Z",
+    "updated_at": "2022-06-15T15:17:10Z",
+    "html_url": "https://github.com/starship/starship/pull/4048#discussion_r898108840",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4048",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/898108840"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4048#discussion_r898108840"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4048"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/898108840/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 34,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 36,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 36,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/898964278",
+    "pull_request_review_id": 1008871831,
+    "id": 898964278,
+    "node_id": "PRRC_kwDOCqswNs41lRs2",
+    "diff_hunk": "@@ -0,0 +1,138 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::raku::RakuConfig;\n+use crate::formatter::StringFormatter;\n+use crate::formatter::VersionFormatter;\n+\n+/// Creates a module with the current raku version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"raku\");\n+    let config: RakuConfig = RakuConfig::try_load(module.config);\n+    let is_raku_project = context\n+        .try_begin_scan()?\n+        .set_extensions(&config.detect_extensions)\n+        .set_files(&config.detect_files)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_raku_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let raku_version = context\n+                        .exec_cmd(\"raku\", &[\"-e\", \"printf q/%s-%s/, $*RAKU.version, $*VM;\"])?\n+                        .stdout;",
+    "path": "src/modules/raku.rs",
+    "commit_id": "bbf6720f65122617fa4cb1cf3dbababbdd2a59ec",
+    "original_commit_id": "6a52c25d7740f8496fd3b1d5a842c16f76bf3704",
+    "user": {
+      "login": "sergot",
+      "id": 1027825,
+      "node_id": "MDQ6VXNlcjEwMjc4MjU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1027825?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/sergot",
+      "html_url": "https://github.com/sergot",
+      "followers_url": "https://api.github.com/users/sergot/followers",
+      "following_url": "https://api.github.com/users/sergot/following{/other_user}",
+      "gists_url": "https://api.github.com/users/sergot/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/sergot/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/sergot/subscriptions",
+      "organizations_url": "https://api.github.com/users/sergot/orgs",
+      "repos_url": "https://api.github.com/users/sergot/repos",
+      "events_url": "https://api.github.com/users/sergot/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/sergot/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Good point, on it! :) ",
+    "created_at": "2022-06-16T11:03:08Z",
+    "updated_at": "2022-06-16T11:03:19Z",
+    "html_url": "https://github.com/starship/starship/pull/4048#discussion_r898964278",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4048",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/898964278"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4048#discussion_r898964278"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4048"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/898964278/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 34,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 36,
+    "side": "RIGHT",
+    "in_reply_to_id": 898108840,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 36,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/899016311",
+    "pull_request_review_id": 1008945416,
+    "id": 899016311,
+    "node_id": "PRRC_kwDOCqswNs41leZ3",
+    "diff_hunk": "@@ -0,0 +1,138 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::raku::RakuConfig;\n+use crate::formatter::StringFormatter;\n+use crate::formatter::VersionFormatter;\n+\n+/// Creates a module with the current raku version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"raku\");\n+    let config: RakuConfig = RakuConfig::try_load(module.config);\n+    let is_raku_project = context\n+        .try_begin_scan()?\n+        .set_extensions(&config.detect_extensions)\n+        .set_files(&config.detect_files)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_raku_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let raku_version = context\n+                        .exec_cmd(\"raku\", &[\"-e\", \"printf q/%s-%s/, $*RAKU.version, $*VM;\"])?\n+                        .stdout;",
+    "path": "src/modules/raku.rs",
+    "commit_id": "bbf6720f65122617fa4cb1cf3dbababbdd2a59ec",
+    "original_commit_id": "6a52c25d7740f8496fd3b1d5a842c16f76bf3704",
+    "user": {
+      "login": "sergot",
+      "id": 1027825,
+      "node_id": "MDQ6VXNlcjEwMjc4MjU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1027825?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/sergot",
+      "html_url": "https://github.com/sergot",
+      "followers_url": "https://api.github.com/users/sergot/followers",
+      "following_url": "https://api.github.com/users/sergot/following{/other_user}",
+      "gists_url": "https://api.github.com/users/sergot/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/sergot/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/sergot/subscriptions",
+      "organizations_url": "https://api.github.com/users/sergot/orgs",
+      "repos_url": "https://api.github.com/users/sergot/repos",
+      "events_url": "https://api.github.com/users/sergot/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/sergot/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Done",
+    "created_at": "2022-06-16T12:13:20Z",
+    "updated_at": "2022-06-16T12:13:21Z",
+    "html_url": "https://github.com/starship/starship/pull/4048#discussion_r899016311",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4048",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/899016311"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4048#discussion_r899016311"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4048"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/899016311/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 34,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 36,
+    "side": "RIGHT",
+    "in_reply_to_id": 898108840,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 36,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/901156121",
+    "pull_request_review_id": 1011566520,
+    "id": 901156121,
+    "node_id": "PRRC_kwDOCqswNs41to0Z",
+    "diff_hunk": "@@ -2938,6 +2938,45 @@ any of the following conditions are met:\n format = \"with [📐 $version](blue bold) \"\n ```\n \n+## Raku\n+\n+The `raku` module shows the currently installed version of [Raku](https://www.raku.org/).\n+By default the module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `META6.json` file\n+- The current directory contains a `.p6`, `.pm6`, `.raku`, `.rakumod` or `.pod6`\n+\n+### Options\n+\n+| Option              | Default                                          | Description                                                               |\n+| ------------------- | ------------------------------------------------ | ------------------------------------------------------------------------- |\n+| `format`            | `\"via [$symbol($version-$vm_version )]($style)\"` | The format string for the module.                                         |\n+| `version_format`    | `\"v${raw}\"`                                      | The version format. Available vars are `raw`, `major`, `minor`, & `patch` |\n+| `symbol`            | `\"🦋 \"`                                           | The symbol used before displaying the version of Perl                     |",
+    "path": "docs/config/README.md",
+    "commit_id": "bbf6720f65122617fa4cb1cf3dbababbdd2a59ec",
+    "original_commit_id": "5b7dd8971a8ecd7293a17d3dd6614260464b88f9",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Should this be\r\n```suggestion\r\n| `symbol`            | `\"🦋 \"`                                           | The symbol used before displaying the version of Raku                     |\r\n```",
+    "created_at": "2022-06-19T20:51:58Z",
+    "updated_at": "2022-06-19T20:55:20Z",
+    "html_url": "https://github.com/starship/starship/pull/4048#discussion_r901156121",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4048",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/901156121"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4048#discussion_r901156121"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4048"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/901156121/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 2955,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 18,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

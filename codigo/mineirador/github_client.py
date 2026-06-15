@@ -17,6 +17,7 @@ import urllib.request
 import urllib.error
 import json
 from typing import Any
+import http.client
 
 from .config import MinerConfig
 from .json_cache import CacheJson

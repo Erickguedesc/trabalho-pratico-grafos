@@ -1,0 +1,696 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1581749975",
+    "pull_request_review_id": 2026513173,
+    "id": 1581749975,
+    "node_id": "PRRC_kwDOCqswNs5eR5bX",
+    "diff_hunk": "@@ -0,0 +1,26 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct NatsConfig<'a> {\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> Default for NatsConfig<'a> {\n+    fn default() -> Self {\n+        NatsConfig {\n+            format: \"[$symbol$name]($style)\",\n+            symbol: \"\",",
+    "path": "src/configs/nats.rs",
+    "commit_id": "246dc41f80c1e2a87dca2dcbbcf21396b82c0e9a",
+    "original_commit_id": "40c6da1e6b01f967367855f9d3def5bfbb76113c",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this should have a symbol by default.",
+    "created_at": "2024-04-27T07:26:45Z",
+    "updated_at": "2024-04-27T07:30:46Z",
+    "html_url": "https://github.com/starship/starship/pull/5900#discussion_r1581749975",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5900",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1581749975"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5900#discussion_r1581749975"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5900"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1581749975/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 20,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 21,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 21,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1581750387",
+    "pull_request_review_id": 2026513173,
+    "id": 1581750387,
+    "node_id": "PRRC_kwDOCqswNs5eR5hz",
+    "diff_hunk": "@@ -0,0 +1,96 @@\n+use super::{Context, Module, ModuleConfig};\n+use serde_json as json;\n+\n+use crate::configs::nats::NatsConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"nats\");\n+    let config = NatsConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    };\n+\n+    let ctx_str = context\n+        .exec_cmd(\"nats\", &[\"context\", \"info\", \"--json\"])?\n+        .stdout;\n+    let nats_context: json::Value = json::from_str(&ctx_str).ok()?;\n+    let name = nats_context.get(\"name\")?.as_str()?;",
+    "path": "src/modules/nats.rs",
+    "commit_id": "246dc41f80c1e2a87dca2dcbbcf21396b82c0e9a",
+    "original_commit_id": "40c6da1e6b01f967367855f9d3def5bfbb76113c",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I feel like failure to parse the JSON should be logged here.\r\nAdditionally, I would prefer to move the `nats_context.get(\"name\")` into the `name =>` `match`, but you can skip that if that causes any issues.",
+    "created_at": "2024-04-27T07:29:32Z",
+    "updated_at": "2024-04-27T07:30:46Z",
+    "html_url": "https://github.com/starship/starship/pull/5900#discussion_r1581750387",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5900",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1581750387"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5900#discussion_r1581750387"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5900"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1581750387/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 18,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 19,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 19,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1586927473",
+    "pull_request_review_id": 2034618129,
+    "id": 1586927473,
+    "node_id": "PRRC_kwDOCqswNs5elpdx",
+    "diff_hunk": "@@ -0,0 +1,26 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct NatsConfig<'a> {\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> Default for NatsConfig<'a> {\n+    fn default() -> Self {\n+        NatsConfig {\n+            format: \"[$symbol$name]($style)\",\n+            symbol: \"\",",
+    "path": "src/configs/nats.rs",
+    "commit_id": "246dc41f80c1e2a87dca2dcbbcf21396b82c0e9a",
+    "original_commit_id": "40c6da1e6b01f967367855f9d3def5bfbb76113c",
+    "user": {
+      "login": "hooksie1",
+      "id": 17015451,
+      "node_id": "MDQ6VXNlcjE3MDE1NDUx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17015451?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/hooksie1",
+      "html_url": "https://github.com/hooksie1",
+      "followers_url": "https://api.github.com/users/hooksie1/followers",
+      "following_url": "https://api.github.com/users/hooksie1/following{/other_user}",
+      "gists_url": "https://api.github.com/users/hooksie1/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/hooksie1/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/hooksie1/subscriptions",
+      "organizations_url": "https://api.github.com/users/hooksie1/orgs",
+      "repos_url": "https://api.github.com/users/hooksie1/repos",
+      "events_url": "https://api.github.com/users/hooksie1/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/hooksie1/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Yeah I'm not sure what to put here lol. ",
+    "created_at": "2024-05-01T23:46:32Z",
+    "updated_at": "2024-05-01T23:46:32Z",
+    "html_url": "https://github.com/starship/starship/pull/5900#discussion_r1586927473",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5900",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1586927473"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5900#discussion_r1586927473"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5900"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1586927473/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 20,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 21,
+    "side": "RIGHT",
+    "in_reply_to_id": 1581749975,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 21,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1586953988",
+    "pull_request_review_id": 2034656796,
+    "id": 1586953988,
+    "node_id": "PRRC_kwDOCqswNs5elv8E",
+    "diff_hunk": "@@ -0,0 +1,96 @@\n+use super::{Context, Module, ModuleConfig};\n+use serde_json as json;\n+\n+use crate::configs::nats::NatsConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"nats\");\n+    let config = NatsConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    };\n+\n+    let ctx_str = context\n+        .exec_cmd(\"nats\", &[\"context\", \"info\", \"--json\"])?\n+        .stdout;\n+    let nats_context: json::Value = json::from_str(&ctx_str).ok()?;\n+    let name = nats_context.get(\"name\")?.as_str()?;",
+    "path": "src/modules/nats.rs",
+    "commit_id": "246dc41f80c1e2a87dca2dcbbcf21396b82c0e9a",
+    "original_commit_id": "40c6da1e6b01f967367855f9d3def5bfbb76113c",
+    "user": {
+      "login": "hooksie1",
+      "id": 17015451,
+      "node_id": "MDQ6VXNlcjE3MDE1NDUx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17015451?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/hooksie1",
+      "html_url": "https://github.com/hooksie1",
+      "followers_url": "https://api.github.com/users/hooksie1/followers",
+      "following_url": "https://api.github.com/users/hooksie1/following{/other_user}",
+      "gists_url": "https://api.github.com/users/hooksie1/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/hooksie1/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/hooksie1/subscriptions",
+      "organizations_url": "https://api.github.com/users/hooksie1/orgs",
+      "repos_url": "https://api.github.com/users/hooksie1/repos",
+      "events_url": "https://api.github.com/users/hooksie1/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/hooksie1/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "yeah I can do that. I think I looked at another module to see how others did it and assumed the error bubbled up. ",
+    "created_at": "2024-05-02T00:48:51Z",
+    "updated_at": "2024-05-02T00:48:51Z",
+    "html_url": "https://github.com/starship/starship/pull/5900#discussion_r1586953988",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5900",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1586953988"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5900#discussion_r1586953988"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5900"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1586953988/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 18,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 19,
+    "side": "RIGHT",
+    "in_reply_to_id": 1581750387,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 19,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1586998660",
+    "pull_request_review_id": 2034721016,
+    "id": 1586998660,
+    "node_id": "PRRC_kwDOCqswNs5el62E",
+    "diff_hunk": "@@ -0,0 +1,26 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct NatsConfig<'a> {\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> Default for NatsConfig<'a> {\n+    fn default() -> Self {\n+        NatsConfig {\n+            format: \"[$symbol$name]($style)\",\n+            symbol: \"\",",
+    "path": "src/configs/nats.rs",
+    "commit_id": "246dc41f80c1e2a87dca2dcbbcf21396b82c0e9a",
+    "original_commit_id": "40c6da1e6b01f967367855f9d3def5bfbb76113c",
+    "user": {
+      "login": "hooksie1",
+      "id": 17015451,
+      "node_id": "MDQ6VXNlcjE3MDE1NDUx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17015451?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/hooksie1",
+      "html_url": "https://github.com/hooksie1",
+      "followers_url": "https://api.github.com/users/hooksie1/followers",
+      "following_url": "https://api.github.com/users/hooksie1/following{/other_user}",
+      "gists_url": "https://api.github.com/users/hooksie1/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/hooksie1/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/hooksie1/subscriptions",
+      "organizations_url": "https://api.github.com/users/hooksie1/orgs",
+      "repos_url": "https://api.github.com/users/hooksie1/repos",
+      "events_url": "https://api.github.com/users/hooksie1/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/hooksie1/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I used an envelope for \"messages\" ",
+    "created_at": "2024-05-02T02:38:00Z",
+    "updated_at": "2024-05-02T02:38:01Z",
+    "html_url": "https://github.com/starship/starship/pull/5900#discussion_r1586998660",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5900",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1586998660"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5900#discussion_r1586998660"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5900"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1586998660/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 20,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 21,
+    "side": "RIGHT",
+    "in_reply_to_id": 1581749975,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 21,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1591315951",
+    "pull_request_review_id": 2041275919,
+    "id": 1591315951,
+    "node_id": "PRRC_kwDOCqswNs5e2Y3v",
+    "diff_hunk": "@@ -2895,6 +2896,35 @@ truncation_length = 4\n truncation_symbol = ''\n ```\n \n+## NATS\n+\n+The `nats` module shows the name of the current [NATS](https://nats.io) context.\n+\n+### Options\n+\n+| Option     | Default                    | Description                                                  |\n+| ---------- | -------------------------- | ------------------------------------------------------------ |\n+| `symbol`   | `''`                       | The symbol used before the NATS context (defaults to empty). |",
+    "path": "docs/config/README.md",
+    "commit_id": "246dc41f80c1e2a87dca2dcbbcf21396b82c0e9a",
+    "original_commit_id": "89b76ec5cbaf948b1cbf7b35181e0e3a096db84f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n| `symbol`   | `'✉️ '`                    | The symbol used before the NATS context (defaults to empty). |\r\n```",
+    "created_at": "2024-05-06T17:09:48Z",
+    "updated_at": "2024-05-06T17:20:30Z",
+    "html_url": "https://github.com/starship/starship/pull/5900#discussion_r1591315951",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5900",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1591315951"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5900#discussion_r1591315951"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5900"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1591315951/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 2907,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 20,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1591320570",
+    "pull_request_review_id": 2041275919,
+    "id": 1591320570,
+    "node_id": "PRRC_kwDOCqswNs5e2Z_6",
+    "diff_hunk": "@@ -0,0 +1,99 @@\n+use super::{Context, Module, ModuleConfig};\n+use serde_json as json;\n+\n+use crate::configs::nats::NatsConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"nats\");\n+    let config = NatsConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    };\n+\n+    let ctx_str = context\n+        .exec_cmd(\"nats\", &[\"context\", \"info\", \"--json\"])?\n+        .stdout;\n+    let nats_context: json::Value = json::from_str(&ctx_str)\n+        .map_err(|e| {\n+            log::warn!(\"Error parsing nats context JSON: {}\\n\", e);\n+            drop(e);\n+        })\n+        .ok()?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"name\" => Some(Ok(nats_context.get(\"name\")?.as_str()?)),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `nats`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use nu_ansi_term::Color;\n+    use std::io;\n+\n+    use crate::test::ModuleRenderer;\n+\n+    #[test]\n+    fn show_context() -> io::Result<()> {\n+        let actual = ModuleRenderer::new(\"nats\")\n+            .config(\n+                toml::from_str(&format!(\n+                    \"\n+                [nats]\n+                format = \\\"[$symbol$name](bold purple)\\\"\n+                symbol = \\\"\\\"\n+                disabled = false\n+                \"\n+                ))\n+                .unwrap(),\n+            )",
+    "path": "src/modules/nats.rs",
+    "commit_id": "246dc41f80c1e2a87dca2dcbbcf21396b82c0e9a",
+    "original_commit_id": "89b76ec5cbaf948b1cbf7b35181e0e3a096db84f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n            .config(toml::toml! {\r\n                [nats]\r\n                format = \"[$symbol$name](bold purple)\"\r\n                symbol = \"\"\r\n                disabled = false\r\n            })\r\n```",
+    "created_at": "2024-05-06T17:14:25Z",
+    "updated_at": "2024-05-06T17:20:31Z",
+    "html_url": "https://github.com/starship/starship/pull/5900#discussion_r1591320570",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5900",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1591320570"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5900#discussion_r1591320570"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5900"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1591320570/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 63,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 73,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 73,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1591321547",
+    "pull_request_review_id": 2041275919,
+    "id": 1591321547,
+    "node_id": "PRRC_kwDOCqswNs5e2aPL",
+    "diff_hunk": "@@ -0,0 +1,99 @@\n+use super::{Context, Module, ModuleConfig};\n+use serde_json as json;\n+\n+use crate::configs::nats::NatsConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"nats\");\n+    let config = NatsConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    };\n+\n+    let ctx_str = context\n+        .exec_cmd(\"nats\", &[\"context\", \"info\", \"--json\"])?\n+        .stdout;\n+    let nats_context: json::Value = json::from_str(&ctx_str)\n+        .map_err(|e| {\n+            log::warn!(\"Error parsing nats context JSON: {}\\n\", e);\n+            drop(e);\n+        })\n+        .ok()?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"name\" => Some(Ok(nats_context.get(\"name\")?.as_str()?)),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `nats`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use nu_ansi_term::Color;\n+    use std::io;\n+\n+    use crate::test::ModuleRenderer;\n+\n+    #[test]\n+    fn show_context() -> io::Result<()> {\n+        let actual = ModuleRenderer::new(\"nats\")\n+            .config(\n+                toml::from_str(&format!(\n+                    \"\n+                [nats]\n+                format = \\\"[$symbol$name](bold purple)\\\"\n+                symbol = \\\"\\\"\n+                disabled = false\n+                \"\n+                ))\n+                .unwrap(),\n+            )\n+            .collect();\n+        let expected = Some(format!(\"{}\", Color::Purple.bold().paint(\"localhost\")));\n+        assert_eq!(expected, actual);\n+        Ok(())\n+    }\n+\n+    #[test]\n+    fn test_with_symbol() -> io::Result<()> {\n+        let actual = ModuleRenderer::new(\"nats\")\n+            .config(\n+                toml::from_str(&format!(\n+                    \"\n+                [nats]\n+                format = \\\"[$symbol$name](bold red)\\\"\n+                symbol = \\\"N \\\"\n+                disabled = false\n+                \"\n+                ))\n+                .unwrap(),\n+            )",
+    "path": "src/modules/nats.rs",
+    "commit_id": "246dc41f80c1e2a87dca2dcbbcf21396b82c0e9a",
+    "original_commit_id": "89b76ec5cbaf948b1cbf7b35181e0e3a096db84f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n            .config(toml::toml! {\r\n                [nats]\r\n                format = \"[$symbol$name](bold red)\"\r\n                symbol = \"N \"\r\n                disabled = false\r\n            })\r\n```",
+    "created_at": "2024-05-06T17:15:26Z",
+    "updated_at": "2024-05-06T17:20:31Z",
+    "html_url": "https://github.com/starship/starship/pull/5900#discussion_r1591321547",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5900",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1591321547"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5900#discussion_r1591321547"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5900"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1591321547/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 83,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 93,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 93,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1591325903",
+    "pull_request_review_id": 2041275919,
+    "id": 1591325903,
+    "node_id": "PRRC_kwDOCqswNs5e2bTP",
+    "diff_hunk": "@@ -0,0 +1,26 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct NatsConfig<'a> {\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> Default for NatsConfig<'a> {\n+    fn default() -> Self {\n+        NatsConfig {\n+            format: \"[$symbol$name]($style)\",",
+    "path": "src/configs/nats.rs",
+    "commit_id": "246dc41f80c1e2a87dca2dcbbcf21396b82c0e9a",
+    "original_commit_id": "89b76ec5cbaf948b1cbf7b35181e0e3a096db84f",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This should have more space, please also update the docs and config schema:\r\n```suggestion\r\n            format: \"[$symbol($name )]($style)\",\r\n```",
+    "created_at": "2024-05-06T17:19:54Z",
+    "updated_at": "2024-05-06T17:20:31Z",
+    "html_url": "https://github.com/starship/starship/pull/5900#discussion_r1591325903",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5900",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1591325903"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5900#discussion_r1591325903"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5900"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1591325903/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 20,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 20,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1591684272",
+    "pull_request_review_id": 2041873570,
+    "id": 1591684272,
+    "node_id": "PRRC_kwDOCqswNs5e3yyw",
+    "diff_hunk": "@@ -0,0 +1,99 @@\n+use super::{Context, Module, ModuleConfig};\n+use serde_json as json;\n+\n+use crate::configs::nats::NatsConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"nats\");\n+    let config = NatsConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    };\n+\n+    let ctx_str = context\n+        .exec_cmd(\"nats\", &[\"context\", \"info\", \"--json\"])?\n+        .stdout;\n+    let nats_context: json::Value = json::from_str(&ctx_str)\n+        .map_err(|e| {\n+            log::warn!(\"Error parsing nats context JSON: {}\\n\", e);\n+            drop(e);\n+        })\n+        .ok()?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"name\" => Some(Ok(nats_context.get(\"name\")?.as_str()?)),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `nats`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use nu_ansi_term::Color;\n+    use std::io;\n+\n+    use crate::test::ModuleRenderer;\n+\n+    #[test]\n+    fn show_context() -> io::Result<()> {\n+        let actual = ModuleRenderer::new(\"nats\")\n+            .config(\n+                toml::from_str(&format!(\n+                    \"\n+                [nats]\n+                format = \\\"[$symbol$name](bold purple)\\\"\n+                symbol = \\\"\\\"\n+                disabled = false\n+                \"\n+                ))\n+                .unwrap(),\n+            )\n+            .collect();\n+        let expected = Some(format!(\"{}\", Color::Purple.bold().paint(\"localhost\")));\n+        assert_eq!(expected, actual);\n+        Ok(())\n+    }\n+\n+    #[test]\n+    fn test_with_symbol() -> io::Result<()> {\n+        let actual = ModuleRenderer::new(\"nats\")\n+            .config(\n+                toml::from_str(&format!(\n+                    \"\n+                [nats]\n+                format = \\\"[$symbol$name](bold red)\\\"\n+                symbol = \\\"N \\\"\n+                disabled = false\n+                \"\n+                ))\n+                .unwrap(),\n+            )",
+    "path": "src/modules/nats.rs",
+    "commit_id": "246dc41f80c1e2a87dca2dcbbcf21396b82c0e9a",
+    "original_commit_id": "89b76ec5cbaf948b1cbf7b35181e0e3a096db84f",
+    "user": {
+      "login": "hooksie1",
+      "id": 17015451,
+      "node_id": "MDQ6VXNlcjE3MDE1NDUx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17015451?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/hooksie1",
+      "html_url": "https://github.com/hooksie1",
+      "followers_url": "https://api.github.com/users/hooksie1/followers",
+      "following_url": "https://api.github.com/users/hooksie1/following{/other_user}",
+      "gists_url": "https://api.github.com/users/hooksie1/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/hooksie1/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/hooksie1/subscriptions",
+      "organizations_url": "https://api.github.com/users/hooksie1/orgs",
+      "repos_url": "https://api.github.com/users/hooksie1/repos",
+      "events_url": "https://api.github.com/users/hooksie1/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/hooksie1/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I switched out the N since we have an icon.",
+    "created_at": "2024-05-07T00:38:55Z",
+    "updated_at": "2024-05-07T00:38:55Z",
+    "html_url": "https://github.com/starship/starship/pull/5900#discussion_r1591684272",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5900",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1591684272"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5900#discussion_r1591684272"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5900"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1591684272/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 83,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 93,
+    "side": "RIGHT",
+    "in_reply_to_id": 1591321547,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 93,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

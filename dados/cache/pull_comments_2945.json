@@ -1,0 +1,487 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/684387943",
+    "pull_request_review_id": 724561072,
+    "id": 684387943,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY4NDM4Nzk0Mw==",
+    "diff_hunk": "@@ -1314,6 +1314,7 @@ current directory.\n | `ahead`      | `\"⇡\"`                                         | The format of `ahead`               |\n | `behind`     | `\"⇣\"`                                         | The format of `behind`              |\n | `diverged`   | `\"⇕\"`                                         | The format of `diverged`            |\n+| `uptodate`   | `\"✓\"`                                         | The format of `uptodate`            |",
+    "path": "docs/config/README.md",
+    "commit_id": "81501206f9492e6f497e1f2d67ff3f4d8d4e46b1",
+    "original_commit_id": "64a2b4e7cab222abccd1cfd549eb032ef5779f4e",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think it's better to default to an empty string to avoid changing the existing output.",
+    "created_at": "2021-08-06T17:15:40Z",
+    "updated_at": "2021-08-06T17:22:02Z",
+    "html_url": "https://github.com/starship/starship/pull/2945#discussion_r684387943",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2945",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/684387943"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2945#discussion_r684387943"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2945"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/684387943/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1317,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/684389809",
+    "pull_request_review_id": 724561072,
+    "id": 684389809,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY4NDM4OTgwOQ==",
+    "diff_hunk": "@@ -46,23 +47,35 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n                     \"stashed\" => info.get_stashed().and_then(|count| {\n                         format_count(config.stashed, \"git_status.stashed\", count)\n                     }),\n-                    \"ahead_behind\" => info.get_ahead_behind().and_then(|(ahead, behind)| {\n-                        if ahead > 0 && behind > 0 {\n-                            format_text(config.diverged, \"git_status.diverged\", |variable| {\n-                                match variable {\n-                                    \"ahead_count\" => Some(ahead.to_string()),\n-                                    \"behind_count\" => Some(behind.to_string()),\n-                                    _ => None,\n+                    \"ahead_behind\" => {\n+                        info.get_ahead_behind()\n+                            .and_then(|(ahead, behind)| match (ahead, behind) {\n+                                (None, _) | (_, None) => None,\n+                                (Some(a), Some(b)) => {",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "81501206f9492e6f497e1f2d67ff3f4d8d4e46b1",
+    "original_commit_id": "64a2b4e7cab222abccd1cfd549eb032ef5779f4e",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think you can keep the changes smaller and simplify this by using the `?` operator:\r\n\r\n```rust\r\nmatch (ahead?, behind?) {\r\n```",
+    "created_at": "2021-08-06T17:19:05Z",
+    "updated_at": "2021-08-06T17:22:02Z",
+    "html_url": "https://github.com/starship/starship/pull/2945#discussion_r684389809",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2945",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/684389809"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2945#discussion_r684389809"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2945"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/684389809/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 52,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 54,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/684390655",
+    "pull_request_review_id": 724561072,
+    "id": 684390655,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY4NDM5MDY1NQ==",
+    "diff_hunk": "@@ -271,8 +284,8 @@ impl RepoStatus {\n         let re = Regex::new(r\"branch\\.ab \\+([0-9]+) \\-([0-9]+)\").unwrap();\n \n         if let Some(caps) = re.captures(s) {\n-            self.ahead = caps.get(1).unwrap().as_str().parse::<usize>().unwrap();\n-            self.behind = caps.get(2).unwrap().as_str().parse::<usize>().unwrap();\n+            self.ahead = Some(caps.get(1).unwrap().as_str().parse::<usize>().unwrap());\n+            self.behind = Some(caps.get(2).unwrap().as_str().parse::<usize>().unwrap());",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "81501206f9492e6f497e1f2d67ff3f4d8d4e46b1",
+    "original_commit_id": "64a2b4e7cab222abccd1cfd549eb032ef5779f4e",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "You can make this safer by using the `parse` return value:\r\n```suggestion\r\n            self.ahead = caps.get(1).unwrap().as_str().parse::<usize>().ok();\r\n            self.behind = caps.get(2).unwrap().as_str().parse::<usize>().ok();\r\n```",
+    "created_at": "2021-08-06T17:20:39Z",
+    "updated_at": "2021-08-06T17:22:02Z",
+    "html_url": "https://github.com/starship/starship/pull/2945#discussion_r684390655",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2945",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/684390655"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2945#discussion_r684390655"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2945"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/684390655/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 287,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 288,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 86,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/684447957",
+    "pull_request_review_id": 724638336,
+    "id": 684447957,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY4NDQ0Nzk1Nw==",
+    "diff_hunk": "@@ -1314,6 +1314,7 @@ current directory.\n | `ahead`      | `\"⇡\"`                                         | The format of `ahead`               |\n | `behind`     | `\"⇣\"`                                         | The format of `behind`              |\n | `diverged`   | `\"⇕\"`                                         | The format of `diverged`            |\n+| `uptodate`   | `\"✓\"`                                         | The format of `uptodate`            |",
+    "path": "docs/config/README.md",
+    "commit_id": "81501206f9492e6f497e1f2d67ff3f4d8d4e46b1",
+    "original_commit_id": "64a2b4e7cab222abccd1cfd549eb032ef5779f4e",
+    "user": {
+      "login": "billrisher",
+      "id": 24847734,
+      "node_id": "MDQ6VXNlcjI0ODQ3NzM0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24847734?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/billrisher",
+      "html_url": "https://github.com/billrisher",
+      "followers_url": "https://api.github.com/users/billrisher/followers",
+      "following_url": "https://api.github.com/users/billrisher/following{/other_user}",
+      "gists_url": "https://api.github.com/users/billrisher/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/billrisher/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/billrisher/subscriptions",
+      "organizations_url": "https://api.github.com/users/billrisher/orgs",
+      "repos_url": "https://api.github.com/users/billrisher/repos",
+      "events_url": "https://api.github.com/users/billrisher/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/billrisher/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "In the docstrings of `modules/git_status.rs` (lines 13-26), should I remove the mention of `uptodate` there since it defaults to nothing, or still leave it there with an empty string as its 'default symbol'? Thanks for your review!",
+    "created_at": "2021-08-06T19:04:37Z",
+    "updated_at": "2021-08-06T19:04:49Z",
+    "html_url": "https://github.com/starship/starship/pull/2945#discussion_r684447957",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2945",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/684447957"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2945#discussion_r684447957"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2945"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/684447957/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1317,
+    "side": "RIGHT",
+    "in_reply_to_id": 684387943,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/684471167",
+    "pull_request_review_id": 724667917,
+    "id": 684471167,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY4NDQ3MTE2Nw==",
+    "diff_hunk": "@@ -1314,6 +1314,7 @@ current directory.\n | `ahead`      | `\"⇡\"`                                         | The format of `ahead`               |\n | `behind`     | `\"⇣\"`                                         | The format of `behind`              |\n | `diverged`   | `\"⇕\"`                                         | The format of `diverged`            |\n+| `uptodate`   | `\"✓\"`                                         | The format of `uptodate`            |",
+    "path": "docs/config/README.md",
+    "commit_id": "81501206f9492e6f497e1f2d67ff3f4d8d4e46b1",
+    "original_commit_id": "64a2b4e7cab222abccd1cfd549eb032ef5779f4e",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please leave it there with an empty string.",
+    "created_at": "2021-08-06T19:52:08Z",
+    "updated_at": "2021-08-06T19:52:08Z",
+    "html_url": "https://github.com/starship/starship/pull/2945#discussion_r684471167",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2945",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/684471167"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2945#discussion_r684471167"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2945"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/684471167/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1317,
+    "side": "RIGHT",
+    "in_reply_to_id": 684387943,
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/684493496",
+    "pull_request_review_id": 724697357,
+    "id": 684493496,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY4NDQ5MzQ5Ng==",
+    "diff_hunk": "@@ -10,6 +10,7 @@ pub struct GitStatusConfig<'a> {\n     pub stashed: &'a str,\n     pub ahead: &'a str,\n     pub behind: &'a str,\n+    pub uptodate: &'a str,",
+    "path": "src/configs/git_status.rs",
+    "commit_id": "81501206f9492e6f497e1f2d67ff3f4d8d4e46b1",
+    "original_commit_id": "fa8c1adeed87e712c11ed381ff5aef4df78ed32a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I just noticed it might be better to bring this in line with the other names and call this `up_to_date`",
+    "created_at": "2021-08-06T20:40:51Z",
+    "updated_at": "2021-08-06T20:48:53Z",
+    "html_url": "https://github.com/starship/starship/pull/2945#discussion_r684493496",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2945",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/684493496"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2945#discussion_r684493496"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2945"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/684493496/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 13,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 4,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/684496382",
+    "pull_request_review_id": 724697357,
+    "id": 684496382,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY4NDQ5NjM4Mg==",
+    "diff_hunk": "@@ -59,6 +61,8 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n                             format_count(config.ahead, \"git_status.ahead\", ahead)\n                         } else if behind > 0 && ahead == 0 {\n                             format_count(config.behind, \"git_status.behind\", behind)\n+                        } else if ahead == 0 && behind == 0 {\n+                            format_symbol(config.uptodate, \"git_status.uptodate\")\n                         } else {\n                             None\n                         }",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "81501206f9492e6f497e1f2d67ff3f4d8d4e46b1",
+    "original_commit_id": "fa8c1adeed87e712c11ed381ff5aef4df78ed32a",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think else is never reached:\r\n```suggestion\r\n                        } else {\r\n                            format_symbol(config.up_to_date, \"git_status.up_to_date\")\r\n                        }\r\n```",
+    "created_at": "2021-08-06T20:47:39Z",
+    "updated_at": "2021-08-06T20:48:53Z",
+    "html_url": "https://github.com/starship/starship/pull/2945#discussion_r684496382",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2945",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/684496382"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2945#discussion_r684496382"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2945"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/684496382/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 64,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 68,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 24,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

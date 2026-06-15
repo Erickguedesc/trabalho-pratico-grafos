@@ -1,0 +1,2652 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328934512",
+    "pull_request_review_id": 294141193,
+    "id": 328934512,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODkzNDUxMg==",
+    "diff_hunk": "@@ -39,6 +39,9 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     let mut module = context.new_module(\"git_status\");\n     let show_sync_count = module.config_value_bool(\"show_sync_count\").unwrap_or(false);\n+    let show_status_count = module\n+        .config_value_bool(\"show_status_count\")\n+        .unwrap_or(false);",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "brianlow",
+      "id": 938138,
+      "node_id": "MDQ6VXNlcjkzODEzOA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/938138?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/brianlow",
+      "html_url": "https://github.com/brianlow",
+      "followers_url": "https://api.github.com/users/brianlow/followers",
+      "following_url": "https://api.github.com/users/brianlow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/brianlow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/brianlow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/brianlow/subscriptions",
+      "organizations_url": "https://api.github.com/users/brianlow/orgs",
+      "repos_url": "https://api.github.com/users/brianlow/repos",
+      "events_url": "https://api.github.com/users/brianlow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/brianlow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Option per symbol (e.g. `show_deleted_count`, `show_staged_count`)?",
+    "created_at": "2019-09-27T06:53:54Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r328934512",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328934512"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r328934512"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328934512/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 44,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328935339",
+    "pull_request_review_id": 294141193,
+    "id": 328935339,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODkzNTMzOQ==",
+    "diff_hunk": "@@ -156,8 +175,25 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     Some(module)\n }\n \n-/// Gets the bitflags associated with the repo's git status\n-fn get_repo_status(repository: &Repository) -> Result<Status, git2::Error> {\n+/// Adds a segment with an optional count segment (e.g. \"+2\")\n+fn new_segment_with_count<'a>(\n+    module: &mut Module<'a>,\n+    name: &str,\n+    count: usize,\n+    symbol: &str,\n+    show_count: bool,\n+) {\n+    if count > 0 {\n+        module.new_segment(name, symbol);\n+\n+        if show_count {\n+            module.new_segment(&format!(\"{}_count\", name), &count.to_string());\n+        }\n+    }\n+}",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "brianlow",
+      "id": 938138,
+      "node_id": "MDQ6VXNlcjkzODEzOA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/938138?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/brianlow",
+      "html_url": "https://github.com/brianlow",
+      "followers_url": "https://api.github.com/users/brianlow/followers",
+      "following_url": "https://api.github.com/users/brianlow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/brianlow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/brianlow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/brianlow/subscriptions",
+      "organizations_url": "https://api.github.com/users/brianlow/orgs",
+      "repos_url": "https://api.github.com/users/brianlow/repos",
+      "events_url": "https://api.github.com/users/brianlow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/brianlow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Introduced this function at clippy's request (cyclomatic complexity of main function). \r\n\r\nAn alternative refactor would be to extract larger functions (e.g. `add_ahead_behind_segments`, `add_stashed_segment`, `add_other_segments`). \r\n\r\nSuggestions welcome",
+    "created_at": "2019-09-27T06:56:57Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r328935339",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328935339"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r328935339"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328935339/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 187,
+    "original_line": 193,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 140,
+    "position": 224,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328935782",
+    "pull_request_review_id": 294141193,
+    "id": 328935782,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODkzNTc4Mg==",
+    "diff_hunk": "@@ -170,15 +206,46 @@ fn get_repo_status(repository: &Repository) -> Result<Status, git2::Error> {\n \n     let repo_file_statuses = repository.statuses(Some(&mut status_options))?;\n \n-    // Statuses are stored as bitflags, so use BitOr to join them all into a single value\n-    let repo_status: Status = repo_file_statuses.iter().map(|e| e.status()).collect();\n-    if repo_status.is_empty() {\n+    if repo_file_statuses.is_empty() {\n         return Err(git2::Error::from_str(\"Repo has no status\"));\n     }\n \n+    let repo_status: RepoStatus = repo_file_statuses.iter().fold(RepoStatus::default(), count);\n+\n     Ok(repo_status)\n }\n \n+/// Increment RepoStatus counts for a given file status\n+fn count(mut repo_status: RepoStatus, status_entry: StatusEntry) -> RepoStatus {\n+    let status = status_entry.status();\n+\n+    if status.is_conflicted() {\n+        repo_status.conflicted += 1;\n+    }\n+\n+    if status.is_wt_deleted() || status.is_index_deleted() {\n+        repo_status.deleted += 1;\n+    }\n+\n+    if status.is_wt_renamed() || status.is_index_renamed() {\n+        repo_status.renamed += 1;\n+    }\n+\n+    if status.is_wt_modified() {\n+        repo_status.modified += 1;\n+    }\n+\n+    if status.is_index_modified() || status.is_index_new() {\n+        repo_status.staged += 1;\n+    }\n+\n+    if status.is_wt_new() {\n+        repo_status.untracked += 1;\n+    }\n+\n+    repo_status\n+}",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "brianlow",
+      "id": 938138,
+      "node_id": "MDQ6VXNlcjkzODEzOA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/938138?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/brianlow",
+      "html_url": "https://github.com/brianlow",
+      "followers_url": "https://api.github.com/users/brianlow/followers",
+      "following_url": "https://api.github.com/users/brianlow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/brianlow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/brianlow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/brianlow/subscriptions",
+      "organizations_url": "https://api.github.com/users/brianlow/orgs",
+      "repos_url": "https://api.github.com/users/brianlow/repos",
+      "events_url": "https://api.github.com/users/brianlow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/brianlow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Can this function be written as immutable? Should it be? I imagine it would be slower due to copying.",
+    "created_at": "2019-09-27T06:58:33Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r328935782",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328935782"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r328935782"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328935782/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 245,
+    "original_line": 247,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 192,
+    "position": 283,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328978613",
+    "pull_request_review_id": 294198711,
+    "id": 328978613,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODk3ODYxMw==",
+    "diff_hunk": "@@ -39,6 +39,9 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     let mut module = context.new_module(\"git_status\");\n     let show_sync_count = module.config_value_bool(\"show_sync_count\").unwrap_or(false);\n+    let show_status_count = module\n+        .config_value_bool(\"show_status_count\")\n+        .unwrap_or(false);",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "What about nesting the symbol? e.g. `deleted = { symbol=\"x\", count=true }`",
+    "created_at": "2019-09-27T09:04:12Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r328978613",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328978613"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r328978613"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328978613/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 44,
+    "side": "RIGHT",
+    "in_reply_to_id": 328934512,
+    "author_association": "MEMBER",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328980087",
+    "pull_request_review_id": 294198711,
+    "id": 328980087,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODk4MDA4Nw==",
+    "diff_hunk": "@@ -170,15 +206,46 @@ fn get_repo_status(repository: &Repository) -> Result<Status, git2::Error> {\n \n     let repo_file_statuses = repository.statuses(Some(&mut status_options))?;\n \n-    // Statuses are stored as bitflags, so use BitOr to join them all into a single value\n-    let repo_status: Status = repo_file_statuses.iter().map(|e| e.status()).collect();\n-    if repo_status.is_empty() {\n+    if repo_file_statuses.is_empty() {\n         return Err(git2::Error::from_str(\"Repo has no status\"));\n     }\n \n+    let repo_status: RepoStatus = repo_file_statuses.iter().fold(RepoStatus::default(), count);\n+\n     Ok(repo_status)\n }\n \n+/// Increment RepoStatus counts for a given file status\n+fn count(mut repo_status: RepoStatus, status_entry: StatusEntry) -> RepoStatus {\n+    let status = status_entry.status();\n+\n+    if status.is_conflicted() {\n+        repo_status.conflicted += 1;\n+    }\n+\n+    if status.is_wt_deleted() || status.is_index_deleted() {\n+        repo_status.deleted += 1;\n+    }\n+\n+    if status.is_wt_renamed() || status.is_index_renamed() {\n+        repo_status.renamed += 1;\n+    }\n+\n+    if status.is_wt_modified() {\n+        repo_status.modified += 1;\n+    }\n+\n+    if status.is_index_modified() || status.is_index_new() {\n+        repo_status.staged += 1;\n+    }\n+\n+    if status.is_wt_new() {\n+        repo_status.untracked += 1;\n+    }\n+\n+    repo_status\n+}",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Can you just pass a mutable reference of repo_status instead of giving the whole ownership to the function and returning it?",
+    "created_at": "2019-09-27T09:07:59Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r328980087",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328980087"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r328980087"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328980087/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 245,
+    "original_line": 247,
+    "side": "RIGHT",
+    "in_reply_to_id": 328935782,
+    "author_association": "MEMBER",
+    "original_position": 192,
+    "position": 283,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328990864",
+    "pull_request_review_id": 294214768,
+    "id": 328990864,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODk5MDg2NA==",
+    "diff_hunk": "@@ -39,6 +39,9 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     let mut module = context.new_module(\"git_status\");\n     let show_sync_count = module.config_value_bool(\"show_sync_count\").unwrap_or(false);\n+    let show_status_count = module\n+        .config_value_bool(\"show_status_count\")\n+        .unwrap_or(false);",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "brianlow",
+      "id": 938138,
+      "node_id": "MDQ6VXNlcjkzODEzOA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/938138?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/brianlow",
+      "html_url": "https://github.com/brianlow",
+      "followers_url": "https://api.github.com/users/brianlow/followers",
+      "following_url": "https://api.github.com/users/brianlow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/brianlow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/brianlow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/brianlow/subscriptions",
+      "organizations_url": "https://api.github.com/users/brianlow/orgs",
+      "repos_url": "https://api.github.com/users/brianlow/repos",
+      "events_url": "https://api.github.com/users/brianlow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/brianlow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "What do you think about\r\n```toml\r\n[git_status]\r\nstaged_count = true\r\ndeleted_count = true\r\nuntracked_count = false\r\n```\r\n\r\nand then we would get segment-specific styling for free with #378:\r\n```toml\r\n[git_status]\r\nstaged_count = true\r\nstaged_count.style = \"green\"\r\n```",
+    "created_at": "2019-09-27T09:35:18Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r328990864",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328990864"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r328990864"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328990864/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 44,
+    "side": "RIGHT",
+    "in_reply_to_id": 328934512,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/329014852",
+    "pull_request_review_id": 294198711,
+    "id": 329014852,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyOTAxNDg1Mg==",
+    "diff_hunk": "@@ -39,6 +39,9 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     let mut module = context.new_module(\"git_status\");\n     let show_sync_count = module.config_value_bool(\"show_sync_count\").unwrap_or(false);\n+    let show_status_count = module\n+        .config_value_bool(\"show_status_count\")\n+        .unwrap_or(false);",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Note that this is invalid in `toml`. You cannot give both a `boolean` and a `table` value to the same key.\r\n\r\nEither use this:\r\n\r\n```toml\r\n[git_status]\r\nstaged_count_enabled = true\r\nstaged_count.style = \"green\"\r\n```\r\n\r\nor this:\r\n\r\n```toml\r\n[git_status]\r\nstaged_count = { enabled = true, style = \"green\" }\r\n# also: staged = { style = \"red\", symbol = \"=\", count = { enabled = true, style = \"green\" }}\r\n```\r\n\r\nor you can display the count only when style exists using `fn new_segment_if_config_exists`\r\n\r\n```toml\r\nstaged_count_style = \"green\" # will display staged_count\r\n# will not display untracked count\r\n```\r\n\r\nIf you can wait for a week or so, maybe I can get #383 merged for a more convenient way to parse the config.",
+    "created_at": "2019-09-27T10:43:51Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r329014852",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/329014852"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r329014852"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/329014852/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 44,
+    "side": "RIGHT",
+    "in_reply_to_id": 328934512,
+    "author_association": "MEMBER",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/329296532",
+    "pull_request_review_id": 294620856,
+    "id": 329296532,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyOTI5NjUzMg==",
+    "diff_hunk": "@@ -170,15 +206,46 @@ fn get_repo_status(repository: &Repository) -> Result<Status, git2::Error> {\n \n     let repo_file_statuses = repository.statuses(Some(&mut status_options))?;\n \n-    // Statuses are stored as bitflags, so use BitOr to join them all into a single value\n-    let repo_status: Status = repo_file_statuses.iter().map(|e| e.status()).collect();\n-    if repo_status.is_empty() {\n+    if repo_file_statuses.is_empty() {\n         return Err(git2::Error::from_str(\"Repo has no status\"));\n     }\n \n+    let repo_status: RepoStatus = repo_file_statuses.iter().fold(RepoStatus::default(), count);\n+\n     Ok(repo_status)\n }\n \n+/// Increment RepoStatus counts for a given file status\n+fn count(mut repo_status: RepoStatus, status_entry: StatusEntry) -> RepoStatus {\n+    let status = status_entry.status();\n+\n+    if status.is_conflicted() {\n+        repo_status.conflicted += 1;\n+    }\n+\n+    if status.is_wt_deleted() || status.is_index_deleted() {\n+        repo_status.deleted += 1;\n+    }\n+\n+    if status.is_wt_renamed() || status.is_index_renamed() {\n+        repo_status.renamed += 1;\n+    }\n+\n+    if status.is_wt_modified() {\n+        repo_status.modified += 1;\n+    }\n+\n+    if status.is_index_modified() || status.is_index_new() {\n+        repo_status.staged += 1;\n+    }\n+\n+    if status.is_wt_new() {\n+        repo_status.untracked += 1;\n+    }\n+\n+    repo_status\n+}",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "brianlow",
+      "id": 938138,
+      "node_id": "MDQ6VXNlcjkzODEzOA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/938138?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/brianlow",
+      "html_url": "https://github.com/brianlow",
+      "followers_url": "https://api.github.com/users/brianlow/followers",
+      "following_url": "https://api.github.com/users/brianlow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/brianlow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/brianlow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/brianlow/subscriptions",
+      "organizations_url": "https://api.github.com/users/brianlow/orgs",
+      "repos_url": "https://api.github.com/users/brianlow/repos",
+      "events_url": "https://api.github.com/users/brianlow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/brianlow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Done, let me know there is a shorter / more elegant was to do this",
+    "created_at": "2019-09-28T04:35:37Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r329296532",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/329296532"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r329296532"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/329296532/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 245,
+    "original_line": 247,
+    "side": "RIGHT",
+    "in_reply_to_id": 328935782,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 192,
+    "position": 283,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/329296561",
+    "pull_request_review_id": 294620887,
+    "id": 329296561,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyOTI5NjU2MQ==",
+    "diff_hunk": "@@ -259,7 +239,6 @@ fn doesnt_show_untracked_file_if_disabled() -> io::Result<()> {\n }\n \n #[test]\n-#[ignore]",
+    "path": "tests/testsuite/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "e7780cb2d88c1fcf7e6accb220a74e3de89c2af5",
+    "user": {
+      "login": "brianlow",
+      "id": 938138,
+      "node_id": "MDQ6VXNlcjkzODEzOA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/938138?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/brianlow",
+      "html_url": "https://github.com/brianlow",
+      "followers_url": "https://api.github.com/users/brianlow/followers",
+      "following_url": "https://api.github.com/users/brianlow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/brianlow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/brianlow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/brianlow/subscriptions",
+      "organizations_url": "https://api.github.com/users/brianlow/orgs",
+      "repos_url": "https://api.github.com/users/brianlow/repos",
+      "events_url": "https://api.github.com/users/brianlow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/brianlow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Not sure why these were ignored (couldn't tell from history). Ok to un-ignore?",
+    "created_at": "2019-09-28T04:37:01Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r329296561",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/329296561"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r329296561"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/329296561/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 283,
+    "side": "LEFT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 230,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/329296604",
+    "pull_request_review_id": 294620940,
+    "id": 329296604,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyOTI5NjYwNA==",
+    "diff_hunk": "@@ -39,6 +39,9 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     let mut module = context.new_module(\"git_status\");\n     let show_sync_count = module.config_value_bool(\"show_sync_count\").unwrap_or(false);\n+    let show_status_count = module\n+        .config_value_bool(\"show_status_count\")\n+        .unwrap_or(false);",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "brianlow",
+      "id": 938138,
+      "node_id": "MDQ6VXNlcjkzODEzOA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/938138?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/brianlow",
+      "html_url": "https://github.com/brianlow",
+      "followers_url": "https://api.github.com/users/brianlow/followers",
+      "following_url": "https://api.github.com/users/brianlow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/brianlow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/brianlow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/brianlow/subscriptions",
+      "organizations_url": "https://api.github.com/users/brianlow/orgs",
+      "repos_url": "https://api.github.com/users/brianlow/repos",
+      "events_url": "https://api.github.com/users/brianlow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/brianlow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Thanks @heyrict. Is there an option that is consistent with other plugins or the direction starship is going?\r\n",
+    "created_at": "2019-09-28T04:39:14Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r329296604",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/329296604"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r329296604"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/329296604/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 44,
+    "side": "RIGHT",
+    "in_reply_to_id": 328934512,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/329314131",
+    "pull_request_review_id": 294641445,
+    "id": 329314131,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyOTMxNDEzMQ==",
+    "diff_hunk": "@@ -170,15 +206,46 @@ fn get_repo_status(repository: &Repository) -> Result<Status, git2::Error> {\n \n     let repo_file_statuses = repository.statuses(Some(&mut status_options))?;\n \n-    // Statuses are stored as bitflags, so use BitOr to join them all into a single value\n-    let repo_status: Status = repo_file_statuses.iter().map(|e| e.status()).collect();\n-    if repo_status.is_empty() {\n+    if repo_file_statuses.is_empty() {\n         return Err(git2::Error::from_str(\"Repo has no status\"));\n     }\n \n+    let repo_status: RepoStatus = repo_file_statuses.iter().fold(RepoStatus::default(), count);\n+\n     Ok(repo_status)\n }\n \n+/// Increment RepoStatus counts for a given file status\n+fn count(mut repo_status: RepoStatus, status_entry: StatusEntry) -> RepoStatus {\n+    let status = status_entry.status();\n+\n+    if status.is_conflicted() {\n+        repo_status.conflicted += 1;\n+    }\n+\n+    if status.is_wt_deleted() || status.is_index_deleted() {\n+        repo_status.deleted += 1;\n+    }\n+\n+    if status.is_wt_renamed() || status.is_index_renamed() {\n+        repo_status.renamed += 1;\n+    }\n+\n+    if status.is_wt_modified() {\n+        repo_status.modified += 1;\n+    }\n+\n+    if status.is_index_modified() || status.is_index_new() {\n+        repo_status.staged += 1;\n+    }\n+\n+    if status.is_wt_new() {\n+        repo_status.untracked += 1;\n+    }\n+\n+    repo_status\n+}",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Mhh. I don't see why any of this *has* to be mutable. I think you could do\r\n```\r\nlet repo_status = if status.is_conflicted() {\r\n        RepoStatus { conflicted: repo_status.conflicted + 1, .. repo_status };\r\n    } else {\r\n        repo_status\r\n};\r\n```\r\nbut I guess this will result in copies.",
+    "created_at": "2019-09-28T15:21:12Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r329314131",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/329314131"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r329314131"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/329314131/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 245,
+    "original_line": 247,
+    "side": "RIGHT",
+    "in_reply_to_id": 328935782,
+    "author_association": "NONE",
+    "original_position": 192,
+    "position": 283,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/329361013",
+    "pull_request_review_id": 294692281,
+    "id": 329361013,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyOTM2MTAxMw==",
+    "diff_hunk": "@@ -170,15 +206,46 @@ fn get_repo_status(repository: &Repository) -> Result<Status, git2::Error> {\n \n     let repo_file_statuses = repository.statuses(Some(&mut status_options))?;\n \n-    // Statuses are stored as bitflags, so use BitOr to join them all into a single value\n-    let repo_status: Status = repo_file_statuses.iter().map(|e| e.status()).collect();\n-    if repo_status.is_empty() {\n+    if repo_file_statuses.is_empty() {\n         return Err(git2::Error::from_str(\"Repo has no status\"));\n     }\n \n+    let repo_status: RepoStatus = repo_file_statuses.iter().fold(RepoStatus::default(), count);\n+\n     Ok(repo_status)\n }\n \n+/// Increment RepoStatus counts for a given file status\n+fn count(mut repo_status: RepoStatus, status_entry: StatusEntry) -> RepoStatus {\n+    let status = status_entry.status();\n+\n+    if status.is_conflicted() {\n+        repo_status.conflicted += 1;\n+    }\n+\n+    if status.is_wt_deleted() || status.is_index_deleted() {\n+        repo_status.deleted += 1;\n+    }\n+\n+    if status.is_wt_renamed() || status.is_index_renamed() {\n+        repo_status.renamed += 1;\n+    }\n+\n+    if status.is_wt_modified() {\n+        repo_status.modified += 1;\n+    }\n+\n+    if status.is_index_modified() || status.is_index_new() {\n+        repo_status.staged += 1;\n+    }\n+\n+    if status.is_wt_new() {\n+        repo_status.untracked += 1;\n+    }\n+\n+    repo_status\n+}",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "brianlow",
+      "id": 938138,
+      "node_id": "MDQ6VXNlcjkzODEzOA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/938138?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/brianlow",
+      "html_url": "https://github.com/brianlow",
+      "followers_url": "https://api.github.com/users/brianlow/followers",
+      "following_url": "https://api.github.com/users/brianlow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/brianlow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/brianlow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/brianlow/subscriptions",
+      "organizations_url": "https://api.github.com/users/brianlow/orgs",
+      "repos_url": "https://api.github.com/users/brianlow/repos",
+      "events_url": "https://api.github.com/users/brianlow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/brianlow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Thanks @bijancn. I didn't know about `..`. Since starship is focused on speed I imagine the mutable version is preferred?\r\n\r\n\r\n",
+    "created_at": "2019-09-29T16:59:19Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r329361013",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/329361013"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r329361013"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/329361013/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 245,
+    "original_line": 247,
+    "side": "RIGHT",
+    "in_reply_to_id": 328935782,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 192,
+    "position": 283,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/329361205",
+    "pull_request_review_id": 294692474,
+    "id": 329361205,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyOTM2MTIwNQ==",
+    "diff_hunk": "@@ -170,15 +206,46 @@ fn get_repo_status(repository: &Repository) -> Result<Status, git2::Error> {\n \n     let repo_file_statuses = repository.statuses(Some(&mut status_options))?;\n \n-    // Statuses are stored as bitflags, so use BitOr to join them all into a single value\n-    let repo_status: Status = repo_file_statuses.iter().map(|e| e.status()).collect();\n-    if repo_status.is_empty() {\n+    if repo_file_statuses.is_empty() {\n         return Err(git2::Error::from_str(\"Repo has no status\"));\n     }\n \n+    let repo_status: RepoStatus = repo_file_statuses.iter().fold(RepoStatus::default(), count);\n+\n     Ok(repo_status)\n }\n \n+/// Increment RepoStatus counts for a given file status\n+fn count(mut repo_status: RepoStatus, status_entry: StatusEntry) -> RepoStatus {\n+    let status = status_entry.status();\n+\n+    if status.is_conflicted() {\n+        repo_status.conflicted += 1;\n+    }\n+\n+    if status.is_wt_deleted() || status.is_index_deleted() {\n+        repo_status.deleted += 1;\n+    }\n+\n+    if status.is_wt_renamed() || status.is_index_renamed() {\n+        repo_status.renamed += 1;\n+    }\n+\n+    if status.is_wt_modified() {\n+        repo_status.modified += 1;\n+    }\n+\n+    if status.is_index_modified() || status.is_index_new() {\n+        repo_status.staged += 1;\n+    }\n+\n+    if status.is_wt_new() {\n+        repo_status.untracked += 1;\n+    }\n+\n+    repo_status\n+}",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "IDK. Personally, I think one should always benchmark and consider multi-threading / async when one uses speed as an argument but I'm also fine with leaving it as it is.",
+    "created_at": "2019-09-29T17:04:35Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r329361205",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/329361205"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r329361205"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/329361205/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 245,
+    "original_line": 247,
+    "side": "RIGHT",
+    "in_reply_to_id": 328935782,
+    "author_association": "NONE",
+    "original_position": 192,
+    "position": 283,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/329589355",
+    "pull_request_review_id": 294990937,
+    "id": 329589355,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyOTU4OTM1NQ==",
+    "diff_hunk": "@@ -39,6 +39,9 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     let mut module = context.new_module(\"git_status\");\n     let show_sync_count = module.config_value_bool(\"show_sync_count\").unwrap_or(false);\n+    let show_status_count = module\n+        .config_value_bool(\"show_status_count\")\n+        .unwrap_or(false);",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "#383 is merged now! May be the refactored configs [here](https://github.com/starship/starship/blob/master/starship/src/configs/rust.rs) can give you some inspirations :)",
+    "created_at": "2019-09-30T13:54:11Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r329589355",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/329589355"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r329589355"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/329589355/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 44,
+    "side": "RIGHT",
+    "in_reply_to_id": 328934512,
+    "author_association": "MEMBER",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/329673883",
+    "pull_request_review_id": 295103022,
+    "id": 329673883,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyOTY3Mzg4Mw==",
+    "diff_hunk": "@@ -259,7 +239,6 @@ fn doesnt_show_untracked_file_if_disabled() -> io::Result<()> {\n }\n \n #[test]\n-#[ignore]",
+    "path": "tests/testsuite/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "e7780cb2d88c1fcf7e6accb220a74e3de89c2af5",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'd prefer we didn't. Anything that touches the filesystem should be ignored in the tests (in practice, we use `#[ignore]` as a proxy for 'don't run on user machines'), because any user looking to do a regular install may run them.\r\n\r\nWe've already had one bug where (improperly) non-ignored git tests overwrote a bunch of people's git configs with nonsense data.",
+    "created_at": "2019-09-30T16:34:07Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r329673883",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/329673883"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r329673883"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/329673883/reactions",
+      "total_count": 2,
+      "+1": 2,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 283,
+    "side": "LEFT",
+    "in_reply_to_id": 329296561,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 230,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/335406568",
+    "pull_request_review_id": 302486303,
+    "id": 335406568,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzNTQwNjU2OA==",
+    "diff_hunk": "@@ -39,6 +39,9 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     let mut module = context.new_module(\"git_status\");\n     let show_sync_count = module.config_value_bool(\"show_sync_count\").unwrap_or(false);\n+    let show_status_count = module\n+        .config_value_bool(\"show_status_count\")\n+        .unwrap_or(false);",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "brianlow",
+      "id": 938138,
+      "node_id": "MDQ6VXNlcjkzODEzOA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/938138?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/brianlow",
+      "html_url": "https://github.com/brianlow",
+      "followers_url": "https://api.github.com/users/brianlow/followers",
+      "following_url": "https://api.github.com/users/brianlow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/brianlow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/brianlow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/brianlow/subscriptions",
+      "organizations_url": "https://api.github.com/users/brianlow/orgs",
+      "repos_url": "https://api.github.com/users/brianlow/repos",
+      "events_url": "https://api.github.com/users/brianlow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/brianlow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Merged master and started using the new configs (work in progress).\r\n\r\nDecided to go with \r\n```toml\r\n[git_status]\r\nstaged_count_disabled = false\r\n```\r\nI've left \"per-segment\" styling out of this PR to keep simple. I can see wanting to style both the symbol and count and not obvious to me what the config should look like. So I've chosen simple for now. Also chose `disabled` since it is used elsewhere. \r\n\r\n\r\n\r\n\r\n",
+    "created_at": "2019-10-16T10:54:51Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r335406568",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/335406568"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r335406568"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/335406568/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 44,
+    "side": "RIGHT",
+    "in_reply_to_id": 328934512,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/336375782",
+    "pull_request_review_id": 303736946,
+    "id": 336375782,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzNjM3NTc4Mg==",
+    "diff_hunk": "@@ -39,6 +39,9 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     let mut module = context.new_module(\"git_status\");\n     let show_sync_count = module.config_value_bool(\"show_sync_count\").unwrap_or(false);\n+    let show_status_count = module\n+        .config_value_bool(\"show_status_count\")\n+        .unwrap_or(false);",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "brianlow",
+      "id": 938138,
+      "node_id": "MDQ6VXNlcjkzODEzOA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/938138?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/brianlow",
+      "html_url": "https://github.com/brianlow",
+      "followers_url": "https://api.github.com/users/brianlow/followers",
+      "following_url": "https://api.github.com/users/brianlow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/brianlow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/brianlow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/brianlow/subscriptions",
+      "organizations_url": "https://api.github.com/users/brianlow/orgs",
+      "repos_url": "https://api.github.com/users/brianlow/repos",
+      "events_url": "https://api.github.com/users/brianlow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/brianlow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "@heyrict Landed on the 2nd option you suggested after understanding the new config better:\r\n```\r\nstaged_count = { enabled = true, style = \"green\" }\r\ndeleted_count = { enabled = true, style = \"red\" }\r\n```\r\n",
+    "created_at": "2019-10-18T08:33:12Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r336375782",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/336375782"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r336375782"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/336375782/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 44,
+    "side": "RIGHT",
+    "in_reply_to_id": 328934512,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/336376087",
+    "pull_request_review_id": 303738479,
+    "id": 336376087,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzNjM3NjA4Nw==",
+    "diff_hunk": "@@ -170,15 +206,46 @@ fn get_repo_status(repository: &Repository) -> Result<Status, git2::Error> {\n \n     let repo_file_statuses = repository.statuses(Some(&mut status_options))?;\n \n-    // Statuses are stored as bitflags, so use BitOr to join them all into a single value\n-    let repo_status: Status = repo_file_statuses.iter().map(|e| e.status()).collect();\n-    if repo_status.is_empty() {\n+    if repo_file_statuses.is_empty() {\n         return Err(git2::Error::from_str(\"Repo has no status\"));\n     }\n \n+    let repo_status: RepoStatus = repo_file_statuses.iter().fold(RepoStatus::default(), count);\n+\n     Ok(repo_status)\n }\n \n+/// Increment RepoStatus counts for a given file status\n+fn count(mut repo_status: RepoStatus, status_entry: StatusEntry) -> RepoStatus {\n+    let status = status_entry.status();\n+\n+    if status.is_conflicted() {\n+        repo_status.conflicted += 1;\n+    }\n+\n+    if status.is_wt_deleted() || status.is_index_deleted() {\n+        repo_status.deleted += 1;\n+    }\n+\n+    if status.is_wt_renamed() || status.is_index_renamed() {\n+        repo_status.renamed += 1;\n+    }\n+\n+    if status.is_wt_modified() {\n+        repo_status.modified += 1;\n+    }\n+\n+    if status.is_index_modified() || status.is_index_new() {\n+        repo_status.staged += 1;\n+    }\n+\n+    if status.is_wt_new() {\n+        repo_status.untracked += 1;\n+    }\n+\n+    repo_status\n+}",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "brianlow",
+      "id": 938138,
+      "node_id": "MDQ6VXNlcjkzODEzOA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/938138?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/brianlow",
+      "html_url": "https://github.com/brianlow",
+      "followers_url": "https://api.github.com/users/brianlow/followers",
+      "following_url": "https://api.github.com/users/brianlow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/brianlow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/brianlow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/brianlow/subscriptions",
+      "organizations_url": "https://api.github.com/users/brianlow/orgs",
+      "repos_url": "https://api.github.com/users/brianlow/repos",
+      "events_url": "https://api.github.com/users/brianlow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/brianlow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "@bijancn Made immutable. Some informal testing with 50,000 untracked files showed no measurable difference vs mutable.",
+    "created_at": "2019-10-18T08:34:00Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r336376087",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/336376087"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r336376087"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/336376087/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 245,
+    "original_line": 247,
+    "side": "RIGHT",
+    "in_reply_to_id": 328935782,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 192,
+    "position": 283,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/336376364",
+    "pull_request_review_id": 303738831,
+    "id": 336376364,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzNjM3NjM2NA==",
+    "diff_hunk": "@@ -259,7 +239,6 @@ fn doesnt_show_untracked_file_if_disabled() -> io::Result<()> {\n }\n \n #[test]\n-#[ignore]",
+    "path": "tests/testsuite/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "e7780cb2d88c1fcf7e6accb220a74e3de89c2af5",
+    "user": {
+      "login": "brianlow",
+      "id": 938138,
+      "node_id": "MDQ6VXNlcjkzODEzOA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/938138?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/brianlow",
+      "html_url": "https://github.com/brianlow",
+      "followers_url": "https://api.github.com/users/brianlow/followers",
+      "following_url": "https://api.github.com/users/brianlow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/brianlow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/brianlow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/brianlow/subscriptions",
+      "organizations_url": "https://api.github.com/users/brianlow/orgs",
+      "repos_url": "https://api.github.com/users/brianlow/repos",
+      "events_url": "https://api.github.com/users/brianlow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/brianlow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "@chipbuster Added back the `#[ignore]`'s",
+    "created_at": "2019-10-18T08:34:44Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r336376364",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/336376364"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r336376364"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/336376364/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 283,
+    "side": "LEFT",
+    "in_reply_to_id": 329296561,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 230,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/336412470",
+    "pull_request_review_id": 303785187,
+    "id": 336412470,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzNjQxMjQ3MA==",
+    "diff_hunk": "@@ -170,15 +206,46 @@ fn get_repo_status(repository: &Repository) -> Result<Status, git2::Error> {\n \n     let repo_file_statuses = repository.statuses(Some(&mut status_options))?;\n \n-    // Statuses are stored as bitflags, so use BitOr to join them all into a single value\n-    let repo_status: Status = repo_file_statuses.iter().map(|e| e.status()).collect();\n-    if repo_status.is_empty() {\n+    if repo_file_statuses.is_empty() {\n         return Err(git2::Error::from_str(\"Repo has no status\"));\n     }\n \n+    let repo_status: RepoStatus = repo_file_statuses.iter().fold(RepoStatus::default(), count);\n+\n     Ok(repo_status)\n }\n \n+/// Increment RepoStatus counts for a given file status\n+fn count(mut repo_status: RepoStatus, status_entry: StatusEntry) -> RepoStatus {\n+    let status = status_entry.status();\n+\n+    if status.is_conflicted() {\n+        repo_status.conflicted += 1;\n+    }\n+\n+    if status.is_wt_deleted() || status.is_index_deleted() {\n+        repo_status.deleted += 1;\n+    }\n+\n+    if status.is_wt_renamed() || status.is_index_renamed() {\n+        repo_status.renamed += 1;\n+    }\n+\n+    if status.is_wt_modified() {\n+        repo_status.modified += 1;\n+    }\n+\n+    if status.is_index_modified() || status.is_index_new() {\n+        repo_status.staged += 1;\n+    }\n+\n+    if status.is_wt_new() {\n+        repo_status.untracked += 1;\n+    }\n+\n+    repo_status\n+}",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Thats great news <3",
+    "created_at": "2019-10-18T09:56:51Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r336412470",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/336412470"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r336412470"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/336412470/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 245,
+    "original_line": 247,
+    "side": "RIGHT",
+    "in_reply_to_id": 328935782,
+    "author_association": "NONE",
+    "original_position": 192,
+    "position": 283,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/336716223",
+    "pull_request_review_id": 304188625,
+    "id": 336716223,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzNjcxNjIyMw==",
+    "diff_hunk": "@@ -471,23 +471,37 @@ current directory.\n \n ### Options\n \n-| Variable          | Default      | Description                                             |\n-| ----------------- | ------------ | ------------------------------------------------------- |\n-| `conflicted`      | `\"=\"`        | This branch has merge conflicts.                        |\n-| `ahead`           | `\"⇡\"`        | This branch is ahead of the branch being tracked.       |\n-| `behind`          | `\"⇣\"`        | This branch is behind of the branch being tracked.      |\n-| `diverged`        | `\"⇕\"`        | This branch has diverged from the branch being tracked. |\n-| `untracked`       | `\"?\"`        | There are untracked files in the working directory.     |\n-| `stashed`         | `\"$\"`        | A stash exists for the local repository.                |\n-| `modified`        | `\"!\"`        | There are file modifications in the working directory.  |\n-| `staged`          | `\"+\"`        | A new file has been added to the staging area.          |\n-| `renamed`         | `\"»\"`        | A renamed file has been added to the staging area.      |\n-| `deleted`         | `\"✘\"`        | A file's deletion has been added to the staging area.   |\n-| `show_sync_count` | `false`      | Show ahead/behind count of the branch being tracked.    |\n-| `prefix`          | `[`          | Prefix to display immediately before git status.        |\n-| `suffix`          | `]`          | Suffix to display immediately after git status.         |\n-| `style`           | `\"bold red\"` | The style for the module.                               |\n-| `disabled`        | `false`      | Disables the `git_status` module.                       |\n+| Variable            | Default                    | Description                                                     |\n+| ------------------- | -------------------------- | --------------------------------------------------------------- |\n+| `conflicted`        | `\"=\"`                      | This branch has merge conflicts.                                |\n+| `conflicted_count`  | [link](#git-status-counts) | Show and style the number of conflicts.                         |",
+    "path": "docs/config/README.md",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "e2af0850c5a0471b91474d918312b54ab7dae68a",
+    "user": {
+      "login": "keawade",
+      "id": 7308850,
+      "node_id": "MDQ6VXNlcjczMDg4NTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7308850?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/keawade",
+      "html_url": "https://github.com/keawade",
+      "followers_url": "https://api.github.com/users/keawade/followers",
+      "following_url": "https://api.github.com/users/keawade/following{/other_user}",
+      "gists_url": "https://api.github.com/users/keawade/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/keawade/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/keawade/subscriptions",
+      "organizations_url": "https://api.github.com/users/keawade/orgs",
+      "repos_url": "https://api.github.com/users/keawade/repos",
+      "events_url": "https://api.github.com/users/keawade/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/keawade/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this might be easier to read as\r\n\r\n| Variable | Default |\r\n| ---| --- |\r\n| `conflicted_count.enabled` | `true` |\r\n| `conflicted_count.style` | `bold red` |",
+    "created_at": "2019-10-19T01:20:28Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r336716223",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/336716223"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r336716223"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/336716223/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 477,
+    "original_line": 477,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 24,
+    "position": 24,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/336757374",
+    "pull_request_review_id": 304235349,
+    "id": 336757374,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzNjc1NzM3NA==",
+    "diff_hunk": "@@ -248,6 +248,14 @@ impl<'a> SegmentConfig<'a> {\n             style: Some(style),\n         }\n     }\n+\n+    /// Immutably set style\n+    pub fn maybe_with_style(&self, style: Option<Style>) -> Self {\n+        Self {\n+            value: self.value,\n+            style,\n+        }\n+    }",
+    "path": "src/config.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "e2af0850c5a0471b91474d918312b54ab7dae68a",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "You can simply modifies `pub fn with_style` as it is never used :)",
+    "created_at": "2019-10-19T23:37:27Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r336757374",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/336757374"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r336757374"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/336757374/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 252,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 258,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 11,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/336757395",
+    "pull_request_review_id": 304235349,
+    "id": 336757395,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzNjc1NzM5NQ==",
+    "diff_hunk": "@@ -0,0 +1,81 @@\n+use crate::config::{ModuleConfig, RootModuleConfig, SegmentConfig};\n+\n+use ansi_term::{Color, Style};\n+use starship_module_config_derive::ModuleConfig;\n+\n+#[derive(Clone, ModuleConfig)]\n+pub struct GitStatusConfig<'a> {\n+    pub stashed: SegmentConfig<'a>,\n+    pub ahead: SegmentConfig<'a>,\n+    pub behind: SegmentConfig<'a>,\n+    pub diverged: SegmentConfig<'a>,\n+    pub show_sync_count: bool,\n+    pub conflicted: SegmentConfig<'a>,\n+    pub conflicted_count: CountConfig,\n+    pub deleted: SegmentConfig<'a>,\n+    pub deleted_count: CountConfig,\n+    pub renamed: SegmentConfig<'a>,\n+    pub renamed_count: CountConfig,\n+    pub modified: SegmentConfig<'a>,\n+    pub modified_count: CountConfig,\n+    pub staged: SegmentConfig<'a>,\n+    pub staged_count: CountConfig,\n+    pub untracked: SegmentConfig<'a>,\n+    pub untracked_count: CountConfig,\n+    pub prefix: &'a str,\n+    pub suffix: &'a str,\n+    pub style: Style,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> RootModuleConfig<'a> for GitStatusConfig<'a> {\n+    fn new() -> Self {\n+        GitStatusConfig {\n+            stashed: SegmentConfig::new(\"$\"),\n+            ahead: SegmentConfig::new(\"⇡\"),\n+            behind: SegmentConfig::new(\"⇣\"),\n+            diverged: SegmentConfig::new(\"⇕\"),\n+            conflicted: SegmentConfig::new(\"=\"),\n+            show_sync_count: false,\n+            conflicted_count: CountConfig {\n+                enabled: false,\n+                style: None,\n+            },",
+    "path": "src/configs/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "e2af0850c5a0471b91474d918312b54ab7dae68a",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "What abount implementing `Default` trait for `CountConfig` and use `CountConfig::default()`?",
+    "created_at": "2019-10-19T23:38:52Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r336757395",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/336757395"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r336757395"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/336757395/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 40,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 43,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 43,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/336757739",
+    "pull_request_review_id": 304235349,
+    "id": 336757739,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzNjc1NzczOQ==",
+    "diff_hunk": "@@ -170,15 +206,46 @@ fn get_repo_status(repository: &Repository) -> Result<Status, git2::Error> {\n \n     let repo_file_statuses = repository.statuses(Some(&mut status_options))?;\n \n-    // Statuses are stored as bitflags, so use BitOr to join them all into a single value\n-    let repo_status: Status = repo_file_statuses.iter().map(|e| e.status()).collect();\n-    if repo_status.is_empty() {\n+    if repo_file_statuses.is_empty() {\n         return Err(git2::Error::from_str(\"Repo has no status\"));\n     }\n \n+    let repo_status: RepoStatus = repo_file_statuses.iter().fold(RepoStatus::default(), count);\n+\n     Ok(repo_status)\n }\n \n+/// Increment RepoStatus counts for a given file status\n+fn count(mut repo_status: RepoStatus, status_entry: StatusEntry) -> RepoStatus {\n+    let status = status_entry.status();\n+\n+    if status.is_conflicted() {\n+        repo_status.conflicted += 1;\n+    }\n+\n+    if status.is_wt_deleted() || status.is_index_deleted() {\n+        repo_status.deleted += 1;\n+    }\n+\n+    if status.is_wt_renamed() || status.is_index_renamed() {\n+        repo_status.renamed += 1;\n+    }\n+\n+    if status.is_wt_modified() {\n+        repo_status.modified += 1;\n+    }\n+\n+    if status.is_index_modified() || status.is_index_new() {\n+        repo_status.staged += 1;\n+    }\n+\n+    if status.is_wt_new() {\n+        repo_status.untracked += 1;\n+    }\n+\n+    repo_status\n+}",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Idk if it looks better but what about using\r\n\r\n```rust\r\nRepoStatus {\r\n    conflicted: repo_status.conflicted + i32::from(status.is_conflicted()),\r\n    deleted: ...,\r\n    ...,\r\n}\r\n```",
+    "created_at": "2019-10-19T23:56:50Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r336757739",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/336757739"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r336757739"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/336757739/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 245,
+    "original_line": 247,
+    "side": "RIGHT",
+    "in_reply_to_id": 328935782,
+    "author_association": "MEMBER",
+    "original_position": 192,
+    "position": 283,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/336757804",
+    "pull_request_review_id": 304235845,
+    "id": 336757804,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzNjc1NzgwNA==",
+    "diff_hunk": "@@ -471,23 +471,37 @@ current directory.\n \n ### Options\n \n-| Variable          | Default      | Description                                             |\n-| ----------------- | ------------ | ------------------------------------------------------- |\n-| `conflicted`      | `\"=\"`        | This branch has merge conflicts.                        |\n-| `ahead`           | `\"⇡\"`        | This branch is ahead of the branch being tracked.       |\n-| `behind`          | `\"⇣\"`        | This branch is behind of the branch being tracked.      |\n-| `diverged`        | `\"⇕\"`        | This branch has diverged from the branch being tracked. |\n-| `untracked`       | `\"?\"`        | There are untracked files in the working directory.     |\n-| `stashed`         | `\"$\"`        | A stash exists for the local repository.                |\n-| `modified`        | `\"!\"`        | There are file modifications in the working directory.  |\n-| `staged`          | `\"+\"`        | A new file has been added to the staging area.          |\n-| `renamed`         | `\"»\"`        | A renamed file has been added to the staging area.      |\n-| `deleted`         | `\"✘\"`        | A file's deletion has been added to the staging area.   |\n-| `show_sync_count` | `false`      | Show ahead/behind count of the branch being tracked.    |\n-| `prefix`          | `[`          | Prefix to display immediately before git status.        |\n-| `suffix`          | `]`          | Suffix to display immediately after git status.         |\n-| `style`           | `\"bold red\"` | The style for the module.                               |\n-| `disabled`        | `false`      | Disables the `git_status` module.                       |\n+| Variable            | Default                    | Description                                                     |\n+| ------------------- | -------------------------- | --------------------------------------------------------------- |\n+| `conflicted`        | `\"=\"`                      | This branch has merge conflicts.                                |\n+| `conflicted_count`  | [link](#git-status-counts) | Show and style the number of conflicts.                         |",
+    "path": "docs/config/README.md",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "e2af0850c5a0471b91474d918312b54ab7dae68a",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Well, it should be OK as it seems to be a common practice to extract shared nested configuation table to a separate passage.",
+    "created_at": "2019-10-20T00:00:37Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r336757804",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/336757804"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r336757804"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/336757804/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 477,
+    "original_line": 477,
+    "side": "RIGHT",
+    "in_reply_to_id": 336716223,
+    "author_association": "MEMBER",
+    "original_position": 24,
+    "position": 24,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/336764866",
+    "pull_request_review_id": 304243916,
+    "id": 336764866,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzNjc2NDg2Ng==",
+    "diff_hunk": "@@ -170,15 +206,46 @@ fn get_repo_status(repository: &Repository) -> Result<Status, git2::Error> {\n \n     let repo_file_statuses = repository.statuses(Some(&mut status_options))?;\n \n-    // Statuses are stored as bitflags, so use BitOr to join them all into a single value\n-    let repo_status: Status = repo_file_statuses.iter().map(|e| e.status()).collect();\n-    if repo_status.is_empty() {\n+    if repo_file_statuses.is_empty() {\n         return Err(git2::Error::from_str(\"Repo has no status\"));\n     }\n \n+    let repo_status: RepoStatus = repo_file_statuses.iter().fold(RepoStatus::default(), count);\n+\n     Ok(repo_status)\n }\n \n+/// Increment RepoStatus counts for a given file status\n+fn count(mut repo_status: RepoStatus, status_entry: StatusEntry) -> RepoStatus {\n+    let status = status_entry.status();\n+\n+    if status.is_conflicted() {\n+        repo_status.conflicted += 1;\n+    }\n+\n+    if status.is_wt_deleted() || status.is_index_deleted() {\n+        repo_status.deleted += 1;\n+    }\n+\n+    if status.is_wt_renamed() || status.is_index_renamed() {\n+        repo_status.renamed += 1;\n+    }\n+\n+    if status.is_wt_modified() {\n+        repo_status.modified += 1;\n+    }\n+\n+    if status.is_index_modified() || status.is_index_new() {\n+        repo_status.staged += 1;\n+    }\n+\n+    if status.is_wt_new() {\n+        repo_status.untracked += 1;\n+    }\n+\n+    repo_status\n+}",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "brianlow",
+      "id": 938138,
+      "node_id": "MDQ6VXNlcjkzODEzOA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/938138?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/brianlow",
+      "html_url": "https://github.com/brianlow",
+      "followers_url": "https://api.github.com/users/brianlow/followers",
+      "following_url": "https://api.github.com/users/brianlow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/brianlow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/brianlow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/brianlow/subscriptions",
+      "organizations_url": "https://api.github.com/users/brianlow/orgs",
+      "repos_url": "https://api.github.com/users/brianlow/repos",
+      "events_url": "https://api.github.com/users/brianlow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/brianlow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "@heyrict Can you provide more details on `repo_status.conflicted()`? I expected to see `status` used somewhere.\r\n\r\nI experimented with what I thought was the most readable solution. Informal benchmarking shows no speed difference.\r\n```rust\r\n    let repo_status: RepoStatus = RepoStatus {\r\n        conflicted: statuses.iter().filter(|s| is_conflicted(**s)).count(),\r\n        deleted: statuses.iter().filter(|s| is_deleted(**s)).count(),\r\n        renamed: statuses.iter().filter(|s| is_renamed(**s)).count(),\r\n        // ...\r\n    };\r\n```\r\nWhat do you think?\r\n\r\n\r\n\r\n\r\n",
+    "created_at": "2019-10-20T06:24:33Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r336764866",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/336764866"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r336764866"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/336764866/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 245,
+    "original_line": 247,
+    "side": "RIGHT",
+    "in_reply_to_id": 328935782,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 192,
+    "position": 283,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/336771130",
+    "pull_request_review_id": 304250544,
+    "id": 336771130,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzNjc3MTEzMA==",
+    "diff_hunk": "@@ -170,15 +206,46 @@ fn get_repo_status(repository: &Repository) -> Result<Status, git2::Error> {\n \n     let repo_file_statuses = repository.statuses(Some(&mut status_options))?;\n \n-    // Statuses are stored as bitflags, so use BitOr to join them all into a single value\n-    let repo_status: Status = repo_file_statuses.iter().map(|e| e.status()).collect();\n-    if repo_status.is_empty() {\n+    if repo_file_statuses.is_empty() {\n         return Err(git2::Error::from_str(\"Repo has no status\"));\n     }\n \n+    let repo_status: RepoStatus = repo_file_statuses.iter().fold(RepoStatus::default(), count);\n+\n     Ok(repo_status)\n }\n \n+/// Increment RepoStatus counts for a given file status\n+fn count(mut repo_status: RepoStatus, status_entry: StatusEntry) -> RepoStatus {\n+    let status = status_entry.status();\n+\n+    if status.is_conflicted() {\n+        repo_status.conflicted += 1;\n+    }\n+\n+    if status.is_wt_deleted() || status.is_index_deleted() {\n+        repo_status.deleted += 1;\n+    }\n+\n+    if status.is_wt_renamed() || status.is_index_renamed() {\n+        repo_status.renamed += 1;\n+    }\n+\n+    if status.is_wt_modified() {\n+        repo_status.modified += 1;\n+    }\n+\n+    if status.is_index_modified() || status.is_index_new() {\n+        repo_status.staged += 1;\n+    }\n+\n+    if status.is_wt_new() {\n+        repo_status.untracked += 1;\n+    }\n+\n+    repo_status\n+}",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Oh, sorry. It's a typo of `status.is_conflicted()`.\r\n\r\n> I experimented with what I thought was the most readable solution...\r\n\r\nThat looks great 👍",
+    "created_at": "2019-10-20T09:46:09Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r336771130",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/336771130"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r336771130"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/336771130/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 245,
+    "original_line": 247,
+    "side": "RIGHT",
+    "in_reply_to_id": 328935782,
+    "author_association": "MEMBER",
+    "original_position": 192,
+    "position": 283,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/338756317",
+    "pull_request_review_id": 306817302,
+    "id": 338756317,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzODc1NjMxNw==",
+    "diff_hunk": "@@ -18,48 +20,23 @@ use super::{Context, Module};\n ///   - `»` — A renamed file has been added to the staging area\n ///   - `✘` — A file's deletion has been added to the staging area\n pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n-    // This is the order that the sections will appear in\n-    const GIT_STATUS_CONFLICTED: &str = \"=\";\n-    const GIT_STATUS_AHEAD: &str = \"⇡\";\n-    const GIT_STATUS_BEHIND: &str = \"⇣\";\n-    const GIT_STATUS_DIVERGED: &str = \"⇕\";\n-    const GIT_STATUS_UNTRACKED: &str = \"?\";\n-    const GIT_STATUS_STASHED: &str = \"$\";\n-    const GIT_STATUS_MODIFIED: &str = \"!\";\n-    const GIT_STATUS_ADDED: &str = \"+\";\n-    const GIT_STATUS_RENAMED: &str = \"»\";\n-    const GIT_STATUS_DELETED: &str = \"✘\";\n-    const PREFIX: &str = \"[\";\n-    const SUFFIX: &str = \"] \";\n-\n     let repo = context.get_repo().ok()?;\n     let branch_name = repo.branch.as_ref()?;\n     let repo_root = repo.root.as_ref()?;\n     let repository = Repository::open(repo_root).ok()?;\n \n     let mut module = context.new_module(\"git_status\");\n-    let show_sync_count = module.config_value_bool(\"show_sync_count\").unwrap_or(false);\n-    let module_style = module\n-        .config_value_style(\"style\")\n-        .unwrap_or_else(|| Color::Red.bold());\n-    let start_symbol = module\n-        .config_value_str(\"prefix\")\n-        .unwrap_or(PREFIX)\n-        .to_owned();\n-    let end_symbol = module\n-        .config_value_str(\"suffix\")\n-        .unwrap_or(SUFFIX)\n-        .to_owned();\n+    let config: GitStatusConfig = GitStatusConfig::try_load(module.config);\n \n     module\n         .get_prefix()\n-        .set_value(start_symbol)\n-        .set_style(module_style);\n+        .set_value(config.prefix)\n+        .set_style(config.style);\n     module\n         .get_suffix()\n-        .set_value(end_symbol)\n-        .set_style(module_style);\n-    module.set_style(module_style);\n+        .set_value(config.suffix)\n+        .set_style(config.style);\n+    module.set_style(config.style);",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "8e7ed8e600e17a58c454408e6ee452c6bd830574",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`module.set_style` twice?",
+    "created_at": "2019-10-24T19:39:35Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r338756317",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/338756317"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r338756317"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/338756317/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 39,
+    "original_line": 39,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 63,
+    "position": 63,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/338756868",
+    "pull_request_review_id": 306817302,
+    "id": 338756868,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzODc1Njg2OA==",
+    "diff_hunk": "@@ -80,33 +57,47 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     // Add the conflicted segment\n     if let Ok(repo_status) = repo_status {\n-        if repo_status.is_conflicted() {\n-            module.new_segment(\"conflicted\", GIT_STATUS_CONFLICTED);\n-        }\n+        create_segment_with_count(\n+            &mut module,\n+            \"conflicted\",\n+            repo_status.conflicted,\n+            &config.conflicted,\n+            config.conflicted_count,\n+        );\n     }\n \n     // Add the ahead/behind segment\n     if let Ok((ahead, behind)) = ahead_behind {\n         let add_ahead = |m: &mut Module<'a>| {\n-            m.new_segment(\"ahead\", GIT_STATUS_AHEAD);\n-\n-            if show_sync_count {\n-                m.new_segment(\"ahead_count\", &ahead.to_string());\n-            }\n+            create_segment_with_count(\n+                m,\n+                \"ahead\",\n+                ahead,\n+                &config.ahead,\n+                CountConfig {\n+                    enabled: config.show_sync_count,\n+                    style: None,\n+                },\n+            );\n         };\n \n         let add_behind = |m: &mut Module<'a>| {\n-            m.new_segment(\"behind\", GIT_STATUS_BEHIND);\n-\n-            if show_sync_count {\n-                m.new_segment(\"behind_count\", &behind.to_string());\n-            }\n+            create_segment_with_count(\n+                m,\n+                \"behind\",\n+                behind,\n+                &config.behind,\n+                CountConfig {\n+                    enabled: config.show_sync_count,\n+                    style: None,",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "8e7ed8e600e17a58c454408e6ee452c6bd830574",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "why is the style None here?",
+    "created_at": "2019-10-24T19:41:01Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r338756868",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/338756868"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r338756868"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/338756868/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 92,
+    "original_line": 92,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 116,
+    "position": 116,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/338756898",
+    "pull_request_review_id": 306817302,
+    "id": 338756898,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzODc1Njg5OA==",
+    "diff_hunk": "@@ -80,33 +57,47 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     // Add the conflicted segment\n     if let Ok(repo_status) = repo_status {\n-        if repo_status.is_conflicted() {\n-            module.new_segment(\"conflicted\", GIT_STATUS_CONFLICTED);\n-        }\n+        create_segment_with_count(\n+            &mut module,\n+            \"conflicted\",\n+            repo_status.conflicted,\n+            &config.conflicted,\n+            config.conflicted_count,\n+        );\n     }\n \n     // Add the ahead/behind segment\n     if let Ok((ahead, behind)) = ahead_behind {\n         let add_ahead = |m: &mut Module<'a>| {\n-            m.new_segment(\"ahead\", GIT_STATUS_AHEAD);\n-\n-            if show_sync_count {\n-                m.new_segment(\"ahead_count\", &ahead.to_string());\n-            }\n+            create_segment_with_count(\n+                m,\n+                \"ahead\",\n+                ahead,\n+                &config.ahead,\n+                CountConfig {\n+                    enabled: config.show_sync_count,\n+                    style: None,",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "8e7ed8e600e17a58c454408e6ee452c6bd830574",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "why is the style None here?",
+    "created_at": "2019-10-24T19:41:04Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r338756898",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/338756898"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r338756898"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/338756898/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 79,
+    "original_line": 79,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 98,
+    "position": 98,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/338757803",
+    "pull_request_review_id": 306817302,
+    "id": 338757803,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzODc1NzgwMw==",
+    "diff_hunk": "@@ -156,8 +175,25 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     Some(module)\n }\n \n-/// Gets the bitflags associated with the repo's git status\n-fn get_repo_status(repository: &Repository) -> Result<Status, git2::Error> {\n+/// Adds a segment with an optional count segment (e.g. \"+2\")\n+fn new_segment_with_count<'a>(\n+    module: &mut Module<'a>,\n+    name: &str,\n+    count: usize,\n+    symbol: &str,\n+    show_count: bool,\n+) {\n+    if count > 0 {\n+        module.new_segment(name, symbol);\n+\n+        if show_count {\n+            module.new_segment(&format!(\"{}_count\", name), &count.to_string());\n+        }\n+    }\n+}",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It's good that clippy requests that and I also like this refactor. But I'm wondering: Why are those ifs like e.g. `if repo_status.is_index_modified() || repo_status.is_index_new()` not needed anymore?",
+    "created_at": "2019-10-24T19:43:25Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r338757803",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/338757803"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r338757803"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/338757803/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 187,
+    "original_line": 193,
+    "side": "RIGHT",
+    "in_reply_to_id": 328935339,
+    "author_association": "NONE",
+    "original_position": 140,
+    "position": 224,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/338856896",
+    "pull_request_review_id": 306946460,
+    "id": 338856896,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzODg1Njg5Ng==",
+    "diff_hunk": "@@ -18,48 +20,23 @@ use super::{Context, Module};\n ///   - `»` — A renamed file has been added to the staging area\n ///   - `✘` — A file's deletion has been added to the staging area\n pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n-    // This is the order that the sections will appear in\n-    const GIT_STATUS_CONFLICTED: &str = \"=\";\n-    const GIT_STATUS_AHEAD: &str = \"⇡\";\n-    const GIT_STATUS_BEHIND: &str = \"⇣\";\n-    const GIT_STATUS_DIVERGED: &str = \"⇕\";\n-    const GIT_STATUS_UNTRACKED: &str = \"?\";\n-    const GIT_STATUS_STASHED: &str = \"$\";\n-    const GIT_STATUS_MODIFIED: &str = \"!\";\n-    const GIT_STATUS_ADDED: &str = \"+\";\n-    const GIT_STATUS_RENAMED: &str = \"»\";\n-    const GIT_STATUS_DELETED: &str = \"✘\";\n-    const PREFIX: &str = \"[\";\n-    const SUFFIX: &str = \"] \";\n-\n     let repo = context.get_repo().ok()?;\n     let branch_name = repo.branch.as_ref()?;\n     let repo_root = repo.root.as_ref()?;\n     let repository = Repository::open(repo_root).ok()?;\n \n     let mut module = context.new_module(\"git_status\");\n-    let show_sync_count = module.config_value_bool(\"show_sync_count\").unwrap_or(false);\n-    let module_style = module\n-        .config_value_style(\"style\")\n-        .unwrap_or_else(|| Color::Red.bold());\n-    let start_symbol = module\n-        .config_value_str(\"prefix\")\n-        .unwrap_or(PREFIX)\n-        .to_owned();\n-    let end_symbol = module\n-        .config_value_str(\"suffix\")\n-        .unwrap_or(SUFFIX)\n-        .to_owned();\n+    let config: GitStatusConfig = GitStatusConfig::try_load(module.config);\n \n     module\n         .get_prefix()\n-        .set_value(start_symbol)\n-        .set_style(module_style);\n+        .set_value(config.prefix)\n+        .set_style(config.style);\n     module\n         .get_suffix()\n-        .set_value(end_symbol)\n-        .set_style(module_style);\n-    module.set_style(module_style);\n+        .set_value(config.suffix)\n+        .set_style(config.style);\n+    module.set_style(config.style);",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "8e7ed8e600e17a58c454408e6ee452c6bd830574",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The first style is for the suffix, and the second is for the module, I think.",
+    "created_at": "2019-10-25T01:47:00Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r338856896",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/338856896"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r338856896"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/338856896/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 39,
+    "original_line": 39,
+    "side": "RIGHT",
+    "in_reply_to_id": 338756317,
+    "author_association": "MEMBER",
+    "original_position": 63,
+    "position": 63,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/338875706",
+    "pull_request_review_id": 306969697,
+    "id": 338875706,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzODg3NTcwNg==",
+    "diff_hunk": "@@ -18,48 +20,23 @@ use super::{Context, Module};\n ///   - `»` — A renamed file has been added to the staging area\n ///   - `✘` — A file's deletion has been added to the staging area\n pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n-    // This is the order that the sections will appear in\n-    const GIT_STATUS_CONFLICTED: &str = \"=\";\n-    const GIT_STATUS_AHEAD: &str = \"⇡\";\n-    const GIT_STATUS_BEHIND: &str = \"⇣\";\n-    const GIT_STATUS_DIVERGED: &str = \"⇕\";\n-    const GIT_STATUS_UNTRACKED: &str = \"?\";\n-    const GIT_STATUS_STASHED: &str = \"$\";\n-    const GIT_STATUS_MODIFIED: &str = \"!\";\n-    const GIT_STATUS_ADDED: &str = \"+\";\n-    const GIT_STATUS_RENAMED: &str = \"»\";\n-    const GIT_STATUS_DELETED: &str = \"✘\";\n-    const PREFIX: &str = \"[\";\n-    const SUFFIX: &str = \"] \";\n-\n     let repo = context.get_repo().ok()?;\n     let branch_name = repo.branch.as_ref()?;\n     let repo_root = repo.root.as_ref()?;\n     let repository = Repository::open(repo_root).ok()?;\n \n     let mut module = context.new_module(\"git_status\");\n-    let show_sync_count = module.config_value_bool(\"show_sync_count\").unwrap_or(false);\n-    let module_style = module\n-        .config_value_style(\"style\")\n-        .unwrap_or_else(|| Color::Red.bold());\n-    let start_symbol = module\n-        .config_value_str(\"prefix\")\n-        .unwrap_or(PREFIX)\n-        .to_owned();\n-    let end_symbol = module\n-        .config_value_str(\"suffix\")\n-        .unwrap_or(SUFFIX)\n-        .to_owned();\n+    let config: GitStatusConfig = GitStatusConfig::try_load(module.config);\n \n     module\n         .get_prefix()\n-        .set_value(start_symbol)\n-        .set_style(module_style);\n+        .set_value(config.prefix)\n+        .set_style(config.style);\n     module\n         .get_suffix()\n-        .set_value(end_symbol)\n-        .set_style(module_style);\n-    module.set_style(module_style);\n+        .set_value(config.suffix)\n+        .set_style(config.style);\n+    module.set_style(config.style);",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "8e7ed8e600e17a58c454408e6ee452c6bd830574",
+    "user": {
+      "login": "brianlow",
+      "id": 938138,
+      "node_id": "MDQ6VXNlcjkzODEzOA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/938138?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/brianlow",
+      "html_url": "https://github.com/brianlow",
+      "followers_url": "https://api.github.com/users/brianlow/followers",
+      "following_url": "https://api.github.com/users/brianlow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/brianlow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/brianlow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/brianlow/subscriptions",
+      "organizations_url": "https://api.github.com/users/brianlow/orgs",
+      "repos_url": "https://api.github.com/users/brianlow/repos",
+      "events_url": "https://api.github.com/users/brianlow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/brianlow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Yeah",
+    "created_at": "2019-10-25T03:44:27Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r338875706",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/338875706"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r338875706"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/338875706/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 39,
+    "original_line": 39,
+    "side": "RIGHT",
+    "in_reply_to_id": 338756317,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 63,
+    "position": 63,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/338876186",
+    "pull_request_review_id": 306970318,
+    "id": 338876186,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzODg3NjE4Ng==",
+    "diff_hunk": "@@ -80,33 +57,47 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     // Add the conflicted segment\n     if let Ok(repo_status) = repo_status {\n-        if repo_status.is_conflicted() {\n-            module.new_segment(\"conflicted\", GIT_STATUS_CONFLICTED);\n-        }\n+        create_segment_with_count(\n+            &mut module,\n+            \"conflicted\",\n+            repo_status.conflicted,\n+            &config.conflicted,\n+            config.conflicted_count,\n+        );\n     }\n \n     // Add the ahead/behind segment\n     if let Ok((ahead, behind)) = ahead_behind {\n         let add_ahead = |m: &mut Module<'a>| {\n-            m.new_segment(\"ahead\", GIT_STATUS_AHEAD);\n-\n-            if show_sync_count {\n-                m.new_segment(\"ahead_count\", &ahead.to_string());\n-            }\n+            create_segment_with_count(\n+                m,\n+                \"ahead\",\n+                ahead,\n+                &config.ahead,\n+                CountConfig {\n+                    enabled: config.show_sync_count,\n+                    style: None,",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "8e7ed8e600e17a58c454408e6ee452c6bd830574",
+    "user": {
+      "login": "brianlow",
+      "id": 938138,
+      "node_id": "MDQ6VXNlcjkzODEzOA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/938138?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/brianlow",
+      "html_url": "https://github.com/brianlow",
+      "followers_url": "https://api.github.com/users/brianlow/followers",
+      "following_url": "https://api.github.com/users/brianlow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/brianlow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/brianlow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/brianlow/subscriptions",
+      "organizations_url": "https://api.github.com/users/brianlow/orgs",
+      "repos_url": "https://api.github.com/users/brianlow/repos",
+      "events_url": "https://api.github.com/users/brianlow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/brianlow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "So we fallback to the module style and preserve existing behaviour.\r\n\r\nA followup PR I'd like to propose: replace this option\r\n* `show_sync_count: Bool` \r\n\r\nwith:\r\n\r\n* `ahead_count: CountConfig`\r\n* `behind_count: CountConfig`\r\n\r\nto make consistent with the new options in this PR and to allow styling the two counts.",
+    "created_at": "2019-10-25T03:47:56Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r338876186",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/338876186"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r338876186"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/338876186/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 79,
+    "original_line": 79,
+    "side": "RIGHT",
+    "in_reply_to_id": 338756898,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 98,
+    "position": 98,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/338876213",
+    "pull_request_review_id": 306970360,
+    "id": 338876213,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzODg3NjIxMw==",
+    "diff_hunk": "@@ -80,33 +57,47 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     // Add the conflicted segment\n     if let Ok(repo_status) = repo_status {\n-        if repo_status.is_conflicted() {\n-            module.new_segment(\"conflicted\", GIT_STATUS_CONFLICTED);\n-        }\n+        create_segment_with_count(\n+            &mut module,\n+            \"conflicted\",\n+            repo_status.conflicted,\n+            &config.conflicted,\n+            config.conflicted_count,\n+        );\n     }\n \n     // Add the ahead/behind segment\n     if let Ok((ahead, behind)) = ahead_behind {\n         let add_ahead = |m: &mut Module<'a>| {\n-            m.new_segment(\"ahead\", GIT_STATUS_AHEAD);\n-\n-            if show_sync_count {\n-                m.new_segment(\"ahead_count\", &ahead.to_string());\n-            }\n+            create_segment_with_count(\n+                m,\n+                \"ahead\",\n+                ahead,\n+                &config.ahead,\n+                CountConfig {\n+                    enabled: config.show_sync_count,\n+                    style: None,\n+                },\n+            );\n         };\n \n         let add_behind = |m: &mut Module<'a>| {\n-            m.new_segment(\"behind\", GIT_STATUS_BEHIND);\n-\n-            if show_sync_count {\n-                m.new_segment(\"behind_count\", &behind.to_string());\n-            }\n+            create_segment_with_count(\n+                m,\n+                \"behind\",\n+                behind,\n+                &config.behind,\n+                CountConfig {\n+                    enabled: config.show_sync_count,\n+                    style: None,",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "8e7ed8e600e17a58c454408e6ee452c6bd830574",
+    "user": {
+      "login": "brianlow",
+      "id": 938138,
+      "node_id": "MDQ6VXNlcjkzODEzOA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/938138?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/brianlow",
+      "html_url": "https://github.com/brianlow",
+      "followers_url": "https://api.github.com/users/brianlow/followers",
+      "following_url": "https://api.github.com/users/brianlow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/brianlow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/brianlow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/brianlow/subscriptions",
+      "organizations_url": "https://api.github.com/users/brianlow/orgs",
+      "repos_url": "https://api.github.com/users/brianlow/repos",
+      "events_url": "https://api.github.com/users/brianlow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/brianlow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "same as above",
+    "created_at": "2019-10-25T03:48:08Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r338876213",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/338876213"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r338876213"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/338876213/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 92,
+    "original_line": 92,
+    "side": "RIGHT",
+    "in_reply_to_id": 338756868,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 116,
+    "position": 116,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/338882012",
+    "pull_request_review_id": 306977619,
+    "id": 338882012,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzODg4MjAxMg==",
+    "diff_hunk": "@@ -156,8 +175,25 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     Some(module)\n }\n \n-/// Gets the bitflags associated with the repo's git status\n-fn get_repo_status(repository: &Repository) -> Result<Status, git2::Error> {\n+/// Adds a segment with an optional count segment (e.g. \"+2\")\n+fn new_segment_with_count<'a>(\n+    module: &mut Module<'a>,\n+    name: &str,\n+    count: usize,\n+    symbol: &str,\n+    show_count: bool,\n+) {\n+    if count > 0 {\n+        module.new_segment(name, symbol);\n+\n+        if show_count {\n+            module.new_segment(&format!(\"{}_count\", name), &count.to_string());\n+        }\n+    }\n+}",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "brianlow",
+      "id": 938138,
+      "node_id": "MDQ6VXNlcjkzODEzOA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/938138?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/brianlow",
+      "html_url": "https://github.com/brianlow",
+      "followers_url": "https://api.github.com/users/brianlow/followers",
+      "following_url": "https://api.github.com/users/brianlow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/brianlow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/brianlow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/brianlow/subscriptions",
+      "organizations_url": "https://api.github.com/users/brianlow/orgs",
+      "repos_url": "https://api.github.com/users/brianlow/repos",
+      "events_url": "https://api.github.com/users/brianlow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/brianlow/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Still needed, just moved to here:\r\nhttps://github.com/starship/starship/pull/434/files#diff-dd08f4ad178c416b7aeb56e91e3e8830R240\r\n\r\nNow we count the number of `repo_status.is_index_modified() || repo_status.is_index_new()` entries and pass it into the above function through the `count` parameter.",
+    "created_at": "2019-10-25T04:28:09Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r338882012",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/338882012"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r338882012"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/338882012/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 187,
+    "original_line": 193,
+    "side": "RIGHT",
+    "in_reply_to_id": 328935339,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 140,
+    "position": 224,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/339173634",
+    "pull_request_review_id": 307365541,
+    "id": 339173634,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzOTE3MzYzNA==",
+    "diff_hunk": "@@ -156,8 +175,25 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     Some(module)\n }\n \n-/// Gets the bitflags associated with the repo's git status\n-fn get_repo_status(repository: &Repository) -> Result<Status, git2::Error> {\n+/// Adds a segment with an optional count segment (e.g. \"+2\")\n+fn new_segment_with_count<'a>(\n+    module: &mut Module<'a>,\n+    name: &str,\n+    count: usize,\n+    symbol: &str,\n+    show_count: bool,\n+) {\n+    if count > 0 {\n+        module.new_segment(name, symbol);\n+\n+        if show_count {\n+            module.new_segment(&format!(\"{}_count\", name), &count.to_string());\n+        }\n+    }\n+}",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "63bc648abd3e2319a3da96973a466a6312d7e0a0",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I see",
+    "created_at": "2019-10-25T18:02:22Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r339173634",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/339173634"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r339173634"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/339173634/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 187,
+    "original_line": 193,
+    "side": "RIGHT",
+    "in_reply_to_id": 328935339,
+    "author_association": "NONE",
+    "original_position": 140,
+    "position": 224,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/339173999",
+    "pull_request_review_id": 307365976,
+    "id": 339173999,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzOTE3Mzk5OQ==",
+    "diff_hunk": "@@ -80,33 +57,47 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     // Add the conflicted segment\n     if let Ok(repo_status) = repo_status {\n-        if repo_status.is_conflicted() {\n-            module.new_segment(\"conflicted\", GIT_STATUS_CONFLICTED);\n-        }\n+        create_segment_with_count(\n+            &mut module,\n+            \"conflicted\",\n+            repo_status.conflicted,\n+            &config.conflicted,\n+            config.conflicted_count,\n+        );\n     }\n \n     // Add the ahead/behind segment\n     if let Ok((ahead, behind)) = ahead_behind {\n         let add_ahead = |m: &mut Module<'a>| {\n-            m.new_segment(\"ahead\", GIT_STATUS_AHEAD);\n-\n-            if show_sync_count {\n-                m.new_segment(\"ahead_count\", &ahead.to_string());\n-            }\n+            create_segment_with_count(\n+                m,\n+                \"ahead\",\n+                ahead,\n+                &config.ahead,\n+                CountConfig {\n+                    enabled: config.show_sync_count,\n+                    style: None,",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "b9353fe6ddd453139ca2e47e385b1dfad4dec26d",
+    "original_commit_id": "8e7ed8e600e17a58c454408e6ee452c6bd830574",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I see",
+    "created_at": "2019-10-25T18:03:17Z",
+    "updated_at": "2019-10-26T03:54:30Z",
+    "html_url": "https://github.com/starship/starship/pull/434#discussion_r339173999",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/434",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/339173999"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/434#discussion_r339173999"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/434"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/339173999/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 79,
+    "original_line": 79,
+    "side": "RIGHT",
+    "in_reply_to_id": 338756898,
+    "author_association": "NONE",
+    "original_position": 98,
+    "position": 98,
+    "subject_type": "line"
+  }
+]

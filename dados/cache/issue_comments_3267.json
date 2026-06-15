@@ -1,0 +1,48 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/issues/comments/978438681",
+    "html_url": "https://github.com/starship/starship/issues/3267#issuecomment-978438681",
+    "issue_url": "https://api.github.com/repos/starship/starship/issues/3267",
+    "id": 978438681,
+    "node_id": "IC_kwDOCqswNs46UcoZ",
+    "user": {
+      "login": "getchoo",
+      "id": 48872998,
+      "node_id": "MDQ6VXNlcjQ4ODcyOTk4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48872998?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/getchoo",
+      "html_url": "https://github.com/getchoo",
+      "followers_url": "https://api.github.com/users/getchoo/followers",
+      "following_url": "https://api.github.com/users/getchoo/following{/other_user}",
+      "gists_url": "https://api.github.com/users/getchoo/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/getchoo/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/getchoo/subscriptions",
+      "organizations_url": "https://api.github.com/users/getchoo/orgs",
+      "repos_url": "https://api.github.com/users/getchoo/repos",
+      "events_url": "https://api.github.com/users/getchoo/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/getchoo/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "created_at": "2021-11-24T23:19:42Z",
+    "updated_at": "2021-11-24T23:19:42Z",
+    "body": "fish doesn't support command substitution with `$(...)` like bash or zsh do (which are the shells that `sh` links to in most systems). Instead, fish uses [`psub`](https://fishshell.com/docs/current/cmds/psub.html) - so to run a command like this, you would use this:\r\n`sh (curl -fsSL https://starship.rs/install.sh | psub)`\r\n\r\nYou remove the `-c` argument from sh because `psub` actually creates a temporary file to pipe into wherever it's being substituted, but `-c` requires a string or a normal piped input as an argument, so by just running sh with no arguments, it reads from the temporary file. Also, with this method you are still able to use arguments for the script by doing something like this:\r\n`sh (curl -fsSL https://starship.rs/install.sh | psub) --help`\r\n\r\nSo it's not really a problem with the script itself - minus the fact that if you try to run the script with sh symlinked to fish, it will fail since fish has varying syntax with things like substitution when compared to shells with higher POSIX compliance like bash, dash, or zsh. But that's probably why the devs suggest running it with `sh`, since it's usually symlinked to those aforementioned shells with higher POSIX compliance. The best way to probably \"fix\" this would be to make an addition to the documentation specificity to run that command in a shell like bash, or just the command from above as instructions for fish specifically.",
+    "author_association": "NONE",
+    "pin": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/issues/comments/978438681/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "performed_via_github_app": null
+  }
+]

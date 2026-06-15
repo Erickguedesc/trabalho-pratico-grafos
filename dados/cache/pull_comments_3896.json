@@ -1,0 +1,140 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/857122943",
+    "pull_request_review_id": 951202251,
+    "id": 857122943,
+    "node_id": "PRRC_kwDOCqswNs4zFqh_",
+    "diff_hunk": "@@ -0,0 +1,30 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(feature = \"config-schema\", derive(schemars::JsonSchema))]\n+#[serde(default)]\n+pub struct SolidityConfig<'a> {\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub version_format: &'a str,\n+    pub disabled: bool,\n+    pub detect_extensions: Vec<&'a str>,\n+    pub detect_files: Vec<&'a str>,\n+    pub detect_folders: Vec<&'a str>,\n+}\n+\n+impl<'a> Default for SolidityConfig<'a> {\n+    fn default() -> Self {\n+        SolidityConfig {\n+            format: \"via [$symbol($version )]($style)\",\n+            symbol: \"S \",\n+            style: \"bold blue\",\n+            version_format: \"v${raw}\",",
+    "path": "src/configs/solidity.rs",
+    "commit_id": "b6f57e6bca06855e1f6f742171c9fd5a1fe16b94",
+    "original_commit_id": "c2711249a86c75b4365cc9557bd919977d3884d3",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Considering the complexity of the version numbers, I think it makes sense to use `v${major}.${minor}.${patch}` here.",
+    "created_at": "2022-04-24T12:59:47Z",
+    "updated_at": "2022-04-25T20:06:54Z",
+    "html_url": "https://github.com/starship/starship/pull/3896#discussion_r857122943",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3896",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/857122943"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3896#discussion_r857122943"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3896"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/857122943/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 23,
+    "original_line": 23,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 23,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/857984619",
+    "pull_request_review_id": 951202251,
+    "id": 857984619,
+    "node_id": "PRRC_kwDOCqswNs4zI85r",
+    "diff_hunk": "@@ -0,0 +1,112 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::solidity::SolidityConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+/// Creates a module with the current Solidity version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"solidity\");\n+    let config = SolidityConfig::try_load(module.config);\n+\n+    let is_sol_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_sol_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let version = get_module_version(context, &config)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `solidity`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_module_version(context: &Context, _config: &SolidityConfig) -> Option<String> {\n+    let version = parse_solc_version(&context.exec_cmd(\"solc\", &[\"--version\"])?.stdout)?;",
+    "path": "src/modules/solidity.rs",
+    "commit_id": "b6f57e6bca06855e1f6f742171c9fd5a1fe16b94",
+    "original_commit_id": "c2711249a86c75b4365cc9557bd919977d3884d3",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Should this also support `solcjs`?",
+    "created_at": "2022-04-25T20:03:35Z",
+    "updated_at": "2022-04-25T20:06:54Z",
+    "html_url": "https://github.com/starship/starship/pull/3896#discussion_r857984619",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3896",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/857984619"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3896#discussion_r857984619"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3896"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/857984619/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 59,
+    "original_line": 59,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 59,
+    "position": 59,
+    "subject_type": "line"
+  }
+]

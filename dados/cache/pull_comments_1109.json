@@ -1,0 +1,350 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/416230839",
+    "pull_request_review_id": 401409123,
+    "id": 416230839,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQxNjIzMDgzOQ==",
+    "diff_hunk": "@@ -367,91 +401,149 @@ java {\n   end\n end\";\n \n-        let expected_version = Some(\"v1.2.3\".to_string());\n-        assert_eq!(extract_mix_version(&mix_complete), expected_version);\n-\n-        let mix_partial_oneline = \"  def project, do: [app: :my_app,version: \\\"3.2.1\\\"]\";\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v1.2.3\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let expected_version = Some(\"v3.2.1\".to_string());\n-        assert_eq!(extract_mix_version(&mix_partial_oneline), expected_version);\n+    #[test]\n+    fn test_extract_mix_version_partial_online() -> io::Result<()> {\n+        let config_name = \"mix.exs\";\n+        let config_content = \"  def project, do: [app: :my_app,version: \\\"3.2.1\\\"]\";\n+\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v3.2.1\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let mix_partial_prerelease = \"  def project do\n+    #[test]\n+    fn test_extract_mix_version_rc_version() -> io::Result<()> {\n+        let config_name = \"mix.exs\";\n+        let config_content = \"  def project do\n     [\n       app: :my_app,\n       version: \\\"1.0.0-alpha.3\\\"\n     ]\n   end\";\n \n-        let expected_version = Some(\"v1.0.0-alpha.3\".to_string());\n-        assert_eq!(\n-            extract_mix_version(&mix_partial_prerelease),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v1.0.0-alpha.3\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let mix_partial_prerelease_and_build_info = \"  def project do\n+    #[test]\n+    fn test_extract_mix_version_rc_with_build_version() -> io::Result<()> {\n+        let config_name = \"mix.exs\";\n+        let config_content = \"  def project do\n     [\n       app: :my_app,\n       version: \\\"0.9.9-dev+20130417140000.amd64\\\"\n     ]\n   end\";\n \n-        let expected_version = Some(\"v0.9.9-dev+20130417140000.amd64\".to_string());\n-        assert_eq!(\n-            extract_mix_version(&mix_partial_prerelease_and_build_info),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v0.9.9-dev+20130417140000.amd64\"), None)?;\n+        project_dir.close()\n     }\n \n     #[test]\n-    fn test_extract_composer_version() {\n-        let composer_with_version = json::json!({\n-            \"name\": \"spacefish\",\n+    fn test_extract_composer_version() -> io::Result<()> {\n+        let config_name = \"composer.json\";\n+        let config_content = json::json!({\n+            \"name\": \"starship\",\n             \"version\": \"0.1.0\"\n         })\n         .to_string();\n \n-        let expected_version = Some(\"v0.1.0\".to_string());\n-        assert_eq!(\n-            extract_composer_version(&composer_with_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v0.1.0\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let composer_without_version = json::json!({\n-            \"name\": \"spacefish\"\n+    #[test]\n+    fn test_extract_composer_version_without_version() -> io::Result<()> {\n+        let config_name = \"composer.json\";\n+        let config_content = json::json!({\n+            \"name\": \"starship\"\n         })\n         .to_string();\n \n-        let expected_version = None;\n-        assert_eq!(\n-            extract_composer_version(&composer_without_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, None, None)?;\n+        project_dir.close()\n     }\n \n     #[test]\n-    fn test_extract_project_version() {\n-        let project_with_version = toml::toml! {\n+    fn test_extract_project_version() -> io::Result<()> {\n+        let config_name = \"Project.toml\";\n+        let config_content = toml::toml! {\n             name = \"starship\"\n             version = \"0.1.0\"\n         }\n         .to_string();\n \n-        let expected_version = Some(\"v0.1.0\".to_string());\n-        assert_eq!(\n-            extract_project_version(&project_with_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v0.1.0\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let project_without_version = toml::toml! {\n-            [package]\n+    #[test]\n+    fn test_extract_project_version_without_version() -> io::Result<()> {\n+        let config_name = \"Project.toml\";\n+        let config_content = toml::toml! {\n             name = \"starship\"\n         }\n         .to_string();\n \n-        let expected_version = None;\n-        assert_eq!(\n-            extract_project_version(&project_without_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, None, None)?;\n+        project_dir.close()\n+    }\n+\n+    fn create_project_dir() -> io::Result<TempDir> {\n+        Ok(tempfile::tempdir()?)\n+    }\n+\n+    fn fill_config(\n+        project_dir: &TempDir,\n+        file_name: &str,\n+        contents: Option<&str>,\n+    ) -> io::Result<()> {\n+        let mut file = File::create(project_dir.path().join(file_name))?;\n+        file.write_all(contents.unwrap_or(\"\").as_bytes())?;\n+        file.sync_all()\n+    }\n+\n+    fn expect_output(\n+        project_dir: &TempDir,\n+        contains: Option<&str>,\n+        config: Option<toml::Value>,\n+    ) -> io::Result<()> {\n+        let starship_config = Some(config.unwrap_or(toml::toml! {\n+            [package]\n+            disabled = false\n+        }));\n+\n+        let actual = render_module(\"package\", project_dir.path(), starship_config);\n+        let text = String::from(contains.unwrap_or(\"\"));\n+        let expected = Some(format!(\n+            \"is {} \",\n+            Color::Fixed(208).bold().paint(format!(\"📦 {}\", text))\n+        ));\n+\n+        match contains {\n+            Some(_contains) => assert_eq!(actual, expected),\n+            None => assert_eq!(actual, None),\n+        }",
+    "path": "src/modules/package.rs",
+    "commit_id": "e5c1a7ec7a2417cf348477f0b4a973707a888f10",
+    "original_commit_id": "7ac59e8089ebb65965d6fbe7cdf922c27e361950",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think it would be better written as the following as you don't need the value `contains`.\r\n```suggestion\r\n        match contains.is_some() {\r\n            true => assert_eq!(actual, expected),\r\n            false => assert_eq!(actual, None),\r\n        }\r\n```",
+    "created_at": "2020-04-28T00:02:13Z",
+    "updated_at": "2020-04-28T08:29:02Z",
+    "html_url": "https://github.com/starship/starship/pull/1109#discussion_r416230839",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1109",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/416230839"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1109#discussion_r416230839"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1109"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/416230839/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 542,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 545,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 562,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/416350515",
+    "pull_request_review_id": 401521021,
+    "id": 416350515,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQxNjM1MDUxNQ==",
+    "diff_hunk": "@@ -367,91 +401,149 @@ java {\n   end\n end\";\n \n-        let expected_version = Some(\"v1.2.3\".to_string());\n-        assert_eq!(extract_mix_version(&mix_complete), expected_version);\n-\n-        let mix_partial_oneline = \"  def project, do: [app: :my_app,version: \\\"3.2.1\\\"]\";\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v1.2.3\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let expected_version = Some(\"v3.2.1\".to_string());\n-        assert_eq!(extract_mix_version(&mix_partial_oneline), expected_version);\n+    #[test]\n+    fn test_extract_mix_version_partial_online() -> io::Result<()> {\n+        let config_name = \"mix.exs\";\n+        let config_content = \"  def project, do: [app: :my_app,version: \\\"3.2.1\\\"]\";\n+\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v3.2.1\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let mix_partial_prerelease = \"  def project do\n+    #[test]\n+    fn test_extract_mix_version_rc_version() -> io::Result<()> {\n+        let config_name = \"mix.exs\";\n+        let config_content = \"  def project do\n     [\n       app: :my_app,\n       version: \\\"1.0.0-alpha.3\\\"\n     ]\n   end\";\n \n-        let expected_version = Some(\"v1.0.0-alpha.3\".to_string());\n-        assert_eq!(\n-            extract_mix_version(&mix_partial_prerelease),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v1.0.0-alpha.3\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let mix_partial_prerelease_and_build_info = \"  def project do\n+    #[test]\n+    fn test_extract_mix_version_rc_with_build_version() -> io::Result<()> {\n+        let config_name = \"mix.exs\";\n+        let config_content = \"  def project do\n     [\n       app: :my_app,\n       version: \\\"0.9.9-dev+20130417140000.amd64\\\"\n     ]\n   end\";\n \n-        let expected_version = Some(\"v0.9.9-dev+20130417140000.amd64\".to_string());\n-        assert_eq!(\n-            extract_mix_version(&mix_partial_prerelease_and_build_info),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v0.9.9-dev+20130417140000.amd64\"), None)?;\n+        project_dir.close()\n     }\n \n     #[test]\n-    fn test_extract_composer_version() {\n-        let composer_with_version = json::json!({\n-            \"name\": \"spacefish\",\n+    fn test_extract_composer_version() -> io::Result<()> {\n+        let config_name = \"composer.json\";\n+        let config_content = json::json!({\n+            \"name\": \"starship\",\n             \"version\": \"0.1.0\"\n         })\n         .to_string();\n \n-        let expected_version = Some(\"v0.1.0\".to_string());\n-        assert_eq!(\n-            extract_composer_version(&composer_with_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v0.1.0\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let composer_without_version = json::json!({\n-            \"name\": \"spacefish\"\n+    #[test]\n+    fn test_extract_composer_version_without_version() -> io::Result<()> {\n+        let config_name = \"composer.json\";\n+        let config_content = json::json!({\n+            \"name\": \"starship\"\n         })\n         .to_string();\n \n-        let expected_version = None;\n-        assert_eq!(\n-            extract_composer_version(&composer_without_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, None, None)?;\n+        project_dir.close()\n     }\n \n     #[test]\n-    fn test_extract_project_version() {\n-        let project_with_version = toml::toml! {\n+    fn test_extract_project_version() -> io::Result<()> {\n+        let config_name = \"Project.toml\";\n+        let config_content = toml::toml! {\n             name = \"starship\"\n             version = \"0.1.0\"\n         }\n         .to_string();\n \n-        let expected_version = Some(\"v0.1.0\".to_string());\n-        assert_eq!(\n-            extract_project_version(&project_with_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v0.1.0\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let project_without_version = toml::toml! {\n-            [package]\n+    #[test]\n+    fn test_extract_project_version_without_version() -> io::Result<()> {\n+        let config_name = \"Project.toml\";\n+        let config_content = toml::toml! {\n             name = \"starship\"\n         }\n         .to_string();\n \n-        let expected_version = None;\n-        assert_eq!(\n-            extract_project_version(&project_without_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, None, None)?;\n+        project_dir.close()\n+    }\n+\n+    fn create_project_dir() -> io::Result<TempDir> {\n+        Ok(tempfile::tempdir()?)\n+    }\n+\n+    fn fill_config(\n+        project_dir: &TempDir,\n+        file_name: &str,\n+        contents: Option<&str>,\n+    ) -> io::Result<()> {\n+        let mut file = File::create(project_dir.path().join(file_name))?;\n+        file.write_all(contents.unwrap_or(\"\").as_bytes())?;\n+        file.sync_all()\n+    }\n+\n+    fn expect_output(\n+        project_dir: &TempDir,\n+        contains: Option<&str>,\n+        config: Option<toml::Value>,\n+    ) -> io::Result<()> {\n+        let starship_config = Some(config.unwrap_or(toml::toml! {\n+            [package]\n+            disabled = false\n+        }));\n+\n+        let actual = render_module(\"package\", project_dir.path(), starship_config);\n+        let text = String::from(contains.unwrap_or(\"\"));\n+        let expected = Some(format!(\n+            \"is {} \",\n+            Color::Fixed(208).bold().paint(format!(\"📦 {}\", text))\n+        ));\n+\n+        match contains {\n+            Some(_contains) => assert_eq!(actual, expected),\n+            None => assert_eq!(actual, None),\n+        }",
+    "path": "src/modules/package.rs",
+    "commit_id": "e5c1a7ec7a2417cf348477f0b4a973707a888f10",
+    "original_commit_id": "7ac59e8089ebb65965d6fbe7cdf922c27e361950",
+    "user": {
+      "login": "kudlatyamroth",
+      "id": 2165237,
+      "node_id": "MDQ6VXNlcjIxNjUyMzc=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2165237?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/kudlatyamroth",
+      "html_url": "https://github.com/kudlatyamroth",
+      "followers_url": "https://api.github.com/users/kudlatyamroth/followers",
+      "following_url": "https://api.github.com/users/kudlatyamroth/following{/other_user}",
+      "gists_url": "https://api.github.com/users/kudlatyamroth/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/kudlatyamroth/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/kudlatyamroth/subscriptions",
+      "organizations_url": "https://api.github.com/users/kudlatyamroth/orgs",
+      "repos_url": "https://api.github.com/users/kudlatyamroth/repos",
+      "events_url": "https://api.github.com/users/kudlatyamroth/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/kudlatyamroth/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "changed and updated with upstream",
+    "created_at": "2020-04-28T06:05:21Z",
+    "updated_at": "2020-04-28T08:29:02Z",
+    "html_url": "https://github.com/starship/starship/pull/1109#discussion_r416350515",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1109",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/416350515"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1109#discussion_r416350515"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1109"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/416350515/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 542,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 545,
+    "side": "RIGHT",
+    "in_reply_to_id": 416230839,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 562,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/416363519",
+    "pull_request_review_id": 401535022,
+    "id": 416363519,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQxNjM2MzUxOQ==",
+    "diff_hunk": "@@ -367,91 +401,149 @@ java {\n   end\n end\";\n \n-        let expected_version = Some(\"v1.2.3\".to_string());\n-        assert_eq!(extract_mix_version(&mix_complete), expected_version);\n-\n-        let mix_partial_oneline = \"  def project, do: [app: :my_app,version: \\\"3.2.1\\\"]\";\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v1.2.3\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let expected_version = Some(\"v3.2.1\".to_string());\n-        assert_eq!(extract_mix_version(&mix_partial_oneline), expected_version);\n+    #[test]\n+    fn test_extract_mix_version_partial_online() -> io::Result<()> {\n+        let config_name = \"mix.exs\";\n+        let config_content = \"  def project, do: [app: :my_app,version: \\\"3.2.1\\\"]\";\n+\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v3.2.1\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let mix_partial_prerelease = \"  def project do\n+    #[test]\n+    fn test_extract_mix_version_rc_version() -> io::Result<()> {\n+        let config_name = \"mix.exs\";\n+        let config_content = \"  def project do\n     [\n       app: :my_app,\n       version: \\\"1.0.0-alpha.3\\\"\n     ]\n   end\";\n \n-        let expected_version = Some(\"v1.0.0-alpha.3\".to_string());\n-        assert_eq!(\n-            extract_mix_version(&mix_partial_prerelease),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v1.0.0-alpha.3\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let mix_partial_prerelease_and_build_info = \"  def project do\n+    #[test]\n+    fn test_extract_mix_version_rc_with_build_version() -> io::Result<()> {\n+        let config_name = \"mix.exs\";\n+        let config_content = \"  def project do\n     [\n       app: :my_app,\n       version: \\\"0.9.9-dev+20130417140000.amd64\\\"\n     ]\n   end\";\n \n-        let expected_version = Some(\"v0.9.9-dev+20130417140000.amd64\".to_string());\n-        assert_eq!(\n-            extract_mix_version(&mix_partial_prerelease_and_build_info),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v0.9.9-dev+20130417140000.amd64\"), None)?;\n+        project_dir.close()\n     }\n \n     #[test]\n-    fn test_extract_composer_version() {\n-        let composer_with_version = json::json!({\n-            \"name\": \"spacefish\",\n+    fn test_extract_composer_version() -> io::Result<()> {\n+        let config_name = \"composer.json\";\n+        let config_content = json::json!({\n+            \"name\": \"starship\",\n             \"version\": \"0.1.0\"\n         })\n         .to_string();\n \n-        let expected_version = Some(\"v0.1.0\".to_string());\n-        assert_eq!(\n-            extract_composer_version(&composer_with_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v0.1.0\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let composer_without_version = json::json!({\n-            \"name\": \"spacefish\"\n+    #[test]\n+    fn test_extract_composer_version_without_version() -> io::Result<()> {\n+        let config_name = \"composer.json\";\n+        let config_content = json::json!({\n+            \"name\": \"starship\"\n         })\n         .to_string();\n \n-        let expected_version = None;\n-        assert_eq!(\n-            extract_composer_version(&composer_without_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, None, None)?;\n+        project_dir.close()\n     }\n \n     #[test]\n-    fn test_extract_project_version() {\n-        let project_with_version = toml::toml! {\n+    fn test_extract_project_version() -> io::Result<()> {\n+        let config_name = \"Project.toml\";\n+        let config_content = toml::toml! {\n             name = \"starship\"\n             version = \"0.1.0\"\n         }\n         .to_string();\n \n-        let expected_version = Some(\"v0.1.0\".to_string());\n-        assert_eq!(\n-            extract_project_version(&project_with_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v0.1.0\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let project_without_version = toml::toml! {\n-            [package]\n+    #[test]\n+    fn test_extract_project_version_without_version() -> io::Result<()> {\n+        let config_name = \"Project.toml\";\n+        let config_content = toml::toml! {\n             name = \"starship\"\n         }\n         .to_string();\n \n-        let expected_version = None;\n-        assert_eq!(\n-            extract_project_version(&project_without_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, None, None)?;\n+        project_dir.close()\n+    }\n+\n+    fn create_project_dir() -> io::Result<TempDir> {\n+        Ok(tempfile::tempdir()?)\n+    }\n+\n+    fn fill_config(\n+        project_dir: &TempDir,\n+        file_name: &str,\n+        contents: Option<&str>,\n+    ) -> io::Result<()> {\n+        let mut file = File::create(project_dir.path().join(file_name))?;\n+        file.write_all(contents.unwrap_or(\"\").as_bytes())?;\n+        file.sync_all()\n+    }\n+\n+    fn expect_output(\n+        project_dir: &TempDir,\n+        contains: Option<&str>,\n+        config: Option<toml::Value>,\n+    ) -> io::Result<()> {\n+        let starship_config = Some(config.unwrap_or(toml::toml! {\n+            [package]\n+            disabled = false\n+        }));\n+\n+        let actual = render_module(\"package\", project_dir.path(), starship_config);\n+        let text = String::from(contains.unwrap_or(\"\"));\n+        let expected = Some(format!(\n+            \"is {} \",\n+            Color::Fixed(208).bold().paint(format!(\"📦 {}\", text))\n+        ));\n+\n+        match contains {\n+            Some(_contains) => assert_eq!(actual, expected),\n+            None => assert_eq!(actual, None),\n+        }",
+    "path": "src/modules/package.rs",
+    "commit_id": "e5c1a7ec7a2417cf348477f0b4a973707a888f10",
+    "original_commit_id": "7ac59e8089ebb65965d6fbe7cdf922c27e361950",
+    "user": {
+      "login": "kudlatyamroth",
+      "id": 2165237,
+      "node_id": "MDQ6VXNlcjIxNjUyMzc=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2165237?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/kudlatyamroth",
+      "html_url": "https://github.com/kudlatyamroth",
+      "followers_url": "https://api.github.com/users/kudlatyamroth/followers",
+      "following_url": "https://api.github.com/users/kudlatyamroth/following{/other_user}",
+      "gists_url": "https://api.github.com/users/kudlatyamroth/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/kudlatyamroth/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/kudlatyamroth/subscriptions",
+      "organizations_url": "https://api.github.com/users/kudlatyamroth/orgs",
+      "repos_url": "https://api.github.com/users/kudlatyamroth/repos",
+      "events_url": "https://api.github.com/users/kudlatyamroth/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/kudlatyamroth/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "after update with upstream, i need to update erlang tests with third parameter in render_module",
+    "created_at": "2020-04-28T06:35:23Z",
+    "updated_at": "2020-04-28T08:29:02Z",
+    "html_url": "https://github.com/starship/starship/pull/1109#discussion_r416363519",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1109",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/416363519"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1109#discussion_r416363519"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1109"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/416363519/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 542,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 545,
+    "side": "RIGHT",
+    "in_reply_to_id": 416230839,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 562,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/416413727",
+    "pull_request_review_id": 401593280,
+    "id": 416413727,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQxNjQxMzcyNw==",
+    "diff_hunk": "@@ -366,91 +400,149 @@ java {\n   end\n end\";\n \n-        let expected_version = Some(\"v1.2.3\".to_string());\n-        assert_eq!(extract_mix_version(&mix_complete), expected_version);\n-\n-        let mix_partial_oneline = \"  def project, do: [app: :my_app,version: \\\"3.2.1\\\"]\";\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v1.2.3\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let expected_version = Some(\"v3.2.1\".to_string());\n-        assert_eq!(extract_mix_version(&mix_partial_oneline), expected_version);\n+    #[test]\n+    fn test_extract_mix_version_partial_online() -> io::Result<()> {\n+        let config_name = \"mix.exs\";\n+        let config_content = \"  def project, do: [app: :my_app,version: \\\"3.2.1\\\"]\";\n+\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v3.2.1\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let mix_partial_prerelease = \"  def project do\n+    #[test]\n+    fn test_extract_mix_version_rc_version() -> io::Result<()> {\n+        let config_name = \"mix.exs\";\n+        let config_content = \"  def project do\n     [\n       app: :my_app,\n       version: \\\"1.0.0-alpha.3\\\"\n     ]\n   end\";\n \n-        let expected_version = Some(\"v1.0.0-alpha.3\".to_string());\n-        assert_eq!(\n-            extract_mix_version(&mix_partial_prerelease),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v1.0.0-alpha.3\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let mix_partial_prerelease_and_build_info = \"  def project do\n+    #[test]\n+    fn test_extract_mix_version_rc_with_build_version() -> io::Result<()> {\n+        let config_name = \"mix.exs\";\n+        let config_content = \"  def project do\n     [\n       app: :my_app,\n       version: \\\"0.9.9-dev+20130417140000.amd64\\\"\n     ]\n   end\";\n \n-        let expected_version = Some(\"v0.9.9-dev+20130417140000.amd64\".to_string());\n-        assert_eq!(\n-            extract_mix_version(&mix_partial_prerelease_and_build_info),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v0.9.9-dev+20130417140000.amd64\"), None)?;\n+        project_dir.close()\n     }\n \n     #[test]\n-    fn test_extract_composer_version() {\n-        let composer_with_version = json::json!({\n-            \"name\": \"spacefish\",\n+    fn test_extract_composer_version() -> io::Result<()> {\n+        let config_name = \"composer.json\";\n+        let config_content = json::json!({\n+            \"name\": \"starship\",\n             \"version\": \"0.1.0\"\n         })\n         .to_string();\n \n-        let expected_version = Some(\"v0.1.0\".to_string());\n-        assert_eq!(\n-            extract_composer_version(&composer_with_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v0.1.0\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let composer_without_version = json::json!({\n-            \"name\": \"spacefish\"\n+    #[test]\n+    fn test_extract_composer_version_without_version() -> io::Result<()> {\n+        let config_name = \"composer.json\";\n+        let config_content = json::json!({\n+            \"name\": \"starship\"\n         })\n         .to_string();\n \n-        let expected_version = None;\n-        assert_eq!(\n-            extract_composer_version(&composer_without_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, None, None)?;\n+        project_dir.close()\n     }\n \n     #[test]\n-    fn test_extract_project_version() {\n-        let project_with_version = toml::toml! {\n+    fn test_extract_project_version() -> io::Result<()> {\n+        let config_name = \"Project.toml\";\n+        let config_content = toml::toml! {\n             name = \"starship\"\n             version = \"0.1.0\"\n         }\n         .to_string();\n \n-        let expected_version = Some(\"v0.1.0\".to_string());\n-        assert_eq!(\n-            extract_project_version(&project_with_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v0.1.0\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let project_without_version = toml::toml! {\n-            [package]\n+    #[test]\n+    fn test_extract_project_version_without_version() -> io::Result<()> {\n+        let config_name = \"Project.toml\";\n+        let config_content = toml::toml! {\n             name = \"starship\"\n         }\n         .to_string();\n \n-        let expected_version = None;\n-        assert_eq!(\n-            extract_project_version(&project_without_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, None, None)?;\n+        project_dir.close()\n+    }\n+\n+    fn create_project_dir() -> io::Result<TempDir> {\n+        Ok(tempfile::tempdir()?)\n+    }\n+\n+    fn fill_config(\n+        project_dir: &TempDir,\n+        file_name: &str,\n+        contents: Option<&str>,\n+    ) -> io::Result<()> {\n+        let mut file = File::create(project_dir.path().join(file_name))?;\n+        file.write_all(contents.unwrap_or(\"\").as_bytes())?;\n+        file.sync_all()\n+    }\n+\n+    fn expect_output(\n+        project_dir: &TempDir,\n+        contains: Option<&str>,\n+        config: Option<toml::Value>,\n+    ) -> io::Result<()> {\n+        let starship_config = Some(config.unwrap_or(toml::toml! {\n+            [package]\n+            disabled = false\n+        }));\n+\n+        let actual = render_module(\"package\", project_dir.path(), starship_config);\n+        let text = String::from(contains.unwrap_or(\"\"));\n+        let expected = Some(format!(\n+            \"is {} \",\n+            Color::Fixed(208).bold().paint(format!(\"📦 {}\", text))\n+        ));\n+\n+        match contains.is_some() {\n+            true => assert_eq!(actual, expected),\n+            false => assert_eq!(actual, None),\n+        }",
+    "path": "src/modules/package.rs",
+    "commit_id": "e5c1a7ec7a2417cf348477f0b4a973707a888f10",
+    "original_commit_id": "c35ebb9509edec86d481f051a2dd28704a2c5f0b",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Clippy is suggesting this should be an if/else statement (see https://github.com/starship/starship/pull/1109/checks?check_run_id=625039316#step:4:400) rather than a match so it is failing.",
+    "created_at": "2020-04-28T08:05:56Z",
+    "updated_at": "2020-04-28T08:29:02Z",
+    "html_url": "https://github.com/starship/starship/pull/1109#discussion_r416413727",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1109",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/416413727"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1109#discussion_r416413727"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1109"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/416413727/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 541,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 545,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 562,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/416429593",
+    "pull_request_review_id": 401612467,
+    "id": 416429593,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQxNjQyOTU5Mw==",
+    "diff_hunk": "@@ -366,91 +400,149 @@ java {\n   end\n end\";\n \n-        let expected_version = Some(\"v1.2.3\".to_string());\n-        assert_eq!(extract_mix_version(&mix_complete), expected_version);\n-\n-        let mix_partial_oneline = \"  def project, do: [app: :my_app,version: \\\"3.2.1\\\"]\";\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v1.2.3\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let expected_version = Some(\"v3.2.1\".to_string());\n-        assert_eq!(extract_mix_version(&mix_partial_oneline), expected_version);\n+    #[test]\n+    fn test_extract_mix_version_partial_online() -> io::Result<()> {\n+        let config_name = \"mix.exs\";\n+        let config_content = \"  def project, do: [app: :my_app,version: \\\"3.2.1\\\"]\";\n+\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v3.2.1\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let mix_partial_prerelease = \"  def project do\n+    #[test]\n+    fn test_extract_mix_version_rc_version() -> io::Result<()> {\n+        let config_name = \"mix.exs\";\n+        let config_content = \"  def project do\n     [\n       app: :my_app,\n       version: \\\"1.0.0-alpha.3\\\"\n     ]\n   end\";\n \n-        let expected_version = Some(\"v1.0.0-alpha.3\".to_string());\n-        assert_eq!(\n-            extract_mix_version(&mix_partial_prerelease),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v1.0.0-alpha.3\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let mix_partial_prerelease_and_build_info = \"  def project do\n+    #[test]\n+    fn test_extract_mix_version_rc_with_build_version() -> io::Result<()> {\n+        let config_name = \"mix.exs\";\n+        let config_content = \"  def project do\n     [\n       app: :my_app,\n       version: \\\"0.9.9-dev+20130417140000.amd64\\\"\n     ]\n   end\";\n \n-        let expected_version = Some(\"v0.9.9-dev+20130417140000.amd64\".to_string());\n-        assert_eq!(\n-            extract_mix_version(&mix_partial_prerelease_and_build_info),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v0.9.9-dev+20130417140000.amd64\"), None)?;\n+        project_dir.close()\n     }\n \n     #[test]\n-    fn test_extract_composer_version() {\n-        let composer_with_version = json::json!({\n-            \"name\": \"spacefish\",\n+    fn test_extract_composer_version() -> io::Result<()> {\n+        let config_name = \"composer.json\";\n+        let config_content = json::json!({\n+            \"name\": \"starship\",\n             \"version\": \"0.1.0\"\n         })\n         .to_string();\n \n-        let expected_version = Some(\"v0.1.0\".to_string());\n-        assert_eq!(\n-            extract_composer_version(&composer_with_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v0.1.0\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let composer_without_version = json::json!({\n-            \"name\": \"spacefish\"\n+    #[test]\n+    fn test_extract_composer_version_without_version() -> io::Result<()> {\n+        let config_name = \"composer.json\";\n+        let config_content = json::json!({\n+            \"name\": \"starship\"\n         })\n         .to_string();\n \n-        let expected_version = None;\n-        assert_eq!(\n-            extract_composer_version(&composer_without_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, None, None)?;\n+        project_dir.close()\n     }\n \n     #[test]\n-    fn test_extract_project_version() {\n-        let project_with_version = toml::toml! {\n+    fn test_extract_project_version() -> io::Result<()> {\n+        let config_name = \"Project.toml\";\n+        let config_content = toml::toml! {\n             name = \"starship\"\n             version = \"0.1.0\"\n         }\n         .to_string();\n \n-        let expected_version = Some(\"v0.1.0\".to_string());\n-        assert_eq!(\n-            extract_project_version(&project_with_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, Some(\"v0.1.0\"), None)?;\n+        project_dir.close()\n+    }\n \n-        let project_without_version = toml::toml! {\n-            [package]\n+    #[test]\n+    fn test_extract_project_version_without_version() -> io::Result<()> {\n+        let config_name = \"Project.toml\";\n+        let config_content = toml::toml! {\n             name = \"starship\"\n         }\n         .to_string();\n \n-        let expected_version = None;\n-        assert_eq!(\n-            extract_project_version(&project_without_version),\n-            expected_version\n-        );\n+        let project_dir = create_project_dir()?;\n+        fill_config(&project_dir, config_name, Some(&config_content))?;\n+        expect_output(&project_dir, None, None)?;\n+        project_dir.close()\n+    }\n+\n+    fn create_project_dir() -> io::Result<TempDir> {\n+        Ok(tempfile::tempdir()?)\n+    }\n+\n+    fn fill_config(\n+        project_dir: &TempDir,\n+        file_name: &str,\n+        contents: Option<&str>,\n+    ) -> io::Result<()> {\n+        let mut file = File::create(project_dir.path().join(file_name))?;\n+        file.write_all(contents.unwrap_or(\"\").as_bytes())?;\n+        file.sync_all()\n+    }\n+\n+    fn expect_output(\n+        project_dir: &TempDir,\n+        contains: Option<&str>,\n+        config: Option<toml::Value>,\n+    ) -> io::Result<()> {\n+        let starship_config = Some(config.unwrap_or(toml::toml! {\n+            [package]\n+            disabled = false\n+        }));\n+\n+        let actual = render_module(\"package\", project_dir.path(), starship_config);\n+        let text = String::from(contains.unwrap_or(\"\"));\n+        let expected = Some(format!(\n+            \"is {} \",\n+            Color::Fixed(208).bold().paint(format!(\"📦 {}\", text))\n+        ));\n+\n+        match contains.is_some() {\n+            true => assert_eq!(actual, expected),\n+            false => assert_eq!(actual, None),\n+        }",
+    "path": "src/modules/package.rs",
+    "commit_id": "e5c1a7ec7a2417cf348477f0b4a973707a888f10",
+    "original_commit_id": "c35ebb9509edec86d481f051a2dd28704a2c5f0b",
+    "user": {
+      "login": "kudlatyamroth",
+      "id": 2165237,
+      "node_id": "MDQ6VXNlcjIxNjUyMzc=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2165237?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/kudlatyamroth",
+      "html_url": "https://github.com/kudlatyamroth",
+      "followers_url": "https://api.github.com/users/kudlatyamroth/followers",
+      "following_url": "https://api.github.com/users/kudlatyamroth/following{/other_user}",
+      "gists_url": "https://api.github.com/users/kudlatyamroth/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/kudlatyamroth/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/kudlatyamroth/subscriptions",
+      "organizations_url": "https://api.github.com/users/kudlatyamroth/orgs",
+      "repos_url": "https://api.github.com/users/kudlatyamroth/repos",
+      "events_url": "https://api.github.com/users/kudlatyamroth/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/kudlatyamroth/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "ah, ok, i saw that it cannot download some lib and i think that it was same error that last time",
+    "created_at": "2020-04-28T08:30:26Z",
+    "updated_at": "2020-04-28T08:30:26Z",
+    "html_url": "https://github.com/starship/starship/pull/1109#discussion_r416429593",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1109",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/416429593"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1109#discussion_r416429593"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1109"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/416429593/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 541,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 545,
+    "side": "RIGHT",
+    "in_reply_to_id": 416413727,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 562,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

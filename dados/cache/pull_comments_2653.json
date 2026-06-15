@@ -1,0 +1,768 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/621594445",
+    "pull_request_review_id": 646351595,
+    "id": 621594445,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYyMTU5NDQ0NQ==",
+    "diff_hunk": "@@ -69,6 +82,25 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     Some(module)\n }\n \n+fn is_root_euid(context: &Context) -> bool {\n+    let root_uid: usize = 0;\n+    let euid: Option<usize> = match context.exec_cmd(\"id\", &[\"-u\"]) {\n+        Some(output) => match output.stdout.trim().parse() {\n+            Ok(euid) => Some(euid),\n+            Err(e) => {\n+                log::warn!(\"Error parsing {} with error {}\", output.stdout, e);\n+                None\n+            }\n+        },\n+        None => None,\n+    };\n+\n+    match euid {\n+        Some(euid) => euid == root_uid,\n+        None => false,\n+    }\n+}",
+    "path": "src/modules/character.rs",
+    "commit_id": "c58fe5158093d3f20610f7bb523a7909c02f406d",
+    "original_commit_id": "b38720619e2349af70b8d58bf8dbdb77ca0c25a0",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "You should reuse `is_root_user()` from the `username` module here (`src/modules/username.rs`).",
+    "created_at": "2021-04-27T20:56:30Z",
+    "updated_at": "2021-04-27T20:56:30Z",
+    "html_url": "https://github.com/starship/starship/pull/2653#discussion_r621594445",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2653",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/621594445"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2653#discussion_r621594445"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2653"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/621594445/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 85,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 102,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 60,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/624328644",
+    "pull_request_review_id": 649697717,
+    "id": 624328644,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYyNDMyODY0NA==",
+    "diff_hunk": "@@ -113,6 +145,7 @@ mod test {\n                 .config(toml::toml! {\n                     [character]\n                     success_symbol = \"[➜](bold green)\"\n+                    root_symbol = \"[➜](bold green)\"",
+    "path": "src/modules/character.rs",
+    "commit_id": "c58fe5158093d3f20610f7bb523a7909c02f406d",
+    "original_commit_id": "b38720619e2349af70b8d58bf8dbdb77ca0c25a0",
+    "user": {
+      "login": "daniel-white",
+      "id": 735269,
+      "node_id": "MDQ6VXNlcjczNTI2OQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/735269?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/daniel-white",
+      "html_url": "https://github.com/daniel-white",
+      "followers_url": "https://api.github.com/users/daniel-white/followers",
+      "following_url": "https://api.github.com/users/daniel-white/following{/other_user}",
+      "gists_url": "https://api.github.com/users/daniel-white/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/daniel-white/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/daniel-white/subscriptions",
+      "organizations_url": "https://api.github.com/users/daniel-white/orgs",
+      "repos_url": "https://api.github.com/users/daniel-white/repos",
+      "events_url": "https://api.github.com/users/daniel-white/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/daniel-white/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "can we have `root_success_symbol` and `root_error_symbol`?",
+    "created_at": "2021-05-01T00:34:12Z",
+    "updated_at": "2021-05-01T00:34:12Z",
+    "html_url": "https://github.com/starship/starship/pull/2653#discussion_r624328644",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2653",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/624328644"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2653#discussion_r624328644"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2653"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/624328644/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 148,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 69,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/624329408",
+    "pull_request_review_id": 649697945,
+    "id": 624329408,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYyNDMyOTQwOA==",
+    "diff_hunk": "@@ -113,6 +145,7 @@ mod test {\n                 .config(toml::toml! {\n                     [character]\n                     success_symbol = \"[➜](bold green)\"\n+                    root_symbol = \"[➜](bold green)\"",
+    "path": "src/modules/character.rs",
+    "commit_id": "c58fe5158093d3f20610f7bb523a7909c02f406d",
+    "original_commit_id": "b38720619e2349af70b8d58bf8dbdb77ca0c25a0",
+    "user": {
+      "login": "daniel-white",
+      "id": 735269,
+      "node_id": "MDQ6VXNlcjczNTI2OQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/735269?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/daniel-white",
+      "html_url": "https://github.com/daniel-white",
+      "followers_url": "https://api.github.com/users/daniel-white/followers",
+      "following_url": "https://api.github.com/users/daniel-white/following{/other_user}",
+      "gists_url": "https://api.github.com/users/daniel-white/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/daniel-white/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/daniel-white/subscriptions",
+      "organizations_url": "https://api.github.com/users/daniel-white/orgs",
+      "repos_url": "https://api.github.com/users/daniel-white/repos",
+      "events_url": "https://api.github.com/users/daniel-white/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/daniel-white/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "also for convention sake - can we change this to `#`",
+    "created_at": "2021-05-01T00:36:06Z",
+    "updated_at": "2021-05-01T00:36:06Z",
+    "html_url": "https://github.com/starship/starship/pull/2653#discussion_r624329408",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2653",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/624329408"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2653#discussion_r624329408"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2653"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/624329408/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 148,
+    "side": "RIGHT",
+    "in_reply_to_id": 624328644,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 69,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/637491438",
+    "pull_request_review_id": 666231016,
+    "id": 637491438,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYzNzQ5MTQzOA==",
+    "diff_hunk": "@@ -69,6 +82,25 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     Some(module)\n }\n \n+fn is_root_euid(context: &Context) -> bool {\n+    let root_uid: usize = 0;\n+    let euid: Option<usize> = match context.exec_cmd(\"id\", &[\"-u\"]) {\n+        Some(output) => match output.stdout.trim().parse() {\n+            Ok(euid) => Some(euid),\n+            Err(e) => {\n+                log::warn!(\"Error parsing {} with error {}\", output.stdout, e);\n+                None\n+            }\n+        },\n+        None => None,\n+    };\n+\n+    match euid {\n+        Some(euid) => euid == root_uid,\n+        None => false,\n+    }\n+}",
+    "path": "src/modules/character.rs",
+    "commit_id": "c58fe5158093d3f20610f7bb523a7909c02f406d",
+    "original_commit_id": "b38720619e2349af70b8d58bf8dbdb77ca0c25a0",
+    "user": {
+      "login": "DavidSmith166",
+      "id": 23267693,
+      "node_id": "MDQ6VXNlcjIzMjY3Njkz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23267693?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/DavidSmith166",
+      "html_url": "https://github.com/DavidSmith166",
+      "followers_url": "https://api.github.com/users/DavidSmith166/followers",
+      "following_url": "https://api.github.com/users/DavidSmith166/following{/other_user}",
+      "gists_url": "https://api.github.com/users/DavidSmith166/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/DavidSmith166/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/DavidSmith166/subscriptions",
+      "organizations_url": "https://api.github.com/users/DavidSmith166/orgs",
+      "repos_url": "https://api.github.com/users/DavidSmith166/repos",
+      "events_url": "https://api.github.com/users/DavidSmith166/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/DavidSmith166/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Thank you for your feedback! I've implemented your suggestion",
+    "created_at": "2021-05-23T05:50:01Z",
+    "updated_at": "2021-05-23T05:50:01Z",
+    "html_url": "https://github.com/starship/starship/pull/2653#discussion_r637491438",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2653",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/637491438"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2653#discussion_r637491438"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2653"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/637491438/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 85,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 102,
+    "side": "RIGHT",
+    "in_reply_to_id": 621594445,
+    "author_association": "NONE",
+    "original_position": 60,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/637491547",
+    "pull_request_review_id": 666231056,
+    "id": 637491547,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYzNzQ5MTU0Nw==",
+    "diff_hunk": "@@ -113,6 +145,7 @@ mod test {\n                 .config(toml::toml! {\n                     [character]\n                     success_symbol = \"[➜](bold green)\"\n+                    root_symbol = \"[➜](bold green)\"",
+    "path": "src/modules/character.rs",
+    "commit_id": "c58fe5158093d3f20610f7bb523a7909c02f406d",
+    "original_commit_id": "b38720619e2349af70b8d58bf8dbdb77ca0c25a0",
+    "user": {
+      "login": "DavidSmith166",
+      "id": 23267693,
+      "node_id": "MDQ6VXNlcjIzMjY3Njkz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23267693?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/DavidSmith166",
+      "html_url": "https://github.com/DavidSmith166",
+      "followers_url": "https://api.github.com/users/DavidSmith166/followers",
+      "following_url": "https://api.github.com/users/DavidSmith166/following{/other_user}",
+      "gists_url": "https://api.github.com/users/DavidSmith166/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/DavidSmith166/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/DavidSmith166/subscriptions",
+      "organizations_url": "https://api.github.com/users/DavidSmith166/orgs",
+      "repos_url": "https://api.github.com/users/DavidSmith166/repos",
+      "events_url": "https://api.github.com/users/DavidSmith166/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/DavidSmith166/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Good call, how does it look now?",
+    "created_at": "2021-05-23T05:50:51Z",
+    "updated_at": "2021-05-23T05:50:52Z",
+    "html_url": "https://github.com/starship/starship/pull/2653#discussion_r637491547",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2653",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/637491547"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2653#discussion_r637491547"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2653"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/637491547/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 148,
+    "side": "RIGHT",
+    "in_reply_to_id": 624328644,
+    "author_association": "NONE",
+    "original_position": 69,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/637606159",
+    "pull_request_review_id": 666308278,
+    "id": 637606159,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYzNzYwNjE1OQ==",
+    "diff_hunk": "@@ -19,6 +22,9 @@ impl<'a> Default for CharacterConfig<'a> {\n             success_symbol: \"[❯](bold green)\",\n             error_symbol: \"[❯](bold red)\",\n             vicmd_symbol: \"[❮](bold green)\",\n+            root_success_symbol: \"[#](bold green)\",\n+            root_error_symbol: \"[#](bold red)\",\n+            root_symbol_enabled: false,",
+    "path": "src/configs/character.rs",
+    "commit_id": "c58fe5158093d3f20610f7bb523a7909c02f406d",
+    "original_commit_id": "c58fe5158093d3f20610f7bb523a7909c02f406d",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'm a little concerned by the amount of added configuration options something like this adds.\r\n\r\nIdeally, we would have `success_style`, `error_style`, `symbol` and `root_symbol`; similarly to how we have `style`, `not_capable_style`, and `symbol` for the Node.js module. The trade-off there being that folks wouldn't be able to change the error symbol. 🤔\r\n\r\nI'd be curious to hear the thoughts of other @starship/astronauts about how we could go about handling these cases.",
+    "created_at": "2021-05-23T21:53:43Z",
+    "updated_at": "2021-05-23T21:53:43Z",
+    "html_url": "https://github.com/starship/starship/pull/2653#discussion_r637606159",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2653",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/637606159"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2653#discussion_r637606159"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2653"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/637606159/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 25,
+    "original_start_line": 25,
+    "start_side": "RIGHT",
+    "line": 27,
+    "original_line": 27,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 16,
+    "position": 16,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/637619230",
+    "pull_request_review_id": 666318118,
+    "id": 637619230,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYzNzYxOTIzMA==",
+    "diff_hunk": "@@ -28,14 +32,19 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let keymap = props.get(\"keymap\").unwrap_or(&keymap_default);\n     let exit_success = exit_code == \"0\";\n \n+    let assumed_mode = match config.root_symbol_enabled && cfg!(target_os = \"linux\") && is_root_user() {",
+    "path": "src/modules/character.rs",
+    "commit_id": "c58fe5158093d3f20610f7bb523a7909c02f406d",
+    "original_commit_id": "c58fe5158093d3f20610f7bb523a7909c02f406d",
+    "user": {
+      "login": "daniel-white",
+      "id": 735269,
+      "node_id": "MDQ6VXNlcjczNTI2OQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/735269?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/daniel-white",
+      "html_url": "https://github.com/daniel-white",
+      "followers_url": "https://api.github.com/users/daniel-white/followers",
+      "following_url": "https://api.github.com/users/daniel-white/following{/other_user}",
+      "gists_url": "https://api.github.com/users/daniel-white/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/daniel-white/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/daniel-white/subscriptions",
+      "organizations_url": "https://api.github.com/users/daniel-white/orgs",
+      "repos_url": "https://api.github.com/users/daniel-white/repos",
+      "events_url": "https://api.github.com/users/daniel-white/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/daniel-white/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "does this imply linux only - i'd love to see this on mac",
+    "created_at": "2021-05-23T23:52:11Z",
+    "updated_at": "2021-05-23T23:52:11Z",
+    "html_url": "https://github.com/starship/starship/pull/2653#discussion_r637619230",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2653",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/637619230"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2653#discussion_r637619230"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2653"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/637619230/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 35,
+    "original_line": 35,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 23,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/637620101",
+    "pull_request_review_id": 666318908,
+    "id": 637620101,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDYzNzYyMDEwMQ==",
+    "diff_hunk": "@@ -28,14 +32,19 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let keymap = props.get(\"keymap\").unwrap_or(&keymap_default);\n     let exit_success = exit_code == \"0\";\n \n+    let assumed_mode = match config.root_symbol_enabled && cfg!(target_os = \"linux\") && is_root_user() {",
+    "path": "src/modules/character.rs",
+    "commit_id": "c58fe5158093d3f20610f7bb523a7909c02f406d",
+    "original_commit_id": "c58fe5158093d3f20610f7bb523a7909c02f406d",
+    "user": {
+      "login": "kidonng",
+      "id": 44045911,
+      "node_id": "MDQ6VXNlcjQ0MDQ1OTEx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/44045911?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/kidonng",
+      "html_url": "https://github.com/kidonng",
+      "followers_url": "https://api.github.com/users/kidonng/followers",
+      "following_url": "https://api.github.com/users/kidonng/following{/other_user}",
+      "gists_url": "https://api.github.com/users/kidonng/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/kidonng/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/kidonng/subscriptions",
+      "organizations_url": "https://api.github.com/users/kidonng/orgs",
+      "repos_url": "https://api.github.com/users/kidonng/repos",
+      "events_url": "https://api.github.com/users/kidonng/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/kidonng/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "macOS's root user is disabled by default, `sudo` gives your **current user** root privileges, so this doesn't make much sense on macs.\n\nQuoting [Apple](https://support.apple.com/guide/directory-utility/about-the-root-user-dirub32398f1/mac):\n\n> The root user is disabled by default. Although you can enable it, it’s recommended that you avoid logging into a Mac as the root user, either locally or remotely.",
+    "created_at": "2021-05-23T23:59:09Z",
+    "updated_at": "2021-05-24T00:00:56Z",
+    "html_url": "https://github.com/starship/starship/pull/2653#discussion_r637620101",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2653",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/637620101"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2653#discussion_r637620101"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2653"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/637620101/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 35,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 637619230,
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 23,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/641971962",
+    "pull_request_review_id": 671766649,
+    "id": 641971962,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY0MTk3MTk2Mg==",
+    "diff_hunk": "@@ -28,14 +32,19 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let keymap = props.get(\"keymap\").unwrap_or(&keymap_default);\n     let exit_success = exit_code == \"0\";\n \n+    let assumed_mode = match config.root_symbol_enabled && cfg!(target_os = \"linux\") && is_root_user() {",
+    "path": "src/modules/character.rs",
+    "commit_id": "c58fe5158093d3f20610f7bb523a7909c02f406d",
+    "original_commit_id": "c58fe5158093d3f20610f7bb523a7909c02f406d",
+    "user": {
+      "login": "daniel-white",
+      "id": 735269,
+      "node_id": "MDQ6VXNlcjczNTI2OQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/735269?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/daniel-white",
+      "html_url": "https://github.com/daniel-white",
+      "followers_url": "https://api.github.com/users/daniel-white/followers",
+      "following_url": "https://api.github.com/users/daniel-white/following{/other_user}",
+      "gists_url": "https://api.github.com/users/daniel-white/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/daniel-white/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/daniel-white/subscriptions",
+      "organizations_url": "https://api.github.com/users/daniel-white/orgs",
+      "repos_url": "https://api.github.com/users/daniel-white/repos",
+      "events_url": "https://api.github.com/users/daniel-white/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/daniel-white/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "but on macs if i `sudo bash` i get a prompt with a `#`\r\n",
+    "created_at": "2021-05-29T18:47:12Z",
+    "updated_at": "2021-05-29T18:47:12Z",
+    "html_url": "https://github.com/starship/starship/pull/2653#discussion_r641971962",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2653",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/641971962"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2653#discussion_r641971962"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2653"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/641971962/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 35,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 637619230,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 23,
+    "position": 23,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/642214641",
+    "pull_request_review_id": 671954695,
+    "id": 642214641,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY0MjIxNDY0MQ==",
+    "diff_hunk": "@@ -28,14 +32,19 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let keymap = props.get(\"keymap\").unwrap_or(&keymap_default);\n     let exit_success = exit_code == \"0\";\n \n+    let assumed_mode = match config.root_symbol_enabled && cfg!(target_os = \"linux\") && is_root_user() {",
+    "path": "src/modules/character.rs",
+    "commit_id": "c58fe5158093d3f20610f7bb523a7909c02f406d",
+    "original_commit_id": "c58fe5158093d3f20610f7bb523a7909c02f406d",
+    "user": {
+      "login": "kidonng",
+      "id": 44045911,
+      "node_id": "MDQ6VXNlcjQ0MDQ1OTEx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/44045911?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/kidonng",
+      "html_url": "https://github.com/kidonng",
+      "followers_url": "https://api.github.com/users/kidonng/followers",
+      "following_url": "https://api.github.com/users/kidonng/following{/other_user}",
+      "gists_url": "https://api.github.com/users/kidonng/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/kidonng/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/kidonng/subscriptions",
+      "organizations_url": "https://api.github.com/users/kidonng/orgs",
+      "repos_url": "https://api.github.com/users/kidonng/repos",
+      "events_url": "https://api.github.com/users/kidonng/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/kidonng/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Root privileges≠root user\n\nSure, root user indicator could be useful even on macOS, but IMO enabling root user is something worse than disabling SIP.",
+    "created_at": "2021-05-31T05:15:52Z",
+    "updated_at": "2021-05-31T05:18:55Z",
+    "html_url": "https://github.com/starship/starship/pull/2653#discussion_r642214641",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2653",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/642214641"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2653#discussion_r642214641"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2653"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/642214641/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 35,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 637619230,
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 23,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/642365089",
+    "pull_request_review_id": 672150129,
+    "id": 642365089,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDY0MjM2NTA4OQ==",
+    "diff_hunk": "@@ -28,14 +32,19 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let keymap = props.get(\"keymap\").unwrap_or(&keymap_default);\n     let exit_success = exit_code == \"0\";\n \n+    let assumed_mode = match config.root_symbol_enabled && cfg!(target_os = \"linux\") && is_root_user() {",
+    "path": "src/modules/character.rs",
+    "commit_id": "c58fe5158093d3f20610f7bb523a7909c02f406d",
+    "original_commit_id": "c58fe5158093d3f20610f7bb523a7909c02f406d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Even if using the root user is discouraged in macOS, I don't think the prompt should artificially restrict displaying that. The current implementation also seems to detect root even if the user is only acting with root privileges (`sudo bash` ).\r\n\r\nFurthermore this check  shouldn't exclude all the other BSDs. `is_root_user()` is already handling different operating systems.",
+    "created_at": "2021-05-31T09:49:41Z",
+    "updated_at": "2021-05-31T09:49:42Z",
+    "html_url": "https://github.com/starship/starship/pull/2653#discussion_r642365089",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2653",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/642365089"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2653#discussion_r642365089"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2653"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/642365089/reactions",
+      "total_count": 2,
+      "+1": 2,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 35,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 637619230,
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 23,
+    "subject_type": "line"
+  }
+]

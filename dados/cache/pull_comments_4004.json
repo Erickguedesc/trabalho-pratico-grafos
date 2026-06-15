@@ -1,0 +1,908 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/878696576",
+    "pull_request_review_id": 980828579,
+    "id": 878696576,
+    "node_id": "PRRC_kwDOCqswNs40X9iA",
+    "diff_hunk": "@@ -0,0 +1,120 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::daml::DamlConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+const DAML_SDK_VERSION: &str = \"sdk-version\";\n+const DAML_SDK_VERSION_ENV: &str = \"DAML_SDK_VERSION\";\n+const DAML_YAML: &str = \"daml.yaml\";\n+\n+/// Creates a module with the current Daml version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"daml\");\n+    let config: DamlConfig = DamlConfig::try_load(module.config);\n+\n+    let is_daml_project = context.try_begin_scan()?.set_files(&[DAML_YAML]).is_match();",
+    "path": "src/modules/daml.rs",
+    "commit_id": "466fec78824c1431ebcaf6f44f10d0731d25e5f3",
+    "original_commit_id": "41d4433e437a53a1cd39323386fde1cd916ead8d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please use `detect_`.... options like most other modules.",
+    "created_at": "2022-05-21T13:38:05Z",
+    "updated_at": "2022-05-21T13:48:26Z",
+    "html_url": "https://github.com/starship/starship/pull/4004#discussion_r878696576",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4004",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/878696576"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4004#discussion_r878696576"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4004"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/878696576/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 14,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 14,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/878696665",
+    "pull_request_review_id": 980828579,
+    "id": 878696665,
+    "node_id": "PRRC_kwDOCqswNs40X9jZ",
+    "diff_hunk": "@@ -65,12 +65,12 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n                     // so again we always want the first semver-ish word.\n                     VersionFormatter::format_module_version(\n                         module.get_name(),\n-                        c_compiler_info.split_whitespace().find_map(\n-                            |word| match Version::parse(word) {\n-                                Ok(_v) => Some(word),\n-                                Err(_e) => None,\n-                            },\n-                        )?,\n+                        c_compiler_info.split_whitespace().find(|word| {\n+                            match Version::parse(word) {\n+                                Ok(_v) => true,\n+                                Err(_e) => false,\n+                            }\n+                        })?,",
+    "path": "src/modules/c.rs",
+    "commit_id": "466fec78824c1431ebcaf6f44f10d0731d25e5f3",
+    "original_commit_id": "41d4433e437a53a1cd39323386fde1cd916ead8d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "#4002 has a fix for this.",
+    "created_at": "2022-05-21T13:38:40Z",
+    "updated_at": "2022-05-21T13:48:27Z",
+    "html_url": "https://github.com/starship/starship/pull/4004#discussion_r878696665",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4004",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/878696665"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4004#discussion_r878696665"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4004"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/878696665/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 68,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 73,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/878696976",
+    "pull_request_review_id": 980828579,
+    "id": 878696976,
+    "node_id": "PRRC_kwDOCqswNs40X9oQ",
+    "diff_hunk": "@@ -0,0 +1,120 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::daml::DamlConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+const DAML_SDK_VERSION: &str = \"sdk-version\";\n+const DAML_SDK_VERSION_ENV: &str = \"DAML_SDK_VERSION\";\n+const DAML_YAML: &str = \"daml.yaml\";\n+\n+/// Creates a module with the current Daml version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"daml\");\n+    let config: DamlConfig = DamlConfig::try_load(module.config);\n+\n+    let is_daml_project = context.try_begin_scan()?.set_files(&[DAML_YAML]).is_match();\n+\n+    if !is_daml_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let daml_sdk_version = get_daml_sdk_version(context)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &daml_sdk_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `daml`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_daml_sdk_version(context: &Context) -> Option<String> {\n+    context\n+        .get_env(DAML_SDK_VERSION_ENV)\n+        .or_else(|| read_sdk_version_from_daml_yaml(context))\n+}\n+\n+fn read_sdk_version_from_daml_yaml(context: &Context) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(DAML_YAML)?;\n+    let daml_yaml = yaml_rust::YamlLoader::load_from_str(&file_contents).ok()?;\n+    let sdk_version = daml_yaml.first()?[DAML_SDK_VERSION].as_str()?;",
+    "path": "src/modules/daml.rs",
+    "commit_id": "466fec78824c1431ebcaf6f44f10d0731d25e5f3",
+    "original_commit_id": "41d4433e437a53a1cd39323386fde1cd916ead8d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It looks like it's safe to do with this type, but please use `get` as `Index` may panic. Perhaps also add a test covering missing `DAML_SDK_VERSION`.",
+    "created_at": "2022-05-21T13:41:18Z",
+    "updated_at": "2022-05-21T13:48:27Z",
+    "html_url": "https://github.com/starship/starship/pull/4004#discussion_r878696976",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4004",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/878696976"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4004#discussion_r878696976"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4004"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/878696976/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 70,
+    "original_line": 70,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 65,
+    "position": 70,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/878697031",
+    "pull_request_review_id": 980828579,
+    "id": 878697031,
+    "node_id": "PRRC_kwDOCqswNs40X9pH",
+    "diff_hunk": "@@ -247,6 +247,15 @@ fn get_shard_version(context: &Context, config: &PackageConfig) -> Option<String\n     format_version(raw_version, config.version_format)\n }\n \n+fn get_daml_project_version(context: &Context, config: &PackageConfig) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(\"daml.yaml\")?;\n+\n+    let daml_yaml = yaml_rust::YamlLoader::load_from_str(&file_contents).ok()?;\n+    let raw_version = daml_yaml.first()?[\"version\"].as_str()?;",
+    "path": "src/modules/package.rs",
+    "commit_id": "466fec78824c1431ebcaf6f44f10d0731d25e5f3",
+    "original_commit_id": "41d4433e437a53a1cd39323386fde1cd916ead8d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please use `.get(\"version\")`.",
+    "created_at": "2022-05-21T13:41:58Z",
+    "updated_at": "2022-05-21T13:48:27Z",
+    "html_url": "https://github.com/starship/starship/pull/4004#discussion_r878697031",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4004",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/878697031"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4004#discussion_r878697031"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4004"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/878697031/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 254,
+    "original_line": 254,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 8,
+    "position": 8,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/878697852",
+    "pull_request_review_id": 980829551,
+    "id": 878697852,
+    "node_id": "PRRC_kwDOCqswNs40X918",
+    "diff_hunk": "@@ -65,12 +65,12 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n                     // so again we always want the first semver-ish word.\n                     VersionFormatter::format_module_version(\n                         module.get_name(),\n-                        c_compiler_info.split_whitespace().find_map(\n-                            |word| match Version::parse(word) {\n-                                Ok(_v) => Some(word),\n-                                Err(_e) => None,\n-                            },\n-                        )?,\n+                        c_compiler_info.split_whitespace().find(|word| {\n+                            match Version::parse(word) {\n+                                Ok(_v) => true,\n+                                Err(_e) => false,\n+                            }\n+                        })?,",
+    "path": "src/modules/c.rs",
+    "commit_id": "466fec78824c1431ebcaf6f44f10d0731d25e5f3",
+    "original_commit_id": "41d4433e437a53a1cd39323386fde1cd916ead8d",
+    "user": {
+      "login": "stefanobaghino",
+      "id": 1374489,
+      "node_id": "MDQ6VXNlcjEzNzQ0ODk=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1374489?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefanobaghino",
+      "html_url": "https://github.com/stefanobaghino",
+      "followers_url": "https://api.github.com/users/stefanobaghino/followers",
+      "following_url": "https://api.github.com/users/stefanobaghino/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefanobaghino/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefanobaghino/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefanobaghino/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefanobaghino/orgs",
+      "repos_url": "https://api.github.com/users/stefanobaghino/repos",
+      "events_url": "https://api.github.com/users/stefanobaghino/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefanobaghino/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Should I wait for it to be merged and rebase on top of it?",
+    "created_at": "2022-05-21T13:50:44Z",
+    "updated_at": "2022-05-21T13:50:44Z",
+    "html_url": "https://github.com/starship/starship/pull/4004#discussion_r878697852",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4004",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/878697852"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4004#discussion_r878697852"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4004"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/878697852/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 68,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 73,
+    "side": "RIGHT",
+    "in_reply_to_id": 878696665,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/878699757",
+    "pull_request_review_id": 980831153,
+    "id": 878699757,
+    "node_id": "PRRC_kwDOCqswNs40X-Tt",
+    "diff_hunk": "@@ -0,0 +1,120 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::daml::DamlConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+const DAML_SDK_VERSION: &str = \"sdk-version\";\n+const DAML_SDK_VERSION_ENV: &str = \"DAML_SDK_VERSION\";\n+const DAML_YAML: &str = \"daml.yaml\";\n+\n+/// Creates a module with the current Daml version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"daml\");\n+    let config: DamlConfig = DamlConfig::try_load(module.config);\n+\n+    let is_daml_project = context.try_begin_scan()?.set_files(&[DAML_YAML]).is_match();\n+\n+    if !is_daml_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let daml_sdk_version = get_daml_sdk_version(context)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &daml_sdk_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `daml`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_daml_sdk_version(context: &Context) -> Option<String> {\n+    context\n+        .get_env(DAML_SDK_VERSION_ENV)\n+        .or_else(|| read_sdk_version_from_daml_yaml(context))\n+}\n+\n+fn read_sdk_version_from_daml_yaml(context: &Context) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(DAML_YAML)?;\n+    let daml_yaml = yaml_rust::YamlLoader::load_from_str(&file_contents).ok()?;\n+    let sdk_version = daml_yaml.first()?[DAML_SDK_VERSION].as_str()?;",
+    "path": "src/modules/daml.rs",
+    "commit_id": "466fec78824c1431ebcaf6f44f10d0731d25e5f3",
+    "original_commit_id": "41d4433e437a53a1cd39323386fde1cd916ead8d",
+    "user": {
+      "login": "stefanobaghino",
+      "id": 1374489,
+      "node_id": "MDQ6VXNlcjEzNzQ0ODk=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1374489?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefanobaghino",
+      "html_url": "https://github.com/stefanobaghino",
+      "followers_url": "https://api.github.com/users/stefanobaghino/followers",
+      "following_url": "https://api.github.com/users/stefanobaghino/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefanobaghino/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefanobaghino/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefanobaghino/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefanobaghino/orgs",
+      "repos_url": "https://api.github.com/users/stefanobaghino/repos",
+      "events_url": "https://api.github.com/users/stefanobaghino/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefanobaghino/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'm not a Rust expert, so I may need some help with this. I had a look at the other uses of this library in this codebase and it looks like the `Index` implementation always returns `Yaml` and that absence is dealt with the `.as_...` methods. Do I understand correctly? Let me write a test as you asked to validate my hypothesis.",
+    "created_at": "2022-05-21T14:10:06Z",
+    "updated_at": "2022-05-21T14:10:06Z",
+    "html_url": "https://github.com/starship/starship/pull/4004#discussion_r878699757",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4004",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/878699757"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4004#discussion_r878699757"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4004"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/878699757/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 70,
+    "original_line": 70,
+    "side": "RIGHT",
+    "in_reply_to_id": 878696976,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 65,
+    "position": 70,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/878700436",
+    "pull_request_review_id": 980831698,
+    "id": 878700436,
+    "node_id": "PRRC_kwDOCqswNs40X-eU",
+    "diff_hunk": "@@ -0,0 +1,120 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::daml::DamlConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+const DAML_SDK_VERSION: &str = \"sdk-version\";\n+const DAML_SDK_VERSION_ENV: &str = \"DAML_SDK_VERSION\";\n+const DAML_YAML: &str = \"daml.yaml\";\n+\n+/// Creates a module with the current Daml version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"daml\");\n+    let config: DamlConfig = DamlConfig::try_load(module.config);\n+\n+    let is_daml_project = context.try_begin_scan()?.set_files(&[DAML_YAML]).is_match();",
+    "path": "src/modules/daml.rs",
+    "commit_id": "466fec78824c1431ebcaf6f44f10d0731d25e5f3",
+    "original_commit_id": "41d4433e437a53a1cd39323386fde1cd916ead8d",
+    "user": {
+      "login": "stefanobaghino",
+      "id": 1374489,
+      "node_id": "MDQ6VXNlcjEzNzQ0ODk=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1374489?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefanobaghino",
+      "html_url": "https://github.com/stefanobaghino",
+      "followers_url": "https://api.github.com/users/stefanobaghino/followers",
+      "following_url": "https://api.github.com/users/stefanobaghino/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefanobaghino/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefanobaghino/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefanobaghino/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefanobaghino/orgs",
+      "repos_url": "https://api.github.com/users/stefanobaghino/repos",
+      "events_url": "https://api.github.com/users/stefanobaghino/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefanobaghino/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Addressed by https://github.com/starship/starship/pull/4004/commits/91989796cdeee210c08cf29484d53d99dcf3f791",
+    "created_at": "2022-05-21T14:17:03Z",
+    "updated_at": "2022-05-21T14:17:03Z",
+    "html_url": "https://github.com/starship/starship/pull/4004#discussion_r878700436",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4004",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/878700436"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4004#discussion_r878700436"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4004"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/878700436/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 14,
+    "side": "RIGHT",
+    "in_reply_to_id": 878696576,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 14,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/878700498",
+    "pull_request_review_id": 980831743,
+    "id": 878700498,
+    "node_id": "PRRC_kwDOCqswNs40X-fS",
+    "diff_hunk": "@@ -65,12 +65,12 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n                     // so again we always want the first semver-ish word.\n                     VersionFormatter::format_module_version(\n                         module.get_name(),\n-                        c_compiler_info.split_whitespace().find_map(\n-                            |word| match Version::parse(word) {\n-                                Ok(_v) => Some(word),\n-                                Err(_e) => None,\n-                            },\n-                        )?,\n+                        c_compiler_info.split_whitespace().find(|word| {\n+                            match Version::parse(word) {\n+                                Ok(_v) => true,\n+                                Err(_e) => false,\n+                            }\n+                        })?,",
+    "path": "src/modules/c.rs",
+    "commit_id": "466fec78824c1431ebcaf6f44f10d0731d25e5f3",
+    "original_commit_id": "41d4433e437a53a1cd39323386fde1cd916ead8d",
+    "user": {
+      "login": "stefanobaghino",
+      "id": 1374489,
+      "node_id": "MDQ6VXNlcjEzNzQ0ODk=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1374489?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefanobaghino",
+      "html_url": "https://github.com/stefanobaghino",
+      "followers_url": "https://api.github.com/users/stefanobaghino/followers",
+      "following_url": "https://api.github.com/users/stefanobaghino/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefanobaghino/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefanobaghino/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefanobaghino/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefanobaghino/orgs",
+      "repos_url": "https://api.github.com/users/stefanobaghino/repos",
+      "events_url": "https://api.github.com/users/stefanobaghino/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefanobaghino/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Changes reverted by https://github.com/starship/starship/pull/4004/commits/da426f34b864b1e17636da64083c57f3b33d874e. I'll wait for #4002 to be merged and rebase on top of it, thanks for letting me know.",
+    "created_at": "2022-05-21T14:17:39Z",
+    "updated_at": "2022-05-21T14:17:39Z",
+    "html_url": "https://github.com/starship/starship/pull/4004#discussion_r878700498",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4004",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/878700498"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4004#discussion_r878700498"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4004"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/878700498/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 68,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 73,
+    "side": "RIGHT",
+    "in_reply_to_id": 878696665,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/878700560",
+    "pull_request_review_id": 980831806,
+    "id": 878700560,
+    "node_id": "PRRC_kwDOCqswNs40X-gQ",
+    "diff_hunk": "@@ -0,0 +1,120 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::daml::DamlConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+const DAML_SDK_VERSION: &str = \"sdk-version\";\n+const DAML_SDK_VERSION_ENV: &str = \"DAML_SDK_VERSION\";\n+const DAML_YAML: &str = \"daml.yaml\";\n+\n+/// Creates a module with the current Daml version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"daml\");\n+    let config: DamlConfig = DamlConfig::try_load(module.config);\n+\n+    let is_daml_project = context.try_begin_scan()?.set_files(&[DAML_YAML]).is_match();\n+\n+    if !is_daml_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let daml_sdk_version = get_daml_sdk_version(context)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &daml_sdk_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `daml`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_daml_sdk_version(context: &Context) -> Option<String> {\n+    context\n+        .get_env(DAML_SDK_VERSION_ENV)\n+        .or_else(|| read_sdk_version_from_daml_yaml(context))\n+}\n+\n+fn read_sdk_version_from_daml_yaml(context: &Context) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(DAML_YAML)?;\n+    let daml_yaml = yaml_rust::YamlLoader::load_from_str(&file_contents).ok()?;\n+    let sdk_version = daml_yaml.first()?[DAML_SDK_VERSION].as_str()?;",
+    "path": "src/modules/daml.rs",
+    "commit_id": "466fec78824c1431ebcaf6f44f10d0731d25e5f3",
+    "original_commit_id": "41d4433e437a53a1cd39323386fde1cd916ead8d",
+    "user": {
+      "login": "stefanobaghino",
+      "id": 1374489,
+      "node_id": "MDQ6VXNlcjEzNzQ0ODk=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1374489?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefanobaghino",
+      "html_url": "https://github.com/stefanobaghino",
+      "followers_url": "https://api.github.com/users/stefanobaghino/followers",
+      "following_url": "https://api.github.com/users/stefanobaghino/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefanobaghino/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefanobaghino/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefanobaghino/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefanobaghino/orgs",
+      "repos_url": "https://api.github.com/users/stefanobaghino/repos",
+      "events_url": "https://api.github.com/users/stefanobaghino/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefanobaghino/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Test added in https://github.com/starship/starship/pull/4004/commits/8f6e77d998bbb793d4ee4a1081eabc1a69cae98c. IIUC this means that `Index` is safe to use here, right?",
+    "created_at": "2022-05-21T14:18:18Z",
+    "updated_at": "2022-05-21T14:18:19Z",
+    "html_url": "https://github.com/starship/starship/pull/4004#discussion_r878700560",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4004",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/878700560"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4004#discussion_r878700560"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4004"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/878700560/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 70,
+    "original_line": 70,
+    "side": "RIGHT",
+    "in_reply_to_id": 878696976,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 65,
+    "position": 70,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/878700616",
+    "pull_request_review_id": 980831844,
+    "id": 878700616,
+    "node_id": "PRRC_kwDOCqswNs40X-hI",
+    "diff_hunk": "@@ -0,0 +1,120 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::daml::DamlConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+const DAML_SDK_VERSION: &str = \"sdk-version\";\n+const DAML_SDK_VERSION_ENV: &str = \"DAML_SDK_VERSION\";\n+const DAML_YAML: &str = \"daml.yaml\";\n+\n+/// Creates a module with the current Daml version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"daml\");\n+    let config: DamlConfig = DamlConfig::try_load(module.config);\n+\n+    let is_daml_project = context.try_begin_scan()?.set_files(&[DAML_YAML]).is_match();\n+\n+    if !is_daml_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let daml_sdk_version = get_daml_sdk_version(context)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &daml_sdk_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `daml`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_daml_sdk_version(context: &Context) -> Option<String> {\n+    context\n+        .get_env(DAML_SDK_VERSION_ENV)\n+        .or_else(|| read_sdk_version_from_daml_yaml(context))\n+}\n+\n+fn read_sdk_version_from_daml_yaml(context: &Context) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(DAML_YAML)?;\n+    let daml_yaml = yaml_rust::YamlLoader::load_from_str(&file_contents).ok()?;\n+    let sdk_version = daml_yaml.first()?[DAML_SDK_VERSION].as_str()?;",
+    "path": "src/modules/daml.rs",
+    "commit_id": "466fec78824c1431ebcaf6f44f10d0731d25e5f3",
+    "original_commit_id": "41d4433e437a53a1cd39323386fde1cd916ead8d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Just being cautious, as some implementation of `Index` will panic on undefined values.",
+    "created_at": "2022-05-21T14:18:50Z",
+    "updated_at": "2022-05-21T14:18:50Z",
+    "html_url": "https://github.com/starship/starship/pull/4004#discussion_r878700616",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4004",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/878700616"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4004#discussion_r878700616"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4004"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/878700616/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 70,
+    "original_line": 70,
+    "side": "RIGHT",
+    "in_reply_to_id": 878696976,
+    "author_association": "MEMBER",
+    "original_position": 65,
+    "position": 70,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/878700638",
+    "pull_request_review_id": 980831855,
+    "id": 878700638,
+    "node_id": "PRRC_kwDOCqswNs40X-he",
+    "diff_hunk": "@@ -247,6 +247,15 @@ fn get_shard_version(context: &Context, config: &PackageConfig) -> Option<String\n     format_version(raw_version, config.version_format)\n }\n \n+fn get_daml_project_version(context: &Context, config: &PackageConfig) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(\"daml.yaml\")?;\n+\n+    let daml_yaml = yaml_rust::YamlLoader::load_from_str(&file_contents).ok()?;\n+    let raw_version = daml_yaml.first()?[\"version\"].as_str()?;",
+    "path": "src/modules/package.rs",
+    "commit_id": "466fec78824c1431ebcaf6f44f10d0731d25e5f3",
+    "original_commit_id": "41d4433e437a53a1cd39323386fde1cd916ead8d",
+    "user": {
+      "login": "stefanobaghino",
+      "id": 1374489,
+      "node_id": "MDQ6VXNlcjEzNzQ0ODk=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1374489?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefanobaghino",
+      "html_url": "https://github.com/stefanobaghino",
+      "followers_url": "https://api.github.com/users/stefanobaghino/followers",
+      "following_url": "https://api.github.com/users/stefanobaghino/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefanobaghino/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefanobaghino/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefanobaghino/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefanobaghino/orgs",
+      "repos_url": "https://api.github.com/users/stefanobaghino/repos",
+      "events_url": "https://api.github.com/users/stefanobaghino/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefanobaghino/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I believe the same applies here as https://github.com/starship/starship/pull/4004#discussion_r878699757, but happy to receive further feedback of that not being the case.",
+    "created_at": "2022-05-21T14:18:56Z",
+    "updated_at": "2022-05-21T14:18:56Z",
+    "html_url": "https://github.com/starship/starship/pull/4004#discussion_r878700638",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4004",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/878700638"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4004#discussion_r878700638"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4004"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/878700638/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 254,
+    "original_line": 254,
+    "side": "RIGHT",
+    "in_reply_to_id": 878697031,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 8,
+    "position": 8,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/878700836",
+    "pull_request_review_id": 980832027,
+    "id": 878700836,
+    "node_id": "PRRC_kwDOCqswNs40X-kk",
+    "diff_hunk": "@@ -0,0 +1,120 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::daml::DamlConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+const DAML_SDK_VERSION: &str = \"sdk-version\";\n+const DAML_SDK_VERSION_ENV: &str = \"DAML_SDK_VERSION\";\n+const DAML_YAML: &str = \"daml.yaml\";\n+\n+/// Creates a module with the current Daml version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"daml\");\n+    let config: DamlConfig = DamlConfig::try_load(module.config);\n+\n+    let is_daml_project = context.try_begin_scan()?.set_files(&[DAML_YAML]).is_match();\n+\n+    if !is_daml_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let daml_sdk_version = get_daml_sdk_version(context)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &daml_sdk_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `daml`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_daml_sdk_version(context: &Context) -> Option<String> {\n+    context\n+        .get_env(DAML_SDK_VERSION_ENV)\n+        .or_else(|| read_sdk_version_from_daml_yaml(context))\n+}\n+\n+fn read_sdk_version_from_daml_yaml(context: &Context) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(DAML_YAML)?;\n+    let daml_yaml = yaml_rust::YamlLoader::load_from_str(&file_contents).ok()?;\n+    let sdk_version = daml_yaml.first()?[DAML_SDK_VERSION].as_str()?;",
+    "path": "src/modules/daml.rs",
+    "commit_id": "466fec78824c1431ebcaf6f44f10d0731d25e5f3",
+    "original_commit_id": "41d4433e437a53a1cd39323386fde1cd916ead8d",
+    "user": {
+      "login": "stefanobaghino",
+      "id": 1374489,
+      "node_id": "MDQ6VXNlcjEzNzQ0ODk=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1374489?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stefanobaghino",
+      "html_url": "https://github.com/stefanobaghino",
+      "followers_url": "https://api.github.com/users/stefanobaghino/followers",
+      "following_url": "https://api.github.com/users/stefanobaghino/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stefanobaghino/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stefanobaghino/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stefanobaghino/subscriptions",
+      "organizations_url": "https://api.github.com/users/stefanobaghino/orgs",
+      "repos_url": "https://api.github.com/users/stefanobaghino/repos",
+      "events_url": "https://api.github.com/users/stefanobaghino/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stefanobaghino/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Makes a lot of sense. Can I consider this and https://github.com/starship/starship/pull/4004#discussion_r878697031 resolved?",
+    "created_at": "2022-05-21T14:21:11Z",
+    "updated_at": "2022-05-21T14:21:11Z",
+    "html_url": "https://github.com/starship/starship/pull/4004#discussion_r878700836",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4004",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/878700836"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4004#discussion_r878700836"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4004"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/878700836/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 70,
+    "original_line": 70,
+    "side": "RIGHT",
+    "in_reply_to_id": 878696976,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 65,
+    "position": 70,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/878711139",
+    "pull_request_review_id": 980840387,
+    "id": 878711139,
+    "node_id": "PRRC_kwDOCqswNs40YBFj",
+    "diff_hunk": "@@ -0,0 +1,120 @@\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::daml::DamlConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+const DAML_SDK_VERSION: &str = \"sdk-version\";\n+const DAML_SDK_VERSION_ENV: &str = \"DAML_SDK_VERSION\";\n+const DAML_YAML: &str = \"daml.yaml\";\n+\n+/// Creates a module with the current Daml version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"daml\");\n+    let config: DamlConfig = DamlConfig::try_load(module.config);\n+\n+    let is_daml_project = context.try_begin_scan()?.set_files(&[DAML_YAML]).is_match();\n+\n+    if !is_daml_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let daml_sdk_version = get_daml_sdk_version(context)?;\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &daml_sdk_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `daml`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_daml_sdk_version(context: &Context) -> Option<String> {\n+    context\n+        .get_env(DAML_SDK_VERSION_ENV)\n+        .or_else(|| read_sdk_version_from_daml_yaml(context))\n+}\n+\n+fn read_sdk_version_from_daml_yaml(context: &Context) -> Option<String> {\n+    let file_contents = context.read_file_from_pwd(DAML_YAML)?;\n+    let daml_yaml = yaml_rust::YamlLoader::load_from_str(&file_contents).ok()?;\n+    let sdk_version = daml_yaml.first()?[DAML_SDK_VERSION].as_str()?;",
+    "path": "src/modules/daml.rs",
+    "commit_id": "466fec78824c1431ebcaf6f44f10d0731d25e5f3",
+    "original_commit_id": "41d4433e437a53a1cd39323386fde1cd916ead8d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "sure.",
+    "created_at": "2022-05-21T15:53:49Z",
+    "updated_at": "2022-05-21T15:53:49Z",
+    "html_url": "https://github.com/starship/starship/pull/4004#discussion_r878711139",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4004",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/878711139"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4004#discussion_r878711139"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4004"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/878711139/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 70,
+    "original_line": 70,
+    "side": "RIGHT",
+    "in_reply_to_id": 878696976,
+    "author_association": "MEMBER",
+    "original_position": 65,
+    "position": 70,
+    "subject_type": "line"
+  }
+]

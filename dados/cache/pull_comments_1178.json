@@ -1,0 +1,419 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/421430149",
+    "pull_request_review_id": 407378817,
+    "id": 421430149,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyMTQzMDE0OQ==",
+    "diff_hunk": "@@ -161,6 +152,57 @@ fn to_fish_style(pwd_dir_length: usize, dir_string: String, truncated_dir_string\n         .join(\"/\")\n }\n \n+#[cfg(target_os = \"windows\")]\n+fn to_separator(path: &Path, separator: &str) -> Option<String> {",
+    "path": "src/modules/directory.rs",
+    "commit_id": "c8b09fc0c13beee4b04556d21ffbf7445795b638",
+    "original_commit_id": "211746aa6f069123588923f81f22f6a8728d5c83",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "1. Have you investigated unifying the windows and -nix implementations? Gating platform behaviour in `#[cfg(windows)]` and/or `if cfg!(windows)`?\r\n2. I think this will never return `None`, maybe switch to plain `String`?",
+    "created_at": "2020-05-07T11:22:38Z",
+    "updated_at": "2020-05-08T04:20:19Z",
+    "html_url": "https://github.com/starship/starship/pull/1178#discussion_r421430149",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1178",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/421430149"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1178#discussion_r421430149"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1178"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/421430149/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 156,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 112,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/421430270",
+    "pull_request_review_id": 407378965,
+    "id": 421430270,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyMTQzMDI3MA==",
+    "diff_hunk": "@@ -161,6 +152,57 @@ fn to_fish_style(pwd_dir_length: usize, dir_string: String, truncated_dir_string\n         .join(\"/\")\n }\n \n+#[cfg(target_os = \"windows\")]\n+fn to_separator(path: &Path, separator: &str) -> Option<String> {\n+    let path_str = path.as_os_str().to_string_lossy();\n+\n+    let mut out = String::with_capacity((*path_str).len());\n+\n+    let mut iter = path\n+        .iter()\n+        .filter(|x| x.to_string_lossy() != \"\\\\\" && x.to_string_lossy() != \"/\");\n+    let first = iter.next();\n+    if let Some(first_component) = first {\n+        out.push_str(&first_component.to_string_lossy());\n+        for component in iter {\n+            out.push_str(&separator);\n+            out.push_str(&component.to_string_lossy());\n+        }\n+    }\n+\n+    if path_str.ends_with('\\\\') || path_str.ends_with('/') {",
+    "path": "src/modules/directory.rs",
+    "commit_id": "c8b09fc0c13beee4b04556d21ffbf7445795b638",
+    "original_commit_id": "211746aa6f069123588923f81f22f6a8728d5c83",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "When does this trigger?",
+    "created_at": "2020-05-07T11:22:55Z",
+    "updated_at": "2020-05-08T04:20:19Z",
+    "html_url": "https://github.com/starship/starship/pull/1178#discussion_r421430270",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1178",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/421430270"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1178#discussion_r421430270"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1178"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/421430270/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 173,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 129,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/421430743",
+    "pull_request_review_id": 407379547,
+    "id": 421430743,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyMTQzMDc0Mw==",
+    "diff_hunk": "@@ -161,6 +152,57 @@ fn to_fish_style(pwd_dir_length: usize, dir_string: String, truncated_dir_string\n         .join(\"/\")\n }\n \n+#[cfg(target_os = \"windows\")]\n+fn to_separator(path: &Path, separator: &str) -> Option<String> {\n+    let path_str = path.as_os_str().to_string_lossy();\n+\n+    let mut out = String::with_capacity((*path_str).len());\n+\n+    let mut iter = path\n+        .iter()\n+        .filter(|x| x.to_string_lossy() != \"\\\\\" && x.to_string_lossy() != \"/\");\n+    let first = iter.next();\n+    if let Some(first_component) = first {\n+        out.push_str(&first_component.to_string_lossy());\n+        for component in iter {\n+            out.push_str(&separator);\n+            out.push_str(&component.to_string_lossy());\n+        }\n+    }\n+\n+    if path_str.ends_with('\\\\') || path_str.ends_with('/') {\n+        out.push_str(&separator);\n+    }\n+\n+    Some(out)\n+}\n+\n+#[cfg(not(target_os = \"windows\"))]\n+fn to_separator(path: &Path, separator: &str) -> Option<String> {\n+    let path_str = path.as_os_str().to_string_lossy();\n+\n+    if path_str == \"/\" {",
+    "path": "src/modules/directory.rs",
+    "commit_id": "c8b09fc0c13beee4b04556d21ffbf7445795b638",
+    "original_commit_id": "211746aa6f069123588923f81f22f6a8728d5c83",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Maybe use `std::path::MAIN_SEPARATOR` here instead of `/`?",
+    "created_at": "2020-05-07T11:23:51Z",
+    "updated_at": "2020-05-08T04:20:19Z",
+    "html_url": "https://github.com/starship/starship/pull/1178#discussion_r421430743",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1178",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/421430743"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1178#discussion_r421430743"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1178"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/421430743/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 184,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 140,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/421441080",
+    "pull_request_review_id": 407392298,
+    "id": 421441080,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyMTQ0MTA4MA==",
+    "diff_hunk": "@@ -161,6 +152,57 @@ fn to_fish_style(pwd_dir_length: usize, dir_string: String, truncated_dir_string\n         .join(\"/\")\n }\n \n+#[cfg(target_os = \"windows\")]\n+fn to_separator(path: &Path, separator: &str) -> Option<String> {\n+    let path_str = path.as_os_str().to_string_lossy();\n+\n+    let mut out = String::with_capacity((*path_str).len());\n+\n+    let mut iter = path\n+        .iter()\n+        .filter(|x| x.to_string_lossy() != \"\\\\\" && x.to_string_lossy() != \"/\");\n+    let first = iter.next();\n+    if let Some(first_component) = first {\n+        out.push_str(&first_component.to_string_lossy());\n+        for component in iter {\n+            out.push_str(&separator);\n+            out.push_str(&component.to_string_lossy());\n+        }\n+    }\n+\n+    if path_str.ends_with('\\\\') || path_str.ends_with('/') {",
+    "path": "src/modules/directory.rs",
+    "commit_id": "c8b09fc0c13beee4b04556d21ffbf7445795b638",
+    "original_commit_id": "211746aa6f069123588923f81f22f6a8728d5c83",
+    "user": {
+      "login": "jeanga",
+      "id": 7120091,
+      "node_id": "MDQ6VXNlcjcxMjAwOTE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7120091?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jeanga",
+      "html_url": "https://github.com/jeanga",
+      "followers_url": "https://api.github.com/users/jeanga/followers",
+      "following_url": "https://api.github.com/users/jeanga/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jeanga/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jeanga/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jeanga/subscriptions",
+      "organizations_url": "https://api.github.com/users/jeanga/orgs",
+      "repos_url": "https://api.github.com/users/jeanga/repos",
+      "events_url": "https://api.github.com/users/jeanga/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jeanga/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I did this today for the Linux tests to pass but I probably should remove this now that most of them are separated with #[cfg(windows)].",
+    "created_at": "2020-05-07T11:44:39Z",
+    "updated_at": "2020-05-08T04:20:19Z",
+    "html_url": "https://github.com/starship/starship/pull/1178#discussion_r421441080",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1178",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/421441080"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1178#discussion_r421441080"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1178"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/421441080/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 173,
+    "side": "RIGHT",
+    "in_reply_to_id": 421430270,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 129,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/421441932",
+    "pull_request_review_id": 407393365,
+    "id": 421441932,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyMTQ0MTkzMg==",
+    "diff_hunk": "@@ -161,6 +152,57 @@ fn to_fish_style(pwd_dir_length: usize, dir_string: String, truncated_dir_string\n         .join(\"/\")\n }\n \n+#[cfg(target_os = \"windows\")]\n+fn to_separator(path: &Path, separator: &str) -> Option<String> {\n+    let path_str = path.as_os_str().to_string_lossy();\n+\n+    let mut out = String::with_capacity((*path_str).len());\n+\n+    let mut iter = path\n+        .iter()\n+        .filter(|x| x.to_string_lossy() != \"\\\\\" && x.to_string_lossy() != \"/\");\n+    let first = iter.next();\n+    if let Some(first_component) = first {\n+        out.push_str(&first_component.to_string_lossy());\n+        for component in iter {\n+            out.push_str(&separator);\n+            out.push_str(&component.to_string_lossy());\n+        }\n+    }\n+\n+    if path_str.ends_with('\\\\') || path_str.ends_with('/') {\n+        out.push_str(&separator);\n+    }\n+\n+    Some(out)\n+}\n+\n+#[cfg(not(target_os = \"windows\"))]\n+fn to_separator(path: &Path, separator: &str) -> Option<String> {\n+    let path_str = path.as_os_str().to_string_lossy();\n+\n+    if path_str == \"/\" {",
+    "path": "src/modules/directory.rs",
+    "commit_id": "c8b09fc0c13beee4b04556d21ffbf7445795b638",
+    "original_commit_id": "211746aa6f069123588923f81f22f6a8728d5c83",
+    "user": {
+      "login": "jeanga",
+      "id": 7120091,
+      "node_id": "MDQ6VXNlcjcxMjAwOTE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7120091?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jeanga",
+      "html_url": "https://github.com/jeanga",
+      "followers_url": "https://api.github.com/users/jeanga/followers",
+      "following_url": "https://api.github.com/users/jeanga/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jeanga/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jeanga/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jeanga/subscriptions",
+      "organizations_url": "https://api.github.com/users/jeanga/orgs",
+      "repos_url": "https://api.github.com/users/jeanga/repos",
+      "events_url": "https://api.github.com/users/jeanga/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jeanga/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Yes, will do. I will have to exclude empty string first and test on len ( std::path::MAIN_SEPARATOR is a char, not a str, remember ;-))",
+    "created_at": "2020-05-07T11:46:22Z",
+    "updated_at": "2020-05-08T04:20:19Z",
+    "html_url": "https://github.com/starship/starship/pull/1178#discussion_r421441932",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1178",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/421441932"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1178#discussion_r421441932"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1178"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/421441932/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 184,
+    "side": "RIGHT",
+    "in_reply_to_id": 421430743,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 140,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/421450119",
+    "pull_request_review_id": 407403287,
+    "id": 421450119,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyMTQ1MDExOQ==",
+    "diff_hunk": "@@ -161,6 +152,57 @@ fn to_fish_style(pwd_dir_length: usize, dir_string: String, truncated_dir_string\n         .join(\"/\")\n }\n \n+#[cfg(target_os = \"windows\")]\n+fn to_separator(path: &Path, separator: &str) -> Option<String> {",
+    "path": "src/modules/directory.rs",
+    "commit_id": "c8b09fc0c13beee4b04556d21ffbf7445795b638",
+    "original_commit_id": "211746aa6f069123588923f81f22f6a8728d5c83",
+    "user": {
+      "login": "jeanga",
+      "id": 7120091,
+      "node_id": "MDQ6VXNlcjcxMjAwOTE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7120091?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jeanga",
+      "html_url": "https://github.com/jeanga",
+      "followers_url": "https://api.github.com/users/jeanga/followers",
+      "following_url": "https://api.github.com/users/jeanga/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jeanga/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jeanga/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jeanga/subscriptions",
+      "organizations_url": "https://api.github.com/users/jeanga/orgs",
+      "repos_url": "https://api.github.com/users/jeanga/repos",
+      "events_url": "https://api.github.com/users/jeanga/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jeanga/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "1: Not sure, windows&unix paths have very unique characteristics, like absolute paths always starting with / on Linux and on Windows they are relative to the current drive...\r\n2: Sure, done.",
+    "created_at": "2020-05-07T12:02:04Z",
+    "updated_at": "2020-05-08T04:20:19Z",
+    "html_url": "https://github.com/starship/starship/pull/1178#discussion_r421450119",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1178",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/421450119"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1178#discussion_r421450119"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1178"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/421450119/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 156,
+    "side": "RIGHT",
+    "in_reply_to_id": 421430149,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 112,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

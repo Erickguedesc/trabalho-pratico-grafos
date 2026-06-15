@@ -1,0 +1,140 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/421883002",
+    "pull_request_review_id": 407937605,
+    "id": 421883002,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyMTg4MzAwMg==",
+    "diff_hunk": "@@ -1,22 +1,17 @@\n-use crate::config::{ModuleConfig, RootModuleConfig, SegmentConfig};\n+use crate::config::{ModuleConfig, RootModuleConfig};\n \n-use ansi_term::{Color, Style};\n use starship_module_config_derive::ModuleConfig;\n \n #[derive(Clone, ModuleConfig)]\n pub struct GoConfig<'a> {\n-    pub symbol: SegmentConfig<'a>,\n-    pub version: SegmentConfig<'a>,\n-    pub style: Style,\n+    pub format: &'a str,",
+    "path": "src/configs/go.rs",
+    "commit_id": "81f55e3fd9a0f288021eb558b6cdde02187d77e6",
+    "original_commit_id": "d5b4ea97588e22726e6d3765bf8068992ea37210",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Symbol and style should not be deleted as is discussed in https://github.com/starship/starship/discussions/1116#discussioncomment-6579",
+    "created_at": "2020-05-08T01:19:15Z",
+    "updated_at": "2020-05-10T11:16:27Z",
+    "html_url": "https://github.com/starship/starship/pull/1066#discussion_r421883002",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1066",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/421883002"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1066#discussion_r421883002"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1066"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/421883002/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 7,
+    "original_line": 7,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 12,
+    "position": 12,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/421883640",
+    "pull_request_review_id": 407937605,
+    "id": 421883640,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyMTg4MzY0MA==",
+    "diff_hunk": "@@ -33,15 +34,24 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         return None;\n     }\n \n+    let module_version = format_go_version(&utils::exec_cmd(\"go\", &[\"version\"])?.stdout.as_str())?;\n+\n     let mut module = context.new_module(\"golang\");\n     let config: GoConfig = GoConfig::try_load(module.config);\n+    let formatter = if let Ok(formatter) = StringFormatter::new(config.format) {\n+        formatter.map(|variable| match variable {\n+            \"version\" => Some(module_version.clone()),\n+            _ => None,\n+        })\n+    } else {\n+        log::warn!(\"Error parsing format string in `golang.format`\");\n+        return None;\n+    };",
+    "path": "src/modules/golang.rs",
+    "commit_id": "81f55e3fd9a0f288021eb558b6cdde02187d77e6",
+    "original_commit_id": "d5b4ea97588e22726e6d3765bf8068992ea37210",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The API of `StringFormatter::map` has changed. Try merging latest `feat/format-string`.",
+    "created_at": "2020-05-08T01:21:31Z",
+    "updated_at": "2020-05-10T11:16:27Z",
+    "html_url": "https://github.com/starship/starship/pull/1066#discussion_r421883640",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1066",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/421883640"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1066#discussion_r421883640"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1066"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/421883640/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 41,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 49,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 24,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

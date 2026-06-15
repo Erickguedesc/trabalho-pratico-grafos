@@ -1,0 +1,279 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/799312371",
+    "pull_request_review_id": 872874180,
+    "id": 799312371,
+    "node_id": "PRRC_kwDOCqswNs4vpInz",
+    "diff_hunk": "@@ -108,7 +108,36 @@ fn main() {\n     let _ = ansi_term::enable_ansi_support();\n     logger::init();\n \n-    let args = Cli::parse();\n+    let args = match Cli::try_parse() {\n+        Ok(args) => args,\n+        Err(e) => {\n+            let is_info_only = matches!(\n+                e.kind,\n+                clap::ErrorKind::DisplayHelpOnMissingArgumentOrSubcommand\n+                    | clap::ErrorKind::DisplayHelp\n+                    | clap::ErrorKind::DisplayVersion\n+            );\n+            // print the error\n+            e.print().expect(\"error while writing error\");",
+    "path": "src/main.rs",
+    "commit_id": "0696cbce7e904860f765e2666e100b25739d88ba",
+    "original_commit_id": "cd40a23c63d3d576c87bf1c7534296f671aeec58",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It's better to avoid panicking here (#3280):\r\nUpstream `parse` uses this:\r\n```suggestion\r\n            // avoid panic if stdout/stderr close unexpectedly\r\n            let _ = e.print();\r\n```\r\n",
+    "created_at": "2022-02-04T09:47:38Z",
+    "updated_at": "2022-02-04T09:52:57Z",
+    "html_url": "https://github.com/starship/starship/pull/3560#discussion_r799312371",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3560",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/799312371"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3560#discussion_r799312371"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3560"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/799312371/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 121,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/799314830",
+    "pull_request_review_id": 872874180,
+    "id": 799314830,
+    "node_id": "PRRC_kwDOCqswNs4vpJOO",
+    "diff_hunk": "@@ -108,7 +108,36 @@ fn main() {\n     let _ = ansi_term::enable_ansi_support();\n     logger::init();\n \n-    let args = Cli::parse();\n+    let args = match Cli::try_parse() {\n+        Ok(args) => args,\n+        Err(e) => {\n+            let is_info_only = matches!(\n+                e.kind,\n+                clap::ErrorKind::DisplayHelpOnMissingArgumentOrSubcommand\n+                    | clap::ErrorKind::DisplayHelp\n+                    | clap::ErrorKind::DisplayVersion\n+            );\n+            // print the error\n+            e.print().expect(\"error while writing error\");\n+            // if there was no mistake by the user and we're only going to display information,\n+            // we won't put arguments or exit\n+            let exit_code = if is_info_only {\n+                0\n+            } else {\n+                // print the arguments\n+                eprintln!(",
+    "path": "src/main.rs",
+    "commit_id": "0696cbce7e904860f765e2666e100b25739d88ba",
+    "original_commit_id": "cd40a23c63d3d576c87bf1c7534296f671aeec58",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Same thing:\r\n```suggestion\r\n                let mut stderr = io::stderr();\r\n                let _ = writeln!(\r\n                    stderr,\r\n```",
+    "created_at": "2022-02-04T09:50:49Z",
+    "updated_at": "2022-02-04T09:52:57Z",
+    "html_url": "https://github.com/starship/starship/pull/3560#discussion_r799314830",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3560",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/799314830"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3560#discussion_r799314830"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3560"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/799314830/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 128,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 22,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/799401953",
+    "pull_request_review_id": 872998605,
+    "id": 799401953,
+    "node_id": "PRRC_kwDOCqswNs4vpefh",
+    "diff_hunk": "@@ -108,7 +108,36 @@ fn main() {\n     let _ = ansi_term::enable_ansi_support();\n     logger::init();\n \n-    let args = Cli::parse();\n+    let args = match Cli::try_parse() {\n+        Ok(args) => args,\n+        Err(e) => {\n+            let is_info_only = matches!(\n+                e.kind,\n+                clap::ErrorKind::DisplayHelpOnMissingArgumentOrSubcommand\n+                    | clap::ErrorKind::DisplayHelp\n+                    | clap::ErrorKind::DisplayVersion\n+            );\n+            // print the error\n+            e.print().expect(\"error while writing error\");",
+    "path": "src/main.rs",
+    "commit_id": "0696cbce7e904860f765e2666e100b25739d88ba",
+    "original_commit_id": "cd40a23c63d3d576c87bf1c7534296f671aeec58",
+    "user": {
+      "login": "cg-jl",
+      "id": 54634335,
+      "node_id": "MDQ6VXNlcjU0NjM0MzM1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/54634335?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cg-jl",
+      "html_url": "https://github.com/cg-jl",
+      "followers_url": "https://api.github.com/users/cg-jl/followers",
+      "following_url": "https://api.github.com/users/cg-jl/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cg-jl/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cg-jl/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cg-jl/subscriptions",
+      "organizations_url": "https://api.github.com/users/cg-jl/orgs",
+      "repos_url": "https://api.github.com/users/cg-jl/repos",
+      "events_url": "https://api.github.com/users/cg-jl/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cg-jl/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "thank you, will push asap",
+    "created_at": "2022-02-04T11:55:12Z",
+    "updated_at": "2022-02-04T11:55:12Z",
+    "html_url": "https://github.com/starship/starship/pull/3560#discussion_r799401953",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3560",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/799401953"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3560#discussion_r799401953"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3560"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/799401953/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 121,
+    "side": "RIGHT",
+    "in_reply_to_id": 799312371,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/800096168",
+    "pull_request_review_id": 873967069,
+    "id": 800096168,
+    "node_id": "PRRC_kwDOCqswNs4vsH-o",
+    "diff_hunk": "@@ -108,7 +108,40 @@ fn main() {\n     let _ = ansi_term::enable_ansi_support();\n     logger::init();\n \n-    let args = Cli::parse();\n+    let args = match Cli::try_parse() {\n+        Ok(args) => args,\n+        Err(e) => {\n+            let is_info_only = matches!(\n+                e.kind,\n+                clap::ErrorKind::DisplayHelpOnMissingArgumentOrSubcommand\n+                    | clap::ErrorKind::DisplayHelp\n+                    | clap::ErrorKind::DisplayVersion\n+            );",
+    "path": "src/main.rs",
+    "commit_id": "0696cbce7e904860f765e2666e100b25739d88ba",
+    "original_commit_id": "8f0d54853111e6a04ed2b7282f003fb205a92307",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "clap uses this check internally:\r\n```suggestion\r\n            let is_info_only = !e.use_stderr();\r\n```\r\n\r\nShould be slightly more reliable. Beyond this LGTM.",
+    "created_at": "2022-02-05T20:19:02Z",
+    "updated_at": "2022-02-05T20:19:03Z",
+    "html_url": "https://github.com/starship/starship/pull/3560#discussion_r800096168",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3560",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/800096168"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3560#discussion_r800096168"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3560"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/800096168/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 114,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 119,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

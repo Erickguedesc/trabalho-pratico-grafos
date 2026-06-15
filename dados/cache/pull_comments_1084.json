@@ -1,0 +1,557 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/422478203",
+    "pull_request_review_id": 408636299,
+    "id": 422478203,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyMjQ3ODIwMw==",
+    "diff_hunk": "@@ -877,11 +877,20 @@ The module will be shown if any of the following conditions are met:\n \n ### Options\n \n-| Variable   | Default        | Description                                            |\n-| ---------- | -------------- | ------------------------------------------------------ |\n-| `symbol`   | `\"☕ \"`         | The symbol used before displaying the version of Java. |\n-| `style`    | `\"dimmed red\"` | The style for the module.                              |\n-| `disabled` | `false`        | Disables the `java` module.                            |\n+| Variable   | Default                             | Description                                     |",
+    "path": "docs/config/README.md",
+    "commit_id": "968f254f2467fc8f9a3ac19f325508782628729c",
+    "original_commit_id": "7a705d3ce38b6390ae16f03b831993b41eaddd34",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n| Option     | Default                             | Description                                     |\r\n```\r\nTo avoid naming conflicts with variable in format string",
+    "created_at": "2020-05-09T10:06:23Z",
+    "updated_at": "2020-05-13T19:27:28Z",
+    "html_url": "https://github.com/starship/starship/pull/1084#discussion_r422478203",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1084",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/422478203"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1084#discussion_r422478203"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1084"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/422478203/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 880,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 9,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/422478309",
+    "pull_request_review_id": 408636299,
+    "id": 422478309,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyMjQ3ODMwOQ==",
+    "diff_hunk": "@@ -25,12 +26,35 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         Some(java_version) => {\n             let mut module = context.new_module(\"java\");\n             let config: JavaConfig = JavaConfig::try_load(module.config);\n-            module.set_style(config.style);\n-\n             let formatted_version = format_java_version(java_version)?;\n-            module.create_segment(\"symbol\", &config.symbol);\n-            module.create_segment(\"version\", &SegmentConfig::new(&formatted_version));\n \n+            let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+                formatter\n+                    .map_meta(|var, _| match var {\n+                        \"symbol\" => Some(config.symbol),\n+                        _ => None,\n+                    })\n+                    .map_style(|variable| match variable {\n+                        \"style\" => Some(Ok(config.style)),\n+                        _ => None,\n+                    })\n+                    .map(|variable| match variable {\n+                        // This may result in multiple calls to `get_module_version` when a user have\n+                        // multiple `$version` variables defined in `format`.",
+    "path": "src/modules/java.rs",
+    "commit_id": "968f254f2467fc8f9a3ac19f325508782628729c",
+    "original_commit_id": "7a705d3ce38b6390ae16f03b831993b41eaddd34",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n```",
+    "created_at": "2020-05-09T10:07:52Z",
+    "updated_at": "2020-05-13T19:27:28Z",
+    "html_url": "https://github.com/starship/starship/pull/1084#discussion_r422478309",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1084",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/422478309"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1084#discussion_r422478309"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1084"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/422478309/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 42,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 43,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 31,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/422478880",
+    "pull_request_review_id": 408636953,
+    "id": 422478880,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyMjQ3ODg4MA==",
+    "diff_hunk": "@@ -877,11 +877,20 @@ The module will be shown if any of the following conditions are met:\n \n ### Options\n \n-| Variable   | Default        | Description                                            |\n-| ---------- | -------------- | ------------------------------------------------------ |\n-| `symbol`   | `\"☕ \"`         | The symbol used before displaying the version of Java. |\n-| `style`    | `\"dimmed red\"` | The style for the module.                              |\n-| `disabled` | `false`        | Disables the `java` module.                            |\n+| Variable   | Default                             | Description                                     |\n+| ---------- | ----------------------------------- | ----------------------------------------------- |\n+| `format`   | `\"via [$symbol $version]($style) \"` | The format for the module.                      |\n+| `symbol`   | `\"☕\"`                               | A format string representing the symbol of Java |",
+    "path": "docs/config/README.md",
+    "commit_id": "968f254f2467fc8f9a3ac19f325508782628729c",
+    "original_commit_id": "7a705d3ce38b6390ae16f03b831993b41eaddd34",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n| `format`   | `\"via [$symbol$version]($style) \"` | The format for the module.                      |\r\n| `symbol`   | `\"☕ \"`                             | A format string representing the symbol of Java |\r\n```\r\nWell, this change looks reasonable to me, but it will break the config before the format string release. I think it should use exactly the same config as before.",
+    "created_at": "2020-05-09T10:13:53Z",
+    "updated_at": "2020-05-13T19:27:28Z",
+    "html_url": "https://github.com/starship/starship/pull/1084#discussion_r422478880",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1084",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/422478880"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1084#discussion_r422478880"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1084"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/422478880/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 882,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 883,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 12,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/422479542",
+    "pull_request_review_id": 408637521,
+    "id": 422479542,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyMjQ3OTU0Mg==",
+    "diff_hunk": "@@ -1,21 +1,22 @@\n-use crate::config::{ModuleConfig, RootModuleConfig, SegmentConfig};\n+use crate::config::{ModuleConfig, RootModuleConfig};\n \n-use ansi_term::{Color, Style};\n use starship_module_config_derive::ModuleConfig;\n \n #[derive(Clone, ModuleConfig)]\n pub struct JavaConfig<'a> {\n-    pub symbol: SegmentConfig<'a>,\n-    pub style: Style,\n     pub disabled: bool,\n+    pub format: &'a str,\n+    pub style: &'a str,\n+    pub symbol: &'a str,\n }\n \n impl<'a> RootModuleConfig<'a> for JavaConfig<'a> {\n     fn new() -> Self {\n         JavaConfig {\n-            symbol: SegmentConfig::new(\"☕ \"),\n-            style: Color::Red.dimmed(),\n+            format: \"via [$symbol $version]($style) \",\n             disabled: false,\n+            style: \"red dimmed\",\n+            symbol: \"☕\",",
+    "path": "src/configs/java.rs",
+    "commit_id": "968f254f2467fc8f9a3ac19f325508782628729c",
+    "original_commit_id": "7a705d3ce38b6390ae16f03b831993b41eaddd34",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n            format: \"via [$symbol$version]($style) \",\r\n            disabled: false,\r\n            style: \"red dimmed\",\r\n            symbol: \"☕ \",\r\n```",
+    "created_at": "2020-05-09T10:20:29Z",
+    "updated_at": "2020-05-13T19:27:28Z",
+    "html_url": "https://github.com/starship/starship/pull/1084#discussion_r422479542",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1084",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/422479542"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1084#discussion_r422479542"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1084"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/422479542/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 16,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 19,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 25,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/422479753",
+    "pull_request_review_id": 408637715,
+    "id": 422479753,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyMjQ3OTc1Mw==",
+    "diff_hunk": "@@ -25,12 +26,35 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         Some(java_version) => {\n             let mut module = context.new_module(\"java\");\n             let config: JavaConfig = JavaConfig::try_load(module.config);\n-            module.set_style(config.style);\n-\n             let formatted_version = format_java_version(java_version)?;\n-            module.create_segment(\"symbol\", &config.symbol);\n-            module.create_segment(\"version\", &SegmentConfig::new(&formatted_version));\n \n+            let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+                formatter\n+                    .map_meta(|var, _| match var {\n+                        \"symbol\" => Some(config.symbol),\n+                        _ => None,\n+                    })\n+                    .map_style(|variable| match variable {\n+                        \"style\" => Some(Ok(config.style)),\n+                        _ => None,\n+                    })\n+                    .map(|variable| match variable {\n+                        // This may result in multiple calls to `get_module_version` when a user have\n+                        // multiple `$version` variables defined in `format`.\n+                        \"version\" => Some(Ok(formatted_version.clone())),",
+    "path": "src/modules/java.rs",
+    "commit_id": "968f254f2467fc8f9a3ac19f325508782628729c",
+    "original_commit_id": "7a705d3ce38b6390ae16f03b831993b41eaddd34",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Cloning isn't required here",
+    "created_at": "2020-05-09T10:22:38Z",
+    "updated_at": "2020-05-13T19:27:28Z",
+    "html_url": "https://github.com/starship/starship/pull/1084#discussion_r422479753",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1084",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/422479753"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1084#discussion_r422479753"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1084"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/422479753/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 44,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 32,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/424640957",
+    "pull_request_review_id": 411185002,
+    "id": 424640957,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyNDY0MDk1Nw==",
+    "diff_hunk": "@@ -877,11 +877,20 @@ The module will be shown if any of the following conditions are met:\n \n ### Options\n \n-| Variable   | Default        | Description                                            |\n-| ---------- | -------------- | ------------------------------------------------------ |\n-| `symbol`   | `\"☕ \"`         | The symbol used before displaying the version of Java. |\n-| `style`    | `\"dimmed red\"` | The style for the module.                              |\n-| `disabled` | `false`        | Disables the `java` module.                            |\n+| Variable   | Default                             | Description                                     |\n+| ---------- | ----------------------------------- | ----------------------------------------------- |\n+| `format`   | `\"via [$symbol $version]($style) \"` | The format for the module.                      |\n+| `symbol`   | `\"☕\"`                               | A format string representing the symbol of Java |",
+    "path": "docs/config/README.md",
+    "commit_id": "968f254f2467fc8f9a3ac19f325508782628729c",
+    "original_commit_id": "7a705d3ce38b6390ae16f03b831993b41eaddd34",
+    "user": {
+      "login": "jimleroyer",
+      "id": 805567,
+      "node_id": "MDQ6VXNlcjgwNTU2Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/805567?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jimleroyer",
+      "html_url": "https://github.com/jimleroyer",
+      "followers_url": "https://api.github.com/users/jimleroyer/followers",
+      "following_url": "https://api.github.com/users/jimleroyer/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jimleroyer/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jimleroyer/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jimleroyer/subscriptions",
+      "organizations_url": "https://api.github.com/users/jimleroyer/orgs",
+      "repos_url": "https://api.github.com/users/jimleroyer/repos",
+      "events_url": "https://api.github.com/users/jimleroyer/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jimleroyer/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Arf... not ideal but I get it for backward compatibility. Let me change that. ",
+    "created_at": "2020-05-13T18:20:59Z",
+    "updated_at": "2020-05-13T19:27:28Z",
+    "html_url": "https://github.com/starship/starship/pull/1084#discussion_r424640957",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1084",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/424640957"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1084#discussion_r424640957"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1084"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/424640957/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 882,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 883,
+    "side": "RIGHT",
+    "in_reply_to_id": 422478880,
+    "author_association": "MEMBER",
+    "original_position": 12,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/424642911",
+    "pull_request_review_id": 411187437,
+    "id": 424642911,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyNDY0MjkxMQ==",
+    "diff_hunk": "@@ -25,12 +26,35 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         Some(java_version) => {\n             let mut module = context.new_module(\"java\");\n             let config: JavaConfig = JavaConfig::try_load(module.config);\n-            module.set_style(config.style);\n-\n             let formatted_version = format_java_version(java_version)?;\n-            module.create_segment(\"symbol\", &config.symbol);\n-            module.create_segment(\"version\", &SegmentConfig::new(&formatted_version));\n \n+            let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+                formatter\n+                    .map_meta(|var, _| match var {\n+                        \"symbol\" => Some(config.symbol),\n+                        _ => None,\n+                    })\n+                    .map_style(|variable| match variable {\n+                        \"style\" => Some(Ok(config.style)),\n+                        _ => None,\n+                    })\n+                    .map(|variable| match variable {\n+                        // This may result in multiple calls to `get_module_version` when a user have\n+                        // multiple `$version` variables defined in `format`.\n+                        \"version\" => Some(Ok(formatted_version.clone())),",
+    "path": "src/modules/java.rs",
+    "commit_id": "968f254f2467fc8f9a3ac19f325508782628729c",
+    "original_commit_id": "7a705d3ce38b6390ae16f03b831993b41eaddd34",
+    "user": {
+      "login": "jimleroyer",
+      "id": 805567,
+      "node_id": "MDQ6VXNlcjgwNTU2Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/805567?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jimleroyer",
+      "html_url": "https://github.com/jimleroyer",
+      "followers_url": "https://api.github.com/users/jimleroyer/followers",
+      "following_url": "https://api.github.com/users/jimleroyer/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jimleroyer/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jimleroyer/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jimleroyer/subscriptions",
+      "organizations_url": "https://api.github.com/users/jimleroyer/orgs",
+      "repos_url": "https://api.github.com/users/jimleroyer/repos",
+      "events_url": "https://api.github.com/users/jimleroyer/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jimleroyer/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Without it, I get this error:\r\n```\r\ncannot move out of `formatted_version`, a captured variable in an `Fn` closure\r\n  --> src\\modules\\java.rs:42:46\r\n42 |                         \"version\" => Some(Ok(formatted_version)),\r\n   |                                              ^^^^^^^^^^^^^^^^^ move occurs because `formatted_version` has type `std::string::String`, which does not implement the `Copy` trait\r\n```",
+    "created_at": "2020-05-13T18:24:18Z",
+    "updated_at": "2020-05-13T19:27:28Z",
+    "html_url": "https://github.com/starship/starship/pull/1084#discussion_r424642911",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1084",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/424642911"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1084#discussion_r424642911"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1084"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/424642911/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 44,
+    "side": "RIGHT",
+    "in_reply_to_id": 422479753,
+    "author_association": "MEMBER",
+    "original_position": 32,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/424678658",
+    "pull_request_review_id": 411232365,
+    "id": 424678658,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyNDY3ODY1OA==",
+    "diff_hunk": "@@ -25,12 +26,35 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         Some(java_version) => {\n             let mut module = context.new_module(\"java\");\n             let config: JavaConfig = JavaConfig::try_load(module.config);\n-            module.set_style(config.style);\n-\n             let formatted_version = format_java_version(java_version)?;\n-            module.create_segment(\"symbol\", &config.symbol);\n-            module.create_segment(\"version\", &SegmentConfig::new(&formatted_version));\n \n+            let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+                formatter\n+                    .map_meta(|var, _| match var {\n+                        \"symbol\" => Some(config.symbol),\n+                        _ => None,\n+                    })\n+                    .map_style(|variable| match variable {\n+                        \"style\" => Some(Ok(config.style)),\n+                        _ => None,\n+                    })\n+                    .map(|variable| match variable {\n+                        // This may result in multiple calls to `get_module_version` when a user have\n+                        // multiple `$version` variables defined in `format`.\n+                        \"version\" => Some(Ok(formatted_version.clone())),",
+    "path": "src/modules/java.rs",
+    "commit_id": "968f254f2467fc8f9a3ac19f325508782628729c",
+    "original_commit_id": "7a705d3ce38b6390ae16f03b831993b41eaddd34",
+    "user": {
+      "login": "jimleroyer",
+      "id": 805567,
+      "node_id": "MDQ6VXNlcjgwNTU2Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/805567?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jimleroyer",
+      "html_url": "https://github.com/jimleroyer",
+      "followers_url": "https://api.github.com/users/jimleroyer/followers",
+      "following_url": "https://api.github.com/users/jimleroyer/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jimleroyer/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jimleroyer/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jimleroyer/subscriptions",
+      "organizations_url": "https://api.github.com/users/jimleroyer/orgs",
+      "repos_url": "https://api.github.com/users/jimleroyer/repos",
+      "events_url": "https://api.github.com/users/jimleroyer/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jimleroyer/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Okay I changed it to a reference using `&` and it works. 👍 ",
+    "created_at": "2020-05-13T19:26:36Z",
+    "updated_at": "2020-05-13T19:27:28Z",
+    "html_url": "https://github.com/starship/starship/pull/1084#discussion_r424678658",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1084",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/424678658"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1084#discussion_r424678658"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1084"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/424678658/reactions",
+      "total_count": 1,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 1,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 44,
+    "side": "RIGHT",
+    "in_reply_to_id": 422479753,
+    "author_association": "MEMBER",
+    "original_position": 32,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

@@ -1,0 +1,280 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2596511882",
+    "pull_request_review_id": 3549490049,
+    "id": 2596511882,
+    "node_id": "PRRC_kwDOCqswNs6aw6CK",
+    "diff_hunk": "@@ -31,12 +34,64 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         return None;\n     }\n \n-    if config.only_attached && gix_repo.head().ok()?.is_detached() {\n-        return None;\n-    }\n+    // Get branch and remote information\n+    let (branch_name, remote_branch, remote_name) = if uses_reftables(&gix_repo) {\n+        // Use git executable for branch information\n+        match get_branch_info_from_git(context, repo) {\n+            Some((branch, upstream)) => {\n+                // Successfully got branch name, parse upstream into remote_name and remote_branch\n+                let (remote_name, remote_branch) = upstream\n+                    .map(|upstream| {\n+                        (\n+                            find_longest_matching_remote_name(\n+                                upstream.as_ref(),\n+                                &gix_repo.remote_names(),\n+                            ),\n+                            Some(upstream),\n+                        )\n+                    })\n+                    .unwrap_or_default();",
+    "path": "src/modules/git_branch.rs",
+    "commit_id": "0f5022ec74bae305a3327b3e5e66008b9953a831",
+    "original_commit_id": "0f5022ec74bae305a3327b3e5e66008b9953a831",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I would prefer aliasing `upstream` to `remote_branch` and handling `remote_name` separately to make the control flow more clear.",
+    "created_at": "2025-12-07T18:43:52Z",
+    "updated_at": "2025-12-07T18:48:38Z",
+    "html_url": "https://github.com/starship/starship/pull/7154#discussion_r2596511882",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7154",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2596511882"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7154#discussion_r2596511882"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7154"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2596511882/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 43,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 53,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 36,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2596514148",
+    "pull_request_review_id": 3549490049,
+    "id": 2596514148,
+    "node_id": "PRRC_kwDOCqswNs6aw6lk",
+    "diff_hunk": "@@ -243,6 +249,7 @@ fn get_repo_status(\n     let has_untracked = !config.untracked.is_empty();\n     let git_config = gix_repo.config_snapshot();\n     if config.use_git_executable\n+        || uses_reftables(&repo.repo.to_thread_local())\n         || repo.fs_monitor_value_is_true",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "0f5022ec74bae305a3327b3e5e66008b9953a831",
+    "original_commit_id": "0f5022ec74bae305a3327b3e5e66008b9953a831",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It's probably a bit faster to check `repo.fs_monitor_value_is_true` first:\n\n```suggestion\n        || repo.fs_monitor_value_is_true\n        || uses_reftables(&repo.repo.to_thread_local())\n```\n\nIn addition, please also add the `uses_reftables` check to the `git_metrics` module.",
+    "created_at": "2025-12-07T18:47:24Z",
+    "updated_at": "2025-12-07T18:48:39Z",
+    "html_url": "https://github.com/starship/starship/pull/7154#discussion_r2596514148",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7154",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2596514148"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7154#discussion_r2596514148"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7154"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2596514148/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 252,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 253,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 18,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2597088405",
+    "pull_request_review_id": 3550184868,
+    "id": 2597088405,
+    "node_id": "PRRC_kwDOCqswNs6azGyV",
+    "diff_hunk": "@@ -243,6 +249,7 @@ fn get_repo_status(\n     let has_untracked = !config.untracked.is_empty();\n     let git_config = gix_repo.config_snapshot();\n     if config.use_git_executable\n+        || uses_reftables(&repo.repo.to_thread_local())\n         || repo.fs_monitor_value_is_true",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "0f5022ec74bae305a3327b3e5e66008b9953a831",
+    "original_commit_id": "0f5022ec74bae305a3327b3e5e66008b9953a831",
+    "user": {
+      "login": "Byron",
+      "id": 63622,
+      "node_id": "MDQ6VXNlcjYzNjIy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/63622?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Byron",
+      "html_url": "https://github.com/Byron",
+      "followers_url": "https://api.github.com/users/Byron/followers",
+      "following_url": "https://api.github.com/users/Byron/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Byron/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Byron/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Byron/subscriptions",
+      "organizations_url": "https://api.github.com/users/Byron/orgs",
+      "repos_url": "https://api.github.com/users/Byron/repos",
+      "events_url": "https://api.github.com/users/Byron/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Byron/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Also a great catch!\r\nAnd `git_metrics` has the conditional now as well.",
+    "created_at": "2025-12-08T05:23:45Z",
+    "updated_at": "2025-12-08T05:23:46Z",
+    "html_url": "https://github.com/starship/starship/pull/7154#discussion_r2597088405",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7154",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2597088405"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7154#discussion_r2597088405"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7154"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2597088405/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 252,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 253,
+    "side": "RIGHT",
+    "in_reply_to_id": 2596514148,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 18,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2597088688",
+    "pull_request_review_id": 3550185190,
+    "id": 2597088688,
+    "node_id": "PRRC_kwDOCqswNs6azG2w",
+    "diff_hunk": "@@ -31,12 +34,64 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n         return None;\n     }\n \n-    if config.only_attached && gix_repo.head().ok()?.is_detached() {\n-        return None;\n-    }\n+    // Get branch and remote information\n+    let (branch_name, remote_branch, remote_name) = if uses_reftables(&gix_repo) {\n+        // Use git executable for branch information\n+        match get_branch_info_from_git(context, repo) {\n+            Some((branch, upstream)) => {\n+                // Successfully got branch name, parse upstream into remote_name and remote_branch\n+                let (remote_name, remote_branch) = upstream\n+                    .map(|upstream| {\n+                        (\n+                            find_longest_matching_remote_name(\n+                                upstream.as_ref(),\n+                                &gix_repo.remote_names(),\n+                            ),\n+                            Some(upstream),\n+                        )\n+                    })\n+                    .unwrap_or_default();",
+    "path": "src/modules/git_branch.rs",
+    "commit_id": "0f5022ec74bae305a3327b3e5e66008b9953a831",
+    "original_commit_id": "0f5022ec74bae305a3327b3e5e66008b9953a831",
+    "user": {
+      "login": "Byron",
+      "id": 63622,
+      "node_id": "MDQ6VXNlcjYzNjIy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/63622?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Byron",
+      "html_url": "https://github.com/Byron",
+      "followers_url": "https://api.github.com/users/Byron/followers",
+      "following_url": "https://api.github.com/users/Byron/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Byron/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Byron/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Byron/subscriptions",
+      "organizations_url": "https://api.github.com/users/Byron/orgs",
+      "repos_url": "https://api.github.com/users/Byron/repos",
+      "events_url": "https://api.github.com/users/Byron/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Byron/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Such a great catch, `Some(upstream)` definitely isn't needed there, and it does look much cleaner now.",
+    "created_at": "2025-12-08T05:23:57Z",
+    "updated_at": "2025-12-08T05:23:58Z",
+    "html_url": "https://github.com/starship/starship/pull/7154#discussion_r2597088688",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7154",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2597088688"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7154#discussion_r2597088688"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7154"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2597088688/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 43,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 53,
+    "side": "RIGHT",
+    "in_reply_to_id": 2596511882,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 36,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

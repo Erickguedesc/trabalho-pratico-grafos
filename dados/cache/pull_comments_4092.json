@@ -1,0 +1,629 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/901853625",
+    "pull_request_review_id": 1012546342,
+    "id": 901853625,
+    "node_id": "PRRC_kwDOCqswNs41wTG5",
+    "diff_hunk": "@@ -124,7 +124,9 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n                             .map_or(project, Cow::Borrowed)\n                     })\n                     .map(Ok),\n-                \"active\" => Some(Ok(Cow::Borrowed(&gcloud_context.config_name))),\n+                \"active\" if gcloud_context.config_name != \"NONE\" => {\n+                    Some(Ok(Cow::Borrowed(&gcloud_context.config_name)))\n+                }",
+    "path": "src/modules/gcloud.rs",
+    "commit_id": "74cc7523a2735482071216cfe5655ff79943e9c0",
+    "original_commit_id": "a7e4d118a8896ab09be9e5e36076c49d111542fa",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think I misread the original request. I think they wanted the whole module to return `None` if `gcloud_context.config_name` is `NONE`, which would be handled via a regular `if`-condition ahead of the `let parsed` part.:\r\n```\r\nif gcloud_context.config_name == \"NONE\" {\r\n    return None;\r\n}\r\n```\r\n\r\nThe documentation for this would need to be in the main description after `# Google Cloud`, like the conditions listed in the AWS module.",
+    "created_at": "2022-06-20T16:46:01Z",
+    "updated_at": "2022-06-20T16:46:02Z",
+    "html_url": "https://github.com/starship/starship/pull/4092#discussion_r901853625",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/901853625"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4092#discussion_r901853625"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/901853625/reactions",
+      "total_count": 2,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 1,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 127,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 135,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 7,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/901856049",
+    "pull_request_review_id": 1012549620,
+    "id": 901856049,
+    "node_id": "PRRC_kwDOCqswNs41wTsx",
+    "diff_hunk": "@@ -124,7 +124,9 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n                             .map_or(project, Cow::Borrowed)\n                     })\n                     .map(Ok),\n-                \"active\" => Some(Ok(Cow::Borrowed(&gcloud_context.config_name))),\n+                \"active\" if gcloud_context.config_name != \"NONE\" => {\n+                    Some(Ok(Cow::Borrowed(&gcloud_context.config_name)))\n+                }",
+    "path": "src/modules/gcloud.rs",
+    "commit_id": "74cc7523a2735482071216cfe5655ff79943e9c0",
+    "original_commit_id": "a7e4d118a8896ab09be9e5e36076c49d111542fa",
+    "user": {
+      "login": "cnpryer",
+      "id": 14341145,
+      "node_id": "MDQ6VXNlcjE0MzQxMTQ1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14341145?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cnpryer",
+      "html_url": "https://github.com/cnpryer",
+      "followers_url": "https://api.github.com/users/cnpryer/followers",
+      "following_url": "https://api.github.com/users/cnpryer/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cnpryer/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cnpryer/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cnpryer/subscriptions",
+      "organizations_url": "https://api.github.com/users/cnpryer/orgs",
+      "repos_url": "https://api.github.com/users/cnpryer/repos",
+      "events_url": "https://api.github.com/users/cnpryer/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cnpryer/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'll convert this to a draft and make the adjustment. Thanks! I was thinking maybe there was a little confusion but wasn't sure enough of the ask.\n\nI'm thinking I'd need a more clever test, no? Idk if this tests that the module is *disabled*. Which I'd think is a Module that's None somehow? I can play with it but any advice here would be super appreciated. :)",
+    "created_at": "2022-06-20T16:50:14Z",
+    "updated_at": "2022-06-20T16:50:14Z",
+    "html_url": "https://github.com/starship/starship/pull/4092#discussion_r901856049",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/901856049"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4092#discussion_r901856049"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/901856049/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 127,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 135,
+    "side": "RIGHT",
+    "in_reply_to_id": 901853625,
+    "author_association": "NONE",
+    "original_position": 7,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/901858377",
+    "pull_request_review_id": 1012552873,
+    "id": 901858377,
+    "node_id": "PRRC_kwDOCqswNs41wURJ",
+    "diff_hunk": "@@ -124,7 +124,9 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n                             .map_or(project, Cow::Borrowed)\n                     })\n                     .map(Ok),\n-                \"active\" => Some(Ok(Cow::Borrowed(&gcloud_context.config_name))),\n+                \"active\" if gcloud_context.config_name != \"NONE\" => {\n+                    Some(Ok(Cow::Borrowed(&gcloud_context.config_name)))\n+                }",
+    "path": "src/modules/gcloud.rs",
+    "commit_id": "74cc7523a2735482071216cfe5655ff79943e9c0",
+    "original_commit_id": "a7e4d118a8896ab09be9e5e36076c49d111542fa",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The `ModuleRenderer` will return `None` if the module has no output. I think the test is fine, assuming it fails if `active` is not set to `NONE`. ",
+    "created_at": "2022-06-20T16:54:24Z",
+    "updated_at": "2022-06-20T16:54:24Z",
+    "html_url": "https://github.com/starship/starship/pull/4092#discussion_r901858377",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/901858377"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4092#discussion_r901858377"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/901858377/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 127,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 135,
+    "side": "RIGHT",
+    "in_reply_to_id": 901853625,
+    "author_association": "MEMBER",
+    "original_position": 7,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/902004043",
+    "pull_request_review_id": 1012755058,
+    "id": 902004043,
+    "node_id": "PRRC_kwDOCqswNs41w31L",
+    "diff_hunk": "@@ -124,7 +124,9 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n                             .map_or(project, Cow::Borrowed)\n                     })\n                     .map(Ok),\n-                \"active\" => Some(Ok(Cow::Borrowed(&gcloud_context.config_name))),\n+                \"active\" if gcloud_context.config_name != \"NONE\" => {\n+                    Some(Ok(Cow::Borrowed(&gcloud_context.config_name)))\n+                }",
+    "path": "src/modules/gcloud.rs",
+    "commit_id": "74cc7523a2735482071216cfe5655ff79943e9c0",
+    "original_commit_id": "a7e4d118a8896ab09be9e5e36076c49d111542fa",
+    "user": {
+      "login": "cnpryer",
+      "id": 14341145,
+      "node_id": "MDQ6VXNlcjE0MzQxMTQ1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14341145?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cnpryer",
+      "html_url": "https://github.com/cnpryer",
+      "followers_url": "https://api.github.com/users/cnpryer/followers",
+      "following_url": "https://api.github.com/users/cnpryer/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cnpryer/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cnpryer/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cnpryer/subscriptions",
+      "organizations_url": "https://api.github.com/users/cnpryer/orgs",
+      "repos_url": "https://api.github.com/users/cnpryer/repos",
+      "events_url": "https://api.github.com/users/cnpryer/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cnpryer/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ready to mark this as resolved if you are. I can give it a double take tomorrow. I think this achieves what we'd like. Would love a gcloud user to validate this PR though. 😇 ",
+    "created_at": "2022-06-20T21:19:33Z",
+    "updated_at": "2022-06-20T21:19:33Z",
+    "html_url": "https://github.com/starship/starship/pull/4092#discussion_r902004043",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/902004043"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4092#discussion_r902004043"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/902004043/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 127,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 135,
+    "side": "RIGHT",
+    "in_reply_to_id": 901853625,
+    "author_association": "NONE",
+    "original_position": 7,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/902125730",
+    "pull_request_review_id": 1012914959,
+    "id": 902125730,
+    "node_id": "PRRC_kwDOCqswNs41xVii",
+    "diff_hunk": "@@ -1380,7 +1380,7 @@ AA -------------------------------------------- BB -----------------------------\n ## Google Cloud (`gcloud`)\n \n The `gcloud` module shows the current configuration for [`gcloud`](https://cloud.google.com/sdk/gcloud) CLI.\n-This is based on the `~/.config/gcloud/active_config` file and the `~/.config/gcloud/configurations/config_{CONFIG NAME}` file and the `CLOUDSDK_CONFIG` env var.\n+This is based on the `~/.config/gcloud/active_config` file and the `~/.config/gcloud/configurations/config_{CONFIG NAME}` file and the `CLOUDSDK_CONFIG` env var. Setting `active` to `\"NONE\"` will disable the module.",
+    "path": "docs/config/README.md",
+    "commit_id": "74cc7523a2735482071216cfe5655ff79943e9c0",
+    "original_commit_id": "0aaa347acc105181a31e2da06392e370b3f0a3c2",
+    "user": {
+      "login": "cnpryer",
+      "id": 14341145,
+      "node_id": "MDQ6VXNlcjE0MzQxMTQ1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14341145?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cnpryer",
+      "html_url": "https://github.com/cnpryer",
+      "followers_url": "https://api.github.com/users/cnpryer/followers",
+      "following_url": "https://api.github.com/users/cnpryer/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cnpryer/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cnpryer/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cnpryer/subscriptions",
+      "organizations_url": "https://api.github.com/users/cnpryer/orgs",
+      "repos_url": "https://api.github.com/users/cnpryer/repos",
+      "events_url": "https://api.github.com/users/cnpryer/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cnpryer/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Trying to read up on the \"NONE\" config mentioned. I'm not sure if it's `active = \"NONE\"` or if it's the active *name* is `\"NONE\"`.\r\n\r\nSo maybe:\r\n\r\n```suggestion\r\nThis is based on the `~/.config/gcloud/active_config` file and the `~/.config/gcloud/configurations/config_{CONFIG NAME}` file and the `CLOUDSDK_CONFIG` env var. Setting active name to `\"NONE\"` will disable the module.\r\n```",
+    "created_at": "2022-06-21T03:16:02Z",
+    "updated_at": "2022-06-21T03:16:19Z",
+    "html_url": "https://github.com/starship/starship/pull/4092#discussion_r902125730",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/902125730"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4092#discussion_r902125730"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/902125730/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1383,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 5,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/904820404",
+    "pull_request_review_id": 1016721240,
+    "id": 904820404,
+    "node_id": "PRRC_kwDOCqswNs417na0",
+    "diff_hunk": "@@ -1380,7 +1380,7 @@ AA -------------------------------------------- BB -----------------------------\n ## Google Cloud (`gcloud`)\n \n The `gcloud` module shows the current configuration for [`gcloud`](https://cloud.google.com/sdk/gcloud) CLI.\n-This is based on the `~/.config/gcloud/active_config` file and the `~/.config/gcloud/configurations/config_{CONFIG NAME}` file and the `CLOUDSDK_CONFIG` env var.\n+This is based on the `~/.config/gcloud/active_config` file and the `~/.config/gcloud/configurations/config_{CONFIG NAME}` file and the `CLOUDSDK_CONFIG` env var. Setting `active` to `\"NONE\"` will disable the module.",
+    "path": "docs/config/README.md",
+    "commit_id": "74cc7523a2735482071216cfe5655ff79943e9c0",
+    "original_commit_id": "0aaa347acc105181a31e2da06392e370b3f0a3c2",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\nThis is based on the `~/.config/gcloud/active_config` file and the `~/.config/gcloud/configurations/config_{CONFIG NAME}` file and the `CLOUDSDK_CONFIG` env var. If the active config name in `~/.config/gcloud/active_config` is set to `\"NONE\"`, the module will be disabled.\r\n```",
+    "created_at": "2022-06-23T09:51:11Z",
+    "updated_at": "2022-06-23T09:51:11Z",
+    "html_url": "https://github.com/starship/starship/pull/4092#discussion_r904820404",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/904820404"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4092#discussion_r904820404"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/904820404/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1383,
+    "side": "RIGHT",
+    "in_reply_to_id": 902125730,
+    "author_association": "MEMBER",
+    "original_position": 5,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/904821500",
+    "pull_request_review_id": 1016722838,
+    "id": 904821500,
+    "node_id": "PRRC_kwDOCqswNs417nr8",
+    "diff_hunk": "@@ -88,6 +88,12 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let gcloud_context = GcloudContext::new(&config_name, &config_path);\n     let account: Lazy<Option<Account<'_>>, _> = Lazy::new(|| gcloud_context.get_account());\n \n+    // Disable the Module if gcloud's active config is set to \"NONE\".\n+    // This is a valid gcloud configuration.\n+    if gcloud_context.config_name == \"NONE\" {\n+        return None;",
+    "path": "src/modules/gcloud.rs",
+    "commit_id": "74cc7523a2735482071216cfe5655ff79943e9c0",
+    "original_commit_id": "0aaa347acc105181a31e2da06392e370b3f0a3c2",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This line isn't covered by the tests, which likely means the test doesn't work as expected.",
+    "created_at": "2022-06-23T09:52:20Z",
+    "updated_at": "2022-06-23T09:52:21Z",
+    "html_url": "https://github.com/starship/starship/pull/4092#discussion_r904821500",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/904821500"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4092#discussion_r904821500"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/904821500/reactions",
+      "total_count": 1,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 1
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 94,
+    "original_line": 94,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 7,
+    "position": 7,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/907879601",
+    "pull_request_review_id": 1020895465,
+    "id": 907879601,
+    "node_id": "PRRC_kwDOCqswNs42HSSx",
+    "diff_hunk": "@@ -88,6 +88,12 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let gcloud_context = GcloudContext::new(&config_name, &config_path);\n     let account: Lazy<Option<Account<'_>>, _> = Lazy::new(|| gcloud_context.get_account());\n \n+    // Disable the Module if gcloud's active config is set to \"NONE\".\n+    // This is a valid gcloud configuration.\n+    if gcloud_context.config_name == \"NONE\" {\n+        return None;",
+    "path": "src/modules/gcloud.rs",
+    "commit_id": "74cc7523a2735482071216cfe5655ff79943e9c0",
+    "original_commit_id": "0aaa347acc105181a31e2da06392e370b3f0a3c2",
+    "user": {
+      "login": "cnpryer",
+      "id": 14341145,
+      "node_id": "MDQ6VXNlcjE0MzQxMTQ1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14341145?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cnpryer",
+      "html_url": "https://github.com/cnpryer",
+      "followers_url": "https://api.github.com/users/cnpryer/followers",
+      "following_url": "https://api.github.com/users/cnpryer/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cnpryer/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cnpryer/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cnpryer/subscriptions",
+      "organizations_url": "https://api.github.com/users/cnpryer/orgs",
+      "repos_url": "https://api.github.com/users/cnpryer/repos",
+      "events_url": "https://api.github.com/users/cnpryer/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cnpryer/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "So I'm looking at this now. Originally I used `region_not_set_with_display_region` as a reference.\r\nhttps://github.com/starship/starship/blob/b9746100e2ee3746ea418e26ebc50494710a9d03/src/modules/gcloud.rs#L396-L410\r\n\r\nLooking into `ModuleRenderer`, isn't `collect()` supposed to return `None` for tests like these? \r\nhttps://github.com/starship/starship/blob/b9746100e2ee3746ea418e26ebc50494710a9d03/src/test/mod.rs#L156-L159\r\n\r\nMaybe I'm missing something. I can look at how `module(context)` is utilized, but I want to make sure I'm on the right track first.",
+    "created_at": "2022-06-27T23:25:24Z",
+    "updated_at": "2022-06-27T23:25:25Z",
+    "html_url": "https://github.com/starship/starship/pull/4092#discussion_r907879601",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/907879601"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4092#discussion_r907879601"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/907879601/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 94,
+    "original_line": 94,
+    "side": "RIGHT",
+    "in_reply_to_id": 904821500,
+    "author_association": "NONE",
+    "original_position": 7,
+    "position": 7,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/910182718",
+    "pull_request_review_id": 1023682964,
+    "id": 910182718,
+    "node_id": "PRRC_kwDOCqswNs42QEk-",
+    "diff_hunk": "@@ -88,6 +88,12 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n     let gcloud_context = GcloudContext::new(&config_name, &config_path);\n     let account: Lazy<Option<Account<'_>>, _> = Lazy::new(|| gcloud_context.get_account());\n \n+    // Disable the Module if gcloud's active config is set to \"NONE\".\n+    // This is a valid gcloud configuration.\n+    if gcloud_context.config_name == \"NONE\" {\n+        return None;",
+    "path": "src/modules/gcloud.rs",
+    "commit_id": "74cc7523a2735482071216cfe5655ff79943e9c0",
+    "original_commit_id": "0aaa347acc105181a31e2da06392e370b3f0a3c2",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "You'll need to base the test on something that would usually return `Some(...)`, but returns `None` instead because the active config is `NONE`.",
+    "created_at": "2022-06-29T16:35:13Z",
+    "updated_at": "2022-06-29T16:35:13Z",
+    "html_url": "https://github.com/starship/starship/pull/4092#discussion_r910182718",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4092",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/910182718"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4092#discussion_r910182718"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4092"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/910182718/reactions",
+      "total_count": 1,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 1
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 94,
+    "original_line": 94,
+    "side": "RIGHT",
+    "in_reply_to_id": 904821500,
+    "author_association": "MEMBER",
+    "original_position": 7,
+    "position": 7,
+    "subject_type": "line"
+  }
+]

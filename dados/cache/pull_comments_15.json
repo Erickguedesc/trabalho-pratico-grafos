@@ -1,0 +1,418 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/277170739",
+    "pull_request_review_id": 228915644,
+    "id": 277170739,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI3NzE3MDczOQ==",
+    "diff_hunk": "@@ -0,0 +1,76 @@\n+use super::Segment;\n+use ansi_term::Color;\n+use std::fs::{self, DirEntry};\n+use crate::context::Context;\n+use std::process::Command;\n+\n+/// Creates a segment with the current Rust version\n+///\n+/// Will display the Rust version if any of the following criteria are met:\n+///     - Current directory contains a `.rs` or 'Cargo.toml' file\n+pub fn segment(context: &Context) -> Option<Segment> {\n+    let files = fs::read_dir(&context.current_dir).unwrap();\n+    let is_rs_project = files.filter_map(Result::ok).any(has_rs_files);\n+    if !is_rs_project {\n+        return None;\n+    }\n+\n+    match get_rust_version() {\n+        Some(rust_version) => {\n+            const RUST_LOGO: &str = \"🦀\";\n+            const SECTION_COLOR: Color = Color::Red;\n+\n+            let mut segment = Segment::new(\"rust\");\n+            segment.set_style(SECTION_COLOR);\n+\n+            let formated_version = format_rustc_version(rust_version);",
+    "path": "src/modules/rust.rs",
+    "commit_id": "1dcd5b822674bcba8f57bec5d07117017ec6f919",
+    "original_commit_id": "dc342c12609b79970f70f12b248fc20c409955f4",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Small typo 😉 \r\n```suggestion\r\n            let formatted_version = format_rustc_version(rust_version);\r\n```",
+    "created_at": "2019-04-21T14:40:48Z",
+    "updated_at": "2019-04-21T23:20:14Z",
+    "html_url": "https://github.com/starship/starship/pull/15#discussion_r277170739",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/15",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/277170739"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/15#discussion_r277170739"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/15"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/277170739/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 26,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 26,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/277171056",
+    "pull_request_review_id": 228915644,
+    "id": 277171056,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI3NzE3MTA1Ng==",
+    "diff_hunk": "@@ -0,0 +1,76 @@\n+use super::Segment;\n+use ansi_term::Color;\n+use std::fs::{self, DirEntry};\n+use crate::context::Context;\n+use std::process::Command;\n+\n+/// Creates a segment with the current Rust version\n+///\n+/// Will display the Rust version if any of the following criteria are met:\n+///     - Current directory contains a `.rs` or 'Cargo.toml' file\n+pub fn segment(context: &Context) -> Option<Segment> {\n+    let files = fs::read_dir(&context.current_dir).unwrap();\n+    let is_rs_project = files.filter_map(Result::ok).any(has_rs_files);\n+    if !is_rs_project {\n+        return None;\n+    }\n+\n+    match get_rust_version() {\n+        Some(rust_version) => {\n+            const RUST_LOGO: &str = \"🦀\";\n+            const SECTION_COLOR: Color = Color::Red;\n+\n+            let mut segment = Segment::new(\"rust\");\n+            segment.set_style(SECTION_COLOR);\n+\n+            let formated_version = format_rustc_version(rust_version);\n+            segment.set_value(format!(\"{} {}\", RUST_LOGO, formated_version));\n+\n+            return Some(segment)\n+        },\n+        None => return None\n+    };\n+}\n+\n+fn has_rs_files(dir_entry: DirEntry) -> bool {\n+    let is_rs_file = |d: &DirEntry| -> bool {\n+        d.path().is_file() && d.path().extension().unwrap_or_default() == \"rs\"\n+    };\n+    let is_cargo_toml = |d: &DirEntry| -> bool {\n+        d.path().is_file() && d.path().file_name().unwrap_or_default() == \"Cargo.toml\"\n+    };\n+\n+    is_rs_file(&dir_entry) || is_cargo_toml(&dir_entry)\n+}\n+\n+fn get_rust_version() -> Option<String> {\n+    match Command::new(\"rustc\").arg(\"-V\").output() {\n+        Ok(output) => Some(String::from_utf8(output.stdout).unwrap()),\n+        Err(_) => None\n+    }\n+}\n+\n+fn format_rustc_version(mut rustc_stdout: String) -> String {\n+   let offset = &rustc_stdout.find('(').unwrap();\n+   let formated_version: String = rustc_stdout.drain(..offset).collect();\n+\n+   format!(\" v{}\", formated_version.replace(\"rustc\", \"\").trim())",
+    "path": "src/modules/rust.rs",
+    "commit_id": "1dcd5b822674bcba8f57bec5d07117017ec6f919",
+    "original_commit_id": "dc342c12609b79970f70f12b248fc20c409955f4",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It looks like the outputted string here is padded with a space, but a space is also placed between the symbol and the formatted version string in the `segment.set_value()` call.\r\n\r\nIt looks like this is inserting 2x spaces for me:\r\n\r\n![image](https://user-images.githubusercontent.com/4658208/56471815-fe538f00-6424-11e9-8c8c-fb400919c926.png)\r\n",
+    "created_at": "2019-04-21T14:50:08Z",
+    "updated_at": "2019-04-21T23:20:14Z",
+    "html_url": "https://github.com/starship/starship/pull/15#discussion_r277171056",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/15",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/277171056"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/15#discussion_r277171056"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/15"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/277171056/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 57,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/277171088",
+    "pull_request_review_id": 228915644,
+    "id": 277171088,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI3NzE3MTA4OA==",
+    "diff_hunk": "@@ -11,6 +12,7 @@ pub fn handle(module: &str, context: &Context) -> Option<Segment> {\n         \"dir\" | \"directory\" => directory::segment(context),\n         \"char\" | \"character\" => character::segment(context),\n         \"node\" | \"nodejs\" => nodejs::segment(context),\n+        \"rust\" => rust::segment(context),",
+    "path": "src/modules/mod.rs",
+    "commit_id": "1dcd5b822674bcba8f57bec5d07117017ec6f919",
+    "original_commit_id": "dc342c12609b79970f70f12b248fc20c409955f4",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I would suggest adding `\"rustlang\"` as an option here. ☝️ ",
+    "created_at": "2019-04-21T14:51:02Z",
+    "updated_at": "2019-04-21T23:20:14Z",
+    "html_url": "https://github.com/starship/starship/pull/15#discussion_r277171088",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/15",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/277171088"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/15#discussion_r277171088"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/15"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/277171088/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 15,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 12,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/277171112",
+    "pull_request_review_id": 228915644,
+    "id": 277171112,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI3NzE3MTExMg==",
+    "diff_hunk": "@@ -0,0 +1,76 @@\n+use super::Segment;\n+use ansi_term::Color;\n+use std::fs::{self, DirEntry};\n+use crate::context::Context;\n+use std::process::Command;\n+\n+/// Creates a segment with the current Rust version\n+///\n+/// Will display the Rust version if any of the following criteria are met:\n+///     - Current directory contains a `.rs` or 'Cargo.toml' file\n+pub fn segment(context: &Context) -> Option<Segment> {\n+    let files = fs::read_dir(&context.current_dir).unwrap();\n+    let is_rs_project = files.filter_map(Result::ok).any(has_rs_files);\n+    if !is_rs_project {\n+        return None;\n+    }\n+\n+    match get_rust_version() {\n+        Some(rust_version) => {\n+            const RUST_LOGO: &str = \"🦀\";\n+            const SECTION_COLOR: Color = Color::Red;\n+\n+            let mut segment = Segment::new(\"rust\");\n+            segment.set_style(SECTION_COLOR);\n+\n+            let formated_version = format_rustc_version(rust_version);\n+            segment.set_value(format!(\"{} {}\", RUST_LOGO, formated_version));\n+\n+            return Some(segment)\n+        },\n+        None => return None\n+    };\n+}\n+\n+fn has_rs_files(dir_entry: DirEntry) -> bool {\n+    let is_rs_file = |d: &DirEntry| -> bool {\n+        d.path().is_file() && d.path().extension().unwrap_or_default() == \"rs\"\n+    };\n+    let is_cargo_toml = |d: &DirEntry| -> bool {\n+        d.path().is_file() && d.path().file_name().unwrap_or_default() == \"Cargo.toml\"\n+    };\n+\n+    is_rs_file(&dir_entry) || is_cargo_toml(&dir_entry)\n+}\n+\n+fn get_rust_version() -> Option<String> {\n+    match Command::new(\"rustc\").arg(\"-V\").output() {\n+        Ok(output) => Some(String::from_utf8(output.stdout).unwrap()),\n+        Err(_) => None\n+    }\n+}\n+\n+fn format_rustc_version(mut rustc_stdout: String) -> String {\n+   let offset = &rustc_stdout.find('(').unwrap();\n+   let formated_version: String = rustc_stdout.drain(..offset).collect();\n+\n+   format!(\" v{}\", formated_version.replace(\"rustc\", \"\").trim())\n+}\n+\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::*;\n+\n+    #[test]\n+    fn test_format_rustc_version() {",
+    "path": "src/modules/rust.rs",
+    "commit_id": "1dcd5b822674bcba8f57bec5d07117017ec6f919",
+    "original_commit_id": "dc342c12609b79970f70f12b248fc20c409955f4",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "👍 ",
+    "created_at": "2019-04-21T14:51:44Z",
+    "updated_at": "2019-04-21T23:20:14Z",
+    "html_url": "https://github.com/starship/starship/pull/15#discussion_r277171112",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/15",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/277171112"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/15#discussion_r277171112"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/15"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/277171112/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 65,
+    "original_line": 66,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 66,
+    "position": 65,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/277184540",
+    "pull_request_review_id": 228929857,
+    "id": 277184540,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI3NzE4NDU0MA==",
+    "diff_hunk": "@@ -0,0 +1,76 @@\n+use super::Segment;\n+use ansi_term::Color;\n+use std::fs::{self, DirEntry};\n+use crate::context::Context;\n+use std::process::Command;\n+\n+/// Creates a segment with the current Rust version\n+///\n+/// Will display the Rust version if any of the following criteria are met:\n+///     - Current directory contains a `.rs` or 'Cargo.toml' file\n+pub fn segment(context: &Context) -> Option<Segment> {\n+    let files = fs::read_dir(&context.current_dir).unwrap();\n+    let is_rs_project = files.filter_map(Result::ok).any(has_rs_files);\n+    if !is_rs_project {\n+        return None;\n+    }\n+\n+    match get_rust_version() {\n+        Some(rust_version) => {\n+            const RUST_LOGO: &str = \"🦀\";\n+            const SECTION_COLOR: Color = Color::Red;\n+\n+            let mut segment = Segment::new(\"rust\");\n+            segment.set_style(SECTION_COLOR);\n+\n+            let formated_version = format_rustc_version(rust_version);\n+            segment.set_value(format!(\"{} {}\", RUST_LOGO, formated_version));\n+\n+            return Some(segment)\n+        },\n+        None => return None\n+    };\n+}\n+\n+fn has_rs_files(dir_entry: DirEntry) -> bool {\n+    let is_rs_file = |d: &DirEntry| -> bool {\n+        d.path().is_file() && d.path().extension().unwrap_or_default() == \"rs\"\n+    };\n+    let is_cargo_toml = |d: &DirEntry| -> bool {\n+        d.path().is_file() && d.path().file_name().unwrap_or_default() == \"Cargo.toml\"\n+    };\n+\n+    is_rs_file(&dir_entry) || is_cargo_toml(&dir_entry)\n+}\n+\n+fn get_rust_version() -> Option<String> {\n+    match Command::new(\"rustc\").arg(\"-V\").output() {\n+        Ok(output) => Some(String::from_utf8(output.stdout).unwrap()),\n+        Err(_) => None\n+    }\n+}\n+\n+fn format_rustc_version(mut rustc_stdout: String) -> String {\n+   let offset = &rustc_stdout.find('(').unwrap();\n+   let formated_version: String = rustc_stdout.drain(..offset).collect();\n+\n+   format!(\" v{}\", formated_version.replace(\"rustc\", \"\").trim())",
+    "path": "src/modules/rust.rs",
+    "commit_id": "1dcd5b822674bcba8f57bec5d07117017ec6f919",
+    "original_commit_id": "dc342c12609b79970f70f12b248fc20c409955f4",
+    "user": {
+      "login": "Multimo",
+      "id": 6132021,
+      "node_id": "MDQ6VXNlcjYxMzIwMjE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6132021?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Multimo",
+      "html_url": "https://github.com/Multimo",
+      "followers_url": "https://api.github.com/users/Multimo/followers",
+      "following_url": "https://api.github.com/users/Multimo/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Multimo/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Multimo/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Multimo/subscriptions",
+      "organizations_url": "https://api.github.com/users/Multimo/orgs",
+      "repos_url": "https://api.github.com/users/Multimo/repos",
+      "events_url": "https://api.github.com/users/Multimo/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Multimo/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I was using the vscode and it was only showing one space but in iterm shows two. I guess there is some differences in how it renders spaces based on the terminal, good to know!",
+    "created_at": "2019-04-21T23:11:12Z",
+    "updated_at": "2019-04-21T23:20:14Z",
+    "html_url": "https://github.com/starship/starship/pull/15#discussion_r277184540",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/15",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/277184540"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/15#discussion_r277184540"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/15"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/277184540/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 57,
+    "side": "RIGHT",
+    "in_reply_to_id": 277171056,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 57,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/277184767",
+    "pull_request_review_id": 228930102,
+    "id": 277184767,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDI3NzE4NDc2Nw==",
+    "diff_hunk": "@@ -11,6 +12,7 @@ pub fn handle(module: &str, context: &Context) -> Option<Segment> {\n         \"dir\" | \"directory\" => directory::segment(context),\n         \"char\" | \"character\" => character::segment(context),\n         \"node\" | \"nodejs\" => nodejs::segment(context),\n+        \"rust\" => rust::segment(context),",
+    "path": "src/modules/mod.rs",
+    "commit_id": "1dcd5b822674bcba8f57bec5d07117017ec6f919",
+    "original_commit_id": "dc342c12609b79970f70f12b248fc20c409955f4",
+    "user": {
+      "login": "Multimo",
+      "id": 6132021,
+      "node_id": "MDQ6VXNlcjYxMzIwMjE=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6132021?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Multimo",
+      "html_url": "https://github.com/Multimo",
+      "followers_url": "https://api.github.com/users/Multimo/followers",
+      "following_url": "https://api.github.com/users/Multimo/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Multimo/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Multimo/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Multimo/subscriptions",
+      "organizations_url": "https://api.github.com/users/Multimo/orgs",
+      "repos_url": "https://api.github.com/users/Multimo/repos",
+      "events_url": "https://api.github.com/users/Multimo/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Multimo/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "👍 ",
+    "created_at": "2019-04-21T23:20:34Z",
+    "updated_at": "2019-04-21T23:20:34Z",
+    "html_url": "https://github.com/starship/starship/pull/15#discussion_r277184767",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/15",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/277184767"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/15#discussion_r277184767"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/15"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/277184767/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 15,
+    "side": "RIGHT",
+    "in_reply_to_id": 277171088,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 12,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

@@ -1,0 +1,836 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328405271",
+    "pull_request_review_id": 293446307,
+    "id": 328405271,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODQwNTI3MQ==",
+    "diff_hunk": "@@ -0,0 +1,74 @@\n+use ansi_term::Color;\n+use std::process::Command;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the current Elixir version\n+///\n+/// Will display the Elixir version if any of the following criteria are met:\n+///     - Current directory contains a `.ex` file\n+///     - Current directory contains a `mix.exs` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_ex_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"mix.exs\"])\n+        .set_extensions(&[\"ex\", \"exs\"])\n+        .is_match();\n+\n+    if !is_ex_project {\n+        return None;\n+    }\n+\n+    match get_elixir_version() {\n+        Some(elixir_version) => {\n+            const ELIXIR_CHAR: &str = \"🧪 \";\n+\n+            let mut module = context.new_module(\"elixir\");\n+            let module_style = module\n+                .config_value_style(\"style\")\n+                .unwrap_or_else(|| Color::Purple.bold());\n+            module.set_style(module_style);\n+\n+            let formatted_version = format_elixir_version(&elixir_version)?;\n+            module.new_segment(\"symbol\", ELIXIR_CHAR);\n+            module.new_segment(\"version\", &formatted_version);\n+\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn get_elixir_version() -> Option<String> {\n+    match Command::new(\"elixir\").arg(\"-v\").output() {\n+        Ok(output) => Some(String::from_utf8(output.stdout).unwrap()),\n+        Err(_) => None,\n+    }\n+}\n+\n+fn format_elixir_version(version_str: &str) -> Option<String> {\n+    let version = version_str\n+        // ignore detailed Erlang output\n+        .lines()\n+        .last()?\n+        .trim()\n+        // split into [\"Elixir\", \"1.9.1\", \"(compiled\", \"with, \"Erlang/OTP\", \"21)\"]\n+        .split_whitespace()\n+        .nth(1)?;\n+\n+    let otp_version = version_str\n+        // ignore detailed Erlang output\n+        .lines()",
+    "path": "src/modules/elixir.rs",
+    "commit_id": "516d220ea85e2113affb76b40d2aec088cbe4929",
+    "original_commit_id": "ede117bfd6bbe0b444da452055a3ec5d0c743b36",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Can we extract this out so we don't have to evaluate it twice:\r\n\r\n```\r\n        .lines()\r\n        .last()?\r\n        .trim()\r\n        .split_whitespace()\r\n```",
+    "created_at": "2019-09-26T01:44:58Z",
+    "updated_at": "2019-10-07T05:19:03Z",
+    "html_url": "https://github.com/starship/starship/pull/428#discussion_r328405271",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/428",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328405271"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/428#discussion_r328405271"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/428"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328405271/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 61,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 61,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328405461",
+    "pull_request_review_id": 293446307,
+    "id": 328405461,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODQwNTQ2MQ==",
+    "diff_hunk": "@@ -0,0 +1,54 @@\n+use ansi_term::Color;\n+use std::fs::File;\n+use std::io;\n+\n+use crate::common;\n+\n+#[test]\n+fn folder_without_elixir_files() -> io::Result<()> {",
+    "path": "tests/testsuite/elixir.rs",
+    "commit_id": "516d220ea85e2113affb76b40d2aec088cbe4929",
+    "original_commit_id": "ede117bfd6bbe0b444da452055a3ec5d0c743b36",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Missing an ignore here",
+    "created_at": "2019-09-26T01:46:10Z",
+    "updated_at": "2019-10-07T05:19:03Z",
+    "html_url": "https://github.com/starship/starship/pull/428#discussion_r328405461",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/428",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328405461"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/428#discussion_r328405461"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/428"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328405461/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 8,
+    "original_line": 8,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 8,
+    "position": 8,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328405567",
+    "pull_request_review_id": 293446307,
+    "id": 328405567,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODQwNTU2Nw==",
+    "diff_hunk": "@@ -0,0 +1,54 @@\n+use ansi_term::Color;",
+    "path": "tests/testsuite/elixir.rs",
+    "commit_id": "516d220ea85e2113affb76b40d2aec088cbe4929",
+    "original_commit_id": "ede117bfd6bbe0b444da452055a3ec5d0c743b36",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "You'll need to get the Dockerfile and github actions sorted out before these will pass in CI.",
+    "created_at": "2019-09-26T01:46:43Z",
+    "updated_at": "2019-10-07T05:19:03Z",
+    "html_url": "https://github.com/starship/starship/pull/428#discussion_r328405567",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/428",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328405567"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/428#discussion_r328405567"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/428"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328405567/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1,
+    "original_line": 1,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 1,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328406253",
+    "pull_request_review_id": 293446307,
+    "id": 328406253,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODQwNjI1Mw==",
+    "diff_hunk": "@@ -0,0 +1,74 @@\n+use ansi_term::Color;\n+use std::process::Command;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the current Elixir version\n+///\n+/// Will display the Elixir version if any of the following criteria are met:\n+///     - Current directory contains a `.ex` file\n+///     - Current directory contains a `mix.exs` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_ex_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"mix.exs\"])\n+        .set_extensions(&[\"ex\", \"exs\"])\n+        .is_match();\n+\n+    if !is_ex_project {\n+        return None;\n+    }\n+\n+    match get_elixir_version() {\n+        Some(elixir_version) => {\n+            const ELIXIR_CHAR: &str = \"🧪 \";\n+\n+            let mut module = context.new_module(\"elixir\");\n+            let module_style = module\n+                .config_value_style(\"style\")\n+                .unwrap_or_else(|| Color::Purple.bold());\n+            module.set_style(module_style);\n+\n+            let formatted_version = format_elixir_version(&elixir_version)?;\n+            module.new_segment(\"symbol\", ELIXIR_CHAR);\n+            module.new_segment(\"version\", &formatted_version);\n+\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn get_elixir_version() -> Option<String> {\n+    match Command::new(\"elixir\").arg(\"-v\").output() {\n+        Ok(output) => Some(String::from_utf8(output.stdout).unwrap()),\n+        Err(_) => None,\n+    }\n+}\n+\n+fn format_elixir_version(version_str: &str) -> Option<String> {\n+    let version = version_str\n+        // ignore detailed Erlang output\n+        .lines()\n+        .last()?\n+        .trim()\n+        // split into [\"Elixir\", \"1.9.1\", \"(compiled\", \"with, \"Erlang/OTP\", \"21)\"]\n+        .split_whitespace()\n+        .nth(1)?;\n+\n+    let otp_version = version_str\n+        // ignore detailed Erlang output\n+        .lines()\n+        .last()?\n+        .trim()\n+        .split_whitespace()\n+        .nth(5)?\n+        .trim_matches(')');\n+\n+    let mut formatted_version = String::with_capacity(version.len() + otp_version.len() + 5);\n+    formatted_version.push('v');\n+    formatted_version.push_str(version);\n+    formatted_version.push_str(\"-OTP\");\n+    formatted_version.push_str(otp_version);\n+    Some(formatted_version)",
+    "path": "src/modules/elixir.rs",
+    "commit_id": "516d220ea85e2113affb76b40d2aec088cbe4929",
+    "original_commit_id": "ede117bfd6bbe0b444da452055a3ec5d0c743b36",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This is mostly just preference, but-\r\n\r\nCurrently this gives:\r\n`v1.9.1-OTP21`\r\n\r\nMaybe this is a little nicer?\r\n`v1.9.1 OTP/21`",
+    "created_at": "2019-09-26T01:51:06Z",
+    "updated_at": "2019-10-07T05:19:03Z",
+    "html_url": "https://github.com/starship/starship/pull/428#discussion_r328406253",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/428",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328406253"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/428#discussion_r328406253"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/428"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328406253/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 63,
+    "original_line": 63,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 73,
+    "position": 63,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328413341",
+    "pull_request_review_id": 293456620,
+    "id": 328413341,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODQxMzM0MQ==",
+    "diff_hunk": "@@ -0,0 +1,74 @@\n+use ansi_term::Color;\n+use std::process::Command;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the current Elixir version\n+///\n+/// Will display the Elixir version if any of the following criteria are met:\n+///     - Current directory contains a `.ex` file\n+///     - Current directory contains a `mix.exs` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_ex_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"mix.exs\"])\n+        .set_extensions(&[\"ex\", \"exs\"])\n+        .is_match();\n+\n+    if !is_ex_project {\n+        return None;\n+    }\n+\n+    match get_elixir_version() {\n+        Some(elixir_version) => {\n+            const ELIXIR_CHAR: &str = \"🧪 \";\n+\n+            let mut module = context.new_module(\"elixir\");\n+            let module_style = module\n+                .config_value_style(\"style\")\n+                .unwrap_or_else(|| Color::Purple.bold());\n+            module.set_style(module_style);\n+\n+            let formatted_version = format_elixir_version(&elixir_version)?;\n+            module.new_segment(\"symbol\", ELIXIR_CHAR);\n+            module.new_segment(\"version\", &formatted_version);\n+\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn get_elixir_version() -> Option<String> {\n+    match Command::new(\"elixir\").arg(\"-v\").output() {\n+        Ok(output) => Some(String::from_utf8(output.stdout).unwrap()),\n+        Err(_) => None,\n+    }\n+}\n+\n+fn format_elixir_version(version_str: &str) -> Option<String> {\n+    let version = version_str\n+        // ignore detailed Erlang output\n+        .lines()\n+        .last()?\n+        .trim()\n+        // split into [\"Elixir\", \"1.9.1\", \"(compiled\", \"with, \"Erlang/OTP\", \"21)\"]\n+        .split_whitespace()\n+        .nth(1)?;\n+\n+    let otp_version = version_str\n+        // ignore detailed Erlang output\n+        .lines()",
+    "path": "src/modules/elixir.rs",
+    "commit_id": "516d220ea85e2113affb76b40d2aec088cbe4929",
+    "original_commit_id": "ede117bfd6bbe0b444da452055a3ec5d0c743b36",
+    "user": {
+      "login": "logicmason",
+      "id": 236820,
+      "node_id": "MDQ6VXNlcjIzNjgyMA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/236820?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/logicmason",
+      "html_url": "https://github.com/logicmason",
+      "followers_url": "https://api.github.com/users/logicmason/followers",
+      "following_url": "https://api.github.com/users/logicmason/following{/other_user}",
+      "gists_url": "https://api.github.com/users/logicmason/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/logicmason/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/logicmason/subscriptions",
+      "organizations_url": "https://api.github.com/users/logicmason/orgs",
+      "repos_url": "https://api.github.com/users/logicmason/repos",
+      "events_url": "https://api.github.com/users/logicmason/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/logicmason/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I tried to do that yesterday and got a \"cannot borrow version_arr as mutable\" error. I'm afraid I don't know how to do that at this point. I looked at the docs for `std::str::SplitWhitespace<'_>` but it wasn't much help.",
+    "created_at": "2019-09-26T02:35:25Z",
+    "updated_at": "2019-10-07T05:19:03Z",
+    "html_url": "https://github.com/starship/starship/pull/428#discussion_r328413341",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/428",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328413341"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/428#discussion_r328413341"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/428"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328413341/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 61,
+    "side": "RIGHT",
+    "in_reply_to_id": 328405271,
+    "author_association": "NONE",
+    "original_position": 61,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328413445",
+    "pull_request_review_id": 293456775,
+    "id": 328413445,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODQxMzQ0NQ==",
+    "diff_hunk": "@@ -0,0 +1,54 @@\n+use ansi_term::Color;\n+use std::fs::File;\n+use std::io;\n+\n+use crate::common;\n+\n+#[test]\n+fn folder_without_elixir_files() -> io::Result<()> {",
+    "path": "tests/testsuite/elixir.rs",
+    "commit_id": "516d220ea85e2113affb76b40d2aec088cbe4929",
+    "original_commit_id": "ede117bfd6bbe0b444da452055a3ec5d0c743b36",
+    "user": {
+      "login": "logicmason",
+      "id": 236820,
+      "node_id": "MDQ6VXNlcjIzNjgyMA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/236820?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/logicmason",
+      "html_url": "https://github.com/logicmason",
+      "followers_url": "https://api.github.com/users/logicmason/followers",
+      "following_url": "https://api.github.com/users/logicmason/following{/other_user}",
+      "gists_url": "https://api.github.com/users/logicmason/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/logicmason/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/logicmason/subscriptions",
+      "organizations_url": "https://api.github.com/users/logicmason/orgs",
+      "repos_url": "https://api.github.com/users/logicmason/repos",
+      "events_url": "https://api.github.com/users/logicmason/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/logicmason/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ok. Should I add one to the similar test in ruby.rs as well?",
+    "created_at": "2019-09-26T02:36:16Z",
+    "updated_at": "2019-10-07T05:19:03Z",
+    "html_url": "https://github.com/starship/starship/pull/428#discussion_r328413445",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/428",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328413445"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/428#discussion_r328413445"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/428"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328413445/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 8,
+    "original_line": 8,
+    "side": "RIGHT",
+    "in_reply_to_id": 328405461,
+    "author_association": "NONE",
+    "original_position": 8,
+    "position": 8,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328415891",
+    "pull_request_review_id": 293459957,
+    "id": 328415891,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODQxNTg5MQ==",
+    "diff_hunk": "@@ -0,0 +1,74 @@\n+use ansi_term::Color;\n+use std::process::Command;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the current Elixir version\n+///\n+/// Will display the Elixir version if any of the following criteria are met:\n+///     - Current directory contains a `.ex` file\n+///     - Current directory contains a `mix.exs` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_ex_project = context\n+        .try_begin_scan()?\n+        .set_files(&[\"mix.exs\"])\n+        .set_extensions(&[\"ex\", \"exs\"])\n+        .is_match();\n+\n+    if !is_ex_project {\n+        return None;\n+    }\n+\n+    match get_elixir_version() {\n+        Some(elixir_version) => {\n+            const ELIXIR_CHAR: &str = \"🧪 \";\n+\n+            let mut module = context.new_module(\"elixir\");\n+            let module_style = module\n+                .config_value_style(\"style\")\n+                .unwrap_or_else(|| Color::Purple.bold());\n+            module.set_style(module_style);\n+\n+            let formatted_version = format_elixir_version(&elixir_version)?;\n+            module.new_segment(\"symbol\", ELIXIR_CHAR);\n+            module.new_segment(\"version\", &formatted_version);\n+\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn get_elixir_version() -> Option<String> {\n+    match Command::new(\"elixir\").arg(\"-v\").output() {\n+        Ok(output) => Some(String::from_utf8(output.stdout).unwrap()),\n+        Err(_) => None,\n+    }\n+}\n+\n+fn format_elixir_version(version_str: &str) -> Option<String> {\n+    let version = version_str\n+        // ignore detailed Erlang output\n+        .lines()\n+        .last()?\n+        .trim()\n+        // split into [\"Elixir\", \"1.9.1\", \"(compiled\", \"with, \"Erlang/OTP\", \"21)\"]\n+        .split_whitespace()\n+        .nth(1)?;\n+\n+    let otp_version = version_str\n+        // ignore detailed Erlang output\n+        .lines()",
+    "path": "src/modules/elixir.rs",
+    "commit_id": "516d220ea85e2113affb76b40d2aec088cbe4929",
+    "original_commit_id": "ede117bfd6bbe0b444da452055a3ec5d0c743b36",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Oh, right. `SplitWhitespace` is an iterator, so you aren't supposed to use it from two places.\r\n\r\nThere are two obvious solutions:\r\n1. Stop at the `trim()` when extracting out the common code, and repeat the `split_whitepace()` for each version item.\r\n2. `collect()` after the `split_whitespace()` to materialize in to `Vec<&str>` which can safely be used in multiple places.\r\n\r\nOption 1 is _probably_ more performant, because it doesn't require any allocation, and the strings are quite small.",
+    "created_at": "2019-09-26T02:51:49Z",
+    "updated_at": "2019-10-07T05:19:03Z",
+    "html_url": "https://github.com/starship/starship/pull/428#discussion_r328415891",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/428",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328415891"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/428#discussion_r328415891"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/428"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328415891/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 61,
+    "side": "RIGHT",
+    "in_reply_to_id": 328405271,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 61,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328430590",
+    "pull_request_review_id": 293478750,
+    "id": 328430590,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODQzMDU5MA==",
+    "diff_hunk": "@@ -0,0 +1,54 @@\n+use ansi_term::Color;\n+use std::fs::File;\n+use std::io;\n+\n+use crate::common;\n+\n+#[test]\n+fn folder_without_elixir_files() -> io::Result<()> {",
+    "path": "tests/testsuite/elixir.rs",
+    "commit_id": "516d220ea85e2113affb76b40d2aec088cbe4929",
+    "original_commit_id": "ede117bfd6bbe0b444da452055a3ec5d0c743b36",
+    "user": {
+      "login": "logicmason",
+      "id": 236820,
+      "node_id": "MDQ6VXNlcjIzNjgyMA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/236820?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/logicmason",
+      "html_url": "https://github.com/logicmason",
+      "followers_url": "https://api.github.com/users/logicmason/followers",
+      "following_url": "https://api.github.com/users/logicmason/following{/other_user}",
+      "gists_url": "https://api.github.com/users/logicmason/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/logicmason/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/logicmason/subscriptions",
+      "organizations_url": "https://api.github.com/users/logicmason/orgs",
+      "repos_url": "https://api.github.com/users/logicmason/repos",
+      "events_url": "https://api.github.com/users/logicmason/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/logicmason/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "On second thought, I think the reason the test wasn't ignored is because it's expecting not to identify the path as being a project for the language (and therefore tests won't break on versions).",
+    "created_at": "2019-09-26T04:30:21Z",
+    "updated_at": "2019-10-07T05:19:03Z",
+    "html_url": "https://github.com/starship/starship/pull/428#discussion_r328430590",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/428",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328430590"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/428#discussion_r328430590"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/428"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328430590/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 8,
+    "original_line": 8,
+    "side": "RIGHT",
+    "in_reply_to_id": 328405461,
+    "author_association": "NONE",
+    "original_position": 8,
+    "position": 8,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/329338901",
+    "pull_request_review_id": 294666994,
+    "id": 329338901,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyOTMzODkwMQ==",
+    "diff_hunk": "@@ -571,6 +568,31 @@ impure_msg = \"impure shell\"\n pure_msg = \"pure shell\"\n ```\n \n+## Elixir\n+\n+The `elixir` module shows the currently installed version of Elixir.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `mix` file\n+- The current directory contains a `.ex` or `.exs` file\n+\n+### Options\n+\n+| Variable   | Default         | Description                                              |\n+| ---------- | --------------- | -------------------------------------------------------- |\n+| `symbol`   | `\"🧪 \"`         | The symbol used before displaying the version of Elixir. |",
+    "path": "docs/config/README.md",
+    "commit_id": "516d220ea85e2113affb76b40d2aec088cbe4929",
+    "original_commit_id": "2145692076aa6fda630f78649dcfb8def31a653f",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "My browser refuses to render this emoji, but Google is telling me that's a test tube?\r\n\r\n(It'll be fine once in the terminal--firefox is just being stubborn)",
+    "created_at": "2019-09-29T05:51:31Z",
+    "updated_at": "2019-10-07T05:19:03Z",
+    "html_url": "https://github.com/starship/starship/pull/428#discussion_r329338901",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/428",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/329338901"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/428#discussion_r329338901"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/428"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/329338901/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 583,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 74,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/329339101",
+    "pull_request_review_id": 294666994,
+    "id": 329339101,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyOTMzOTEwMQ==",
+    "diff_hunk": "@@ -571,6 +568,31 @@ impure_msg = \"impure shell\"\n pure_msg = \"pure shell\"\n ```\n \n+## Elixir",
+    "path": "docs/config/README.md",
+    "commit_id": "516d220ea85e2113affb76b40d2aec088cbe4929",
+    "original_commit_id": "2145692076aa6fda630f78649dcfb8def31a653f",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Minor nitpick: the modules are listed in mostly-alphabetic order. Could we move this over to the `E`s?",
+    "created_at": "2019-09-29T05:58:31Z",
+    "updated_at": "2019-10-07T05:19:03Z",
+    "html_url": "https://github.com/starship/starship/pull/428#discussion_r329339101",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/428",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/329339101"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/428#discussion_r329339101"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/428"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/329339101/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 571,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 62,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/331836329",
+    "pull_request_review_id": 297892300,
+    "id": 331836329,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMTgzNjMyOQ==",
+    "diff_hunk": "@@ -571,6 +568,31 @@ impure_msg = \"impure shell\"\n pure_msg = \"pure shell\"\n ```\n \n+## Elixir\n+\n+The `elixir` module shows the currently installed version of Elixir.\n+The module will be shown if any of the following conditions are met:\n+\n+- The current directory contains a `mix` file\n+- The current directory contains a `.ex` or `.exs` file\n+\n+### Options\n+\n+| Variable   | Default         | Description                                              |\n+| ---------- | --------------- | -------------------------------------------------------- |\n+| `symbol`   | `\"🧪 \"`         | The symbol used before displaying the version of Elixir. |",
+    "path": "docs/config/README.md",
+    "commit_id": "516d220ea85e2113affb76b40d2aec088cbe4929",
+    "original_commit_id": "2145692076aa6fda630f78649dcfb8def31a653f",
+    "user": {
+      "login": "logicmason",
+      "id": 236820,
+      "node_id": "MDQ6VXNlcjIzNjgyMA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/236820?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/logicmason",
+      "html_url": "https://github.com/logicmason",
+      "followers_url": "https://api.github.com/users/logicmason/followers",
+      "following_url": "https://api.github.com/users/logicmason/following{/other_user}",
+      "gists_url": "https://api.github.com/users/logicmason/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/logicmason/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/logicmason/subscriptions",
+      "organizations_url": "https://api.github.com/users/logicmason/orgs",
+      "repos_url": "https://api.github.com/users/logicmason/repos",
+      "events_url": "https://api.github.com/users/logicmason/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/logicmason/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Yep, it's a test tube.",
+    "created_at": "2019-10-07T03:32:13Z",
+    "updated_at": "2019-10-07T05:19:03Z",
+    "html_url": "https://github.com/starship/starship/pull/428#discussion_r331836329",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/428",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/331836329"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/428#discussion_r331836329"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/428"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/331836329/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 583,
+    "side": "RIGHT",
+    "in_reply_to_id": 329338901,
+    "author_association": "NONE",
+    "original_position": 74,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/331837362",
+    "pull_request_review_id": 297893653,
+    "id": 331837362,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMzMTgzNzM2Mg==",
+    "diff_hunk": "@@ -571,6 +568,31 @@ impure_msg = \"impure shell\"\n pure_msg = \"pure shell\"\n ```\n \n+## Elixir",
+    "path": "docs/config/README.md",
+    "commit_id": "516d220ea85e2113affb76b40d2aec088cbe4929",
+    "original_commit_id": "2145692076aa6fda630f78649dcfb8def31a653f",
+    "user": {
+      "login": "logicmason",
+      "id": 236820,
+      "node_id": "MDQ6VXNlcjIzNjgyMA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/236820?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/logicmason",
+      "html_url": "https://github.com/logicmason",
+      "followers_url": "https://api.github.com/users/logicmason/followers",
+      "following_url": "https://api.github.com/users/logicmason/following{/other_user}",
+      "gists_url": "https://api.github.com/users/logicmason/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/logicmason/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/logicmason/subscriptions",
+      "organizations_url": "https://api.github.com/users/logicmason/orgs",
+      "repos_url": "https://api.github.com/users/logicmason/repos",
+      "events_url": "https://api.github.com/users/logicmason/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/logicmason/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Okay, I've moved it from the clump of languages further down to right before \"Environment Variable\"",
+    "created_at": "2019-10-07T03:42:46Z",
+    "updated_at": "2019-10-07T05:19:03Z",
+    "html_url": "https://github.com/starship/starship/pull/428#discussion_r331837362",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/428",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/331837362"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/428#discussion_r331837362"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/428"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/331837362/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 571,
+    "side": "RIGHT",
+    "in_reply_to_id": 329339101,
+    "author_association": "NONE",
+    "original_position": 62,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

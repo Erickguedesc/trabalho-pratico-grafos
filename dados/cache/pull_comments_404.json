@@ -1,0 +1,1325 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328443005",
+    "pull_request_review_id": 293494859,
+    "id": 328443005,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODQ0MzAwNQ==",
+    "diff_hunk": "@@ -0,0 +1,154 @@\n+use ansi_term::Color;\n+use dirs;\n+use yaml_rust::YamlLoader;\n+\n+use std::env;\n+use std::path;\n+\n+use super::{Context, Module};\n+use crate::utils;\n+\n+fn get_kube_context(contents: &str) -> Option<(String, String)> {\n+    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n+    if yaml_docs.is_empty() {\n+        return None;\n+    }\n+    let conf = &yaml_docs[0];\n+\n+    let current_ctx = conf[\"current-context\"].as_str()?;",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "88e8f37e7f18e435b34100b6f906346b3b1c1b71",
+    "original_commit_id": "5eb85926b22982aaab60a37a25234b6498b906ea",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "How cool is that! I didn't know that the current context is written to `~/.kube/config`. Just tested this on my machine as well (Mac).",
+    "created_at": "2019-09-26T05:46:29Z",
+    "updated_at": "2019-10-01T07:04:24Z",
+    "html_url": "https://github.com/starship/starship/pull/404#discussion_r328443005",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/404",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328443005"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/404#discussion_r328443005"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/404"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328443005/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 20,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 18,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328445119",
+    "pull_request_review_id": 293494859,
+    "id": 328445119,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODQ0NTExOQ==",
+    "diff_hunk": "@@ -0,0 +1,154 @@\n+use ansi_term::Color;\n+use dirs;\n+use yaml_rust::YamlLoader;\n+\n+use std::env;\n+use std::path;\n+\n+use super::{Context, Module};\n+use crate::utils;\n+\n+fn get_kube_context(contents: &str) -> Option<(String, String)> {\n+    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n+    if yaml_docs.is_empty() {\n+        return None;\n+    }\n+    let conf = &yaml_docs[0];\n+\n+    let current_ctx = conf[\"current-context\"].as_str()?;\n+\n+    if current_ctx.is_empty() {\n+        return None;\n+    }\n+\n+    let mut ns = \"\";\n+\n+    if let Some(contexts) = conf[\"contexts\"].as_vec() {\n+        for ctx in contexts {\n+            if ctx[\"name\"].as_str().unwrap_or(\"\") == current_ctx {\n+                ns = ctx[\"context\"][\"namespace\"].as_str().unwrap_or(\"\");\n+                break;\n+            }\n+        }\n+    }\n+\n+    Some((current_ctx.to_string(), ns.to_string()))\n+}\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let filename = match env::var(\"KUBECONFIG\") {\n+        Ok(path) => path::PathBuf::from(path),\n+        Err(_) => dirs::home_dir()?.join(\".kube\").join(\"config\"),\n+    };\n+\n+    let contents = utils::read_file(filename).ok()?;\n+\n+    match get_kube_context(&contents) {\n+        Some(kube_cfg) => {\n+            const KUBE_CHAR: &str = \"☸ \";",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "88e8f37e7f18e435b34100b6f906346b3b1c1b71",
+    "original_commit_id": "5eb85926b22982aaab60a37a25234b6498b906ea",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "😎 . I'm no performance expert but it's probably better to declare this outside of the function?",
+    "created_at": "2019-09-26T05:57:00Z",
+    "updated_at": "2019-10-01T07:04:24Z",
+    "html_url": "https://github.com/starship/starship/pull/404#discussion_r328445119",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/404",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328445119"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/404#discussion_r328445119"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/404"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328445119/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 48,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 48,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328445503",
+    "pull_request_review_id": 293494859,
+    "id": 328445503,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODQ0NTUwMw==",
+    "diff_hunk": "@@ -0,0 +1,154 @@\n+use ansi_term::Color;\n+use dirs;\n+use yaml_rust::YamlLoader;\n+\n+use std::env;\n+use std::path;\n+\n+use super::{Context, Module};\n+use crate::utils;\n+\n+fn get_kube_context(contents: &str) -> Option<(String, String)> {\n+    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n+    if yaml_docs.is_empty() {\n+        return None;\n+    }\n+    let conf = &yaml_docs[0];\n+\n+    let current_ctx = conf[\"current-context\"].as_str()?;\n+\n+    if current_ctx.is_empty() {\n+        return None;\n+    }\n+\n+    let mut ns = \"\";\n+\n+    if let Some(contexts) = conf[\"contexts\"].as_vec() {\n+        for ctx in contexts {\n+            if ctx[\"name\"].as_str().unwrap_or(\"\") == current_ctx {\n+                ns = ctx[\"context\"][\"namespace\"].as_str().unwrap_or(\"\");\n+                break;\n+            }\n+        }\n+    }",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "88e8f37e7f18e435b34100b6f906346b3b1c1b71",
+    "original_commit_id": "5eb85926b22982aaab60a37a25234b6498b906ea",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Not saying you have to do that in this PR but you can also replace this mutable `ns` + break with a filter and a fold",
+    "created_at": "2019-09-26T05:58:40Z",
+    "updated_at": "2019-10-01T07:04:24Z",
+    "html_url": "https://github.com/starship/starship/pull/404#discussion_r328445503",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/404",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328445503"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/404#discussion_r328445503"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/404"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328445503/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 33,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328447418",
+    "pull_request_review_id": 293494859,
+    "id": 328447418,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODQ0NzQxOA==",
+    "diff_hunk": "@@ -0,0 +1,154 @@\n+use ansi_term::Color;\n+use dirs;\n+use yaml_rust::YamlLoader;\n+\n+use std::env;\n+use std::path;\n+\n+use super::{Context, Module};\n+use crate::utils;\n+\n+fn get_kube_context(contents: &str) -> Option<(String, String)> {\n+    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n+    if yaml_docs.is_empty() {\n+        return None;\n+    }\n+    let conf = &yaml_docs[0];\n+\n+    let current_ctx = conf[\"current-context\"].as_str()?;\n+\n+    if current_ctx.is_empty() {\n+        return None;\n+    }\n+\n+    let mut ns = \"\";\n+\n+    if let Some(contexts) = conf[\"contexts\"].as_vec() {\n+        for ctx in contexts {\n+            if ctx[\"name\"].as_str().unwrap_or(\"\") == current_ctx {\n+                ns = ctx[\"context\"][\"namespace\"].as_str().unwrap_or(\"\");\n+                break;\n+            }\n+        }\n+    }\n+\n+    Some((current_ctx.to_string(), ns.to_string()))\n+}\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let filename = match env::var(\"KUBECONFIG\") {\n+        Ok(path) => path::PathBuf::from(path),\n+        Err(_) => dirs::home_dir()?.join(\".kube\").join(\"config\"),\n+    };\n+\n+    let contents = utils::read_file(filename).ok()?;\n+\n+    match get_kube_context(&contents) {\n+        Some(kube_cfg) => {\n+            const KUBE_CHAR: &str = \"☸ \";\n+\n+            let (kube_ctx, kube_ns) = kube_cfg;\n+\n+            let mut module = context.new_module(\"kubernetes\");\n+\n+            let module_style = module\n+                .config_value_style(\"style\")\n+                .unwrap_or_else(|| Color::Cyan.bold());\n+            module.set_style(module_style);\n+            module.get_prefix().set_value(\"on \");\n+\n+            module.new_segment(\"symbol\", KUBE_CHAR);\n+            module.new_segment(\"context\", &kube_ctx);\n+            if kube_ns != \"\" {\n+                module.new_segment(\"namespace\", &format!(\" ({})\", kube_ns));\n+            }\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::*;\n+\n+    #[test]\n+    fn parse_empty_config() {\n+        let input = \"\";\n+        let result = get_kube_context(&input);\n+        let expected = None;\n+\n+        assert_eq!(result, expected);\n+    }\n+\n+    #[test]\n+    fn parse_no_config() {\n+        let input = r#\"\n+apiVersion: v1\n+clusters: []\n+contexts: []\n+current-context: \"\"\n+kind: Config\n+preferences: {}\n+users: []\n+\"#;\n+        let result = get_kube_context(&input);\n+        let expected = None;\n+\n+        assert_eq!(result, expected);\n+    }\n+    #[test]\n+    fn parse_only_context() {\n+        let input = r#\"\n+apiVersion: v1\n+clusters: []\n+contexts:\n+- context:\n+    cluster: test_cluster\n+    user: test_user\n+  name: test_context\n+current-context: test_context\n+kind: Config\n+preferences: {}\n+users: []\n+\"#;\n+        let result = get_kube_context(&input);\n+        let expected = Some((\"test_context\".to_string(), \"\".to_string()));\n+\n+        assert_eq!(result, expected);\n+    }\n+\n+    #[test]\n+    fn parse_context_and_ns() {\n+        let input = r#\"\n+apiVersion: v1\n+clusters: []\n+contexts:\n+- context:\n+    cluster: test_cluster\n+    user: test_user\n+    namespace: test_namespace\n+  name: test_context\n+current-context: test_context\n+kind: Config\n+preferences: {}\n+users: []\n+\"#;\n+        let result = get_kube_context(&input);\n+        let expected = Some((\"test_context\".to_string(), \"test_namespace\".to_string()));\n+\n+        assert_eq!(result, expected);\n+    }",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "88e8f37e7f18e435b34100b6f906346b3b1c1b71",
+    "original_commit_id": "5eb85926b22982aaab60a37a25234b6498b906ea",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Nice test setup. I would suggest to add one more test with multiple contexts. Let me lend you one similar to mine 😉 \r\n```\r\napiVersion: v1\r\nclusters: []\r\ncontexts:\r\n- context:\r\n    cluster: arn:aws:eks:eu-west-1:123456789:cluster/eks-cluster-eu-west-1-dev\r\n    user: arn:aws:eks:eu-west-1:123456789:cluster/eks-cluster-eu-west-1-dev\r\n  name: DEV\r\n- context:\r\n    cluster: arn:aws:eks:eu-west-1:123456789:cluster/eks-cluster-eu-west-1-prod\r\n    user: arn:aws:eks:eu-west-1:123456789:cluster/eks-cluster-eu-west-1-prod\r\n  name: PROD\r\ncurrent-context: DEV\r\n\r\n```\r\nAs I'm writing this, I notice that namespace detection would not work with my setup. I don't have one namespace per context but use multiple dev namespaces within the dev context. Not sure if it's best practice to include the namespace in the context? I have to say I like not having to switch so often and if I do it's to get to PROD. But yeah I see that in this case it's impossible to show the namespace, so nvm.\r\n\r\nWould still add the test 🙃 \r\n",
+    "created_at": "2019-09-26T06:07:58Z",
+    "updated_at": "2019-10-01T07:04:24Z",
+    "html_url": "https://github.com/starship/starship/pull/404#discussion_r328447418",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/404",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328447418"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/404#discussion_r328447418"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/404"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328447418/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 142,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 141,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328448370",
+    "pull_request_review_id": 293501897,
+    "id": 328448370,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODQ0ODM3MA==",
+    "diff_hunk": "@@ -0,0 +1,154 @@\n+use ansi_term::Color;\n+use dirs;\n+use yaml_rust::YamlLoader;\n+\n+use std::env;\n+use std::path;\n+\n+use super::{Context, Module};\n+use crate::utils;\n+\n+fn get_kube_context(contents: &str) -> Option<(String, String)> {\n+    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n+    if yaml_docs.is_empty() {\n+        return None;\n+    }\n+    let conf = &yaml_docs[0];\n+\n+    let current_ctx = conf[\"current-context\"].as_str()?;\n+\n+    if current_ctx.is_empty() {\n+        return None;\n+    }\n+\n+    let mut ns = \"\";\n+\n+    if let Some(contexts) = conf[\"contexts\"].as_vec() {\n+        for ctx in contexts {\n+            if ctx[\"name\"].as_str().unwrap_or(\"\") == current_ctx {\n+                ns = ctx[\"context\"][\"namespace\"].as_str().unwrap_or(\"\");\n+                break;\n+            }\n+        }\n+    }\n+\n+    Some((current_ctx.to_string(), ns.to_string()))\n+}\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let filename = match env::var(\"KUBECONFIG\") {\n+        Ok(path) => path::PathBuf::from(path),\n+        Err(_) => dirs::home_dir()?.join(\".kube\").join(\"config\"),\n+    };\n+\n+    let contents = utils::read_file(filename).ok()?;\n+\n+    match get_kube_context(&contents) {\n+        Some(kube_cfg) => {\n+            const KUBE_CHAR: &str = \"☸ \";\n+\n+            let (kube_ctx, kube_ns) = kube_cfg;\n+\n+            let mut module = context.new_module(\"kubernetes\");\n+\n+            let module_style = module\n+                .config_value_style(\"style\")\n+                .unwrap_or_else(|| Color::Cyan.bold());\n+            module.set_style(module_style);\n+            module.get_prefix().set_value(\"on \");\n+\n+            module.new_segment(\"symbol\", KUBE_CHAR);\n+            module.new_segment(\"context\", &kube_ctx);\n+            if kube_ns != \"\" {\n+                module.new_segment(\"namespace\", &format!(\" ({})\", kube_ns));\n+            }\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::*;\n+\n+    #[test]\n+    fn parse_empty_config() {\n+        let input = \"\";\n+        let result = get_kube_context(&input);\n+        let expected = None;\n+\n+        assert_eq!(result, expected);\n+    }\n+\n+    #[test]\n+    fn parse_no_config() {\n+        let input = r#\"\n+apiVersion: v1\n+clusters: []\n+contexts: []\n+current-context: \"\"\n+kind: Config\n+preferences: {}\n+users: []\n+\"#;\n+        let result = get_kube_context(&input);\n+        let expected = None;\n+\n+        assert_eq!(result, expected);\n+    }\n+    #[test]\n+    fn parse_only_context() {\n+        let input = r#\"\n+apiVersion: v1\n+clusters: []\n+contexts:\n+- context:\n+    cluster: test_cluster\n+    user: test_user\n+  name: test_context\n+current-context: test_context\n+kind: Config\n+preferences: {}\n+users: []\n+\"#;\n+        let result = get_kube_context(&input);\n+        let expected = Some((\"test_context\".to_string(), \"\".to_string()));\n+\n+        assert_eq!(result, expected);\n+    }\n+\n+    #[test]\n+    fn parse_context_and_ns() {\n+        let input = r#\"\n+apiVersion: v1\n+clusters: []\n+contexts:\n+- context:\n+    cluster: test_cluster\n+    user: test_user\n+    namespace: test_namespace\n+  name: test_context\n+current-context: test_context\n+kind: Config\n+preferences: {}\n+users: []\n+\"#;\n+        let result = get_kube_context(&input);\n+        let expected = Some((\"test_context\".to_string(), \"test_namespace\".to_string()));\n+\n+        assert_eq!(result, expected);\n+    }",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "88e8f37e7f18e435b34100b6f906346b3b1c1b71",
+    "original_commit_id": "5eb85926b22982aaab60a37a25234b6498b906ea",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "And maybe we could note in the documentation that namespace detection only works if namespaces are bound to contexts",
+    "created_at": "2019-09-26T06:12:29Z",
+    "updated_at": "2019-10-01T07:04:24Z",
+    "html_url": "https://github.com/starship/starship/pull/404#discussion_r328448370",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/404",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328448370"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/404#discussion_r328448370"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/404"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328448370/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 142,
+    "side": "RIGHT",
+    "in_reply_to_id": 328447418,
+    "author_association": "NONE",
+    "original_position": 141,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328600567",
+    "pull_request_review_id": 293705053,
+    "id": 328600567,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODYwMDU2Nw==",
+    "diff_hunk": "@@ -0,0 +1,154 @@\n+use ansi_term::Color;\n+use dirs;\n+use yaml_rust::YamlLoader;\n+\n+use std::env;\n+use std::path;\n+\n+use super::{Context, Module};\n+use crate::utils;\n+\n+fn get_kube_context(contents: &str) -> Option<(String, String)> {\n+    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n+    if yaml_docs.is_empty() {\n+        return None;\n+    }\n+    let conf = &yaml_docs[0];\n+\n+    let current_ctx = conf[\"current-context\"].as_str()?;\n+\n+    if current_ctx.is_empty() {\n+        return None;\n+    }\n+\n+    let mut ns = \"\";\n+\n+    if let Some(contexts) = conf[\"contexts\"].as_vec() {\n+        for ctx in contexts {\n+            if ctx[\"name\"].as_str().unwrap_or(\"\") == current_ctx {\n+                ns = ctx[\"context\"][\"namespace\"].as_str().unwrap_or(\"\");\n+                break;\n+            }\n+        }\n+    }",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "88e8f37e7f18e435b34100b6f906346b3b1c1b71",
+    "original_commit_id": "5eb85926b22982aaab60a37a25234b6498b906ea",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I agree with this. `let mut ns` and a `for` loop doesn't feel very rusty.",
+    "created_at": "2019-09-26T13:05:24Z",
+    "updated_at": "2019-10-01T07:04:24Z",
+    "html_url": "https://github.com/starship/starship/pull/404#discussion_r328600567",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/404",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328600567"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/404#discussion_r328600567"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/404"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328600567/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 328445503,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 33,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328601007",
+    "pull_request_review_id": 293705613,
+    "id": 328601007,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODYwMTAwNw==",
+    "diff_hunk": "@@ -0,0 +1,154 @@\n+use ansi_term::Color;\n+use dirs;\n+use yaml_rust::YamlLoader;\n+\n+use std::env;\n+use std::path;\n+\n+use super::{Context, Module};\n+use crate::utils;\n+\n+fn get_kube_context(contents: &str) -> Option<(String, String)> {\n+    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n+    if yaml_docs.is_empty() {\n+        return None;\n+    }\n+    let conf = &yaml_docs[0];\n+\n+    let current_ctx = conf[\"current-context\"].as_str()?;\n+\n+    if current_ctx.is_empty() {\n+        return None;\n+    }\n+\n+    let mut ns = \"\";\n+\n+    if let Some(contexts) = conf[\"contexts\"].as_vec() {\n+        for ctx in contexts {\n+            if ctx[\"name\"].as_str().unwrap_or(\"\") == current_ctx {\n+                ns = ctx[\"context\"][\"namespace\"].as_str().unwrap_or(\"\");\n+                break;\n+            }\n+        }\n+    }\n+\n+    Some((current_ctx.to_string(), ns.to_string()))\n+}\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let filename = match env::var(\"KUBECONFIG\") {\n+        Ok(path) => path::PathBuf::from(path),\n+        Err(_) => dirs::home_dir()?.join(\".kube\").join(\"config\"),\n+    };\n+\n+    let contents = utils::read_file(filename).ok()?;\n+\n+    match get_kube_context(&contents) {\n+        Some(kube_cfg) => {\n+            const KUBE_CHAR: &str = \"☸ \";",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "88e8f37e7f18e435b34100b6f906346b3b1c1b71",
+    "original_commit_id": "5eb85926b22982aaab60a37a25234b6498b906ea",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It's a `const`, so it won't have a performance impact, but it may be neater to declare it at the top of the file",
+    "created_at": "2019-09-26T13:06:18Z",
+    "updated_at": "2019-10-01T07:04:24Z",
+    "html_url": "https://github.com/starship/starship/pull/404#discussion_r328601007",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/404",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328601007"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/404#discussion_r328601007"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/404"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328601007/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 48,
+    "side": "RIGHT",
+    "in_reply_to_id": 328445119,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 48,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328716928",
+    "pull_request_review_id": 293859688,
+    "id": 328716928,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODcxNjkyOA==",
+    "diff_hunk": "@@ -0,0 +1,154 @@\n+use ansi_term::Color;\n+use dirs;\n+use yaml_rust::YamlLoader;\n+\n+use std::env;\n+use std::path;\n+\n+use super::{Context, Module};\n+use crate::utils;\n+\n+fn get_kube_context(contents: &str) -> Option<(String, String)> {\n+    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n+    if yaml_docs.is_empty() {\n+        return None;\n+    }\n+    let conf = &yaml_docs[0];\n+\n+    let current_ctx = conf[\"current-context\"].as_str()?;\n+\n+    if current_ctx.is_empty() {\n+        return None;\n+    }\n+\n+    let mut ns = \"\";\n+\n+    if let Some(contexts) = conf[\"contexts\"].as_vec() {\n+        for ctx in contexts {\n+            if ctx[\"name\"].as_str().unwrap_or(\"\") == current_ctx {\n+                ns = ctx[\"context\"][\"namespace\"].as_str().unwrap_or(\"\");\n+                break;\n+            }\n+        }\n+    }\n+\n+    Some((current_ctx.to_string(), ns.to_string()))\n+}\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let filename = match env::var(\"KUBECONFIG\") {\n+        Ok(path) => path::PathBuf::from(path),\n+        Err(_) => dirs::home_dir()?.join(\".kube\").join(\"config\"),\n+    };\n+\n+    let contents = utils::read_file(filename).ok()?;\n+\n+    match get_kube_context(&contents) {\n+        Some(kube_cfg) => {\n+            const KUBE_CHAR: &str = \"☸ \";\n+\n+            let (kube_ctx, kube_ns) = kube_cfg;\n+\n+            let mut module = context.new_module(\"kubernetes\");\n+\n+            let module_style = module\n+                .config_value_style(\"style\")\n+                .unwrap_or_else(|| Color::Cyan.bold());\n+            module.set_style(module_style);\n+            module.get_prefix().set_value(\"on \");\n+\n+            module.new_segment(\"symbol\", KUBE_CHAR);\n+            module.new_segment(\"context\", &kube_ctx);\n+            if kube_ns != \"\" {\n+                module.new_segment(\"namespace\", &format!(\" ({})\", kube_ns));\n+            }\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::*;\n+\n+    #[test]\n+    fn parse_empty_config() {\n+        let input = \"\";\n+        let result = get_kube_context(&input);\n+        let expected = None;\n+\n+        assert_eq!(result, expected);\n+    }\n+\n+    #[test]\n+    fn parse_no_config() {\n+        let input = r#\"\n+apiVersion: v1\n+clusters: []\n+contexts: []\n+current-context: \"\"\n+kind: Config\n+preferences: {}\n+users: []\n+\"#;\n+        let result = get_kube_context(&input);\n+        let expected = None;\n+\n+        assert_eq!(result, expected);\n+    }\n+    #[test]\n+    fn parse_only_context() {\n+        let input = r#\"\n+apiVersion: v1\n+clusters: []\n+contexts:\n+- context:\n+    cluster: test_cluster\n+    user: test_user\n+  name: test_context\n+current-context: test_context\n+kind: Config\n+preferences: {}\n+users: []\n+\"#;\n+        let result = get_kube_context(&input);\n+        let expected = Some((\"test_context\".to_string(), \"\".to_string()));\n+\n+        assert_eq!(result, expected);\n+    }\n+\n+    #[test]\n+    fn parse_context_and_ns() {\n+        let input = r#\"\n+apiVersion: v1\n+clusters: []\n+contexts:\n+- context:\n+    cluster: test_cluster\n+    user: test_user\n+    namespace: test_namespace\n+  name: test_context\n+current-context: test_context\n+kind: Config\n+preferences: {}\n+users: []\n+\"#;\n+        let result = get_kube_context(&input);\n+        let expected = Some((\"test_context\".to_string(), \"test_namespace\".to_string()));\n+\n+        assert_eq!(result, expected);\n+    }",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "88e8f37e7f18e435b34100b6f906346b3b1c1b71",
+    "original_commit_id": "5eb85926b22982aaab60a37a25234b6498b906ea",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Have added a test for this and updated the docs.",
+    "created_at": "2019-09-26T16:44:15Z",
+    "updated_at": "2019-10-01T07:04:24Z",
+    "html_url": "https://github.com/starship/starship/pull/404#discussion_r328716928",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/404",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328716928"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/404#discussion_r328716928"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/404"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328716928/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 142,
+    "side": "RIGHT",
+    "in_reply_to_id": 328447418,
+    "author_association": "MEMBER",
+    "original_position": 141,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328734531",
+    "pull_request_review_id": 293882750,
+    "id": 328734531,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODczNDUzMQ==",
+    "diff_hunk": "@@ -0,0 +1,154 @@\n+use ansi_term::Color;\n+use dirs;\n+use yaml_rust::YamlLoader;\n+\n+use std::env;\n+use std::path;\n+\n+use super::{Context, Module};\n+use crate::utils;\n+\n+fn get_kube_context(contents: &str) -> Option<(String, String)> {\n+    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n+    if yaml_docs.is_empty() {\n+        return None;\n+    }\n+    let conf = &yaml_docs[0];\n+\n+    let current_ctx = conf[\"current-context\"].as_str()?;\n+\n+    if current_ctx.is_empty() {\n+        return None;\n+    }\n+\n+    let mut ns = \"\";\n+\n+    if let Some(contexts) = conf[\"contexts\"].as_vec() {\n+        for ctx in contexts {\n+            if ctx[\"name\"].as_str().unwrap_or(\"\") == current_ctx {\n+                ns = ctx[\"context\"][\"namespace\"].as_str().unwrap_or(\"\");\n+                break;\n+            }\n+        }\n+    }",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "88e8f37e7f18e435b34100b6f906346b3b1c1b71",
+    "original_commit_id": "5eb85926b22982aaab60a37a25234b6498b906ea",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'm a bit new to rust, how would I go about doing this?",
+    "created_at": "2019-09-26T17:24:50Z",
+    "updated_at": "2019-10-01T07:04:24Z",
+    "html_url": "https://github.com/starship/starship/pull/404#discussion_r328734531",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/404",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328734531"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/404#discussion_r328734531"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/404"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328734531/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 328445503,
+    "author_association": "MEMBER",
+    "original_position": 33,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328735976",
+    "pull_request_review_id": 293884728,
+    "id": 328735976,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODczNTk3Ng==",
+    "diff_hunk": "@@ -0,0 +1,154 @@\n+use ansi_term::Color;\n+use dirs;\n+use yaml_rust::YamlLoader;\n+\n+use std::env;\n+use std::path;\n+\n+use super::{Context, Module};\n+use crate::utils;\n+\n+fn get_kube_context(contents: &str) -> Option<(String, String)> {\n+    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n+    if yaml_docs.is_empty() {\n+        return None;\n+    }\n+    let conf = &yaml_docs[0];\n+\n+    let current_ctx = conf[\"current-context\"].as_str()?;\n+\n+    if current_ctx.is_empty() {\n+        return None;\n+    }\n+\n+    let mut ns = \"\";\n+\n+    if let Some(contexts) = conf[\"contexts\"].as_vec() {\n+        for ctx in contexts {\n+            if ctx[\"name\"].as_str().unwrap_or(\"\") == current_ctx {\n+                ns = ctx[\"context\"][\"namespace\"].as_str().unwrap_or(\"\");\n+                break;\n+            }\n+        }\n+    }",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "88e8f37e7f18e435b34100b6f906346b3b1c1b71",
+    "original_commit_id": "5eb85926b22982aaab60a37a25234b6498b906ea",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "@andytom Are you familiar with the ideas of folds in other languages?",
+    "created_at": "2019-09-26T17:28:07Z",
+    "updated_at": "2019-10-01T07:04:24Z",
+    "html_url": "https://github.com/starship/starship/pull/404#discussion_r328735976",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/404",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328735976"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/404#discussion_r328735976"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/404"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328735976/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 328445503,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 33,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328738290",
+    "pull_request_review_id": 293887777,
+    "id": 328738290,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODczODI5MA==",
+    "diff_hunk": "@@ -0,0 +1,154 @@\n+use ansi_term::Color;\n+use dirs;\n+use yaml_rust::YamlLoader;\n+\n+use std::env;\n+use std::path;\n+\n+use super::{Context, Module};\n+use crate::utils;\n+\n+fn get_kube_context(contents: &str) -> Option<(String, String)> {\n+    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n+    if yaml_docs.is_empty() {\n+        return None;\n+    }\n+    let conf = &yaml_docs[0];\n+\n+    let current_ctx = conf[\"current-context\"].as_str()?;\n+\n+    if current_ctx.is_empty() {\n+        return None;\n+    }\n+\n+    let mut ns = \"\";\n+\n+    if let Some(contexts) = conf[\"contexts\"].as_vec() {\n+        for ctx in contexts {\n+            if ctx[\"name\"].as_str().unwrap_or(\"\") == current_ctx {\n+                ns = ctx[\"context\"][\"namespace\"].as_str().unwrap_or(\"\");\n+                break;\n+            }\n+        }\n+    }",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "88e8f37e7f18e435b34100b6f906346b3b1c1b71",
+    "original_commit_id": "5eb85926b22982aaab60a37a25234b6498b906ea",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Not really, I've never really explored functional programming.  ",
+    "created_at": "2019-09-26T17:33:18Z",
+    "updated_at": "2019-10-01T07:04:24Z",
+    "html_url": "https://github.com/starship/starship/pull/404#discussion_r328738290",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/404",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328738290"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/404#discussion_r328738290"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/404"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328738290/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 328445503,
+    "author_association": "MEMBER",
+    "original_position": 33,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328741826",
+    "pull_request_review_id": 293892439,
+    "id": 328741826,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODc0MTgyNg==",
+    "diff_hunk": "@@ -0,0 +1,154 @@\n+use ansi_term::Color;\n+use dirs;\n+use yaml_rust::YamlLoader;\n+\n+use std::env;\n+use std::path;\n+\n+use super::{Context, Module};\n+use crate::utils;\n+\n+fn get_kube_context(contents: &str) -> Option<(String, String)> {\n+    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n+    if yaml_docs.is_empty() {\n+        return None;\n+    }\n+    let conf = &yaml_docs[0];\n+\n+    let current_ctx = conf[\"current-context\"].as_str()?;\n+\n+    if current_ctx.is_empty() {\n+        return None;\n+    }\n+\n+    let mut ns = \"\";\n+\n+    if let Some(contexts) = conf[\"contexts\"].as_vec() {\n+        for ctx in contexts {\n+            if ctx[\"name\"].as_str().unwrap_or(\"\") == current_ctx {\n+                ns = ctx[\"context\"][\"namespace\"].as_str().unwrap_or(\"\");\n+                break;\n+            }\n+        }\n+    }",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "88e8f37e7f18e435b34100b6f906346b3b1c1b71",
+    "original_commit_id": "5eb85926b22982aaab60a37a25234b6498b906ea",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "can't get it to compile and have to go but something like this?\r\n```\r\n    let ns: Option<&str> = conf[\"contexts\"].as_vec().and_then(|contexts| {\r\n        contexts\r\n            .iter()\r\n            .filter(|ctx| ctx[\"name\"].as_str().unwrap_or(\"\") == current_ctx)\r\n            .map(|ctx| ctx[\"context\"][\"namespace\"].as_str().unwrap_or(\"\"))\r\n            .collect()\r\n            .get(0)\r\n    });\r\n```",
+    "created_at": "2019-09-26T17:41:33Z",
+    "updated_at": "2019-10-01T07:04:24Z",
+    "html_url": "https://github.com/starship/starship/pull/404#discussion_r328741826",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/404",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328741826"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/404#discussion_r328741826"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/404"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328741826/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 328445503,
+    "author_association": "NONE",
+    "original_position": 33,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328796041",
+    "pull_request_review_id": 293963997,
+    "id": 328796041,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODc5NjA0MQ==",
+    "diff_hunk": "@@ -0,0 +1,154 @@\n+use ansi_term::Color;\n+use dirs;\n+use yaml_rust::YamlLoader;\n+\n+use std::env;\n+use std::path;\n+\n+use super::{Context, Module};\n+use crate::utils;\n+\n+fn get_kube_context(contents: &str) -> Option<(String, String)> {\n+    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n+    if yaml_docs.is_empty() {\n+        return None;\n+    }\n+    let conf = &yaml_docs[0];\n+\n+    let current_ctx = conf[\"current-context\"].as_str()?;\n+\n+    if current_ctx.is_empty() {\n+        return None;\n+    }\n+\n+    let mut ns = \"\";\n+\n+    if let Some(contexts) = conf[\"contexts\"].as_vec() {\n+        for ctx in contexts {\n+            if ctx[\"name\"].as_str().unwrap_or(\"\") == current_ctx {\n+                ns = ctx[\"context\"][\"namespace\"].as_str().unwrap_or(\"\");\n+                break;\n+            }\n+        }\n+    }",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "88e8f37e7f18e435b34100b6f906346b3b1c1b71",
+    "original_commit_id": "5eb85926b22982aaab60a37a25234b6498b906ea",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Okay I played a bit more with it and I think it should be like this\r\n```\r\nfn get_kube_context(contents: &str) -> Option<(&str, Option<&str>)> {\r\n    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\r\n    yaml_docs.first().and_then(|conf| {\r\n        conf[\"current-context\"].as_str().and_then(|ctx|\r\n            if ctx.is_empty() {\r\n                None\r\n            } else {\r\n                Some(ctx)\r\n            }\r\n        ).map(|current_ctx|{\r\n            (current_ctx, conf[\"contexts\"].as_vec().and_then(|contexts| {\r\n                contexts\r\n                    .iter()\r\n                    .filter(|ctx| ctx[\"name\"].as_str().unwrap_or(\"\") == current_ctx)\r\n                    .map(|ctx| ctx[\"context\"][\"namespace\"].as_str().unwrap_or(\"\"))\r\n                    .last()\r\n            }))\r\n        })\r\n    })\r\n}\r\n```\r\nRationale for changing the signature: I would like it to show the context even if I didn't set the namespace. I hope you can still read it 😬 ",
+    "created_at": "2019-09-26T19:50:50Z",
+    "updated_at": "2019-10-01T07:04:24Z",
+    "html_url": "https://github.com/starship/starship/pull/404#discussion_r328796041",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/404",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328796041"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/404#discussion_r328796041"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/404"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328796041/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 328445503,
+    "author_association": "NONE",
+    "original_position": 33,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328902556",
+    "pull_request_review_id": 294100528,
+    "id": 328902556,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODkwMjU1Ng==",
+    "diff_hunk": "@@ -0,0 +1,154 @@\n+use ansi_term::Color;\n+use dirs;\n+use yaml_rust::YamlLoader;\n+\n+use std::env;\n+use std::path;\n+\n+use super::{Context, Module};\n+use crate::utils;\n+\n+fn get_kube_context(contents: &str) -> Option<(String, String)> {\n+    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n+    if yaml_docs.is_empty() {\n+        return None;\n+    }\n+    let conf = &yaml_docs[0];\n+\n+    let current_ctx = conf[\"current-context\"].as_str()?;\n+\n+    if current_ctx.is_empty() {\n+        return None;\n+    }\n+\n+    let mut ns = \"\";\n+\n+    if let Some(contexts) = conf[\"contexts\"].as_vec() {\n+        for ctx in contexts {\n+            if ctx[\"name\"].as_str().unwrap_or(\"\") == current_ctx {\n+                ns = ctx[\"context\"][\"namespace\"].as_str().unwrap_or(\"\");\n+                break;\n+            }\n+        }\n+    }",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "88e8f37e7f18e435b34100b6f906346b3b1c1b71",
+    "original_commit_id": "5eb85926b22982aaab60a37a25234b6498b906ea",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Hmm, Is this simpler?\r\n\r\n```\r\n    let ns = conf[\"contexts\"]\r\n        .as_vec()\r\n        .and_then(|contexts| {\r\n            contexts\r\n                .iter()\r\n                .filter_map(|ctx| Some((ctx, ctx[\"name\"].as_str()?)))\r\n                .find(|(_, name)| *name == current_ctx)\r\n                .and_then(|(ctx, _)| ctx[\"context\"][\"namespace\"].as_str())\r\n        })\r\n        .unwrap_or(\"\");\r\n```",
+    "created_at": "2019-09-27T03:36:47Z",
+    "updated_at": "2019-10-01T07:04:24Z",
+    "html_url": "https://github.com/starship/starship/pull/404#discussion_r328902556",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/404",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328902556"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/404#discussion_r328902556"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/404"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328902556/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 328445503,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 33,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/328951241",
+    "pull_request_review_id": 294163126,
+    "id": 328951241,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyODk1MTI0MQ==",
+    "diff_hunk": "@@ -0,0 +1,154 @@\n+use ansi_term::Color;\n+use dirs;\n+use yaml_rust::YamlLoader;\n+\n+use std::env;\n+use std::path;\n+\n+use super::{Context, Module};\n+use crate::utils;\n+\n+fn get_kube_context(contents: &str) -> Option<(String, String)> {\n+    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n+    if yaml_docs.is_empty() {\n+        return None;\n+    }\n+    let conf = &yaml_docs[0];\n+\n+    let current_ctx = conf[\"current-context\"].as_str()?;\n+\n+    if current_ctx.is_empty() {\n+        return None;\n+    }\n+\n+    let mut ns = \"\";\n+\n+    if let Some(contexts) = conf[\"contexts\"].as_vec() {\n+        for ctx in contexts {\n+            if ctx[\"name\"].as_str().unwrap_or(\"\") == current_ctx {\n+                ns = ctx[\"context\"][\"namespace\"].as_str().unwrap_or(\"\");\n+                break;\n+            }\n+        }\n+    }",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "88e8f37e7f18e435b34100b6f906346b3b1c1b71",
+    "original_commit_id": "5eb85926b22982aaab60a37a25234b6498b906ea",
+    "user": {
+      "login": "bijancn",
+      "id": 2117164,
+      "node_id": "MDQ6VXNlcjIxMTcxNjQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2117164?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/bijancn",
+      "html_url": "https://github.com/bijancn",
+      "followers_url": "https://api.github.com/users/bijancn/followers",
+      "following_url": "https://api.github.com/users/bijancn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/bijancn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/bijancn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/bijancn/subscriptions",
+      "organizations_url": "https://api.github.com/users/bijancn/orgs",
+      "repos_url": "https://api.github.com/users/bijancn/repos",
+      "events_url": "https://api.github.com/users/bijancn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/bijancn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "We could also just merge this PR when its formatted and then I try to refine the module and ask you two for review :)",
+    "created_at": "2019-09-27T07:50:41Z",
+    "updated_at": "2019-10-01T07:04:24Z",
+    "html_url": "https://github.com/starship/starship/pull/404#discussion_r328951241",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/404",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/328951241"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/404#discussion_r328951241"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/404"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/328951241/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 328445503,
+    "author_association": "NONE",
+    "original_position": 33,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/329085409",
+    "pull_request_review_id": 294343697,
+    "id": 329085409,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyOTA4NTQwOQ==",
+    "diff_hunk": "@@ -0,0 +1,154 @@\n+use ansi_term::Color;\n+use dirs;\n+use yaml_rust::YamlLoader;\n+\n+use std::env;\n+use std::path;\n+\n+use super::{Context, Module};\n+use crate::utils;\n+\n+fn get_kube_context(contents: &str) -> Option<(String, String)> {\n+    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n+    if yaml_docs.is_empty() {\n+        return None;\n+    }\n+    let conf = &yaml_docs[0];\n+\n+    let current_ctx = conf[\"current-context\"].as_str()?;\n+\n+    if current_ctx.is_empty() {\n+        return None;\n+    }\n+\n+    let mut ns = \"\";\n+\n+    if let Some(contexts) = conf[\"contexts\"].as_vec() {\n+        for ctx in contexts {\n+            if ctx[\"name\"].as_str().unwrap_or(\"\") == current_ctx {\n+                ns = ctx[\"context\"][\"namespace\"].as_str().unwrap_or(\"\");\n+                break;\n+            }\n+        }\n+    }",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "88e8f37e7f18e435b34100b6f906346b3b1c1b71",
+    "original_commit_id": "5eb85926b22982aaab60a37a25234b6498b906ea",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "@bijancn and @nickwb thanks for the pointers I'll try to add this in later today and update the PR.",
+    "created_at": "2019-09-27T13:58:47Z",
+    "updated_at": "2019-10-01T07:04:24Z",
+    "html_url": "https://github.com/starship/starship/pull/404#discussion_r329085409",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/404",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/329085409"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/404#discussion_r329085409"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/404"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/329085409/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 35,
+    "side": "RIGHT",
+    "in_reply_to_id": 328445503,
+    "author_association": "MEMBER",
+    "original_position": 33,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/329418708",
+    "pull_request_review_id": 294763362,
+    "id": 329418708,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyOTQxODcwOA==",
+    "diff_hunk": "@@ -528,6 +529,35 @@ symbol = \"+ \"\n threshold = 4\n ```\n \n+\n+## Kubernetes\n+\n+Displays the current Kubernetes context name and, if set, the namespace from\n+the kubeconfig file. The namespace needs to be set in the kubeconfig file, this\n+can be done via `kubectl config set-context starship-cluster --namespace\n+astronaut`. If the `$KUBECONFIG` env var is set the module will use that if\n+not it will use the `~/.kube/config`.\n+\n+### Options\n+\n+| Variable   | Default       | Description                                         |",
+    "path": "docs/config/README.md",
+    "commit_id": "88e8f37e7f18e435b34100b6f906346b3b1c1b71",
+    "original_commit_id": "dbafb4afed9bf0abe852338dbef83a6d1de1f491",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Total nitpick:\r\n\r\nThe \"Options\" tables usually end with style and disabled for consistency.\r\nCould you please reorder them?",
+    "created_at": "2019-09-30T06:04:52Z",
+    "updated_at": "2019-10-01T07:04:24Z",
+    "html_url": "https://github.com/starship/starship/pull/404#discussion_r329418708",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/404",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/329418708"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/404#discussion_r329418708"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/404"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/329418708/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 543,
+    "original_line": 543,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 23,
+    "position": 23,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/329418862",
+    "pull_request_review_id": 294763362,
+    "id": 329418862,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyOTQxODg2Mg==",
+    "diff_hunk": "@@ -528,6 +529,35 @@ symbol = \"+ \"\n threshold = 4\n ```\n \n+\n+## Kubernetes\n+\n+Displays the current Kubernetes context name and, if set, the namespace from\n+the kubeconfig file. The namespace needs to be set in the kubeconfig file, this\n+can be done via `kubectl config set-context starship-cluster --namespace\n+astronaut`. If the `$KUBECONFIG` env var is set the module will use that if\n+not it will use the `~/.kube/config`.\n+\n+### Options\n+\n+| Variable   | Default       | Description                                         |\n+| ---------- | ------------- | --------------------------------------------------- |\n+| `disabled` | `false`       | Disables the `kubernetes` module                    |\n+| `style`    | `\"bold blue\"` | The style for the module.                           |\n+| `symbol`   | `\"☸ \"`       | The symbol used before displaying the Cluster info. |\n+\n+### Example\n+\n+```toml\n+# ~/.config/starship.toml\n+\n+[kubernetes]",
+    "path": "docs/config/README.md",
+    "commit_id": "88e8f37e7f18e435b34100b6f906346b3b1c1b71",
+    "original_commit_id": "dbafb4afed9bf0abe852338dbef83a6d1de1f491",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "👈 Same here. ",
+    "created_at": "2019-09-30T06:05:52Z",
+    "updated_at": "2019-10-01T07:04:24Z",
+    "html_url": "https://github.com/starship/starship/pull/404#discussion_r329418862",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/404",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/329418862"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/404#discussion_r329418862"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/404"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/329418862/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 554,
+    "original_line": 554,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 34,
+    "position": 34,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/329419391",
+    "pull_request_review_id": 294763362,
+    "id": 329419391,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyOTQxOTM5MQ==",
+    "diff_hunk": "@@ -0,0 +1,181 @@\n+use ansi_term::Color;\n+use dirs;\n+use yaml_rust::YamlLoader;\n+\n+use std::env;\n+use std::path;\n+\n+use super::{Context, Module};\n+use crate::utils;\n+\n+const KUBE_CHAR: &str = \"☸ \";\n+\n+fn get_kube_context(contents: &str) -> Option<(String, String)> {\n+    let yaml_docs = YamlLoader::load_from_str(&contents).ok()?;\n+    if yaml_docs.is_empty() {\n+        return None;\n+    }\n+    let conf = &yaml_docs[0];\n+\n+    let current_ctx = conf[\"current-context\"].as_str()?;\n+\n+    if current_ctx.is_empty() {\n+        return None;\n+    }\n+\n+    let ns = conf[\"contexts\"]\n+        .as_vec()\n+        .and_then(|contexts| {\n+            contexts\n+                .iter()\n+                .filter_map(|ctx| Some((ctx, ctx[\"name\"].as_str()?)))\n+                .find(|(_, name)| *name == current_ctx)\n+                .and_then(|(ctx, _)| ctx[\"context\"][\"namespace\"].as_str())\n+        })\n+        .unwrap_or(\"\");\n+\n+    Some((current_ctx.to_string(), ns.to_string()))\n+}\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let filename = match env::var(\"KUBECONFIG\") {\n+        Ok(path) => path::PathBuf::from(path),\n+        Err(_) => dirs::home_dir()?.join(\".kube\").join(\"config\"),\n+    };\n+\n+    let contents = utils::read_file(filename).ok()?;\n+\n+    match get_kube_context(&contents) {\n+        Some(kube_cfg) => {\n+            let (kube_ctx, kube_ns) = kube_cfg;\n+\n+            let mut module = context.new_module(\"kubernetes\");\n+\n+            let module_style = module\n+                .config_value_style(\"style\")\n+                .unwrap_or_else(|| Color::Cyan.bold());\n+            module.set_style(module_style);\n+            module.get_prefix().set_value(\"on \");\n+\n+            module.new_segment(\"symbol\", KUBE_CHAR);\n+            module.new_segment(\"context\", &kube_ctx);\n+            if kube_ns != \"\" {\n+                module.new_segment(\"namespace\", &format!(\" ({})\", kube_ns));\n+            }\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use super::*;\n+\n+    #[test]\n+    fn parse_empty_config() {\n+        let input = \"\";\n+        let result = get_kube_context(&input);\n+        let expected = None;\n+\n+        assert_eq!(result, expected);\n+    }\n+\n+    #[test]\n+    fn parse_no_config() {\n+        let input = r#\"\n+apiVersion: v1\n+clusters: []\n+contexts: []\n+current-context: \"\"\n+kind: Config\n+preferences: {}\n+users: []\n+\"#;\n+        let result = get_kube_context(&input);\n+        let expected = None;\n+\n+        assert_eq!(result, expected);\n+    }",
+    "path": "src/modules/kubernetes.rs",
+    "commit_id": "88e8f37e7f18e435b34100b6f906346b3b1c1b71",
+    "original_commit_id": "dbafb4afed9bf0abe852338dbef83a6d1de1f491",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Nitpick: looks like we're missing a newline between tests here. 😅 \r\n\r\n```suggestion\r\n    }\r\n    \r\n```",
+    "created_at": "2019-09-30T06:08:55Z",
+    "updated_at": "2019-10-01T07:04:24Z",
+    "html_url": "https://github.com/starship/starship/pull/404#discussion_r329419391",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/404",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/329419391"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/404#discussion_r329419391"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/404"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/329419391/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 99,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 99,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

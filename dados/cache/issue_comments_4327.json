@@ -1,0 +1,48 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/issues/comments/1515551080",
+    "html_url": "https://github.com/starship/starship/issues/4327#issuecomment-1515551080",
+    "issue_url": "https://api.github.com/repos/starship/starship/issues/4327",
+    "id": 1515551080,
+    "node_id": "IC_kwDOCqswNs5aVXlo",
+    "user": {
+      "login": "Ajpantuso",
+      "id": 13701161,
+      "node_id": "MDQ6VXNlcjEzNzAxMTYx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13701161?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Ajpantuso",
+      "html_url": "https://github.com/Ajpantuso",
+      "followers_url": "https://api.github.com/users/Ajpantuso/followers",
+      "following_url": "https://api.github.com/users/Ajpantuso/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Ajpantuso/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Ajpantuso/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Ajpantuso/subscriptions",
+      "organizations_url": "https://api.github.com/users/Ajpantuso/orgs",
+      "repos_url": "https://api.github.com/users/Ajpantuso/repos",
+      "events_url": "https://api.github.com/users/Ajpantuso/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Ajpantuso/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "created_at": "2023-04-20T00:36:27Z",
+    "updated_at": "2023-04-20T00:36:27Z",
+    "body": "To be precise about the issue the outer style should not have altered the `background` of the inner styles since the inner styles take precedence as a whole i.e. the `background` component cannot be added in isolation from the outer scope.\r\n\r\nWhat is definitely an issue however is that the style variables are not being applied when the outer style exists hence the default \"white on black\" style observed by the OP.\r\n\r\nThis is reproducible with an additional test in [string_formatter.rs](https://github.com/starship/starship/blob/4880201e5eead0a82decb2a0e4693e221eff5a21/src/formatter/string_formatter.rs)\r\n\r\n```rust\r\n    fn test_style_variable_nested() {\r\n        const FORMAT_STR: &str = \"[[text]($style)](blue)\";\r\n        let inner_style = Some(Color::Red.bold());\r\n\r\n        let formatter = StringFormatter::new(FORMAT_STR)\r\n            .unwrap()\r\n            .map_style(|variable| match variable {\r\n                \"style\" => Some(Ok(\"red bold\".to_owned())),\r\n                _ => None,\r\n            });\r\n        let result = formatter.parse(None, None).unwrap();\r\n        let mut result_iter = result.iter();\r\n        match_next!(result_iter, \"text\", inner_style);\r\n    }\r\n```\r\n\r\nThe test fails because the resulting style for `\"text\"` is empty  after parsing.\r\n\r\nI'll see if I can find a reason for this.",
+    "author_association": "CONTRIBUTOR",
+    "pin": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/issues/comments/1515551080/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "performed_via_github_app": null
+  }
+]

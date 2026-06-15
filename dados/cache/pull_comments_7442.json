@@ -1,0 +1,278 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3178415387",
+    "pull_request_review_id": 4216545178,
+    "id": 3178415387,
+    "node_id": "PRRC_kwDOCqswNs69csUb",
+    "diff_hunk": "@@ -365,17 +365,18 @@ To use Starship as your Claude Code statusline:\n \n When invoked with `starship statusline claude-code`, Starship receives Claude Code session data via stdin and renders a statusline using a dedicated profile named `claude-code`.\n \n-The profile includes three specialized modules:\n+The profile includes four specialized modules:",
+    "path": "docs/advanced-config/README.md",
+    "commit_id": "1b9875e3d9cf531fa20d13063c7c4f4055b9b67d",
+    "original_commit_id": "1b9875e3d9cf531fa20d13063c7c4f4055b9b67d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\nThe profile includes some specialized modules:\n```",
+    "created_at": "2026-05-03T16:33:29Z",
+    "updated_at": "2026-05-22T18:00:12Z",
+    "html_url": "https://github.com/starship/starship/pull/7442#discussion_r3178415387",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7442",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3178415387"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7442#discussion_r3178415387"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7442"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3178415387/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 368,
+    "original_line": 368,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 5,
+    "position": 5,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3178418124",
+    "pull_request_review_id": 4216545178,
+    "id": 3178418124,
+    "node_id": "PRRC_kwDOCqswNs69cs_M",
+    "diff_hunk": "@@ -0,0 +1,252 @@\n+use std::time::{SystemTime, UNIX_EPOCH};\n+\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::claude_usage::ClaudeUsageConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"claude_usage\");\n+    let config = ClaudeUsageConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    let claude_data = context.claude_code_data.as_ref()?;\n+    let rate_limits = claude_data.rate_limits.as_ref()?;\n+\n+    let five_hour_pct = rate_limits.five_hour.used_percentage;\n+    let seven_day_pct = rate_limits.seven_day.used_percentage;\n+    let max_pct = five_hour_pct.max(seven_day_pct);\n+\n+    let display_style = config\n+        .display\n+        .iter()\n+        .filter(|s| max_pct >= s.threshold)\n+        .max_by(|a, b| {\n+            a.threshold\n+                .partial_cmp(&b.threshold)\n+                .unwrap_or(std::cmp::Ordering::Equal)\n+        });\n+\n+    if display_style.is_some_and(|s| s.hidden) {\n+        return None;\n+    }\n+\n+    let display_style = display_style?;\n+\n+    let now_secs = SystemTime::now()\n+        .duration_since(UNIX_EPOCH)\n+        .unwrap_or_default()\n+        .as_secs();\n+\n+    let five_hour_reset = format_duration(rate_limits.five_hour.resets_at.saturating_sub(now_secs));\n+    let seven_day_reset = format_duration(rate_limits.seven_day.resets_at.saturating_sub(now_secs));\n+\n+    let five_hour_pct_str = format!(\"{:.0}\", five_hour_pct);\n+    let seven_day_pct_str = format!(\"{:.0}\", seven_day_pct);\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(display_style.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"five_hour_pct\" => Some(Ok(five_hour_pct_str.as_str())),\n+                \"five_hour_reset\" => Some(Ok(five_hour_reset.as_str())),\n+                \"seven_day_pct\" => Some(Ok(seven_day_pct_str.as_str())),\n+                \"seven_day_reset\" => Some(Ok(seven_day_reset.as_str())),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `claude_usage`: {error}\");\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn format_duration(secs: u64) -> String {",
+    "path": "src/modules/claude_usage.rs",
+    "commit_id": "1b9875e3d9cf531fa20d13063c7c4f4055b9b67d",
+    "original_commit_id": "1b9875e3d9cf531fa20d13063c7c4f4055b9b67d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please re-use utilities from cmd_duration.",
+    "created_at": "2026-05-03T16:35:42Z",
+    "updated_at": "2026-05-22T18:00:12Z",
+    "html_url": "https://github.com/starship/starship/pull/7442#discussion_r3178418124",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7442",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3178418124"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7442#discussion_r3178418124"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7442"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3178418124/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 76,
+    "original_line": 76,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 76,
+    "position": 76,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3254425814",
+    "pull_request_review_id": 4216545178,
+    "id": 3254425814,
+    "node_id": "PRRC_kwDOCqswNs7B-pjW",
+    "diff_hunk": "@@ -0,0 +1,43 @@\n+use serde::{Deserialize, Serialize};\n+\n+use crate::configs::claude_context::ClaudeDisplayConfig;\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct ClaudeUsageConfig<'a> {\n+    pub format: &'a str,\n+    #[serde(borrow)]\n+    pub display: Vec<ClaudeDisplayConfig<'a>>,\n+    pub disabled: bool,\n+}\n+\n+impl Default for ClaudeUsageConfig<'_> {\n+    fn default() -> Self {\n+        Self {\n+            format: \"[$five_hour_pct% \\\\(resets in $five_hour_reset\\\\)  $seven_day_pct% \\\\(resets in $seven_day_reset\\\\)]($style) \",",
+    "path": "src/configs/claude_usage.rs",
+    "commit_id": "1b9875e3d9cf531fa20d13063c7c4f4055b9b67d",
+    "original_commit_id": "1b9875e3d9cf531fa20d13063c7c4f4055b9b67d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I feel like it should be possible to (optionally) only show the 5h/7d limits if depending on their values.\n```suggestion\n            format: \"[($five_hour_pct% \\\\(resets in $five_hour_reset\\\\)  )($seven_day_pct% \\\\(resets in $seven_day_reset\\\\)]($style) )\",\n```",
+    "created_at": "2026-05-17T09:49:55Z",
+    "updated_at": "2026-05-22T18:00:12Z",
+    "html_url": "https://github.com/starship/starship/pull/7442#discussion_r3254425814",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7442",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3254425814"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7442#discussion_r3254425814"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7442"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3254425814/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 22,
+    "original_line": 22,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 22,
+    "position": 22,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3254427377",
+    "pull_request_review_id": 4216545178,
+    "id": 3254427377,
+    "node_id": "PRRC_kwDOCqswNs7B-p7x",
+    "diff_hunk": "@@ -0,0 +1,252 @@\n+use std::time::{SystemTime, UNIX_EPOCH};\n+\n+use super::{Context, Module, ModuleConfig};\n+use crate::configs::claude_usage::ClaudeUsageConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"claude_usage\");\n+    let config = ClaudeUsageConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    }\n+",
+    "path": "src/modules/claude_usage.rs",
+    "commit_id": "1b9875e3d9cf531fa20d13063c7c4f4055b9b67d",
+    "original_commit_id": "1b9875e3d9cf531fa20d13063c7c4f4055b9b67d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This is only necessary if disabled by default:\n```suggestion\n```",
+    "created_at": "2026-05-17T09:51:10Z",
+    "updated_at": "2026-05-22T18:00:12Z",
+    "html_url": "https://github.com/starship/starship/pull/7442#discussion_r3254427377",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7442",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3254427377"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7442#discussion_r3254427377"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7442"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3254427377/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 11,
+    "original_start_line": 11,
+    "start_side": "RIGHT",
+    "line": 14,
+    "original_line": 14,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 14,
+    "position": 14,
+    "subject_type": "line"
+  }
+]

@@ -1,0 +1,48 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/issues/comments/1633135654",
+    "html_url": "https://github.com/starship/starship/issues/3831#issuecomment-1633135654",
+    "issue_url": "https://api.github.com/repos/starship/starship/issues/3831",
+    "id": 1633135654,
+    "node_id": "IC_kwDOCqswNs5hV6wm",
+    "user": {
+      "login": "mtalexan",
+      "id": 7081950,
+      "node_id": "MDQ6VXNlcjcwODE5NTA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7081950?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mtalexan",
+      "html_url": "https://github.com/mtalexan",
+      "followers_url": "https://api.github.com/users/mtalexan/followers",
+      "following_url": "https://api.github.com/users/mtalexan/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mtalexan/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mtalexan/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mtalexan/subscriptions",
+      "organizations_url": "https://api.github.com/users/mtalexan/orgs",
+      "repos_url": "https://api.github.com/users/mtalexan/repos",
+      "events_url": "https://api.github.com/users/mtalexan/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mtalexan/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "created_at": "2023-07-12T20:05:11Z",
+    "updated_at": "2023-07-12T20:06:34Z",
+    "body": "In terms of underlying implementation, it seems conditional decisions are based on a single pass of resolving variables and then checking whether the resulting string is empty or not, and sets the output to `None` if it is.  Obviously that will never be true for `$all` unless (maybe) every module is already listed in the `format` or `right_format`.  \r\n\r\nIt seems like there should be a separate function for each variable that is queried to see if the variable is considered \"set\" for the purposes of conditionals, rather than relying on the string length.  That would be necessary for things like `$linebreak` to work as expected (act the same as `\\n`) or for [this proposal](https://github.com/starship/starship/issues/5307) and avoid triggering the conditional even though it contains a variable that evaluates to a non-empty string.\r\n\r\nThe `$all` variable would do the recursive conditional check of its own for the variables it contains, while most variables could just return true if their strings are non-empty.",
+    "author_association": "NONE",
+    "pin": null,
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/issues/comments/1633135654/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "performed_via_github_app": null
+  }
+]

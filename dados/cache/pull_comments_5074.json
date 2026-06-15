@@ -1,0 +1,351 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1161120344",
+    "pull_request_review_id": 1376770900,
+    "id": 1161120344,
+    "node_id": "PRRC_kwDOCqswNs5FNUpY",
+    "diff_hunk": "@@ -1,54 +1,17 @@\n-use nix::sys::stat::Mode;\n-use nix::unistd::{Gid, Uid};\n-use std::fs;\n-use std::os::unix::fs::MetadataExt;\n-use std::os::unix::fs::PermissionsExt;\n+use nix::errno::Errno::ENOENT;\n+use nix::unistd::access;\n+use nix::unistd::AccessFlags;\n use std::path::Path;\n \n /// Checks if the current user can write to the `folder_path`.\n-///\n-/// It extracts Unix access rights from the directory and checks whether\n-/// 1) the current user is the owner of the directory and whether it has the write access\n-/// 2) the current user's primary group is the directory group owner whether if it has write access\n-/// 2a) (not implemented on macOS) one of the supplementary groups of the current user is the\n-/// directory group owner and whether it has write access\n-/// 3) 'others' part of the access mask has the write access\n-#[allow(clippy::useless_conversion)] // On some platforms it is not u32\n pub fn is_write_allowed(folder_path: &Path) -> Result<bool, String> {\n-    let meta =\n-        fs::metadata(folder_path).map_err(|e| format!(\"Unable to stat() directory: {e:?}\"))?;\n-    let perms = meta.permissions().mode();\n-\n-    let euid = Uid::effective();\n-    if euid.is_root() {\n-        return Ok(true);\n-    }\n-\n-    if meta.uid() == euid.as_raw() {\n-        Ok(perms & u32::from(Mode::S_IWUSR.bits()) != 0)\n-    } else if (meta.gid() == Gid::effective().as_raw())\n-        || (get_supplementary_groups().contains(&meta.gid()))\n-    {\n-        Ok(perms & u32::from(Mode::S_IWGRP.bits()) != 0)\n-    } else {\n-        Ok(perms & u32::from(Mode::S_IWOTH.bits()) != 0)\n-    }\n-}\n-\n-#[cfg(all(unix, not(any(target_os = \"macos\", target_os = \"ios\"))))]\n-fn get_supplementary_groups() -> Vec<u32> {\n-    match nix::unistd::getgroups() {\n-        Err(_) => Vec::new(),\n-        Ok(v) => v.into_iter().map(nix::unistd::Gid::as_raw).collect(),\n+    match access(folder_path, AccessFlags::W_OK) {",
+    "path": "src/modules/utils/directory_nix.rs",
+    "commit_id": "ff388cab8aa524a3e2f3f994971f98b725960366",
+    "original_commit_id": "20207d3598c2205d376f5354bc00d247af7ed3e3",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Where did the previous implementation have issues? Also, I feel like `eaccess` should be used instead.",
+    "created_at": "2023-04-08T14:42:10Z",
+    "updated_at": "2023-04-08T14:42:11Z",
+    "html_url": "https://github.com/starship/starship/pull/5074#discussion_r1161120344",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5074",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1161120344"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5074#discussion_r1161120344"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5074"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1161120344/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 8,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 46,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1161128615",
+    "pull_request_review_id": 1376778791,
+    "id": 1161128615,
+    "node_id": "PRRC_kwDOCqswNs5FNWqn",
+    "diff_hunk": "@@ -1,54 +1,17 @@\n-use nix::sys::stat::Mode;\n-use nix::unistd::{Gid, Uid};\n-use std::fs;\n-use std::os::unix::fs::MetadataExt;\n-use std::os::unix::fs::PermissionsExt;\n+use nix::errno::Errno::ENOENT;\n+use nix::unistd::access;\n+use nix::unistd::AccessFlags;\n use std::path::Path;\n \n /// Checks if the current user can write to the `folder_path`.\n-///\n-/// It extracts Unix access rights from the directory and checks whether\n-/// 1) the current user is the owner of the directory and whether it has the write access\n-/// 2) the current user's primary group is the directory group owner whether if it has write access\n-/// 2a) (not implemented on macOS) one of the supplementary groups of the current user is the\n-/// directory group owner and whether it has write access\n-/// 3) 'others' part of the access mask has the write access\n-#[allow(clippy::useless_conversion)] // On some platforms it is not u32\n pub fn is_write_allowed(folder_path: &Path) -> Result<bool, String> {\n-    let meta =\n-        fs::metadata(folder_path).map_err(|e| format!(\"Unable to stat() directory: {e:?}\"))?;\n-    let perms = meta.permissions().mode();\n-\n-    let euid = Uid::effective();\n-    if euid.is_root() {\n-        return Ok(true);\n-    }\n-\n-    if meta.uid() == euid.as_raw() {\n-        Ok(perms & u32::from(Mode::S_IWUSR.bits()) != 0)\n-    } else if (meta.gid() == Gid::effective().as_raw())\n-        || (get_supplementary_groups().contains(&meta.gid()))\n-    {\n-        Ok(perms & u32::from(Mode::S_IWGRP.bits()) != 0)\n-    } else {\n-        Ok(perms & u32::from(Mode::S_IWOTH.bits()) != 0)\n-    }\n-}\n-\n-#[cfg(all(unix, not(any(target_os = \"macos\", target_os = \"ios\"))))]\n-fn get_supplementary_groups() -> Vec<u32> {\n-    match nix::unistd::getgroups() {\n-        Err(_) => Vec::new(),\n-        Ok(v) => v.into_iter().map(nix::unistd::Gid::as_raw).collect(),\n+    match access(folder_path, AccessFlags::W_OK) {",
+    "path": "src/modules/utils/directory_nix.rs",
+    "commit_id": "ff388cab8aa524a3e2f3f994971f98b725960366",
+    "original_commit_id": "20207d3598c2205d376f5354bc00d247af7ed3e3",
+    "user": {
+      "login": "guoci",
+      "id": 1260178,
+      "node_id": "MDQ6VXNlcjEyNjAxNzg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1260178?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/guoci",
+      "html_url": "https://github.com/guoci",
+      "followers_url": "https://api.github.com/users/guoci/followers",
+      "following_url": "https://api.github.com/users/guoci/following{/other_user}",
+      "gists_url": "https://api.github.com/users/guoci/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/guoci/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/guoci/subscriptions",
+      "organizations_url": "https://api.github.com/users/guoci/orgs",
+      "repos_url": "https://api.github.com/users/guoci/repos",
+      "events_url": "https://api.github.com/users/guoci/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/guoci/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I had issues where a directory is writable but that function determined it was not writable. That directory is mounted by `sshfs`.\r\nIt is easy to switch to `eaccess` or `faccessat` with `AT_EACCESS` flag. Both of them have some unsupported `target_os` or `target_env`.\r\nhttps://github.com/nix-rust/nix/blob/master/src/fcntl.rs#L26-L38\r\nhttps://github.com/nix-rust/nix/blob/master/src/unistd.rs#L3418\r\nWhy do we need effective ids for this use case?",
+    "created_at": "2023-04-08T16:02:33Z",
+    "updated_at": "2023-04-08T16:02:33Z",
+    "html_url": "https://github.com/starship/starship/pull/5074#discussion_r1161128615",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5074",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1161128615"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5074#discussion_r1161128615"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5074"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1161128615/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 8,
+    "side": "RIGHT",
+    "in_reply_to_id": 1161120344,
+    "author_association": "NONE",
+    "original_position": 46,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1161637788",
+    "pull_request_review_id": 1377400595,
+    "id": 1161637788,
+    "node_id": "PRRC_kwDOCqswNs5FPS-c",
+    "diff_hunk": "@@ -1,54 +1,17 @@\n-use nix::sys::stat::Mode;\n-use nix::unistd::{Gid, Uid};\n-use std::fs;\n-use std::os::unix::fs::MetadataExt;\n-use std::os::unix::fs::PermissionsExt;\n+use nix::errno::Errno::ENOENT;\n+use nix::unistd::access;\n+use nix::unistd::AccessFlags;\n use std::path::Path;\n \n /// Checks if the current user can write to the `folder_path`.\n-///\n-/// It extracts Unix access rights from the directory and checks whether\n-/// 1) the current user is the owner of the directory and whether it has the write access\n-/// 2) the current user's primary group is the directory group owner whether if it has write access\n-/// 2a) (not implemented on macOS) one of the supplementary groups of the current user is the\n-/// directory group owner and whether it has write access\n-/// 3) 'others' part of the access mask has the write access\n-#[allow(clippy::useless_conversion)] // On some platforms it is not u32\n pub fn is_write_allowed(folder_path: &Path) -> Result<bool, String> {\n-    let meta =\n-        fs::metadata(folder_path).map_err(|e| format!(\"Unable to stat() directory: {e:?}\"))?;\n-    let perms = meta.permissions().mode();\n-\n-    let euid = Uid::effective();\n-    if euid.is_root() {\n-        return Ok(true);\n-    }\n-\n-    if meta.uid() == euid.as_raw() {\n-        Ok(perms & u32::from(Mode::S_IWUSR.bits()) != 0)\n-    } else if (meta.gid() == Gid::effective().as_raw())\n-        || (get_supplementary_groups().contains(&meta.gid()))\n-    {\n-        Ok(perms & u32::from(Mode::S_IWGRP.bits()) != 0)\n-    } else {\n-        Ok(perms & u32::from(Mode::S_IWOTH.bits()) != 0)\n-    }\n-}\n-\n-#[cfg(all(unix, not(any(target_os = \"macos\", target_os = \"ios\"))))]\n-fn get_supplementary_groups() -> Vec<u32> {\n-    match nix::unistd::getgroups() {\n-        Err(_) => Vec::new(),\n-        Ok(v) => v.into_iter().map(nix::unistd::Gid::as_raw).collect(),\n+    match access(folder_path, AccessFlags::W_OK) {",
+    "path": "src/modules/utils/directory_nix.rs",
+    "commit_id": "ff388cab8aa524a3e2f3f994971f98b725960366",
+    "original_commit_id": "20207d3598c2205d376f5354bc00d247af7ed3e3",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Wouldn't switching to regular ids be a regression compared to the previous behavior? It was measuring the effective ability to write before. I would rather not keep around the old code, but I feel like `eaccess` should be used on those platforms that support it.",
+    "created_at": "2023-04-10T11:06:02Z",
+    "updated_at": "2023-04-10T11:06:02Z",
+    "html_url": "https://github.com/starship/starship/pull/5074#discussion_r1161637788",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5074",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1161637788"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5074#discussion_r1161637788"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5074"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1161637788/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 8,
+    "side": "RIGHT",
+    "in_reply_to_id": 1161120344,
+    "author_association": "MEMBER",
+    "original_position": 46,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1161798750",
+    "pull_request_review_id": 1377665301,
+    "id": 1161798750,
+    "node_id": "PRRC_kwDOCqswNs5FP6Re",
+    "diff_hunk": "@@ -1,54 +1,17 @@\n-use nix::sys::stat::Mode;\n-use nix::unistd::{Gid, Uid};\n-use std::fs;\n-use std::os::unix::fs::MetadataExt;\n-use std::os::unix::fs::PermissionsExt;\n+use nix::errno::Errno::ENOENT;\n+use nix::unistd::access;\n+use nix::unistd::AccessFlags;\n use std::path::Path;\n \n /// Checks if the current user can write to the `folder_path`.\n-///\n-/// It extracts Unix access rights from the directory and checks whether\n-/// 1) the current user is the owner of the directory and whether it has the write access\n-/// 2) the current user's primary group is the directory group owner whether if it has write access\n-/// 2a) (not implemented on macOS) one of the supplementary groups of the current user is the\n-/// directory group owner and whether it has write access\n-/// 3) 'others' part of the access mask has the write access\n-#[allow(clippy::useless_conversion)] // On some platforms it is not u32\n pub fn is_write_allowed(folder_path: &Path) -> Result<bool, String> {\n-    let meta =\n-        fs::metadata(folder_path).map_err(|e| format!(\"Unable to stat() directory: {e:?}\"))?;\n-    let perms = meta.permissions().mode();\n-\n-    let euid = Uid::effective();\n-    if euid.is_root() {\n-        return Ok(true);\n-    }\n-\n-    if meta.uid() == euid.as_raw() {\n-        Ok(perms & u32::from(Mode::S_IWUSR.bits()) != 0)\n-    } else if (meta.gid() == Gid::effective().as_raw())\n-        || (get_supplementary_groups().contains(&meta.gid()))\n-    {\n-        Ok(perms & u32::from(Mode::S_IWGRP.bits()) != 0)\n-    } else {\n-        Ok(perms & u32::from(Mode::S_IWOTH.bits()) != 0)\n-    }\n-}\n-\n-#[cfg(all(unix, not(any(target_os = \"macos\", target_os = \"ios\"))))]\n-fn get_supplementary_groups() -> Vec<u32> {\n-    match nix::unistd::getgroups() {\n-        Err(_) => Vec::new(),\n-        Ok(v) => v.into_iter().map(nix::unistd::Gid::as_raw).collect(),\n+    match access(folder_path, AccessFlags::W_OK) {",
+    "path": "src/modules/utils/directory_nix.rs",
+    "commit_id": "ff388cab8aa524a3e2f3f994971f98b725960366",
+    "original_commit_id": "20207d3598c2205d376f5354bc00d247af7ed3e3",
+    "user": {
+      "login": "guoci",
+      "id": 1260178,
+      "node_id": "MDQ6VXNlcjEyNjAxNzg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1260178?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/guoci",
+      "html_url": "https://github.com/guoci",
+      "followers_url": "https://api.github.com/users/guoci/followers",
+      "following_url": "https://api.github.com/users/guoci/following{/other_user}",
+      "gists_url": "https://api.github.com/users/guoci/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/guoci/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/guoci/subscriptions",
+      "organizations_url": "https://api.github.com/users/guoci/orgs",
+      "repos_url": "https://api.github.com/users/guoci/repos",
+      "events_url": "https://api.github.com/users/guoci/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/guoci/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "replaced.",
+    "created_at": "2023-04-10T15:02:44Z",
+    "updated_at": "2023-04-10T15:02:45Z",
+    "html_url": "https://github.com/starship/starship/pull/5074#discussion_r1161798750",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5074",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1161798750"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5074#discussion_r1161798750"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5074"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1161798750/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 8,
+    "side": "RIGHT",
+    "in_reply_to_id": 1161120344,
+    "author_association": "NONE",
+    "original_position": 46,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1161812221",
+    "pull_request_review_id": 1377686273,
+    "id": 1161812221,
+    "node_id": "PRRC_kwDOCqswNs5FP9j9",
+    "diff_hunk": "@@ -1,54 +1,17 @@\n-use nix::sys::stat::Mode;\n-use nix::unistd::{Gid, Uid};\n-use std::fs;\n-use std::os::unix::fs::MetadataExt;\n-use std::os::unix::fs::PermissionsExt;\n+use nix::errno::Errno::ENOENT;\n+use nix::unistd::access;\n+use nix::unistd::AccessFlags;\n use std::path::Path;\n \n /// Checks if the current user can write to the `folder_path`.\n-///\n-/// It extracts Unix access rights from the directory and checks whether\n-/// 1) the current user is the owner of the directory and whether it has the write access\n-/// 2) the current user's primary group is the directory group owner whether if it has write access\n-/// 2a) (not implemented on macOS) one of the supplementary groups of the current user is the\n-/// directory group owner and whether it has write access\n-/// 3) 'others' part of the access mask has the write access\n-#[allow(clippy::useless_conversion)] // On some platforms it is not u32\n pub fn is_write_allowed(folder_path: &Path) -> Result<bool, String> {\n-    let meta =\n-        fs::metadata(folder_path).map_err(|e| format!(\"Unable to stat() directory: {e:?}\"))?;\n-    let perms = meta.permissions().mode();\n-\n-    let euid = Uid::effective();\n-    if euid.is_root() {\n-        return Ok(true);\n-    }\n-\n-    if meta.uid() == euid.as_raw() {\n-        Ok(perms & u32::from(Mode::S_IWUSR.bits()) != 0)\n-    } else if (meta.gid() == Gid::effective().as_raw())\n-        || (get_supplementary_groups().contains(&meta.gid()))\n-    {\n-        Ok(perms & u32::from(Mode::S_IWGRP.bits()) != 0)\n-    } else {\n-        Ok(perms & u32::from(Mode::S_IWOTH.bits()) != 0)\n-    }\n-}\n-\n-#[cfg(all(unix, not(any(target_os = \"macos\", target_os = \"ios\"))))]\n-fn get_supplementary_groups() -> Vec<u32> {\n-    match nix::unistd::getgroups() {\n-        Err(_) => Vec::new(),\n-        Ok(v) => v.into_iter().map(nix::unistd::Gid::as_raw).collect(),\n+    match access(folder_path, AccessFlags::W_OK) {",
+    "path": "src/modules/utils/directory_nix.rs",
+    "commit_id": "ff388cab8aa524a3e2f3f994971f98b725960366",
+    "original_commit_id": "20207d3598c2205d376f5354bc00d247af7ed3e3",
+    "user": {
+      "login": "guoci",
+      "id": 1260178,
+      "node_id": "MDQ6VXNlcjEyNjAxNzg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1260178?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/guoci",
+      "html_url": "https://github.com/guoci",
+      "followers_url": "https://api.github.com/users/guoci/followers",
+      "following_url": "https://api.github.com/users/guoci/following{/other_user}",
+      "gists_url": "https://api.github.com/users/guoci/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/guoci/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/guoci/subscriptions",
+      "organizations_url": "https://api.github.com/users/guoci/orgs",
+      "repos_url": "https://api.github.com/users/guoci/repos",
+      "events_url": "https://api.github.com/users/guoci/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/guoci/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`eaccess` doesn't work on `macOS`.",
+    "created_at": "2023-04-10T15:19:04Z",
+    "updated_at": "2023-04-10T15:19:04Z",
+    "html_url": "https://github.com/starship/starship/pull/5074#discussion_r1161812221",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/5074",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1161812221"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/5074#discussion_r1161812221"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/5074"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1161812221/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 8,
+    "side": "RIGHT",
+    "in_reply_to_id": 1161120344,
+    "author_association": "NONE",
+    "original_position": 46,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

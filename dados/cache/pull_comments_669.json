@@ -1,0 +1,698 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/350362790",
+    "pull_request_review_id": 322503940,
+    "id": 350362790,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MDM2Mjc5MA==",
+    "diff_hunk": "@@ -75,27 +75,76 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n fn get_battery_status() -> Option<BatteryStatus> {\n     let battery_manager = battery::Manager::new().ok()?;\n-    match battery_manager.batteries().ok()?.next() {\n-        Some(Ok(battery)) => {\n-            log::debug!(\"Battery found: {:?}\", battery);\n-            let battery_status = BatteryStatus {\n-                percentage: battery.state_of_charge().value * 100.0,\n-                state: battery.state(),\n-            };\n+    let batteries = battery_manager.batteries().ok()?;\n+    let battery_contructor = batteries\n+        .filter_map(|battery| match battery {\n+            Ok(battery) => {\n+                log::debug!(\"Battery found: {:?}\", battery);\n+                Some(BatteryContructor {\n+                    energy: battery.energy().value,\n+                    energy_full: battery.energy_full().value,\n+                    state: battery.state(),\n+                })\n+            }\n+            Err(e) => {\n+                log::debug!(\"Unable to access battery information:\\n{}\", &e);\n+                None\n+            }\n+        })\n+        .fold(\n+            BatteryContructor {\n+                energy: 0.0,\n+                energy_full: 0.0,\n+                state: battery::State::Unknown,\n+            },\n+            |mut acc, x| {\n+                acc.energy += x.energy;\n+                acc.energy_full += x.energy_full;\n+                acc.state = battery_state_fold(acc.state, x.state);\n+                acc\n+            },\n+        );\n+    if battery_contructor.energy_full != 0.0 {",
+    "path": "src/modules/battery.rs",
+    "commit_id": "6aa34bc0a89c0db5420592465353da0dd778112f",
+    "original_commit_id": "2b514e009b2cb447b9f345bf03ca5b0332ae2607",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Do we need this condition?\r\n`energy_full` could be `0.0` in the case of a depleted battery that is charging. I think we should still show the charging status in that case.",
+    "created_at": "2019-11-25T18:54:48Z",
+    "updated_at": "2019-11-25T21:08:22Z",
+    "html_url": "https://github.com/starship/starship/pull/669#discussion_r350362790",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/669",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/350362790"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/669#discussion_r350362790"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/669"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/350362790/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 107,
+    "original_line": 107,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 40,
+    "position": 40,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/350362847",
+    "pull_request_review_id": 322503940,
+    "id": 350362847,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MDM2Mjg0Nw==",
+    "diff_hunk": "@@ -75,27 +75,76 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n fn get_battery_status() -> Option<BatteryStatus> {\n     let battery_manager = battery::Manager::new().ok()?;\n-    match battery_manager.batteries().ok()?.next() {\n-        Some(Ok(battery)) => {\n-            log::debug!(\"Battery found: {:?}\", battery);\n-            let battery_status = BatteryStatus {\n-                percentage: battery.state_of_charge().value * 100.0,\n-                state: battery.state(),\n-            };\n+    let batteries = battery_manager.batteries().ok()?;\n+    let battery_contructor = batteries\n+        .filter_map(|battery| match battery {\n+            Ok(battery) => {\n+                log::debug!(\"Battery found: {:?}\", battery);\n+                Some(BatteryContructor {\n+                    energy: battery.energy().value,\n+                    energy_full: battery.energy_full().value,\n+                    state: battery.state(),\n+                })\n+            }\n+            Err(e) => {\n+                log::debug!(\"Unable to access battery information:\\n{}\", &e);\n+                None\n+            }\n+        })\n+        .fold(\n+            BatteryContructor {\n+                energy: 0.0,\n+                energy_full: 0.0,\n+                state: battery::State::Unknown,\n+            },\n+            |mut acc, x| {\n+                acc.energy += x.energy;\n+                acc.energy_full += x.energy_full;\n+                acc.state = battery_state_fold(acc.state, x.state);\n+                acc\n+            },\n+        );\n+    if battery_contructor.energy_full != 0.0 {\n+        let battery = BatteryStatus {\n+            percentage: battery_contructor.energy / battery_contructor.energy_full * 100.0,\n+            state: battery_contructor.state,\n+        };\n+        log::debug!(\"Battery status: {:?}\", battery);\n+        Some(battery)\n+    } else {\n+        None\n+    }\n+}\n \n-            Some(battery_status)\n-        }\n-        Some(Err(e)) => {\n-            log::debug!(\"Unable to access battery information:\\n{}\", &e);\n-            None\n-        }\n-        None => {\n-            log::debug!(\"No batteries found\");\n-            None\n-        }\n+/// the fold return Charging if at least one is charging\n+///                 Discharging if at least one is Discharging\n+///                 Full if both are Full or one is Full and the other Unknow\n+///                 Empty if both are Empty or one is Empty and the other Unknow\n+///                 Unknown otherwise\n+fn battery_state_fold(state1: battery::State, state2: battery::State) -> battery::State {\n+    use battery::State::{Charging, Discharging, Unknown};\n+    if state1 == Charging || state2 == Charging {\n+        Charging\n+    } else if state1 == Discharging || state2 == Discharging {\n+        Discharging\n+    } else if state1 == state2 {\n+        state1\n+    } else if state1 == Unknown {\n+        state2\n+    } else if state2 == Unknown {\n+        state1\n+    } else {\n+        Unknown\n     }\n }\n \n+struct BatteryContructor {",
+    "path": "src/modules/battery.rs",
+    "commit_id": "6aa34bc0a89c0db5420592465353da0dd778112f",
+    "original_commit_id": "2b514e009b2cb447b9f345bf03ca5b0332ae2607",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think a more fitting title might be `BatteryInfo`.",
+    "created_at": "2019-11-25T18:54:56Z",
+    "updated_at": "2019-11-25T21:08:22Z",
+    "html_url": "https://github.com/starship/starship/pull/669#discussion_r350362847",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/669",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/350362847"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/669#discussion_r350362847"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/669"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/350362847/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 141,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 84,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/350364360",
+    "pull_request_review_id": 322503940,
+    "id": 350364360,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MDM2NDM2MA==",
+    "diff_hunk": "@@ -75,27 +75,76 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n fn get_battery_status() -> Option<BatteryStatus> {\n     let battery_manager = battery::Manager::new().ok()?;\n-    match battery_manager.batteries().ok()?.next() {\n-        Some(Ok(battery)) => {\n-            log::debug!(\"Battery found: {:?}\", battery);\n-            let battery_status = BatteryStatus {\n-                percentage: battery.state_of_charge().value * 100.0,\n-                state: battery.state(),\n-            };\n+    let batteries = battery_manager.batteries().ok()?;\n+    let battery_contructor = batteries\n+        .filter_map(|battery| match battery {\n+            Ok(battery) => {\n+                log::debug!(\"Battery found: {:?}\", battery);\n+                Some(BatteryContructor {\n+                    energy: battery.energy().value,\n+                    energy_full: battery.energy_full().value,\n+                    state: battery.state(),\n+                })\n+            }\n+            Err(e) => {\n+                log::debug!(\"Unable to access battery information:\\n{}\", &e);\n+                None\n+            }\n+        })\n+        .fold(\n+            BatteryContructor {\n+                energy: 0.0,\n+                energy_full: 0.0,\n+                state: battery::State::Unknown,\n+            },\n+            |mut acc, x| {\n+                acc.energy += x.energy;\n+                acc.energy_full += x.energy_full;\n+                acc.state = battery_state_fold(acc.state, x.state);\n+                acc\n+            },\n+        );\n+    if battery_contructor.energy_full != 0.0 {\n+        let battery = BatteryStatus {\n+            percentage: battery_contructor.energy / battery_contructor.energy_full * 100.0,",
+    "path": "src/modules/battery.rs",
+    "commit_id": "6aa34bc0a89c0db5420592465353da0dd778112f",
+    "original_commit_id": "2b514e009b2cb447b9f345bf03ca5b0332ae2607",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I can see this possibly returning a long decimal value. Perhaps we should limit the number of decimal places.",
+    "created_at": "2019-11-25T18:58:08Z",
+    "updated_at": "2019-11-25T21:08:22Z",
+    "html_url": "https://github.com/starship/starship/pull/669#discussion_r350364360",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/669",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/350364360"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/669#discussion_r350364360"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/669"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/350364360/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 109,
+    "original_line": 109,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 42,
+    "position": 42,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/350364769",
+    "pull_request_review_id": 322503940,
+    "id": 350364769,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MDM2NDc2OQ==",
+    "diff_hunk": "@@ -75,27 +75,76 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n fn get_battery_status() -> Option<BatteryStatus> {\n     let battery_manager = battery::Manager::new().ok()?;\n-    match battery_manager.batteries().ok()?.next() {\n-        Some(Ok(battery)) => {\n-            log::debug!(\"Battery found: {:?}\", battery);\n-            let battery_status = BatteryStatus {\n-                percentage: battery.state_of_charge().value * 100.0,\n-                state: battery.state(),\n-            };\n+    let batteries = battery_manager.batteries().ok()?;\n+    let battery_contructor = batteries\n+        .filter_map(|battery| match battery {\n+            Ok(battery) => {\n+                log::debug!(\"Battery found: {:?}\", battery);\n+                Some(BatteryContructor {\n+                    energy: battery.energy().value,\n+                    energy_full: battery.energy_full().value,\n+                    state: battery.state(),\n+                })\n+            }\n+            Err(e) => {\n+                log::debug!(\"Unable to access battery information:\\n{}\", &e);\n+                None\n+            }\n+        })\n+        .fold(\n+            BatteryContructor {\n+                energy: 0.0,\n+                energy_full: 0.0,\n+                state: battery::State::Unknown,\n+            },\n+            |mut acc, x| {\n+                acc.energy += x.energy;\n+                acc.energy_full += x.energy_full;\n+                acc.state = battery_state_fold(acc.state, x.state);\n+                acc\n+            },\n+        );\n+    if battery_contructor.energy_full != 0.0 {\n+        let battery = BatteryStatus {\n+            percentage: battery_contructor.energy / battery_contructor.energy_full * 100.0,\n+            state: battery_contructor.state,\n+        };\n+        log::debug!(\"Battery status: {:?}\", battery);\n+        Some(battery)\n+    } else {\n+        None\n+    }\n+}\n \n-            Some(battery_status)\n-        }\n-        Some(Err(e)) => {\n-            log::debug!(\"Unable to access battery information:\\n{}\", &e);\n-            None\n-        }\n-        None => {\n-            log::debug!(\"No batteries found\");\n-            None\n-        }\n+/// the fold return Charging if at least one is charging\n+///                 Discharging if at least one is Discharging\n+///                 Full if both are Full or one is Full and the other Unknow\n+///                 Empty if both are Empty or one is Empty and the other Unknow\n+///                 Unknown otherwise\n+fn battery_state_fold(state1: battery::State, state2: battery::State) -> battery::State {",
+    "path": "src/modules/battery.rs",
+    "commit_id": "6aa34bc0a89c0db5420592465353da0dd778112f",
+    "original_commit_id": "2b514e009b2cb447b9f345bf03ca5b0332ae2607",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think a more descriptive function name would be `merge_battery_states`.",
+    "created_at": "2019-11-25T18:59:00Z",
+    "updated_at": "2019-11-25T21:08:22Z",
+    "html_url": "https://github.com/starship/starship/pull/669#discussion_r350364769",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/669",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/350364769"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/669#discussion_r350364769"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/669"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/350364769/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 124,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 67,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/350414559",
+    "pull_request_review_id": 322567542,
+    "id": 350414559,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MDQxNDU1OQ==",
+    "diff_hunk": "@@ -75,27 +75,76 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n fn get_battery_status() -> Option<BatteryStatus> {\n     let battery_manager = battery::Manager::new().ok()?;\n-    match battery_manager.batteries().ok()?.next() {\n-        Some(Ok(battery)) => {\n-            log::debug!(\"Battery found: {:?}\", battery);\n-            let battery_status = BatteryStatus {\n-                percentage: battery.state_of_charge().value * 100.0,\n-                state: battery.state(),\n-            };\n+    let batteries = battery_manager.batteries().ok()?;\n+    let battery_contructor = batteries\n+        .filter_map(|battery| match battery {\n+            Ok(battery) => {\n+                log::debug!(\"Battery found: {:?}\", battery);\n+                Some(BatteryContructor {\n+                    energy: battery.energy().value,\n+                    energy_full: battery.energy_full().value,\n+                    state: battery.state(),\n+                })\n+            }\n+            Err(e) => {\n+                log::debug!(\"Unable to access battery information:\\n{}\", &e);\n+                None\n+            }\n+        })\n+        .fold(\n+            BatteryContructor {\n+                energy: 0.0,\n+                energy_full: 0.0,\n+                state: battery::State::Unknown,\n+            },\n+            |mut acc, x| {\n+                acc.energy += x.energy;\n+                acc.energy_full += x.energy_full;\n+                acc.state = battery_state_fold(acc.state, x.state);\n+                acc\n+            },\n+        );\n+    if battery_contructor.energy_full != 0.0 {",
+    "path": "src/modules/battery.rs",
+    "commit_id": "6aa34bc0a89c0db5420592465353da0dd778112f",
+    "original_commit_id": "2b514e009b2cb447b9f345bf03ca5b0332ae2607",
+    "user": {
+      "login": "lucarin91",
+      "id": 6934358,
+      "node_id": "MDQ6VXNlcjY5MzQzNTg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6934358?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lucarin91",
+      "html_url": "https://github.com/lucarin91",
+      "followers_url": "https://api.github.com/users/lucarin91/followers",
+      "following_url": "https://api.github.com/users/lucarin91/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lucarin91/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lucarin91/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lucarin91/subscriptions",
+      "organizations_url": "https://api.github.com/users/lucarin91/orgs",
+      "repos_url": "https://api.github.com/users/lucarin91/repos",
+      "events_url": "https://api.github.com/users/lucarin91/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lucarin91/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "We need to consider the case in which either the battery manager or the subsequent filter_map does not return any battery information. In those cases, the fold operation will return a `BatteryContructor` with both `energy` and `energy_full` at 0.0.\r\nThis will end up in a division by zero on line 109, but apart for that, we should return None in those situations.\r\nI agree with you that this is not a very good condition, but I think that we need something like that.",
+    "created_at": "2019-11-25T20:48:33Z",
+    "updated_at": "2019-11-25T21:08:22Z",
+    "html_url": "https://github.com/starship/starship/pull/669#discussion_r350414559",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/669",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/350414559"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/669#discussion_r350414559"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/669"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/350414559/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 107,
+    "original_line": 107,
+    "side": "RIGHT",
+    "in_reply_to_id": 350362790,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 40,
+    "position": 40,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/350414864",
+    "pull_request_review_id": 322567950,
+    "id": 350414864,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MDQxNDg2NA==",
+    "diff_hunk": "@@ -75,27 +75,76 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n fn get_battery_status() -> Option<BatteryStatus> {\n     let battery_manager = battery::Manager::new().ok()?;\n-    match battery_manager.batteries().ok()?.next() {\n-        Some(Ok(battery)) => {\n-            log::debug!(\"Battery found: {:?}\", battery);\n-            let battery_status = BatteryStatus {\n-                percentage: battery.state_of_charge().value * 100.0,\n-                state: battery.state(),\n-            };\n+    let batteries = battery_manager.batteries().ok()?;\n+    let battery_contructor = batteries\n+        .filter_map(|battery| match battery {\n+            Ok(battery) => {\n+                log::debug!(\"Battery found: {:?}\", battery);\n+                Some(BatteryContructor {\n+                    energy: battery.energy().value,\n+                    energy_full: battery.energy_full().value,\n+                    state: battery.state(),\n+                })\n+            }\n+            Err(e) => {\n+                log::debug!(\"Unable to access battery information:\\n{}\", &e);\n+                None\n+            }\n+        })\n+        .fold(\n+            BatteryContructor {\n+                energy: 0.0,\n+                energy_full: 0.0,\n+                state: battery::State::Unknown,\n+            },\n+            |mut acc, x| {\n+                acc.energy += x.energy;\n+                acc.energy_full += x.energy_full;\n+                acc.state = battery_state_fold(acc.state, x.state);\n+                acc\n+            },\n+        );\n+    if battery_contructor.energy_full != 0.0 {\n+        let battery = BatteryStatus {\n+            percentage: battery_contructor.energy / battery_contructor.energy_full * 100.0,\n+            state: battery_contructor.state,\n+        };\n+        log::debug!(\"Battery status: {:?}\", battery);\n+        Some(battery)\n+    } else {\n+        None\n+    }\n+}\n \n-            Some(battery_status)\n-        }\n-        Some(Err(e)) => {\n-            log::debug!(\"Unable to access battery information:\\n{}\", &e);\n-            None\n-        }\n-        None => {\n-            log::debug!(\"No batteries found\");\n-            None\n-        }\n+/// the fold return Charging if at least one is charging\n+///                 Discharging if at least one is Discharging\n+///                 Full if both are Full or one is Full and the other Unknow\n+///                 Empty if both are Empty or one is Empty and the other Unknow\n+///                 Unknown otherwise\n+fn battery_state_fold(state1: battery::State, state2: battery::State) -> battery::State {\n+    use battery::State::{Charging, Discharging, Unknown};\n+    if state1 == Charging || state2 == Charging {\n+        Charging\n+    } else if state1 == Discharging || state2 == Discharging {\n+        Discharging\n+    } else if state1 == state2 {\n+        state1\n+    } else if state1 == Unknown {\n+        state2\n+    } else if state2 == Unknown {\n+        state1\n+    } else {\n+        Unknown\n     }\n }\n \n+struct BatteryContructor {",
+    "path": "src/modules/battery.rs",
+    "commit_id": "6aa34bc0a89c0db5420592465353da0dd778112f",
+    "original_commit_id": "2b514e009b2cb447b9f345bf03ca5b0332ae2607",
+    "user": {
+      "login": "lucarin91",
+      "id": 6934358,
+      "node_id": "MDQ6VXNlcjY5MzQzNTg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6934358?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lucarin91",
+      "html_url": "https://github.com/lucarin91",
+      "followers_url": "https://api.github.com/users/lucarin91/followers",
+      "following_url": "https://api.github.com/users/lucarin91/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lucarin91/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lucarin91/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lucarin91/subscriptions",
+      "organizations_url": "https://api.github.com/users/lucarin91/orgs",
+      "repos_url": "https://api.github.com/users/lucarin91/repos",
+      "events_url": "https://api.github.com/users/lucarin91/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lucarin91/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ok, I will update it.",
+    "created_at": "2019-11-25T20:49:17Z",
+    "updated_at": "2019-11-25T21:08:22Z",
+    "html_url": "https://github.com/starship/starship/pull/669#discussion_r350414864",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/669",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/350414864"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/669#discussion_r350414864"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/669"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/350414864/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 141,
+    "side": "RIGHT",
+    "in_reply_to_id": 350362847,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 84,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/350416149",
+    "pull_request_review_id": 322569617,
+    "id": 350416149,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MDQxNjE0OQ==",
+    "diff_hunk": "@@ -75,27 +75,76 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n fn get_battery_status() -> Option<BatteryStatus> {\n     let battery_manager = battery::Manager::new().ok()?;\n-    match battery_manager.batteries().ok()?.next() {\n-        Some(Ok(battery)) => {\n-            log::debug!(\"Battery found: {:?}\", battery);\n-            let battery_status = BatteryStatus {\n-                percentage: battery.state_of_charge().value * 100.0,\n-                state: battery.state(),\n-            };\n+    let batteries = battery_manager.batteries().ok()?;\n+    let battery_contructor = batteries\n+        .filter_map(|battery| match battery {\n+            Ok(battery) => {\n+                log::debug!(\"Battery found: {:?}\", battery);\n+                Some(BatteryContructor {\n+                    energy: battery.energy().value,\n+                    energy_full: battery.energy_full().value,\n+                    state: battery.state(),\n+                })\n+            }\n+            Err(e) => {\n+                log::debug!(\"Unable to access battery information:\\n{}\", &e);\n+                None\n+            }\n+        })\n+        .fold(\n+            BatteryContructor {\n+                energy: 0.0,\n+                energy_full: 0.0,\n+                state: battery::State::Unknown,\n+            },\n+            |mut acc, x| {\n+                acc.energy += x.energy;\n+                acc.energy_full += x.energy_full;\n+                acc.state = battery_state_fold(acc.state, x.state);\n+                acc\n+            },\n+        );\n+    if battery_contructor.energy_full != 0.0 {\n+        let battery = BatteryStatus {\n+            percentage: battery_contructor.energy / battery_contructor.energy_full * 100.0,",
+    "path": "src/modules/battery.rs",
+    "commit_id": "6aa34bc0a89c0db5420592465353da0dd778112f",
+    "original_commit_id": "2b514e009b2cb447b9f345bf03ca5b0332ae2607",
+    "user": {
+      "login": "lucarin91",
+      "id": 6934358,
+      "node_id": "MDQ6VXNlcjY5MzQzNTg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6934358?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lucarin91",
+      "html_url": "https://github.com/lucarin91",
+      "followers_url": "https://api.github.com/users/lucarin91/followers",
+      "following_url": "https://api.github.com/users/lucarin91/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lucarin91/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lucarin91/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lucarin91/subscriptions",
+      "organizations_url": "https://api.github.com/users/lucarin91/orgs",
+      "repos_url": "https://api.github.com/users/lucarin91/repos",
+      "events_url": "https://api.github.com/users/lucarin91/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lucarin91/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Sorry, I do not understand, do you want to cast it to an integer value?",
+    "created_at": "2019-11-25T20:52:18Z",
+    "updated_at": "2019-11-25T21:08:22Z",
+    "html_url": "https://github.com/starship/starship/pull/669#discussion_r350416149",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/669",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/350416149"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/669#discussion_r350416149"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/669"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/350416149/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 109,
+    "original_line": 109,
+    "side": "RIGHT",
+    "in_reply_to_id": 350364360,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 42,
+    "position": 42,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/350416376",
+    "pull_request_review_id": 322569940,
+    "id": 350416376,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MDQxNjM3Ng==",
+    "diff_hunk": "@@ -75,27 +75,76 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n fn get_battery_status() -> Option<BatteryStatus> {\n     let battery_manager = battery::Manager::new().ok()?;\n-    match battery_manager.batteries().ok()?.next() {\n-        Some(Ok(battery)) => {\n-            log::debug!(\"Battery found: {:?}\", battery);\n-            let battery_status = BatteryStatus {\n-                percentage: battery.state_of_charge().value * 100.0,\n-                state: battery.state(),\n-            };\n+    let batteries = battery_manager.batteries().ok()?;\n+    let battery_contructor = batteries\n+        .filter_map(|battery| match battery {\n+            Ok(battery) => {\n+                log::debug!(\"Battery found: {:?}\", battery);\n+                Some(BatteryContructor {\n+                    energy: battery.energy().value,\n+                    energy_full: battery.energy_full().value,\n+                    state: battery.state(),\n+                })\n+            }\n+            Err(e) => {\n+                log::debug!(\"Unable to access battery information:\\n{}\", &e);\n+                None\n+            }\n+        })\n+        .fold(\n+            BatteryContructor {\n+                energy: 0.0,\n+                energy_full: 0.0,\n+                state: battery::State::Unknown,\n+            },\n+            |mut acc, x| {\n+                acc.energy += x.energy;\n+                acc.energy_full += x.energy_full;\n+                acc.state = battery_state_fold(acc.state, x.state);\n+                acc\n+            },\n+        );\n+    if battery_contructor.energy_full != 0.0 {\n+        let battery = BatteryStatus {\n+            percentage: battery_contructor.energy / battery_contructor.energy_full * 100.0,\n+            state: battery_contructor.state,\n+        };\n+        log::debug!(\"Battery status: {:?}\", battery);\n+        Some(battery)\n+    } else {\n+        None\n+    }\n+}\n \n-            Some(battery_status)\n-        }\n-        Some(Err(e)) => {\n-            log::debug!(\"Unable to access battery information:\\n{}\", &e);\n-            None\n-        }\n-        None => {\n-            log::debug!(\"No batteries found\");\n-            None\n-        }\n+/// the fold return Charging if at least one is charging\n+///                 Discharging if at least one is Discharging\n+///                 Full if both are Full or one is Full and the other Unknow\n+///                 Empty if both are Empty or one is Empty and the other Unknow\n+///                 Unknown otherwise\n+fn battery_state_fold(state1: battery::State, state2: battery::State) -> battery::State {",
+    "path": "src/modules/battery.rs",
+    "commit_id": "6aa34bc0a89c0db5420592465353da0dd778112f",
+    "original_commit_id": "2b514e009b2cb447b9f345bf03ca5b0332ae2607",
+    "user": {
+      "login": "lucarin91",
+      "id": 6934358,
+      "node_id": "MDQ6VXNlcjY5MzQzNTg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6934358?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/lucarin91",
+      "html_url": "https://github.com/lucarin91",
+      "followers_url": "https://api.github.com/users/lucarin91/followers",
+      "following_url": "https://api.github.com/users/lucarin91/following{/other_user}",
+      "gists_url": "https://api.github.com/users/lucarin91/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/lucarin91/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/lucarin91/subscriptions",
+      "organizations_url": "https://api.github.com/users/lucarin91/orgs",
+      "repos_url": "https://api.github.com/users/lucarin91/repos",
+      "events_url": "https://api.github.com/users/lucarin91/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/lucarin91/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Good name, I will update it.",
+    "created_at": "2019-11-25T20:52:53Z",
+    "updated_at": "2019-11-25T21:08:22Z",
+    "html_url": "https://github.com/starship/starship/pull/669#discussion_r350416376",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/669",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/350416376"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/669#discussion_r350416376"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/669"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/350416376/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 124,
+    "side": "RIGHT",
+    "in_reply_to_id": 350364769,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 67,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/350417767",
+    "pull_request_review_id": 322571750,
+    "id": 350417767,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MDQxNzc2Nw==",
+    "diff_hunk": "@@ -75,27 +75,76 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n fn get_battery_status() -> Option<BatteryStatus> {\n     let battery_manager = battery::Manager::new().ok()?;\n-    match battery_manager.batteries().ok()?.next() {\n-        Some(Ok(battery)) => {\n-            log::debug!(\"Battery found: {:?}\", battery);\n-            let battery_status = BatteryStatus {\n-                percentage: battery.state_of_charge().value * 100.0,\n-                state: battery.state(),\n-            };\n+    let batteries = battery_manager.batteries().ok()?;\n+    let battery_contructor = batteries\n+        .filter_map(|battery| match battery {\n+            Ok(battery) => {\n+                log::debug!(\"Battery found: {:?}\", battery);\n+                Some(BatteryContructor {\n+                    energy: battery.energy().value,\n+                    energy_full: battery.energy_full().value,\n+                    state: battery.state(),\n+                })\n+            }\n+            Err(e) => {\n+                log::debug!(\"Unable to access battery information:\\n{}\", &e);\n+                None\n+            }\n+        })\n+        .fold(\n+            BatteryContructor {\n+                energy: 0.0,\n+                energy_full: 0.0,\n+                state: battery::State::Unknown,\n+            },\n+            |mut acc, x| {\n+                acc.energy += x.energy;\n+                acc.energy_full += x.energy_full;\n+                acc.state = battery_state_fold(acc.state, x.state);\n+                acc\n+            },\n+        );\n+    if battery_contructor.energy_full != 0.0 {",
+    "path": "src/modules/battery.rs",
+    "commit_id": "6aa34bc0a89c0db5420592465353da0dd778112f",
+    "original_commit_id": "2b514e009b2cb447b9f345bf03ca5b0332ae2607",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "My mistake. I thought that `energy_full` was `energy`.\r\nYeah, this is a fine condition to have. 👍 ",
+    "created_at": "2019-11-25T20:56:14Z",
+    "updated_at": "2019-11-25T21:08:22Z",
+    "html_url": "https://github.com/starship/starship/pull/669#discussion_r350417767",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/669",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/350417767"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/669#discussion_r350417767"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/669"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/350417767/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 107,
+    "original_line": 107,
+    "side": "RIGHT",
+    "in_reply_to_id": 350362790,
+    "author_association": "MEMBER",
+    "original_position": 40,
+    "position": 40,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/350420112",
+    "pull_request_review_id": 322574695,
+    "id": 350420112,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM1MDQyMDExMg==",
+    "diff_hunk": "@@ -75,27 +75,76 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n fn get_battery_status() -> Option<BatteryStatus> {\n     let battery_manager = battery::Manager::new().ok()?;\n-    match battery_manager.batteries().ok()?.next() {\n-        Some(Ok(battery)) => {\n-            log::debug!(\"Battery found: {:?}\", battery);\n-            let battery_status = BatteryStatus {\n-                percentage: battery.state_of_charge().value * 100.0,\n-                state: battery.state(),\n-            };\n+    let batteries = battery_manager.batteries().ok()?;\n+    let battery_contructor = batteries\n+        .filter_map(|battery| match battery {\n+            Ok(battery) => {\n+                log::debug!(\"Battery found: {:?}\", battery);\n+                Some(BatteryContructor {\n+                    energy: battery.energy().value,\n+                    energy_full: battery.energy_full().value,\n+                    state: battery.state(),\n+                })\n+            }\n+            Err(e) => {\n+                log::debug!(\"Unable to access battery information:\\n{}\", &e);\n+                None\n+            }\n+        })\n+        .fold(\n+            BatteryContructor {\n+                energy: 0.0,\n+                energy_full: 0.0,\n+                state: battery::State::Unknown,\n+            },\n+            |mut acc, x| {\n+                acc.energy += x.energy;\n+                acc.energy_full += x.energy_full;\n+                acc.state = battery_state_fold(acc.state, x.state);\n+                acc\n+            },\n+        );\n+    if battery_contructor.energy_full != 0.0 {\n+        let battery = BatteryStatus {\n+            percentage: battery_contructor.energy / battery_contructor.energy_full * 100.0,",
+    "path": "src/modules/battery.rs",
+    "commit_id": "6aa34bc0a89c0db5420592465353da0dd778112f",
+    "original_commit_id": "2b514e009b2cb447b9f345bf03ca5b0332ae2607",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "My bad. I had forgotten that we round the value later on in the file:\r\nhttps://github.com/starship/starship/blob/master/src/modules/battery.rs#L61\r\n\r\nNevermind. 😊 ",
+    "created_at": "2019-11-25T21:01:29Z",
+    "updated_at": "2019-11-25T21:08:22Z",
+    "html_url": "https://github.com/starship/starship/pull/669#discussion_r350420112",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/669",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/350420112"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/669#discussion_r350420112"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/669"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/350420112/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 109,
+    "original_line": 109,
+    "side": "RIGHT",
+    "in_reply_to_id": 350364360,
+    "author_association": "MEMBER",
+    "original_position": 42,
+    "position": 42,
+    "subject_type": "line"
+  }
+]

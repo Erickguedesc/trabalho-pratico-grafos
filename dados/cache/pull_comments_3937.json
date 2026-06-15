@@ -1,0 +1,347 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/889516656",
+    "pull_request_review_id": 995794734,
+    "id": 889516656,
+    "node_id": "PRRC_kwDOCqswNs41BPJw",
+    "diff_hunk": "@@ -0,0 +1,28 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(feature = \"config-schema\", derive(schemars::JsonSchema))]\n+#[serde(default)]\n+pub struct NpmConfig<'a> {\n+    pub format: &'a str,\n+    pub version_format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+    pub not_capable_style: &'a str,\n+    pub detect_files: Vec<&'a str>,",
+    "path": "src/configs/npm.rs",
+    "commit_id": "da796b307bf9be26f0cab3953eadee0b3f1d7121",
+    "original_commit_id": "da796b307bf9be26f0cab3953eadee0b3f1d7121",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please add all `detect_`-options",
+    "created_at": "2022-06-04T10:53:16Z",
+    "updated_at": "2022-06-04T11:07:54Z",
+    "html_url": "https://github.com/starship/starship/pull/3937#discussion_r889516656",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3937",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/889516656"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3937#discussion_r889516656"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3937"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/889516656/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 13,
+    "original_line": 13,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 13,
+    "position": 13,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/889516905",
+    "pull_request_review_id": 995794734,
+    "id": 889516905,
+    "node_id": "PRRC_kwDOCqswNs41BPNp",
+    "diff_hunk": "@@ -0,0 +1,226 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::npm::NpmConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+use once_cell::sync::Lazy;\n+use regex::Regex;\n+use semver::Version;\n+use semver::VersionReq;\n+use serde_json as json;\n+use std::ops::Deref;\n+\n+/// Creates a module with the current Node.js version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"npm\");\n+    let config = NpmConfig::try_load(module.config);\n+    let is_npm_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .is_match();\n+\n+    if !is_npm_project {\n+        return None;\n+    }\n+\n+    let npm_version = Lazy::new(|| {\n+        context\n+            .exec_cmd(\"npm\", &[\"--version\"])\n+            .map(|cmd| cmd.stdout)\n+    });\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => {\n+                    let engines_version = get_engines_version(context);\n+                    let in_engines_range =\n+                        check_engines_version(npm_version.deref().as_ref()?, engines_version);\n+                    if in_engines_range {\n+                        Some(Ok(config.style))\n+                    } else {\n+                        Some(Ok(config.not_capable_style))\n+                    }\n+                }\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let version = npm_version.deref().as_ref()?.trim_start_matches('v').trim();",
+    "path": "src/modules/npm.rs",
+    "commit_id": "da796b307bf9be26f0cab3953eadee0b3f1d7121",
+    "original_commit_id": "da796b307bf9be26f0cab3953eadee0b3f1d7121",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Do some versions use `v`? On my system, there is no `v`.",
+    "created_at": "2022-06-04T10:56:13Z",
+    "updated_at": "2022-06-04T11:07:54Z",
+    "html_url": "https://github.com/starship/starship/pull/3937#discussion_r889516905",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3937",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/889516905"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3937#discussion_r889516905"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3937"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/889516905/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 52,
+    "original_line": 52,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 52,
+    "position": 52,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/889516928",
+    "pull_request_review_id": 995794734,
+    "id": 889516928,
+    "node_id": "PRRC_kwDOCqswNs41BPOA",
+    "diff_hunk": "@@ -0,0 +1,226 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::npm::NpmConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+use once_cell::sync::Lazy;\n+use regex::Regex;\n+use semver::Version;\n+use semver::VersionReq;\n+use serde_json as json;\n+use std::ops::Deref;\n+\n+/// Creates a module with the current Node.js version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"npm\");\n+    let config = NpmConfig::try_load(module.config);\n+    let is_npm_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .is_match();\n+\n+    if !is_npm_project {\n+        return None;\n+    }\n+\n+    let npm_version = Lazy::new(|| {\n+        context\n+            .exec_cmd(\"npm\", &[\"--version\"])\n+            .map(|cmd| cmd.stdout)\n+    });\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => {\n+                    let engines_version = get_engines_version(context);\n+                    let in_engines_range =\n+                        check_engines_version(npm_version.deref().as_ref()?, engines_version);\n+                    if in_engines_range {\n+                        Some(Ok(config.style))\n+                    } else {\n+                        Some(Ok(config.not_capable_style))\n+                    }\n+                }\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let version = npm_version.deref().as_ref()?.trim_start_matches('v').trim();\n+\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `npm`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_engines_version(context: &Context) -> Option<String> {\n+    let json_str = context.read_file_from_pwd(\"package.json\")?;\n+    let package_json: json::Value = json::from_str(&json_str).ok()?;\n+    let raw_version = package_json.get(\"engines\")?.get(\"npm\")?.as_str()?;\n+    Some(raw_version.to_string())\n+}\n+\n+fn check_engines_version(npm_version: &str, engines_version: Option<String>) -> bool {\n+    if engines_version.is_none() {\n+        return true;\n+    }\n+    let r = match VersionReq::parse(&engines_version.unwrap()) {\n+        Ok(r) => r,\n+        Err(_e) => return true,\n+    };\n+    let re = Regex::new(r\"\\d+\\.\\d+\\.\\d+\").unwrap();\n+    let version = re.captures(npm_version).unwrap().get(0).unwrap().as_str();",
+    "path": "src/modules/npm.rs",
+    "commit_id": "da796b307bf9be26f0cab3953eadee0b3f1d7121",
+    "original_commit_id": "da796b307bf9be26f0cab3953eadee0b3f1d7121",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please avoid using `unwrap`. Is a regex required here, why does this not match the processing for the prompt?",
+    "created_at": "2022-06-04T10:56:38Z",
+    "updated_at": "2022-06-04T11:07:54Z",
+    "html_url": "https://github.com/starship/starship/pull/3937#discussion_r889516928",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3937",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/889516928"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3937#discussion_r889516928"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3937"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/889516928/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 92,
+    "original_start_line": 92,
+    "start_side": "RIGHT",
+    "line": 93,
+    "original_line": 93,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 93,
+    "position": 93,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/889517419",
+    "pull_request_review_id": 995794734,
+    "id": 889517419,
+    "node_id": "PRRC_kwDOCqswNs41BPVr",
+    "diff_hunk": "@@ -0,0 +1,28 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(feature = \"config-schema\", derive(schemars::JsonSchema))]\n+#[serde(default)]\n+pub struct NpmConfig<'a> {\n+    pub format: &'a str,\n+    pub version_format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+    pub not_capable_style: &'a str,\n+    pub detect_files: Vec<&'a str>,\n+}\n+\n+impl<'a> Default for NpmConfig<'a> {\n+    fn default() -> Self {\n+        NpmConfig {\n+            format: \"via [$symbol($version )]($style)\",\n+            version_format: \"v${raw}\",\n+            symbol: \" \",",
+    "path": "src/configs/npm.rs",
+    "commit_id": "da796b307bf9be26f0cab3953eadee0b3f1d7121",
+    "original_commit_id": "da796b307bf9be26f0cab3953eadee0b3f1d7121",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please use an emoji or a plain-text symbol here.",
+    "created_at": "2022-06-04T11:02:33Z",
+    "updated_at": "2022-06-04T11:07:54Z",
+    "html_url": "https://github.com/starship/starship/pull/3937#discussion_r889517419",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3937",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/889517419"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3937#discussion_r889517419"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3937"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/889517419/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 21,
+    "original_line": 21,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 21,
+    "position": 21,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/889517777",
+    "pull_request_review_id": 995794734,
+    "id": 889517777,
+    "node_id": "PRRC_kwDOCqswNs41BPbR",
+    "diff_hunk": "@@ -0,0 +1,226 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::npm::NpmConfig;\n+use crate::formatter::{StringFormatter, VersionFormatter};\n+\n+use once_cell::sync::Lazy;\n+use regex::Regex;\n+use semver::Version;\n+use semver::VersionReq;\n+use serde_json as json;\n+use std::ops::Deref;\n+\n+/// Creates a module with the current Node.js version\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"npm\");\n+    let config = NpmConfig::try_load(module.config);\n+    let is_npm_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .is_match();\n+",
+    "path": "src/modules/npm.rs",
+    "commit_id": "da796b307bf9be26f0cab3953eadee0b3f1d7121",
+    "original_commit_id": "da796b307bf9be26f0cab3953eadee0b3f1d7121",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Modules that are disabled by default require an explicit check for `config.disabled`.",
+    "created_at": "2022-06-04T11:07:02Z",
+    "updated_at": "2022-06-04T11:07:54Z",
+    "html_url": "https://github.com/starship/starship/pull/3937#discussion_r889517777",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3937",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/889517777"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3937#discussion_r889517777"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3937"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/889517777/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 21,
+    "original_line": 21,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 21,
+    "position": 21,
+    "subject_type": "line"
+  }
+]

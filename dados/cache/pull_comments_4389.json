@@ -1,0 +1,1114 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/985689583",
+    "pull_request_review_id": 1128231564,
+    "id": 985689583,
+    "node_id": "PRRC_kwDOCqswNs46wG3v",
+    "diff_hunk": "@@ -0,0 +1,232 @@\n+use unicode_segmentation::UnicodeSegmentation;\n+\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::meson::MesonConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Meson dev environment\n+///\n+/// Will display the Meson environment if `$MESON_DEVENV` and `MESON_PROJECT_NAME` are set.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let meson_env = context.get_env(\"MESON_DEVENV\").unwrap_or_default();\n+    let project_env = context.get_env(\"MESON_PROJECT_NAME\").unwrap_or_default();",
+    "path": "src/modules/meson.rs",
+    "commit_id": "81241f27fcbd16c08e6d552b13f99ea90412b3e9",
+    "original_commit_id": "737e1dc1900d882620943a8c9eb39abbe80d6062",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n    let meson_env = context.get_env(\"MESON_DEVENV\")?;\r\n    let project_env = context.get_env(\"MESON_PROJECT_NAME\")?;\r\n```",
+    "created_at": "2022-10-03T11:44:40Z",
+    "updated_at": "2022-10-03T12:29:21Z",
+    "html_url": "https://github.com/starship/starship/pull/4389#discussion_r985689583",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4389",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/985689583"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4389#discussion_r985689583"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4389"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/985689583/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 12,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 13,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 13,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/985692926",
+    "pull_request_review_id": 1128231564,
+    "id": 985692926,
+    "node_id": "PRRC_kwDOCqswNs46wHr-",
+    "diff_hunk": "@@ -0,0 +1,232 @@\n+use unicode_segmentation::UnicodeSegmentation;\n+\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::meson::MesonConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Meson dev environment\n+///\n+/// Will display the Meson environment if `$MESON_DEVENV` and `MESON_PROJECT_NAME` are set.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let meson_env = context.get_env(\"MESON_DEVENV\").unwrap_or_default();\n+    let project_env = context.get_env(\"MESON_PROJECT_NAME\").unwrap_or_default();\n+    if meson_env != \"1\" || project_env.trim().is_empty() {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"meson\");\n+    let config: MesonConfig = MesonConfig::try_load(module.config);\n+\n+    let truncation_symbol = get_first_grapheme(config.truncation_symbol);\n+    let len = if config.truncation_length <= 0 {\n+        log::warn!(\n+            \"\\\"truncation_length\\\" should be a positive value, found {}\",\n+            config.truncation_length\n+        );\n+        std::usize::MAX\n+    } else {\n+        config.truncation_length as usize\n+    };\n+\n+    let mut project_name_graphemes: Vec<&str> = project_env.graphemes(true).collect();\n+\n+    let e = &mut (&mut project_name_graphemes);\n+    let e = &mut **e;\n+    let trunc_len = len.min(e.len());\n+    if trunc_len < e.len() {\n+        // The truncation symbol should only be added if we truncate\n+        e[trunc_len] = truncation_symbol;\n+        e.truncate(trunc_len + 1);\n+    }",
+    "path": "src/modules/meson.rs",
+    "commit_id": "81241f27fcbd16c08e6d552b13f99ea90412b3e9",
+    "original_commit_id": "737e1dc1900d882620943a8c9eb39abbe80d6062",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This is fine, but I would prefer if you based this on the truncation code in the `hg_branch` module. Moving all truncation to a shared utility function would also be nice-to-have.",
+    "created_at": "2022-10-03T11:49:00Z",
+    "updated_at": "2022-10-03T12:29:21Z",
+    "html_url": "https://github.com/starship/starship/pull/4389#discussion_r985692926",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4389",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/985692926"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4389#discussion_r985692926"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4389"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/985692926/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 32,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 41,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 41,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/985694510",
+    "pull_request_review_id": 1128231564,
+    "id": 985694510,
+    "node_id": "PRRC_kwDOCqswNs46wIEu",
+    "diff_hunk": "@@ -0,0 +1,30 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct MesonConfig<'a> {\n+    pub truncation_length: i64,\n+    pub truncation_symbol: &'a str,\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> Default for MesonConfig<'a> {\n+    fn default() -> Self {\n+        MesonConfig {\n+            truncation_length: std::i64::MAX,",
+    "path": "src/configs/meson.rs",
+    "commit_id": "81241f27fcbd16c08e6d552b13f99ea90412b3e9",
+    "original_commit_id": "737e1dc1900d882620943a8c9eb39abbe80d6062",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The config parser supports unsigned integers now:\r\n```suggestion\r\n            truncation_length: std::u64::MAX,\r\n```",
+    "created_at": "2022-10-03T11:50:56Z",
+    "updated_at": "2022-10-03T12:29:21Z",
+    "html_url": "https://github.com/starship/starship/pull/4389#discussion_r985694510",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4389",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/985694510"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4389#discussion_r985694510"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4389"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/985694510/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 22,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 22,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/985694993",
+    "pull_request_review_id": 1128231564,
+    "id": 985694993,
+    "node_id": "PRRC_kwDOCqswNs46wIMR",
+    "diff_hunk": "@@ -0,0 +1,232 @@\n+use unicode_segmentation::UnicodeSegmentation;\n+\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::meson::MesonConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Meson dev environment\n+///\n+/// Will display the Meson environment if `$MESON_DEVENV` and `MESON_PROJECT_NAME` are set.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let meson_env = context.get_env(\"MESON_DEVENV\").unwrap_or_default();\n+    let project_env = context.get_env(\"MESON_PROJECT_NAME\").unwrap_or_default();\n+    if meson_env != \"1\" || project_env.trim().is_empty() {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"meson\");\n+    let config: MesonConfig = MesonConfig::try_load(module.config);\n+\n+    let truncation_symbol = get_first_grapheme(config.truncation_symbol);\n+    let len = if config.truncation_length <= 0 {\n+        log::warn!(\n+            \"\\\"truncation_length\\\" should be a positive value, found {}\",\n+            config.truncation_length\n+        );\n+        std::usize::MAX\n+    } else {\n+        config.truncation_length as usize\n+    };",
+    "path": "src/modules/meson.rs",
+    "commit_id": "81241f27fcbd16c08e6d552b13f99ea90412b3e9",
+    "original_commit_id": "737e1dc1900d882620943a8c9eb39abbe80d6062",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n    let len = config.truncation_length as usize;\r\n```",
+    "created_at": "2022-10-03T11:51:31Z",
+    "updated_at": "2022-10-03T12:29:21Z",
+    "html_url": "https://github.com/starship/starship/pull/4389#discussion_r985694993",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4389",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/985694993"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4389#discussion_r985694993"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4389"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/985694993/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 22,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 30,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 30,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/985723869",
+    "pull_request_review_id": 1128231564,
+    "id": 985723869,
+    "node_id": "PRRC_kwDOCqswNs46wPPd",
+    "diff_hunk": "@@ -2372,6 +2373,45 @@ symbol = \" \"\n style = \"bold dimmed green\"\n ```\n \n+## Meson\n+\n+The `meson` module shows the current Meson developer environment status.\n+\n+By default the Meson project name is displayed, if `$MESON_DEVENV` is set.\n+\n+### Options\n+\n+| Option              | Default                           | Description                                                                               |\n+| ------------------- | --------------------------------- | ----------------------------------------------------------------------------------------- |\n+| `truncation_length` | `2^63 - 1`                        | Truncates a project name to `N` graphemes.                                                |\n+| `truncation_symbol` | `\"…\"`                             | The symbol used to indicate a project name was truncated. You can use `\"\"` for no symbol. |\n+| `format`            | `\"in [$symbol$project]($style) \"` | The format for the module.                                                                |",
+    "path": "docs/config/README.md",
+    "commit_id": "81241f27fcbd16c08e6d552b13f99ea90412b3e9",
+    "original_commit_id": "737e1dc1900d882620943a8c9eb39abbe80d6062",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this module would fit a bit better on the first line along with the conda module. Please also use `via` instead of `in` to match it.",
+    "created_at": "2022-10-03T12:26:47Z",
+    "updated_at": "2022-10-03T12:29:21Z",
+    "html_url": "https://github.com/starship/starship/pull/4389#discussion_r985723869",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4389",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/985723869"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4389#discussion_r985723869"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4389"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/985723869/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 2388,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 24,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/985725188",
+    "pull_request_review_id": 1128231564,
+    "id": 985725188,
+    "node_id": "PRRC_kwDOCqswNs46wPkE",
+    "diff_hunk": "@@ -0,0 +1,232 @@\n+use unicode_segmentation::UnicodeSegmentation;\n+\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::meson::MesonConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Meson dev environment\n+///\n+/// Will display the Meson environment if `$MESON_DEVENV` and `MESON_PROJECT_NAME` are set.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let meson_env = context.get_env(\"MESON_DEVENV\").unwrap_or_default();\n+    let project_env = context.get_env(\"MESON_PROJECT_NAME\").unwrap_or_default();\n+    if meson_env != \"1\" || project_env.trim().is_empty() {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"meson\");\n+    let config: MesonConfig = MesonConfig::try_load(module.config);\n+\n+    let truncation_symbol = get_first_grapheme(config.truncation_symbol);\n+    let len = if config.truncation_length <= 0 {\n+        log::warn!(\n+            \"\\\"truncation_length\\\" should be a positive value, found {}\",\n+            config.truncation_length\n+        );\n+        std::usize::MAX\n+    } else {\n+        config.truncation_length as usize\n+    };\n+\n+    let mut project_name_graphemes: Vec<&str> = project_env.graphemes(true).collect();\n+\n+    let e = &mut (&mut project_name_graphemes);\n+    let e = &mut **e;\n+    let trunc_len = len.min(e.len());\n+    if trunc_len < e.len() {\n+        // The truncation symbol should only be added if we truncate\n+        e[trunc_len] = truncation_symbol;\n+        e.truncate(trunc_len + 1);\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"project\" => Some(Ok(project_name_graphemes.concat())),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `meson`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_first_grapheme(text: &str) -> &str {\n+    UnicodeSegmentation::graphemes(text, true)\n+        .next()\n+        .unwrap_or(\"\")\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::test::ModuleRenderer;\n+    use nu_ansi_term::Color;\n+\n+    #[test]\n+    fn test_changed_truncation_symbol() {\n+        test_truncate_length_with_config(\n+            \"1337_hello_world\",\n+            15,\n+            \"1337_hello_worl\",\n+            \"%\",\n+            \"truncation_symbol = \\\"%\\\"\",\n+        )\n+    }\n+\n+    #[test]\n+    fn test_no_truncation_symbol() {\n+        test_truncate_length_with_config(\n+            \"1337_hello_world\",\n+            15,\n+            \"1337_hello_worl\",\n+            \"\",\n+            \"truncation_symbol = \\\"\\\"\",\n+        )\n+    }\n+\n+    #[test]\n+    fn test_multi_char_truncation_symbol() {\n+        test_truncate_length_with_config(\n+            \"1337_hello_world\",\n+            15,\n+            \"1337_hello_worl\",\n+            \"a\",\n+            \"truncation_symbol = \\\"apple\\\"\",\n+        )\n+    }\n+\n+    #[test]\n+    fn test_ascii_boundary_below() {\n+        test_truncate_length(\"1337_hello_world\", 15, \"1337_hello_worl\", \"…\")\n+    }\n+\n+    #[test]\n+    fn test_ascii_boundary_on() {\n+        test_truncate_length(\"1337_hello_world\", 16, \"1337_hello_world\", \"\")\n+    }\n+\n+    #[test]\n+    fn test_ascii_boundary_above() {\n+        test_truncate_length(\"1337_hello_world\", 17, \"1337_hello_world\", \"\")\n+    }\n+\n+    #[test]\n+    fn test_one() {\n+        test_truncate_length(\"1337_hello_world\", 1, \"1\", \"…\")\n+    }\n+\n+    #[test]\n+    fn test_zero() {\n+        test_truncate_length(\"1337_hello_world\", 0, \"1337_hello_world\", \"\")\n+    }\n+\n+    #[test]\n+    fn test_negative() {\n+        test_truncate_length(\"1337_hello_world\", -1, \"1337_hello_world\", \"\")\n+    }\n+\n+    #[test]\n+    fn test_hindi_truncation() {\n+        test_truncate_length(\"नमस्ते\", 3, \"नमस्\", \"…\")\n+    }\n+\n+    #[test]\n+    fn test_hindi_truncation2() {\n+        test_truncate_length(\"नमस्त\", 3, \"नमस्\", \"…\")\n+    }\n+\n+    #[test]\n+    fn test_japanese_truncation() {\n+        test_truncate_length(\"がんばってね\", 4, \"がんばっ\", \"…\")\n+    }\n+\n+    #[test]\n+    fn not_in_env() {\n+        let actual = ModuleRenderer::new(\"meson\").collect();\n+\n+        let expected = None;\n+\n+        assert_eq!(expected, actual);\n+    }\n+\n+    #[test]\n+    fn env_set() {\n+        let actual = ModuleRenderer::new(\"meson\")\n+            .env(\"MESON_DEVENV\", \"1\")\n+            .env(\"MESON_PROJECT_NAME\", \"starship\")\n+            .collect();\n+\n+        let expected = Some(format!(\n+            \"in {} \",\n+            // TODO change the icon and the color\n+            Color::Blue.bold().paint(\"⬢ starship\")",
+    "path": "src/modules/meson.rs",
+    "commit_id": "81241f27fcbd16c08e6d552b13f99ea90412b3e9",
+    "original_commit_id": "737e1dc1900d882620943a8c9eb39abbe80d6062",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Does this still need to be handled?\r\n```suggestion\r\n            Color::Blue.bold().paint(\"⬢ starship\")\r\n```",
+    "created_at": "2022-10-03T12:28:24Z",
+    "updated_at": "2022-10-03T12:29:21Z",
+    "html_url": "https://github.com/starship/starship/pull/4389#discussion_r985725188",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4389",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/985725188"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4389#discussion_r985725188"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4389"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/985725188/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 178,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 73,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 179,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/985959450",
+    "pull_request_review_id": 1128634973,
+    "id": 985959450,
+    "node_id": "PRRC_kwDOCqswNs46xIwa",
+    "diff_hunk": "@@ -0,0 +1,232 @@\n+use unicode_segmentation::UnicodeSegmentation;\n+\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::meson::MesonConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Meson dev environment\n+///\n+/// Will display the Meson environment if `$MESON_DEVENV` and `MESON_PROJECT_NAME` are set.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let meson_env = context.get_env(\"MESON_DEVENV\").unwrap_or_default();\n+    let project_env = context.get_env(\"MESON_PROJECT_NAME\").unwrap_or_default();\n+    if meson_env != \"1\" || project_env.trim().is_empty() {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"meson\");\n+    let config: MesonConfig = MesonConfig::try_load(module.config);\n+\n+    let truncation_symbol = get_first_grapheme(config.truncation_symbol);\n+    let len = if config.truncation_length <= 0 {\n+        log::warn!(\n+            \"\\\"truncation_length\\\" should be a positive value, found {}\",\n+            config.truncation_length\n+        );\n+        std::usize::MAX\n+    } else {\n+        config.truncation_length as usize\n+    };\n+\n+    let mut project_name_graphemes: Vec<&str> = project_env.graphemes(true).collect();\n+\n+    let e = &mut (&mut project_name_graphemes);\n+    let e = &mut **e;\n+    let trunc_len = len.min(e.len());\n+    if trunc_len < e.len() {\n+        // The truncation symbol should only be added if we truncate\n+        e[trunc_len] = truncation_symbol;\n+        e.truncate(trunc_len + 1);\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"project\" => Some(Ok(project_name_graphemes.concat())),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `meson`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_first_grapheme(text: &str) -> &str {\n+    UnicodeSegmentation::graphemes(text, true)\n+        .next()\n+        .unwrap_or(\"\")\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::test::ModuleRenderer;\n+    use nu_ansi_term::Color;\n+\n+    #[test]\n+    fn test_changed_truncation_symbol() {\n+        test_truncate_length_with_config(\n+            \"1337_hello_world\",\n+            15,\n+            \"1337_hello_worl\",\n+            \"%\",\n+            \"truncation_symbol = \\\"%\\\"\",\n+        )\n+    }\n+\n+    #[test]\n+    fn test_no_truncation_symbol() {\n+        test_truncate_length_with_config(\n+            \"1337_hello_world\",\n+            15,\n+            \"1337_hello_worl\",\n+            \"\",\n+            \"truncation_symbol = \\\"\\\"\",\n+        )\n+    }\n+\n+    #[test]\n+    fn test_multi_char_truncation_symbol() {\n+        test_truncate_length_with_config(\n+            \"1337_hello_world\",\n+            15,\n+            \"1337_hello_worl\",\n+            \"a\",\n+            \"truncation_symbol = \\\"apple\\\"\",\n+        )\n+    }\n+\n+    #[test]\n+    fn test_ascii_boundary_below() {\n+        test_truncate_length(\"1337_hello_world\", 15, \"1337_hello_worl\", \"…\")\n+    }\n+\n+    #[test]\n+    fn test_ascii_boundary_on() {\n+        test_truncate_length(\"1337_hello_world\", 16, \"1337_hello_world\", \"\")\n+    }\n+\n+    #[test]\n+    fn test_ascii_boundary_above() {\n+        test_truncate_length(\"1337_hello_world\", 17, \"1337_hello_world\", \"\")\n+    }\n+\n+    #[test]\n+    fn test_one() {\n+        test_truncate_length(\"1337_hello_world\", 1, \"1\", \"…\")\n+    }\n+\n+    #[test]\n+    fn test_zero() {\n+        test_truncate_length(\"1337_hello_world\", 0, \"1337_hello_world\", \"\")\n+    }\n+\n+    #[test]\n+    fn test_negative() {\n+        test_truncate_length(\"1337_hello_world\", -1, \"1337_hello_world\", \"\")\n+    }\n+\n+    #[test]\n+    fn test_hindi_truncation() {\n+        test_truncate_length(\"नमस्ते\", 3, \"नमस्\", \"…\")\n+    }\n+\n+    #[test]\n+    fn test_hindi_truncation2() {\n+        test_truncate_length(\"नमस्त\", 3, \"नमस्\", \"…\")\n+    }\n+\n+    #[test]\n+    fn test_japanese_truncation() {\n+        test_truncate_length(\"がんばってね\", 4, \"がんばっ\", \"…\")\n+    }\n+\n+    #[test]\n+    fn not_in_env() {\n+        let actual = ModuleRenderer::new(\"meson\").collect();\n+\n+        let expected = None;\n+\n+        assert_eq!(expected, actual);\n+    }\n+\n+    #[test]\n+    fn env_set() {\n+        let actual = ModuleRenderer::new(\"meson\")\n+            .env(\"MESON_DEVENV\", \"1\")\n+            .env(\"MESON_PROJECT_NAME\", \"starship\")\n+            .collect();\n+\n+        let expected = Some(format!(\n+            \"in {} \",\n+            // TODO change the icon and the color\n+            Color::Blue.bold().paint(\"⬢ starship\")",
+    "path": "src/modules/meson.rs",
+    "commit_id": "81241f27fcbd16c08e6d552b13f99ea90412b3e9",
+    "original_commit_id": "737e1dc1900d882620943a8c9eb39abbe80d6062",
+    "user": {
+      "login": "ItsJamie9494",
+      "id": 22264706,
+      "node_id": "MDQ6VXNlcjIyMjY0NzA2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22264706?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ItsJamie9494",
+      "html_url": "https://github.com/ItsJamie9494",
+      "followers_url": "https://api.github.com/users/ItsJamie9494/followers",
+      "following_url": "https://api.github.com/users/ItsJamie9494/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ItsJamie9494/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ItsJamie9494/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ItsJamie9494/subscriptions",
+      "organizations_url": "https://api.github.com/users/ItsJamie9494/orgs",
+      "repos_url": "https://api.github.com/users/ItsJamie9494/repos",
+      "events_url": "https://api.github.com/users/ItsJamie9494/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ItsJamie9494/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "No, I forgot to remove the comment, my bad",
+    "created_at": "2022-10-03T15:50:03Z",
+    "updated_at": "2022-10-03T15:50:03Z",
+    "html_url": "https://github.com/starship/starship/pull/4389#discussion_r985959450",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4389",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/985959450"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4389#discussion_r985959450"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4389"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/985959450/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 178,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 73,
+    "side": "RIGHT",
+    "in_reply_to_id": 985725188,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 179,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/985965155",
+    "pull_request_review_id": 1128643153,
+    "id": 985965155,
+    "node_id": "PRRC_kwDOCqswNs46xKJj",
+    "diff_hunk": "@@ -0,0 +1,232 @@\n+use unicode_segmentation::UnicodeSegmentation;\n+\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::meson::MesonConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Meson dev environment\n+///\n+/// Will display the Meson environment if `$MESON_DEVENV` and `MESON_PROJECT_NAME` are set.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let meson_env = context.get_env(\"MESON_DEVENV\").unwrap_or_default();\n+    let project_env = context.get_env(\"MESON_PROJECT_NAME\").unwrap_or_default();\n+    if meson_env != \"1\" || project_env.trim().is_empty() {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"meson\");\n+    let config: MesonConfig = MesonConfig::try_load(module.config);\n+\n+    let truncation_symbol = get_first_grapheme(config.truncation_symbol);\n+    let len = if config.truncation_length <= 0 {\n+        log::warn!(\n+            \"\\\"truncation_length\\\" should be a positive value, found {}\",\n+            config.truncation_length\n+        );\n+        std::usize::MAX\n+    } else {\n+        config.truncation_length as usize\n+    };\n+\n+    let mut project_name_graphemes: Vec<&str> = project_env.graphemes(true).collect();\n+\n+    let e = &mut (&mut project_name_graphemes);\n+    let e = &mut **e;\n+    let trunc_len = len.min(e.len());\n+    if trunc_len < e.len() {\n+        // The truncation symbol should only be added if we truncate\n+        e[trunc_len] = truncation_symbol;\n+        e.truncate(trunc_len + 1);\n+    }",
+    "path": "src/modules/meson.rs",
+    "commit_id": "81241f27fcbd16c08e6d552b13f99ea90412b3e9",
+    "original_commit_id": "737e1dc1900d882620943a8c9eb39abbe80d6062",
+    "user": {
+      "login": "ItsJamie9494",
+      "id": 22264706,
+      "node_id": "MDQ6VXNlcjIyMjY0NzA2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22264706?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ItsJamie9494",
+      "html_url": "https://github.com/ItsJamie9494",
+      "followers_url": "https://api.github.com/users/ItsJamie9494/followers",
+      "following_url": "https://api.github.com/users/ItsJamie9494/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ItsJamie9494/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ItsJamie9494/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ItsJamie9494/subscriptions",
+      "organizations_url": "https://api.github.com/users/ItsJamie9494/orgs",
+      "repos_url": "https://api.github.com/users/ItsJamie9494/repos",
+      "events_url": "https://api.github.com/users/ItsJamie9494/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ItsJamie9494/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Would you like me to move the truncation code in this MR?\n\nThat feels like something that deserves its own issue or MR, but I guess we could start the process here?",
+    "created_at": "2022-10-03T15:55:39Z",
+    "updated_at": "2022-10-03T15:56:13Z",
+    "html_url": "https://github.com/starship/starship/pull/4389#discussion_r985965155",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4389",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/985965155"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4389#discussion_r985965155"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4389"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/985965155/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 32,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 41,
+    "side": "RIGHT",
+    "in_reply_to_id": 985692926,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 41,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/985989257",
+    "pull_request_review_id": 1128677736,
+    "id": 985989257,
+    "node_id": "PRRC_kwDOCqswNs46xQCJ",
+    "diff_hunk": "@@ -0,0 +1,232 @@\n+use unicode_segmentation::UnicodeSegmentation;\n+\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::meson::MesonConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Meson dev environment\n+///\n+/// Will display the Meson environment if `$MESON_DEVENV` and `MESON_PROJECT_NAME` are set.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let meson_env = context.get_env(\"MESON_DEVENV\").unwrap_or_default();\n+    let project_env = context.get_env(\"MESON_PROJECT_NAME\").unwrap_or_default();\n+    if meson_env != \"1\" || project_env.trim().is_empty() {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"meson\");\n+    let config: MesonConfig = MesonConfig::try_load(module.config);\n+\n+    let truncation_symbol = get_first_grapheme(config.truncation_symbol);\n+    let len = if config.truncation_length <= 0 {\n+        log::warn!(\n+            \"\\\"truncation_length\\\" should be a positive value, found {}\",\n+            config.truncation_length\n+        );\n+        std::usize::MAX\n+    } else {\n+        config.truncation_length as usize\n+    };\n+\n+    let mut project_name_graphemes: Vec<&str> = project_env.graphemes(true).collect();\n+\n+    let e = &mut (&mut project_name_graphemes);\n+    let e = &mut **e;\n+    let trunc_len = len.min(e.len());\n+    if trunc_len < e.len() {\n+        // The truncation symbol should only be added if we truncate\n+        e[trunc_len] = truncation_symbol;\n+        e.truncate(trunc_len + 1);\n+    }",
+    "path": "src/modules/meson.rs",
+    "commit_id": "81241f27fcbd16c08e6d552b13f99ea90412b3e9",
+    "original_commit_id": "737e1dc1900d882620943a8c9eb39abbe80d6062",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Either way is fine with me. I would also be fine with leaving this as-is for now.",
+    "created_at": "2022-10-03T16:19:53Z",
+    "updated_at": "2022-10-03T16:19:53Z",
+    "html_url": "https://github.com/starship/starship/pull/4389#discussion_r985989257",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4389",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/985989257"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4389#discussion_r985989257"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4389"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/985989257/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 32,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 41,
+    "side": "RIGHT",
+    "in_reply_to_id": 985692926,
+    "author_association": "MEMBER",
+    "original_position": 41,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/985995110",
+    "pull_request_review_id": 1128686232,
+    "id": 985995110,
+    "node_id": "PRRC_kwDOCqswNs46xRdm",
+    "diff_hunk": "@@ -0,0 +1,232 @@\n+use unicode_segmentation::UnicodeSegmentation;\n+\n+use super::{Context, Module, ModuleConfig};\n+\n+use crate::configs::meson::MesonConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Meson dev environment\n+///\n+/// Will display the Meson environment if `$MESON_DEVENV` and `MESON_PROJECT_NAME` are set.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let meson_env = context.get_env(\"MESON_DEVENV\").unwrap_or_default();\n+    let project_env = context.get_env(\"MESON_PROJECT_NAME\").unwrap_or_default();\n+    if meson_env != \"1\" || project_env.trim().is_empty() {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"meson\");\n+    let config: MesonConfig = MesonConfig::try_load(module.config);\n+\n+    let truncation_symbol = get_first_grapheme(config.truncation_symbol);\n+    let len = if config.truncation_length <= 0 {\n+        log::warn!(\n+            \"\\\"truncation_length\\\" should be a positive value, found {}\",\n+            config.truncation_length\n+        );\n+        std::usize::MAX\n+    } else {\n+        config.truncation_length as usize\n+    };\n+\n+    let mut project_name_graphemes: Vec<&str> = project_env.graphemes(true).collect();\n+\n+    let e = &mut (&mut project_name_graphemes);\n+    let e = &mut **e;\n+    let trunc_len = len.min(e.len());\n+    if trunc_len < e.len() {\n+        // The truncation symbol should only be added if we truncate\n+        e[trunc_len] = truncation_symbol;\n+        e.truncate(trunc_len + 1);\n+    }",
+    "path": "src/modules/meson.rs",
+    "commit_id": "81241f27fcbd16c08e6d552b13f99ea90412b3e9",
+    "original_commit_id": "737e1dc1900d882620943a8c9eb39abbe80d6062",
+    "user": {
+      "login": "ItsJamie9494",
+      "id": 22264706,
+      "node_id": "MDQ6VXNlcjIyMjY0NzA2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22264706?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ItsJamie9494",
+      "html_url": "https://github.com/ItsJamie9494",
+      "followers_url": "https://api.github.com/users/ItsJamie9494/followers",
+      "following_url": "https://api.github.com/users/ItsJamie9494/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ItsJamie9494/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ItsJamie9494/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ItsJamie9494/subscriptions",
+      "organizations_url": "https://api.github.com/users/ItsJamie9494/orgs",
+      "repos_url": "https://api.github.com/users/ItsJamie9494/repos",
+      "events_url": "https://api.github.com/users/ItsJamie9494/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ItsJamie9494/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I'll move the code into a truncation utility for this module, but won't touch other modules ",
+    "created_at": "2022-10-03T16:26:10Z",
+    "updated_at": "2022-10-03T16:26:11Z",
+    "html_url": "https://github.com/starship/starship/pull/4389#discussion_r985995110",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4389",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/985995110"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4389#discussion_r985995110"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4389"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/985995110/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 32,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 41,
+    "side": "RIGHT",
+    "in_reply_to_id": 985692926,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 41,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/986478667",
+    "pull_request_review_id": 1129360244,
+    "id": 986478667,
+    "node_id": "PRRC_kwDOCqswNs46zHhL",
+    "diff_hunk": "@@ -0,0 +1,30 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct MesonConfig<'a> {\n+    pub truncation_length: i64,\n+    pub truncation_symbol: &'a str,\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> Default for MesonConfig<'a> {\n+    fn default() -> Self {\n+        MesonConfig {\n+            truncation_length: std::i64::MAX,",
+    "path": "src/configs/meson.rs",
+    "commit_id": "81241f27fcbd16c08e6d552b13f99ea90412b3e9",
+    "original_commit_id": "737e1dc1900d882620943a8c9eb39abbe80d6062",
+    "user": {
+      "login": "ItsJamie9494",
+      "id": 22264706,
+      "node_id": "MDQ6VXNlcjIyMjY0NzA2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22264706?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ItsJamie9494",
+      "html_url": "https://github.com/ItsJamie9494",
+      "followers_url": "https://api.github.com/users/ItsJamie9494/followers",
+      "following_url": "https://api.github.com/users/ItsJamie9494/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ItsJamie9494/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ItsJamie9494/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ItsJamie9494/subscriptions",
+      "organizations_url": "https://api.github.com/users/ItsJamie9494/orgs",
+      "repos_url": "https://api.github.com/users/ItsJamie9494/repos",
+      "events_url": "https://api.github.com/users/ItsJamie9494/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ItsJamie9494/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```\r\n---- configs::test::test_all_modules_in_full_config stdout ----\r\nthread 'configs::test::test_all_modules_in_full_config' panicked at 'called `Result::unwrap()` on an `Err` value: Custom(\"u64 value was too large\")', src/configs/mod.rs:263:63\r\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\r\n```\r\n\r\nI'll keep this code in the commit though",
+    "created_at": "2022-10-04T06:31:17Z",
+    "updated_at": "2022-10-04T06:32:19Z",
+    "html_url": "https://github.com/starship/starship/pull/4389#discussion_r986478667",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4389",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/986478667"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4389#discussion_r986478667"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4389"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/986478667/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 22,
+    "side": "RIGHT",
+    "in_reply_to_id": 985694510,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 22,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/986483988",
+    "pull_request_review_id": 1129367636,
+    "id": 986483988,
+    "node_id": "PRRC_kwDOCqswNs46zI0U",
+    "diff_hunk": "@@ -0,0 +1,30 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct MesonConfig<'a> {\n+    pub truncation_length: i64,\n+    pub truncation_symbol: &'a str,\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> Default for MesonConfig<'a> {\n+    fn default() -> Self {\n+        MesonConfig {\n+            truncation_length: std::i64::MAX,",
+    "path": "src/configs/meson.rs",
+    "commit_id": "81241f27fcbd16c08e6d552b13f99ea90412b3e9",
+    "original_commit_id": "737e1dc1900d882620943a8c9eb39abbe80d6062",
+    "user": {
+      "login": "ItsJamie9494",
+      "id": 22264706,
+      "node_id": "MDQ6VXNlcjIyMjY0NzA2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22264706?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ItsJamie9494",
+      "html_url": "https://github.com/ItsJamie9494",
+      "followers_url": "https://api.github.com/users/ItsJamie9494/followers",
+      "following_url": "https://api.github.com/users/ItsJamie9494/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ItsJamie9494/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ItsJamie9494/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ItsJamie9494/subscriptions",
+      "organizations_url": "https://api.github.com/users/ItsJamie9494/orgs",
+      "repos_url": "https://api.github.com/users/ItsJamie9494/repos",
+      "events_url": "https://api.github.com/users/ItsJamie9494/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ItsJamie9494/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Update: it seems to work with a usize?",
+    "created_at": "2022-10-04T06:39:43Z",
+    "updated_at": "2022-10-04T06:39:44Z",
+    "html_url": "https://github.com/starship/starship/pull/4389#discussion_r986483988",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4389",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/986483988"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4389#discussion_r986483988"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4389"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/986483988/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 22,
+    "side": "RIGHT",
+    "in_reply_to_id": 985694510,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 22,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/989291503",
+    "pull_request_review_id": 1133362405,
+    "id": 989291503,
+    "node_id": "PRRC_kwDOCqswNs4692Pv",
+    "diff_hunk": "@@ -0,0 +1,30 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct MesonConfig<'a> {\n+    pub truncation_length: i64,\n+    pub truncation_symbol: &'a str,\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> Default for MesonConfig<'a> {\n+    fn default() -> Self {\n+        MesonConfig {\n+            truncation_length: std::i64::MAX,",
+    "path": "src/configs/meson.rs",
+    "commit_id": "81241f27fcbd16c08e6d552b13f99ea90412b3e9",
+    "original_commit_id": "737e1dc1900d882620943a8c9eb39abbe80d6062",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I would rather not use a type that could change its size based on the target architecture, please try `u32`.",
+    "created_at": "2022-10-06T17:04:26Z",
+    "updated_at": "2022-10-06T17:04:26Z",
+    "html_url": "https://github.com/starship/starship/pull/4389#discussion_r989291503",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4389",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/989291503"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4389#discussion_r989291503"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4389"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/989291503/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 22,
+    "side": "RIGHT",
+    "in_reply_to_id": 985694510,
+    "author_association": "MEMBER",
+    "original_position": 22,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/989295634",
+    "pull_request_review_id": 1133368566,
+    "id": 989295634,
+    "node_id": "PRRC_kwDOCqswNs4693QS",
+    "diff_hunk": "@@ -0,0 +1,30 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct MesonConfig<'a> {\n+    pub truncation_length: i64,\n+    pub truncation_symbol: &'a str,\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> Default for MesonConfig<'a> {\n+    fn default() -> Self {\n+        MesonConfig {\n+            truncation_length: std::i64::MAX,",
+    "path": "src/configs/meson.rs",
+    "commit_id": "81241f27fcbd16c08e6d552b13f99ea90412b3e9",
+    "original_commit_id": "737e1dc1900d882620943a8c9eb39abbe80d6062",
+    "user": {
+      "login": "ItsJamie9494",
+      "id": 22264706,
+      "node_id": "MDQ6VXNlcjIyMjY0NzA2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22264706?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ItsJamie9494",
+      "html_url": "https://github.com/ItsJamie9494",
+      "followers_url": "https://api.github.com/users/ItsJamie9494/followers",
+      "following_url": "https://api.github.com/users/ItsJamie9494/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ItsJamie9494/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ItsJamie9494/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ItsJamie9494/subscriptions",
+      "organizations_url": "https://api.github.com/users/ItsJamie9494/orgs",
+      "repos_url": "https://api.github.com/users/ItsJamie9494/repos",
+      "events_url": "https://api.github.com/users/ItsJamie9494/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ItsJamie9494/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I’ll try that again",
+    "created_at": "2022-10-06T17:09:27Z",
+    "updated_at": "2022-10-06T17:09:27Z",
+    "html_url": "https://github.com/starship/starship/pull/4389#discussion_r989295634",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4389",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/989295634"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4389#discussion_r989295634"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4389"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/989295634/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 22,
+    "side": "RIGHT",
+    "in_reply_to_id": 985694510,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 22,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/990440686",
+    "pull_request_review_id": 1134989390,
+    "id": 990440686,
+    "node_id": "PRRC_kwDOCqswNs47COzu",
+    "diff_hunk": "@@ -2384,6 +2385,45 @@ symbol = \" \"\n style = \"bold dimmed green\"\n ```\n \n+## Meson\n+\n+The `meson` module shows the current Meson developer environment status.\n+\n+By default the Meson project name is displayed, if `$MESON_DEVENV` is set.\n+\n+### Options\n+\n+| Option              | Default                            | Description                                                                               |\n+| ------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------- |\n+| `truncation_length` | `2^63 - 1`                         | Truncates a project name to `N` graphemes.                                                |",
+    "path": "docs/config/README.md",
+    "commit_id": "81241f27fcbd16c08e6d552b13f99ea90412b3e9",
+    "original_commit_id": "161d1b97e5ee223ee1236fa6dcde99760a655d91",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n| `truncation_length` | `2^32 - 1`                         | Truncates a project name to `N` graphemes.                                                |\r\n```",
+    "created_at": "2022-10-07T19:26:08Z",
+    "updated_at": "2022-10-07T19:32:11Z",
+    "html_url": "https://github.com/starship/starship/pull/4389#discussion_r990440686",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4389",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/990440686"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4389#discussion_r990440686"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4389"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/990440686/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 2398,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 22,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/990443647",
+    "pull_request_review_id": 1134989390,
+    "id": 990443647,
+    "node_id": "PRRC_kwDOCqswNs47CPh_",
+    "diff_hunk": "@@ -0,0 +1,79 @@\n+use super::{Context, Module, ModuleConfig};\n+\n+use super::utils::truncate::truncate_text;\n+use crate::configs::meson::MesonConfig;\n+use crate::formatter::StringFormatter;\n+\n+/// Creates a module with the current Meson dev environment\n+///\n+/// Will display the Meson environment if `$MESON_DEVENV` and `MESON_PROJECT_NAME` are set.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let meson_env = context.get_env(\"MESON_DEVENV\")?;\n+    let project_env = context.get_env(\"MESON_PROJECT_NAME\")?;\n+    if meson_env != \"1\" || project_env.trim().is_empty() {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"meson\");\n+    let config: MesonConfig = MesonConfig::try_load(module.config);\n+\n+    let truncated_text = truncate_text(\n+        &project_env,\n+        config.truncation_length as usize,\n+        config.truncation_symbol,\n+    );\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"project\" => Some(Ok(&truncated_text)),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `meson`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use crate::test::ModuleRenderer;\n+    use nu_ansi_term::Color;\n+\n+    #[test]\n+    fn not_in_env() {\n+        let actual = ModuleRenderer::new(\"meson\").collect();\n+\n+        let expected = None;\n+\n+        assert_eq!(expected, actual);\n+    }\n+\n+    #[test]\n+    fn env_set() {\n+        let actual = ModuleRenderer::new(\"meson\")\n+            .env(\"MESON_DEVENV\", \"1\")\n+            .env(\"MESON_PROJECT_NAME\", \"starship\")\n+            .collect();\n+\n+        let expected = Some(format!(\"via {} \", Color::Blue.bold().paint(\"⬢ starship\")));\n+\n+        assert_eq!(expected, actual);\n+    }",
+    "path": "src/modules/meson.rs",
+    "commit_id": "81241f27fcbd16c08e6d552b13f99ea90412b3e9",
+    "original_commit_id": "161d1b97e5ee223ee1236fa6dcde99760a655d91",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I would prefer a few more tests here:\r\n```suggestion\r\n    }\r\n\r\n    #[test]\r\n    fn env_invalid_devenv() {\r\n        let actual = ModuleRenderer::new(\"meson\")\r\n            .env(\"MESON_DEVENV\", \"0\")\r\n            .env(\"MESON_PROJECT_NAME\", \"starship\")\r\n            .collect();\r\n\r\n        let expected = None;\r\n\r\n        assert_eq!(expected, actual);\r\n    }\r\n\r\n    #[test]\r\n    fn env_invalid_project_name() {\r\n        let actual = ModuleRenderer::new(\"meson\")\r\n            .env(\"MESON_DEVENV\", \"1\")\r\n            .env(\"MESON_PROJECT_NAME\", \" \")\r\n            .collect();\r\n\r\n        let expected = None;\r\n\r\n        assert_eq!(expected, actual);\r\n    }\r\n```",
+    "created_at": "2022-10-07T19:30:56Z",
+    "updated_at": "2022-10-07T19:32:11Z",
+    "html_url": "https://github.com/starship/starship/pull/4389#discussion_r990443647",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4389",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/990443647"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4389#discussion_r990443647"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4389"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/990443647/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 78,
+    "original_line": 78,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 78,
+    "position": 78,
+    "subject_type": "line"
+  }
+]

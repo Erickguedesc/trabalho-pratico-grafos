@@ -1,0 +1,279 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/387786068",
+    "pull_request_review_id": 368933093,
+    "id": 387786068,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM4Nzc4NjA2OA==",
+    "diff_hunk": "@@ -0,0 +1,77 @@\n+use super::{Context, Module, SegmentConfig};\n+\n+use crate::config::RootModuleConfig;\n+use crate::configs::js_library::JsLibraryConfig;\n+use crate::modules::package::extract_package_version;\n+use crate::utils;\n+\n+use node_resolve::resolve_from;\n+use rayon::prelude::*;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"js_library\");\n+\n+    let config = JsLibraryConfig::try_load(module.config);\n+\n+    let mut results: Vec<_> = config\n+        .map\n+        .par_iter()\n+        .map(|(_, v)| v)\n+        .filter(|config_item| !config_item.disabled)\n+        .filter_map(|config_item| {\n+            let dep = config_item.dependency;\n+\n+            let target = format!(\"{}/package.json\", dep);\n+            log::debug!(\"looking for {} from {:?}\", dep, &context.current_dir);\n+\n+            let result = resolve_from(&target, context.current_dir.clone());\n+            if let Err(err) = result {\n+                log::debug!(\"{}: resolution failed: {:?}\", dep, err);\n+                return None;\n+            }\n+\n+            let pkg_path = result.unwrap();",
+    "path": "src/modules/js_library.rs",
+    "commit_id": "67458d9dcea3e4bd282c42c9baa7cdafaadc0222",
+    "original_commit_id": "67458d9dcea3e4bd282c42c9baa7cdafaadc0222",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think it'd be best if we replaced the `.unwrap()`s in this file with `?`.\r\nIt'd be better to not return a module than to panic the prompt.",
+    "created_at": "2020-03-04T16:32:26Z",
+    "updated_at": "2020-03-04T17:02:49Z",
+    "html_url": "https://github.com/starship/starship/pull/776#discussion_r387786068",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/776",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/387786068"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/776#discussion_r387786068"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/776"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/387786068/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 33,
+    "original_line": 33,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 33,
+    "position": 33,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/387789222",
+    "pull_request_review_id": 368933093,
+    "id": 387789222,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM4Nzc4OTIyMg==",
+    "diff_hunk": "@@ -0,0 +1,77 @@\n+use super::{Context, Module, SegmentConfig};\n+\n+use crate::config::RootModuleConfig;\n+use crate::configs::js_library::JsLibraryConfig;\n+use crate::modules::package::extract_package_version;\n+use crate::utils;\n+\n+use node_resolve::resolve_from;\n+use rayon::prelude::*;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"js_library\");",
+    "path": "src/modules/js_library.rs",
+    "commit_id": "67458d9dcea3e4bd282c42c9baa7cdafaadc0222",
+    "original_commit_id": "67458d9dcea3e4bd282c42c9baa7cdafaadc0222",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Before we create a new module and load config, it may be best if we check that we're in a JS project.\r\nMaybe we should first check for the existence of `node_modules` and `package.json`. What are your thoughts?",
+    "created_at": "2020-03-04T16:37:16Z",
+    "updated_at": "2020-03-04T17:02:49Z",
+    "html_url": "https://github.com/starship/starship/pull/776#discussion_r387789222",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/776",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/387789222"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/776#discussion_r387789222"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/776"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/387789222/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 12,
+    "original_line": 12,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 12,
+    "position": 12,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/387804984",
+    "pull_request_review_id": 368933093,
+    "id": 387804984,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM4NzgwNDk4NA==",
+    "diff_hunk": "@@ -0,0 +1,138 @@\n+use ansi_term::Color;",
+    "path": "tests/testsuite/js_library.rs",
+    "commit_id": "67458d9dcea3e4bd282c42c9baa7cdafaadc0222",
+    "original_commit_id": "67458d9dcea3e4bd282c42c9baa7cdafaadc0222",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "New module tests are now kept alongside the module they test (e.g. https://github.com/starship/starship/blob/master/src/modules/nodejs.rs#L38)",
+    "created_at": "2020-03-04T17:02:28Z",
+    "updated_at": "2020-03-04T17:02:49Z",
+    "html_url": "https://github.com/starship/starship/pull/776#discussion_r387804984",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/776",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/387804984"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/776#discussion_r387804984"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/776"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/387804984/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1,
+    "original_line": 1,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 1,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/387806533",
+    "pull_request_review_id": 368959972,
+    "id": 387806533,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDM4NzgwNjUzMw==",
+    "diff_hunk": "@@ -0,0 +1,138 @@\n+use ansi_term::Color;",
+    "path": "tests/testsuite/js_library.rs",
+    "commit_id": "67458d9dcea3e4bd282c42c9baa7cdafaadc0222",
+    "original_commit_id": "67458d9dcea3e4bd282c42c9baa7cdafaadc0222",
+    "user": {
+      "login": "Turbo87",
+      "id": 141300,
+      "node_id": "MDQ6VXNlcjE0MTMwMA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/141300?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Turbo87",
+      "html_url": "https://github.com/Turbo87",
+      "followers_url": "https://api.github.com/users/Turbo87/followers",
+      "following_url": "https://api.github.com/users/Turbo87/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Turbo87/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Turbo87/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Turbo87/subscriptions",
+      "organizations_url": "https://api.github.com/users/Turbo87/orgs",
+      "repos_url": "https://api.github.com/users/Turbo87/repos",
+      "events_url": "https://api.github.com/users/Turbo87/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Turbo87/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "no worries, I'll get it rebased and then move it around :)",
+    "created_at": "2020-03-04T17:05:07Z",
+    "updated_at": "2020-03-04T17:05:07Z",
+    "html_url": "https://github.com/starship/starship/pull/776#discussion_r387806533",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/776",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/387806533"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/776#discussion_r387806533"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/776"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/387806533/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1,
+    "original_line": 1,
+    "side": "RIGHT",
+    "in_reply_to_id": 387804984,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 1,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

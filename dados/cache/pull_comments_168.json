@@ -1,0 +1,209 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/315465616",
+    "pull_request_review_id": 276879878,
+    "id": 315465616,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMxNTQ2NTYxNg==",
+    "diff_hunk": "@@ -1,26 +1,39 @@\n use std::ffi::OsStr;\n use std::path::Path;\n \n-/* We need to send execution time to the prompt for the cmd_duration module. For fish,\n-this is fairly straightforward. For bash and zsh, we'll need to use several\n-shell utilities to get the time, as well as render the prompt */\n-\n-pub fn init(shell_name: &str) {\n+/* We use a two-phase init here: the first phase gives a simple command to the\n+shell. This command evaluates a more complicated script using `source` and\n+process substitution.\n+\n+Directly using `eval` on a shell script causes it to be evaluated in\n+a single line, which sucks because things like comments will comment out the\n+rest of the script, and you have to spam semicolons everywhere. By using\n+source and process substitutions, we make it possible to comment and debug\n+the init scripts. */\n+\n+/* This prints the setup stub, the short piece of code which sets up the main\n+init code. The stub produces the main init script, then evaluates it with\n+`source` and process substitution */\n+pub fn init_stub(shell_name: &str) {\n     log::debug!(\"Shell name: {}\", shell_name);\n \n     let shell_basename = Path::new(shell_name).file_stem().and_then(OsStr::to_str);\n \n-    let setup_script = match shell_basename {\n+    let setup_stub = match shell_basename {\n         Some(\"bash\") => {\n-            let script = BASH_INIT;\n+            /* This *should* look like the zsh function, but bash 3.2 (MacOS default shell)",
+    "path": "src/init.rs",
+    "commit_id": "8e443cf6d7bcbbb355b1d6aecbdc9c3e475e0a4a",
+    "original_commit_id": "3c91980de1d55dfd8b370d3920c3c93540f459f2",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "👍 ",
+    "created_at": "2019-08-20T00:33:07Z",
+    "updated_at": "2019-08-20T00:38:52Z",
+    "html_url": "https://github.com/starship/starship/pull/168#discussion_r315465616",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/168",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/315465616"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/168#discussion_r315465616"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/168"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/315465616/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 24,
+    "original_line": 24,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 31,
+    "position": 31,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/315465738",
+    "pull_request_review_id": 276879878,
+    "id": 315465738,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMxNTQ2NTczOA==",
+    "diff_hunk": "@@ -1,26 +1,39 @@\n use std::ffi::OsStr;\n use std::path::Path;\n \n-/* We need to send execution time to the prompt for the cmd_duration module. For fish,\n-this is fairly straightforward. For bash and zsh, we'll need to use several\n-shell utilities to get the time, as well as render the prompt */\n-\n-pub fn init(shell_name: &str) {\n+/* We use a two-phase init here: the first phase gives a simple command to the\n+shell. This command evaluates a more complicated script using `source` and\n+process substitution.\n+\n+Directly using `eval` on a shell script causes it to be evaluated in\n+a single line, which sucks because things like comments will comment out the\n+rest of the script, and you have to spam semicolons everywhere. By using\n+source and process substitutions, we make it possible to comment and debug\n+the init scripts. */\n+\n+/* This prints the setup stub, the short piece of code which sets up the main\n+init code. The stub produces the main init script, then evaluates it with\n+`source` and process substitution */\n+pub fn init_stub(shell_name: &str) {\n     log::debug!(\"Shell name: {}\", shell_name);\n \n     let shell_basename = Path::new(shell_name).file_stem().and_then(OsStr::to_str);\n \n-    let setup_script = match shell_basename {\n+    let setup_stub = match shell_basename {\n         Some(\"bash\") => {\n-            let script = BASH_INIT;\n+            /* This *should* look like the zsh function, but bash 3.2 (MacOS default shell)\n+            does not support using source with process substitution, so we use this\n+            workaround from https://stackoverflow.com/a/32596626 */\n+            let script = \"source /dev/stdin <<<\\\"$(starship init bash --print-full-init)\\\"\";\n             Some(script)\n         }\n         Some(\"zsh\") => {\n-            let script = ZSH_INIT;\n+            let script = \"source <(starship init zsh --print-full-init)\";\n             Some(script)\n         }\n         Some(\"fish\") => {\n-            let script = FISH_INIT;\n+            // Fish does process substitution with pipes and psub instead of bash syntax",
+    "path": "src/init.rs",
+    "commit_id": "8e443cf6d7bcbbb355b1d6aecbdc9c3e475e0a4a",
+    "original_commit_id": "3c91980de1d55dfd8b370d3920c3c93540f459f2",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Huh... Neat! 👍 ",
+    "created_at": "2019-08-20T00:34:01Z",
+    "updated_at": "2019-08-20T00:38:52Z",
+    "html_url": "https://github.com/starship/starship/pull/168#discussion_r315465738",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/168",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/315465738"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/168#discussion_r315465738"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/168"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/315465738/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 35,
+    "original_line": 35,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 44,
+    "position": 44,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/315465885",
+    "pull_request_review_id": 276879878,
+    "id": 315465885,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMxNTQ2NTg4NQ==",
+    "diff_hunk": "@@ -46,142 +59,179 @@ pub fn init(shell_name: &str) {\n             None\n         }\n     };\n+    if let Some(script) = setup_stub {\n+        print!(\"{}\", script);\n+    };\n+}\n \n+/* This function (called when `--print-full-init` is passed to `starship init`)\n+prints out the main initialization script */\n+pub fn init_main(shell_name: &str) {\n+    let setup_script = match shell_name {\n+        \"bash\" => Some(BASH_INIT),\n+        \"zsh\" => Some(ZSH_INIT),\n+        \"fish\" => Some(FISH_INIT),\n+        _ => {\n+            println!(\n+                \"printf \\\"Shell name detection failed on phase two init.\\\\n\\\n+                 This probably indicates a bug within starship: please open\\\\n\\\n+                 an issue at https://github.com/starship/starship/issues/new\\\\n\\\"\"\n+            );\n+            None\n+        }\n+    };\n     if let Some(script) = setup_script {\n         print!(\"{}\", script);\n-    }\n+    };\n }\n \n-/*\n- For bash: we need to manually hook functions ourself: PROMPT_COMMAND will exec\n-   right before the prompt is drawn, and any function trapped by DEBUG will exec\n-   before a command is run.\n-\n-   There is a preexec/precmd framework for bash out there: if we find the\n-   appropriate variables set, assume we are using that framework:\n-   https://github.com/rcaloras/bash-preexec\n-\n-   Bash quirk: DEBUG is triggered whenever a command is executed, even if that\n-   command is part of a pipeline. To avoid only timing the last part of a pipeline,\n-   we only start the timer if no timer has been started since the last prompt draw,\n-   tracked by the variable PREEXEC_READY. Similarly, only draw timing info if\n-   STARSHIP_START_TIME is defined, in case preexec was interrupted.\n-\n-   Finally, to work around existing DEBUG traps in the absence of a preexec-like,\n-   we parse out the name of the old DEBUG hook, then make a new function which\n-   calls both that function and our starship hooks. We don't do this for\n-   PROMPT_COMMAND because that would probably result in two prompts.\n-\n-   We need to quote the output of `$(jobs -p | wc -l)` since MacOS `wc` leaves\n-   giant spaces in front of the number (e.g. \"    3\"), which messes up the\n-   word-splitting. Instead, quote the whole thing, then let Rust do the whitespace\n-   trimming within the jobs module\n+/* GENERAL INIT SCRIPT NOTES",
+    "path": "src/init.rs",
+    "commit_id": "8e443cf6d7bcbbb355b1d6aecbdc9c3e475e0a4a",
+    "original_commit_id": "3c91980de1d55dfd8b370d3920c3c93540f459f2",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "👍 ",
+    "created_at": "2019-08-20T00:35:04Z",
+    "updated_at": "2019-08-20T00:38:52Z",
+    "html_url": "https://github.com/starship/starship/pull/168#discussion_r315465885",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/168",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/315465885"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/168#discussion_r315465885"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/168"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/315465885/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 88,
+    "original_line": 88,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 104,
+    "position": 104,
+    "subject_type": "line"
+  }
+]

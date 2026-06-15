@@ -1,0 +1,487 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/407328505",
+    "pull_request_review_id": 391968198,
+    "id": 407328505,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQwNzMyODUwNQ==",
+    "diff_hunk": "@@ -0,0 +1,89 @@\n+use dirs::home_dir;\n+use encoding_rs::*;\n+use std::env;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader, Read};\n+use std::path::PathBuf;\n+use std::str::FromStr;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+type JValue = serde_json::Value;\n+\n+use crate::configs::azure::AzureConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"azure\");\n+    let config = AzureConfig::try_load(module.config);\n+\n+    let subscription_name = get_azure_subscription_name()?;\n+\n+    let formatter = if let Ok(formatter) = StringFormatter::new(config.format) {\n+        formatter.map(|variable| match variable {\n+            \"subscription\" => Some(subscription_name.to_string()),\n+            _ => None,\n+        })\n+    } else {\n+        log::warn!(\"Error parsing format string in `azure.format`\");\n+        return None;\n+    };\n+\n+    module.set_segments(formatter.parse(None));\n+\n+    module.get_prefix().set_value(\"\");\n+    module.get_suffix().set_value(\"\");\n+\n+    Some(module)\n+}\n+\n+fn get_azure_config_file_location() -> Option<PathBuf> {\n+    env::var(\"AZURE_CONFIG_DIR\")\n+        .ok()\n+        .and_then(|path| PathBuf::from_str(&path).ok())\n+        .or_else(|| {\n+            let mut home = home_dir()?;\n+            home.push(\".azure\");\n+            Some(home)\n+        })\n+}\n+\n+fn get_azure_subscription_name() -> Option<String> {\n+    let mut azure_profile_json = get_azure_config_file_location()?;\n+    azure_profile_json.push(\"azureProfile.json\");\n+\n+    let mut cloud_config = get_azure_config_file_location()?;\n+    cloud_config.push(\"clouds.config\");\n+\n+    let file = File::open(&cloud_config).ok()?;\n+    let reader = BufReader::new(file);\n+    let lines = reader.lines().filter_map(Result::ok);\n+\n+    let region_line = lines\n+        .skip_while(|line| line != \"[AzureCloud]\")\n+        .find(|line| line.starts_with(\"subscription\"))\n+        .unwrap();",
+    "path": "src/modules/azure.rs",
+    "commit_id": "53d94cbd8e40c5385a6498c9790225d73364bc86",
+    "original_commit_id": "7fba003e7d0804f5b59909e7a0080977fb41a036",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`.find( ... )?` might be preferable to `unwrap`, as your function already returns an `Option`",
+    "created_at": "2020-04-13T05:45:29Z",
+    "updated_at": "2020-04-26T07:05:22Z",
+    "html_url": "https://github.com/starship/starship/pull/1086#discussion_r407328505",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1086",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/407328505"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1086#discussion_r407328505"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1086"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/407328505/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 65,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 65,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/407330327",
+    "pull_request_review_id": 391968198,
+    "id": 407330327,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQwNzMzMDMyNw==",
+    "diff_hunk": "@@ -0,0 +1,89 @@\n+use dirs::home_dir;\n+use encoding_rs::*;\n+use std::env;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader, Read};\n+use std::path::PathBuf;\n+use std::str::FromStr;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+type JValue = serde_json::Value;\n+\n+use crate::configs::azure::AzureConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"azure\");\n+    let config = AzureConfig::try_load(module.config);\n+\n+    let subscription_name = get_azure_subscription_name()?;\n+\n+    let formatter = if let Ok(formatter) = StringFormatter::new(config.format) {\n+        formatter.map(|variable| match variable {\n+            \"subscription\" => Some(subscription_name.to_string()),\n+            _ => None,\n+        })\n+    } else {\n+        log::warn!(\"Error parsing format string in `azure.format`\");\n+        return None;\n+    };\n+\n+    module.set_segments(formatter.parse(None));\n+\n+    module.get_prefix().set_value(\"\");\n+    module.get_suffix().set_value(\"\");\n+\n+    Some(module)\n+}\n+\n+fn get_azure_config_file_location() -> Option<PathBuf> {\n+    env::var(\"AZURE_CONFIG_DIR\")\n+        .ok()\n+        .and_then(|path| PathBuf::from_str(&path).ok())\n+        .or_else(|| {\n+            let mut home = home_dir()?;\n+            home.push(\".azure\");\n+            Some(home)\n+        })\n+}\n+\n+fn get_azure_subscription_name() -> Option<String> {\n+    let mut azure_profile_json = get_azure_config_file_location()?;\n+    azure_profile_json.push(\"azureProfile.json\");\n+\n+    let mut cloud_config = get_azure_config_file_location()?;\n+    cloud_config.push(\"clouds.config\");\n+\n+    let file = File::open(&cloud_config).ok()?;\n+    let reader = BufReader::new(file);\n+    let lines = reader.lines().filter_map(Result::ok);\n+\n+    let region_line = lines\n+        .skip_while(|line| line != \"[AzureCloud]\")\n+        .find(|line| line.starts_with(\"subscription\"))\n+        .unwrap();\n+\n+    let region = region_line.split('=').nth(1)?;\n+    let region = region.trim();\n+\n+    let file = File::open(&azure_profile_json).ok()?;\n+    let mut buffer: Vec<u8> = Vec::new();\n+    let mut reader = BufReader::new(file);\n+    reader.read_to_end(&mut buffer).ok()?;\n+    let bytes = buffer.as_mut_slice();\n+    let decodedbuffer = UTF_8.decode_with_bom_removal(bytes).0;",
+    "path": "src/modules/azure.rs",
+    "commit_id": "53d94cbd8e40c5385a6498c9790225d73364bc86",
+    "original_commit_id": "7fba003e7d0804f5b59909e7a0080977fb41a036",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "starship has a `read_file` function in the `utils` module which will read a file to a String, which is probably simpler than these six lines. It relies on the standard `std::io::Read::read_to_string`, which already expects an UTF-8. I would expect it would handle both a BOM/non-BOM string fine.",
+    "created_at": "2020-04-13T05:53:16Z",
+    "updated_at": "2020-04-26T07:05:22Z",
+    "html_url": "https://github.com/starship/starship/pull/1086#discussion_r407330327",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1086",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/407330327"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1086#discussion_r407330327"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1086"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/407330327/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 72,
+    "original_line": 72,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 75,
+    "position": 72,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/407330563",
+    "pull_request_review_id": 391968198,
+    "id": 407330563,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQwNzMzMDU2Mw==",
+    "diff_hunk": "@@ -0,0 +1,89 @@\n+use dirs::home_dir;\n+use encoding_rs::*;\n+use std::env;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader, Read};\n+use std::path::PathBuf;\n+use std::str::FromStr;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+type JValue = serde_json::Value;\n+\n+use crate::configs::azure::AzureConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"azure\");\n+    let config = AzureConfig::try_load(module.config);\n+\n+    let subscription_name = get_azure_subscription_name()?;\n+\n+    let formatter = if let Ok(formatter) = StringFormatter::new(config.format) {\n+        formatter.map(|variable| match variable {\n+            \"subscription\" => Some(subscription_name.to_string()),\n+            _ => None,\n+        })\n+    } else {\n+        log::warn!(\"Error parsing format string in `azure.format`\");\n+        return None;\n+    };\n+\n+    module.set_segments(formatter.parse(None));\n+\n+    module.get_prefix().set_value(\"\");\n+    module.get_suffix().set_value(\"\");\n+\n+    Some(module)\n+}\n+\n+fn get_azure_config_file_location() -> Option<PathBuf> {\n+    env::var(\"AZURE_CONFIG_DIR\")\n+        .ok()\n+        .and_then(|path| PathBuf::from_str(&path).ok())\n+        .or_else(|| {\n+            let mut home = home_dir()?;\n+            home.push(\".azure\");\n+            Some(home)\n+        })\n+}\n+\n+fn get_azure_subscription_name() -> Option<String> {\n+    let mut azure_profile_json = get_azure_config_file_location()?;\n+    azure_profile_json.push(\"azureProfile.json\");\n+\n+    let mut cloud_config = get_azure_config_file_location()?;\n+    cloud_config.push(\"clouds.config\");\n+\n+    let file = File::open(&cloud_config).ok()?;\n+    let reader = BufReader::new(file);\n+    let lines = reader.lines().filter_map(Result::ok);\n+\n+    let region_line = lines\n+        .skip_while(|line| line != \"[AzureCloud]\")\n+        .find(|line| line.starts_with(\"subscription\"))\n+        .unwrap();\n+\n+    let region = region_line.split('=').nth(1)?;\n+    let region = region.trim();",
+    "path": "src/modules/azure.rs",
+    "commit_id": "53d94cbd8e40c5385a6498c9790225d73364bc86",
+    "original_commit_id": "7fba003e7d0804f5b59909e7a0080977fb41a036",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The `trim` could be easily inlined to the previous line, if you prefer.",
+    "created_at": "2020-04-13T05:54:07Z",
+    "updated_at": "2020-04-26T07:05:22Z",
+    "html_url": "https://github.com/starship/starship/pull/1086#discussion_r407330563",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1086",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/407330563"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1086#discussion_r407330563"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1086"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/407330563/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 68,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 68,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/407332500",
+    "pull_request_review_id": 391968198,
+    "id": 407332500,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQwNzMzMjUwMA==",
+    "diff_hunk": "@@ -0,0 +1,89 @@\n+use dirs::home_dir;\n+use encoding_rs::*;\n+use std::env;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader, Read};\n+use std::path::PathBuf;\n+use std::str::FromStr;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+type JValue = serde_json::Value;\n+\n+use crate::configs::azure::AzureConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"azure\");\n+    let config = AzureConfig::try_load(module.config);\n+\n+    let subscription_name = get_azure_subscription_name()?;\n+\n+    let formatter = if let Ok(formatter) = StringFormatter::new(config.format) {\n+        formatter.map(|variable| match variable {\n+            \"subscription\" => Some(subscription_name.to_string()),\n+            _ => None,\n+        })\n+    } else {\n+        log::warn!(\"Error parsing format string in `azure.format`\");\n+        return None;\n+    };\n+\n+    module.set_segments(formatter.parse(None));\n+\n+    module.get_prefix().set_value(\"\");\n+    module.get_suffix().set_value(\"\");\n+\n+    Some(module)\n+}\n+\n+fn get_azure_config_file_location() -> Option<PathBuf> {\n+    env::var(\"AZURE_CONFIG_DIR\")\n+        .ok()\n+        .and_then(|path| PathBuf::from_str(&path).ok())",
+    "path": "src/modules/azure.rs",
+    "commit_id": "53d94cbd8e40c5385a6498c9790225d73364bc86",
+    "original_commit_id": "7fba003e7d0804f5b59909e7a0080977fb41a036",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think there is an implicit allocate + copy here which you an avoid by using `PathBuf::from(path)` instead.",
+    "created_at": "2020-04-13T06:02:04Z",
+    "updated_at": "2020-04-26T07:05:22Z",
+    "html_url": "https://github.com/starship/starship/pull/1086#discussion_r407332500",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1086",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/407332500"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1086#discussion_r407332500"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1086"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/407332500/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 43,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 43,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/407335693",
+    "pull_request_review_id": 391968198,
+    "id": 407335693,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQwNzMzNTY5Mw==",
+    "diff_hunk": "@@ -0,0 +1,89 @@\n+use dirs::home_dir;\n+use encoding_rs::*;\n+use std::env;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader, Read};\n+use std::path::PathBuf;\n+use std::str::FromStr;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+type JValue = serde_json::Value;\n+\n+use crate::configs::azure::AzureConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"azure\");\n+    let config = AzureConfig::try_load(module.config);\n+\n+    let subscription_name = get_azure_subscription_name()?;\n+\n+    let formatter = if let Ok(formatter) = StringFormatter::new(config.format) {\n+        formatter.map(|variable| match variable {\n+            \"subscription\" => Some(subscription_name.to_string()),\n+            _ => None,\n+        })\n+    } else {\n+        log::warn!(\"Error parsing format string in `azure.format`\");\n+        return None;\n+    };\n+\n+    module.set_segments(formatter.parse(None));\n+\n+    module.get_prefix().set_value(\"\");\n+    module.get_suffix().set_value(\"\");\n+\n+    Some(module)\n+}\n+\n+fn get_azure_config_file_location() -> Option<PathBuf> {\n+    env::var(\"AZURE_CONFIG_DIR\")\n+        .ok()\n+        .and_then(|path| PathBuf::from_str(&path).ok())\n+        .or_else(|| {\n+            let mut home = home_dir()?;\n+            home.push(\".azure\");\n+            Some(home)\n+        })\n+}\n+\n+fn get_azure_subscription_name() -> Option<String> {\n+    let mut azure_profile_json = get_azure_config_file_location()?;\n+    azure_profile_json.push(\"azureProfile.json\");\n+\n+    let mut cloud_config = get_azure_config_file_location()?;\n+    cloud_config.push(\"clouds.config\");\n+\n+    let file = File::open(&cloud_config).ok()?;\n+    let reader = BufReader::new(file);\n+    let lines = reader.lines().filter_map(Result::ok);\n+\n+    let region_line = lines\n+        .skip_while(|line| line != \"[AzureCloud]\")\n+        .find(|line| line.starts_with(\"subscription\"))\n+        .unwrap();\n+\n+    let region = region_line.split('=').nth(1)?;\n+    let region = region.trim();\n+\n+    let file = File::open(&azure_profile_json).ok()?;\n+    let mut buffer: Vec<u8> = Vec::new();\n+    let mut reader = BufReader::new(file);\n+    reader.read_to_end(&mut buffer).ok()?;\n+    let bytes = buffer.as_mut_slice();\n+    let decodedbuffer = UTF_8.decode_with_bom_removal(bytes).0;\n+\n+    let parsed_json: JValue = serde_json::from_str(&decodedbuffer).ok()?;\n+\n+    let subscriptions = parsed_json[\"subscriptions\"].as_array()?;\n+\n+    for sub in subscriptions {\n+        let subscription_id = sub[\"id\"].as_str()?;\n+        if subscription_id == region {",
+    "path": "src/modules/azure.rs",
+    "commit_id": "53d94cbd8e40c5385a6498c9790225d73364bc86",
+    "original_commit_id": "7fba003e7d0804f5b59909e7a0080977fb41a036",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`std::iter::find` is probably more idiomatic here, rather than the for loop. Or even: `subscriptions.iter().filter_map(...).next()`, so you can keep the `?` syntax.",
+    "created_at": "2020-04-13T06:15:16Z",
+    "updated_at": "2020-04-26T07:05:22Z",
+    "html_url": "https://github.com/starship/starship/pull/1086#discussion_r407335693",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1086",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/407335693"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1086#discussion_r407335693"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1086"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/407335693/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 83,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 83,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/407721287",
+    "pull_request_review_id": 392439588,
+    "id": 407721287,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQwNzcyMTI4Nw==",
+    "diff_hunk": "@@ -0,0 +1,89 @@\n+use dirs::home_dir;\n+use encoding_rs::*;\n+use std::env;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader, Read};\n+use std::path::PathBuf;\n+use std::str::FromStr;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+type JValue = serde_json::Value;\n+\n+use crate::configs::azure::AzureConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"azure\");\n+    let config = AzureConfig::try_load(module.config);\n+\n+    let subscription_name = get_azure_subscription_name()?;\n+\n+    let formatter = if let Ok(formatter) = StringFormatter::new(config.format) {\n+        formatter.map(|variable| match variable {\n+            \"subscription\" => Some(subscription_name.to_string()),\n+            _ => None,\n+        })\n+    } else {\n+        log::warn!(\"Error parsing format string in `azure.format`\");\n+        return None;\n+    };\n+\n+    module.set_segments(formatter.parse(None));\n+\n+    module.get_prefix().set_value(\"\");\n+    module.get_suffix().set_value(\"\");\n+\n+    Some(module)\n+}\n+\n+fn get_azure_config_file_location() -> Option<PathBuf> {\n+    env::var(\"AZURE_CONFIG_DIR\")\n+        .ok()\n+        .and_then(|path| PathBuf::from_str(&path).ok())\n+        .or_else(|| {\n+            let mut home = home_dir()?;\n+            home.push(\".azure\");\n+            Some(home)\n+        })\n+}\n+\n+fn get_azure_subscription_name() -> Option<String> {\n+    let mut azure_profile_json = get_azure_config_file_location()?;\n+    azure_profile_json.push(\"azureProfile.json\");\n+\n+    let mut cloud_config = get_azure_config_file_location()?;\n+    cloud_config.push(\"clouds.config\");\n+\n+    let file = File::open(&cloud_config).ok()?;\n+    let reader = BufReader::new(file);\n+    let lines = reader.lines().filter_map(Result::ok);\n+\n+    let region_line = lines\n+        .skip_while(|line| line != \"[AzureCloud]\")\n+        .find(|line| line.starts_with(\"subscription\"))\n+        .unwrap();\n+\n+    let region = region_line.split('=').nth(1)?;\n+    let region = region.trim();\n+\n+    let file = File::open(&azure_profile_json).ok()?;\n+    let mut buffer: Vec<u8> = Vec::new();\n+    let mut reader = BufReader::new(file);\n+    reader.read_to_end(&mut buffer).ok()?;\n+    let bytes = buffer.as_mut_slice();\n+    let decodedbuffer = UTF_8.decode_with_bom_removal(bytes).0;",
+    "path": "src/modules/azure.rs",
+    "commit_id": "53d94cbd8e40c5385a6498c9790225d73364bc86",
+    "original_commit_id": "7fba003e7d0804f5b59909e7a0080977fb41a036",
+    "user": {
+      "login": "andymac4182",
+      "id": 1297073,
+      "node_id": "MDQ6VXNlcjEyOTcwNzM=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1297073?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andymac4182",
+      "html_url": "https://github.com/andymac4182",
+      "followers_url": "https://api.github.com/users/andymac4182/followers",
+      "following_url": "https://api.github.com/users/andymac4182/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andymac4182/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andymac4182/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andymac4182/subscriptions",
+      "organizations_url": "https://api.github.com/users/andymac4182/orgs",
+      "repos_url": "https://api.github.com/users/andymac4182/repos",
+      "events_url": "https://api.github.com/users/andymac4182/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andymac4182/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I was originally using this util and had an issue with UTF-8 BOM. I moved to using encoding since that appeared to be the best way to handle BOM.",
+    "created_at": "2020-04-13T21:06:17Z",
+    "updated_at": "2020-04-26T07:05:22Z",
+    "html_url": "https://github.com/starship/starship/pull/1086#discussion_r407721287",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1086",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/407721287"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1086#discussion_r407721287"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1086"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/407721287/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 72,
+    "original_line": 72,
+    "side": "RIGHT",
+    "in_reply_to_id": 407330327,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 75,
+    "position": 72,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/407735347",
+    "pull_request_review_id": 392456676,
+    "id": 407735347,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQwNzczNTM0Nw==",
+    "diff_hunk": "@@ -0,0 +1,89 @@\n+use dirs::home_dir;\n+use encoding_rs::*;\n+use std::env;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader, Read};\n+use std::path::PathBuf;\n+use std::str::FromStr;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+type JValue = serde_json::Value;\n+\n+use crate::configs::azure::AzureConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"azure\");\n+    let config = AzureConfig::try_load(module.config);\n+\n+    let subscription_name = get_azure_subscription_name()?;\n+\n+    let formatter = if let Ok(formatter) = StringFormatter::new(config.format) {\n+        formatter.map(|variable| match variable {\n+            \"subscription\" => Some(subscription_name.to_string()),\n+            _ => None,\n+        })\n+    } else {\n+        log::warn!(\"Error parsing format string in `azure.format`\");\n+        return None;\n+    };\n+\n+    module.set_segments(formatter.parse(None));\n+\n+    module.get_prefix().set_value(\"\");\n+    module.get_suffix().set_value(\"\");\n+\n+    Some(module)\n+}\n+\n+fn get_azure_config_file_location() -> Option<PathBuf> {\n+    env::var(\"AZURE_CONFIG_DIR\")\n+        .ok()\n+        .and_then(|path| PathBuf::from_str(&path).ok())\n+        .or_else(|| {\n+            let mut home = home_dir()?;\n+            home.push(\".azure\");\n+            Some(home)\n+        })\n+}\n+\n+fn get_azure_subscription_name() -> Option<String> {\n+    let mut azure_profile_json = get_azure_config_file_location()?;\n+    azure_profile_json.push(\"azureProfile.json\");\n+\n+    let mut cloud_config = get_azure_config_file_location()?;\n+    cloud_config.push(\"clouds.config\");\n+\n+    let file = File::open(&cloud_config).ok()?;\n+    let reader = BufReader::new(file);\n+    let lines = reader.lines().filter_map(Result::ok);\n+\n+    let region_line = lines\n+        .skip_while(|line| line != \"[AzureCloud]\")\n+        .find(|line| line.starts_with(\"subscription\"))\n+        .unwrap();\n+\n+    let region = region_line.split('=').nth(1)?;\n+    let region = region.trim();\n+\n+    let file = File::open(&azure_profile_json).ok()?;\n+    let mut buffer: Vec<u8> = Vec::new();\n+    let mut reader = BufReader::new(file);\n+    reader.read_to_end(&mut buffer).ok()?;\n+    let bytes = buffer.as_mut_slice();\n+    let decodedbuffer = UTF_8.decode_with_bom_removal(bytes).0;\n+\n+    let parsed_json: JValue = serde_json::from_str(&decodedbuffer).ok()?;\n+\n+    let subscriptions = parsed_json[\"subscriptions\"].as_array()?;\n+\n+    for sub in subscriptions {\n+        let subscription_id = sub[\"id\"].as_str()?;\n+        if subscription_id == region {",
+    "path": "src/modules/azure.rs",
+    "commit_id": "53d94cbd8e40c5385a6498c9790225d73364bc86",
+    "original_commit_id": "7fba003e7d0804f5b59909e7a0080977fb41a036",
+    "user": {
+      "login": "andymac4182",
+      "id": 1297073,
+      "node_id": "MDQ6VXNlcjEyOTcwNzM=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1297073?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andymac4182",
+      "html_url": "https://github.com/andymac4182",
+      "followers_url": "https://api.github.com/users/andymac4182/followers",
+      "following_url": "https://api.github.com/users/andymac4182/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andymac4182/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andymac4182/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andymac4182/subscriptions",
+      "organizations_url": "https://api.github.com/users/andymac4182/orgs",
+      "repos_url": "https://api.github.com/users/andymac4182/repos",
+      "events_url": "https://api.github.com/users/andymac4182/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andymac4182/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Thanks for this. Got some great reading about iterators in Rust. Ended up going with find_map 👍 ",
+    "created_at": "2020-04-13T21:35:08Z",
+    "updated_at": "2020-04-26T07:05:22Z",
+    "html_url": "https://github.com/starship/starship/pull/1086#discussion_r407735347",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1086",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/407735347"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1086#discussion_r407735347"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1086"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/407735347/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 83,
+    "side": "RIGHT",
+    "in_reply_to_id": 407335693,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 83,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

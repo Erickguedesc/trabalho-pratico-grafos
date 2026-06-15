@@ -1,0 +1,349 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2072638883",
+    "pull_request_review_id": 2813489421,
+    "id": 2072638883,
+    "node_id": "PRRC_kwDOCqswNs57ifWj",
+    "diff_hunk": "@@ -0,0 +1,289 @@\n+use std::{borrow::Cow, ops::Deref, sync::LazyLock};\n+\n+use semver::Version;\n+\n+use crate::{\n+    config::ModuleConfig,\n+    configs::fortran::FortranConfig,\n+    formatter::{StringFormatter, VersionFormatter},\n+};\n+\n+use super::{Context, Module};\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"fortran\");\n+    let config = FortranConfig::try_load(module.config);\n+\n+    let is_fortran_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_fortran_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        let compiler_info = LazyLock::new(|| context.exec_cmds_return_first(config.commands));\n+\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"name\" => {\n+                    let compiler_info = &compiler_info.deref().as_ref()?.stdout;\n+\n+                    let compiler = if compiler_info.contains(\"GNU\") {\n+                        \"gfortran\"\n+                    } else if compiler_info.contains(\"flang-new\") || compiler_info.contains(\"flang\")\n+                    {\n+                        \"flang\"\n+                    } else {\n+                        return None;\n+                    };\n+                    Some(Ok(Cow::Borrowed(compiler)))\n+                }\n+                \"version\" => {\n+                    let compiler_info = &compiler_info.deref().as_ref()?.stdout;\n+\n+                    VersionFormatter::format_module_version(\n+                        &module.get_name(),",
+    "path": "src/modules/fortran.rs",
+    "commit_id": "f6c9681b1d91f51f4c6fe177524ca739020f0ad8",
+    "original_commit_id": "34face97d762d95c75e33d1746c3b5e9cc9c1aa5",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n                        module.get_name(),\r\n```",
+    "created_at": "2025-05-04T14:57:28Z",
+    "updated_at": "2025-05-08T15:31:10Z",
+    "html_url": "https://github.com/starship/starship/pull/6685#discussion_r2072638883",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6685",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2072638883"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6685#discussion_r2072638883"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6685"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2072638883/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 58,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 58,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2072640511",
+    "pull_request_review_id": 2813489421,
+    "id": 2072640511,
+    "node_id": "PRRC_kwDOCqswNs57ifv_",
+    "diff_hunk": "@@ -0,0 +1,44 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct FortranConfig<'a> {\n+    pub format: &'a str,\n+    pub version_format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+    pub detect_extensions: Vec<&'a str>,\n+    pub detect_files: Vec<&'a str>,\n+    pub detect_folders: Vec<&'a str>,\n+    pub commands: Vec<Vec<&'a str>>,\n+}\n+\n+impl Default for FortranConfig<'_> {\n+    fn default() -> Self {\n+        FortranConfig {\n+            format: \"via [$symbol($version(-$name) )]($style)\",\n+            version_format: \"${raw}\",\n+            symbol: \"󱈚 \",",
+    "path": "src/configs/fortran.rs",
+    "commit_id": "f6c9681b1d91f51f4c6fe177524ca739020f0ad8",
+    "original_commit_id": "34face97d762d95c75e33d1746c3b5e9cc9c1aa5",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Starship is moving away from using nerd font symbols by default:\r\n\r\n```suggestion\r\n            symbol: \"🅵  \",\r\n```\r\n\r\n```suggestion\r\n            symbol: \"F \",\r\n```",
+    "created_at": "2025-05-04T15:05:29Z",
+    "updated_at": "2025-05-08T15:31:10Z",
+    "html_url": "https://github.com/starship/starship/pull/6685#discussion_r2072640511",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6685",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2072640511"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6685#discussion_r2072640511"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6685"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2072640511/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 27,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 27,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2079958040",
+    "pull_request_review_id": 2813489421,
+    "id": 2079958040,
+    "node_id": "PRRC_kwDOCqswNs57-aQY",
+    "diff_hunk": "@@ -0,0 +1,289 @@\n+use std::{borrow::Cow, ops::Deref, sync::LazyLock};\n+\n+use semver::Version;\n+\n+use crate::{\n+    config::ModuleConfig,\n+    configs::fortran::FortranConfig,\n+    formatter::{StringFormatter, VersionFormatter},\n+};\n+\n+use super::{Context, Module};\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"fortran\");\n+    let config = FortranConfig::try_load(module.config);\n+\n+    let is_fortran_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_fortran_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        let compiler_info = LazyLock::new(|| context.exec_cmds_return_first(config.commands));\n+\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"name\" => {\n+                    let compiler_info = &compiler_info.deref().as_ref()?.stdout;\n+\n+                    let compiler = if compiler_info.contains(\"GNU\") {\n+                        \"gfortran\"\n+                    } else if compiler_info.contains(\"flang-new\") || compiler_info.contains(\"flang\")",
+    "path": "src/modules/fortran.rs",
+    "commit_id": "f6c9681b1d91f51f4c6fe177524ca739020f0ad8",
+    "original_commit_id": "34face97d762d95c75e33d1746c3b5e9cc9c1aa5",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n                    } else if compiler_info.contains(\"flang\")\r\n```",
+    "created_at": "2025-05-08T15:30:58Z",
+    "updated_at": "2025-05-08T15:31:10Z",
+    "html_url": "https://github.com/starship/starship/pull/6685#discussion_r2079958040",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6685",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2079958040"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6685#discussion_r2079958040"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6685"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2079958040/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 46,
+    "original_line": 46,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 46,
+    "position": 46,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2082396986",
+    "pull_request_review_id": 2829498436,
+    "id": 2082396986,
+    "node_id": "PRRC_kwDOCqswNs58Hts6",
+    "diff_hunk": "@@ -0,0 +1,289 @@\n+use std::{borrow::Cow, ops::Deref, sync::LazyLock};\n+\n+use semver::Version;\n+\n+use crate::{\n+    config::ModuleConfig,\n+    configs::fortran::FortranConfig,\n+    formatter::{StringFormatter, VersionFormatter},\n+};\n+\n+use super::{Context, Module};\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"fortran\");\n+    let config = FortranConfig::try_load(module.config);\n+\n+    let is_fortran_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_fortran_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        let compiler_info = LazyLock::new(|| context.exec_cmds_return_first(config.commands));\n+\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"name\" => {\n+                    let compiler_info = &compiler_info.deref().as_ref()?.stdout;\n+\n+                    let compiler = if compiler_info.contains(\"GNU\") {\n+                        \"gfortran\"\n+                    } else if compiler_info.contains(\"flang-new\") || compiler_info.contains(\"flang\")",
+    "path": "src/modules/fortran.rs",
+    "commit_id": "f6c9681b1d91f51f4c6fe177524ca739020f0ad8",
+    "original_commit_id": "34face97d762d95c75e33d1746c3b5e9cc9c1aa5",
+    "user": {
+      "login": "minomy13",
+      "id": 61352736,
+      "node_id": "MDQ6VXNlcjYxMzUyNzM2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/61352736?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/minomy13",
+      "html_url": "https://github.com/minomy13",
+      "followers_url": "https://api.github.com/users/minomy13/followers",
+      "following_url": "https://api.github.com/users/minomy13/following{/other_user}",
+      "gists_url": "https://api.github.com/users/minomy13/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/minomy13/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/minomy13/subscriptions",
+      "organizations_url": "https://api.github.com/users/minomy13/orgs",
+      "repos_url": "https://api.github.com/users/minomy13/repos",
+      "events_url": "https://api.github.com/users/minomy13/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/minomy13/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Actually, the output on Debian with package `flang-19` is:\r\n```\r\nDebian flang-new version 19.1.4 (1~deb12u1)\r\nTarget: aarch64-unknown-linux-gnu\r\nThread model: posix\r\nInstalledDir: /usr/lib/llvm-19/bin\r\n```\r\nOn macOS (Homebrew package `flang`), it is:\r\n```\r\nHomebrew flang version 20.1.4\r\nTarget: arm64-apple-darwin24.3.0\r\nThread model: posix\r\nInstalledDir: /opt/homebrew/Cellar/flang/20.1.4/libexec\r\nConfiguration file: /opt/homebrew/Cellar/flang/20.1.4/libexec/flang.cfg\r\nConfiguration file: /opt/homebrew/etc/clang/arm64-apple-darwin24.cfg\r\n```\r\n\r\nI didn't find an official package for Arch, so couldn't test it there.\r\n\r\nSo, regarding macOS, you're absolutely right - but I think that, at least, Debian based systems wouldn't be supported with that change.",
+    "created_at": "2025-05-09T19:39:50Z",
+    "updated_at": "2025-05-09T20:04:14Z",
+    "html_url": "https://github.com/starship/starship/pull/6685#discussion_r2082396986",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6685",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2082396986"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6685#discussion_r2082396986"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6685"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2082396986/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 46,
+    "original_line": 46,
+    "side": "RIGHT",
+    "in_reply_to_id": 2079958040,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 46,
+    "position": 46,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2148628162",
+    "pull_request_review_id": 2930126262,
+    "id": 2148628162,
+    "node_id": "PRRC_kwDOCqswNs6AEXbC",
+    "diff_hunk": "@@ -0,0 +1,289 @@\n+use std::{borrow::Cow, ops::Deref, sync::LazyLock};\n+\n+use semver::Version;\n+\n+use crate::{\n+    config::ModuleConfig,\n+    configs::fortran::FortranConfig,\n+    formatter::{StringFormatter, VersionFormatter},\n+};\n+\n+use super::{Context, Module};\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"fortran\");\n+    let config = FortranConfig::try_load(module.config);\n+\n+    let is_fortran_project = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_files)\n+        .set_extensions(&config.detect_extensions)\n+        .set_folders(&config.detect_folders)\n+        .is_match();\n+\n+    if !is_fortran_project {\n+        return None;\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        let compiler_info = LazyLock::new(|| context.exec_cmds_return_first(config.commands));\n+\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"name\" => {\n+                    let compiler_info = &compiler_info.deref().as_ref()?.stdout;\n+\n+                    let compiler = if compiler_info.contains(\"GNU\") {\n+                        \"gfortran\"\n+                    } else if compiler_info.contains(\"flang-new\") || compiler_info.contains(\"flang\")",
+    "path": "src/modules/fortran.rs",
+    "commit_id": "f6c9681b1d91f51f4c6fe177524ca739020f0ad8",
+    "original_commit_id": "34face97d762d95c75e33d1746c3b5e9cc9c1aa5",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`flang` should match both `flang-new` and `flang`, but keeping should be fine because there is no functional difference.",
+    "created_at": "2025-06-15T17:49:57Z",
+    "updated_at": "2025-06-15T17:49:57Z",
+    "html_url": "https://github.com/starship/starship/pull/6685#discussion_r2148628162",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6685",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2148628162"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6685#discussion_r2148628162"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6685"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2148628162/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 46,
+    "original_line": 46,
+    "side": "RIGHT",
+    "in_reply_to_id": 2079958040,
+    "author_association": "MEMBER",
+    "original_position": 46,
+    "position": 46,
+    "subject_type": "line"
+  }
+]

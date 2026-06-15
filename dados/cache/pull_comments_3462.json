@@ -1,0 +1,700 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/787658923",
+    "pull_request_review_id": 856671907,
+    "id": 787658923,
+    "node_id": "PRRC_kwDOCqswNs4u8rir",
+    "diff_hunk": "@@ -109,10 +109,7 @@ fn format_exit_code<'a>(\n         }\n     };\n \n-    let hex_status = exit_code\n-        .parse::<i32>()\n-        .ok()\n-        .map(|code| format!(\"0x{:X}\", code));\n+    let hex_status = format!(\"0x{:X}\", exit_code_int as u32);",
+    "path": "src/modules/status.rs",
+    "commit_id": "fb2624f5caa51fa65617982d4ace2104954905df",
+    "original_commit_id": "460ace346cfc040acc1eadd6ba6cba962c348733",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this will just work and avoid truncation:\r\n\r\n```suggestion\r\n    let hex_status = format!(\"0x{:X}\", exit_code_int);\r\n```",
+    "created_at": "2022-01-19T11:36:33Z",
+    "updated_at": "2022-01-19T11:36:34Z",
+    "html_url": "https://github.com/starship/starship/pull/3462#discussion_r787658923",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3462",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/787658923"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3462#discussion_r787658923"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3462"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/787658923/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 112,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/787719594",
+    "pull_request_review_id": 856758054,
+    "id": 787719594,
+    "node_id": "PRRC_kwDOCqswNs4u86Wq",
+    "diff_hunk": "@@ -109,10 +109,7 @@ fn format_exit_code<'a>(\n         }\n     };\n \n-    let hex_status = exit_code\n-        .parse::<i32>()\n-        .ok()\n-        .map(|code| format!(\"0x{:X}\", code));\n+    let hex_status = format!(\"0x{:X}\", exit_code_int as u32);",
+    "path": "src/modules/status.rs",
+    "commit_id": "fb2624f5caa51fa65617982d4ace2104954905df",
+    "original_commit_id": "460ace346cfc040acc1eadd6ba6cba962c348733",
+    "user": {
+      "login": "moko256",
+      "id": 16546008,
+      "node_id": "MDQ6VXNlcjE2NTQ2MDA4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16546008?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/moko256",
+      "html_url": "https://github.com/moko256",
+      "followers_url": "https://api.github.com/users/moko256/followers",
+      "following_url": "https://api.github.com/users/moko256/following{/other_user}",
+      "gists_url": "https://api.github.com/users/moko256/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/moko256/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/moko256/subscriptions",
+      "organizations_url": "https://api.github.com/users/moko256/orgs",
+      "repos_url": "https://api.github.com/users/moko256/repos",
+      "events_url": "https://api.github.com/users/moko256/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/moko256/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Avoiding truncation makes hex_status longer when status code is negative number like this:\r\n```\r\n✖-1 0xFFFFFFFFFFFFFFFF ❯\r\n```\r\n```\r\n✖-1073741510 0xFFFFFFFFC000013A ❯\r\n```\r\nOn Windows, status code is in range of u32 or i32 (e.g, MSVC `exit()` receive `int`), so I think this cast is necessary to make easy to see.",
+    "created_at": "2022-01-19T12:58:57Z",
+    "updated_at": "2022-01-19T13:04:12Z",
+    "html_url": "https://github.com/starship/starship/pull/3462#discussion_r787719594",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3462",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/787719594"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3462#discussion_r787719594"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3462"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/787719594/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 112,
+    "side": "RIGHT",
+    "in_reply_to_id": 787658923,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/789814237",
+    "pull_request_review_id": 859781166,
+    "id": 789814237,
+    "node_id": "PRRC_kwDOCqswNs4vE5vd",
+    "diff_hunk": "@@ -109,10 +109,7 @@ fn format_exit_code<'a>(\n         }\n     };\n \n-    let hex_status = exit_code\n-        .parse::<i32>()\n-        .ok()\n-        .map(|code| format!(\"0x{:X}\", code));\n+    let hex_status = format!(\"0x{:X}\", exit_code_int as u32);",
+    "path": "src/modules/status.rs",
+    "commit_id": "fb2624f5caa51fa65617982d4ace2104954905df",
+    "original_commit_id": "460ace346cfc040acc1eadd6ba6cba962c348733",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "In that case, should this also apply to `int` too? Furthermore, maybe this should be restricted to Windows (with another `type ExitCodeTarget`?) and I feel like this should be documented in the `status` docs.",
+    "created_at": "2022-01-21T16:35:10Z",
+    "updated_at": "2022-01-21T16:35:10Z",
+    "html_url": "https://github.com/starship/starship/pull/3462#discussion_r789814237",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3462",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/789814237"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3462#discussion_r789814237"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3462"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/789814237/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 112,
+    "side": "RIGHT",
+    "in_reply_to_id": 787658923,
+    "author_association": "MEMBER",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/790341203",
+    "pull_request_review_id": 860381821,
+    "id": 790341203,
+    "node_id": "PRRC_kwDOCqswNs4vG6ZT",
+    "diff_hunk": "@@ -109,10 +109,7 @@ fn format_exit_code<'a>(\n         }\n     };\n \n-    let hex_status = exit_code\n-        .parse::<i32>()\n-        .ok()\n-        .map(|code| format!(\"0x{:X}\", code));\n+    let hex_status = format!(\"0x{:X}\", exit_code_int as u32);",
+    "path": "src/modules/status.rs",
+    "commit_id": "fb2624f5caa51fa65617982d4ace2104954905df",
+    "original_commit_id": "460ace346cfc040acc1eadd6ba6cba962c348733",
+    "user": {
+      "login": "moko256",
+      "id": 16546008,
+      "node_id": "MDQ6VXNlcjE2NTQ2MDA4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16546008?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/moko256",
+      "html_url": "https://github.com/moko256",
+      "followers_url": "https://api.github.com/users/moko256/followers",
+      "following_url": "https://api.github.com/users/moko256/following{/other_user}",
+      "gists_url": "https://api.github.com/users/moko256/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/moko256/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/moko256/subscriptions",
+      "organizations_url": "https://api.github.com/users/moko256/orgs",
+      "repos_url": "https://api.github.com/users/moko256/repos",
+      "events_url": "https://api.github.com/users/moko256/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/moko256/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Whether i32 or u32 the status fits in is consistent in one shell, and in supported platform the status code fits in 32bit.\r\nUntil the platform that have larger status code than 32bit will be supported, I think that assuming that the status code fits in 32bit is no problem and hex_status doesn't have to be restricted only for Windows. Similally, I think it doesn't have to apply to int too.\r\nBut I think that the size of status code that the module receives should be documented.",
+    "created_at": "2022-01-23T22:43:36Z",
+    "updated_at": "2022-01-23T22:46:52Z",
+    "html_url": "https://github.com/starship/starship/pull/3462#discussion_r790341203",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3462",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/790341203"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3462#discussion_r790341203"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3462"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/790341203/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 112,
+    "side": "RIGHT",
+    "in_reply_to_id": 787658923,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/790346078",
+    "pull_request_review_id": 860387054,
+    "id": 790346078,
+    "node_id": "PRRC_kwDOCqswNs4vG7le",
+    "diff_hunk": "@@ -109,10 +109,7 @@ fn format_exit_code<'a>(\n         }\n     };\n \n-    let hex_status = exit_code\n-        .parse::<i32>()\n-        .ok()\n-        .map(|code| format!(\"0x{:X}\", code));\n+    let hex_status = format!(\"0x{:X}\", exit_code_int as u32);",
+    "path": "src/modules/status.rs",
+    "commit_id": "fb2624f5caa51fa65617982d4ace2104954905df",
+    "original_commit_id": "460ace346cfc040acc1eadd6ba6cba962c348733",
+    "user": {
+      "login": "moko256",
+      "id": 16546008,
+      "node_id": "MDQ6VXNlcjE2NTQ2MDA4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16546008?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/moko256",
+      "html_url": "https://github.com/moko256",
+      "followers_url": "https://api.github.com/users/moko256/followers",
+      "following_url": "https://api.github.com/users/moko256/following{/other_user}",
+      "gists_url": "https://api.github.com/users/moko256/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/moko256/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/moko256/subscriptions",
+      "organizations_url": "https://api.github.com/users/moko256/orgs",
+      "repos_url": "https://api.github.com/users/moko256/repos",
+      "events_url": "https://api.github.com/users/moko256/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/moko256/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Instead of casting here, it is also possible to use i32 as ExitCode like this:\r\n```diff\r\ndiff --git a/src/modules/status.rs b/src/modules/status.rs\r\nindex 5f643a95..31d26c2c 100644\r\n--- a/src/modules/status.rs\r\n+++ b/src/modules/status.rs\r\n@@ -6,7 +6,7 @@ use crate::configs::status::StatusConfig;\r\n use crate::formatter::{string_formatter::StringFormatterError, StringFormatter};\r\n use crate::segment::Segment;\r\n \r\n-type ExitCode = i64;\r\n+type ExitCode = i32;\r\n type SignalNumber = u32;\r\n #[derive(PartialEq)]\r\n enum PipeStatusStatus<'a> {\r\n@@ -101,15 +101,16 @@ fn format_exit_code<'a>(\r\n     config: &'a StatusConfig,\r\n     context: &'a Context,\r\n ) -> Result<Vec<Segment>, StringFormatterError> {\r\n-    let exit_code_int: ExitCode = match exit_code.parse() {\r\n-        Ok(i) => i,\r\n+    // First, parse as i64 to accept both i32 or u32, then normalize to i32.\r\n+    let exit_code_int: ExitCode = match exit_code.parse::<i64>() {\r\n+        Ok(i) => i as ExitCode,\r\n         Err(_) => {\r\n             log::warn!(\"Error parsing exit_code string to int\");\r\n             return Ok(Vec::new());\r\n         }\r\n     };\r\n \r\n-    let hex_status = format!(\"0x{:X}\", exit_code_int as u32);\r\n+    let hex_status = format!(\"0x{:X}\", exit_code_int);\r\n \r\n     let common_meaning = status_common_meaning(exit_code_int);\r\n \r\n\r\n```",
+    "created_at": "2022-01-23T23:25:13Z",
+    "updated_at": "2022-01-24T00:41:50Z",
+    "html_url": "https://github.com/starship/starship/pull/3462#discussion_r790346078",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3462",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/790346078"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3462#discussion_r790346078"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3462"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/790346078/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 112,
+    "side": "RIGHT",
+    "in_reply_to_id": 787658923,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/793795443",
+    "pull_request_review_id": 865139577,
+    "id": 793795443,
+    "node_id": "PRRC_kwDOCqswNs4vUFtz",
+    "diff_hunk": "@@ -109,10 +109,7 @@ fn format_exit_code<'a>(\n         }\n     };\n \n-    let hex_status = exit_code\n-        .parse::<i32>()\n-        .ok()\n-        .map(|code| format!(\"0x{:X}\", code));\n+    let hex_status = format!(\"0x{:X}\", exit_code_int as u32);",
+    "path": "src/modules/status.rs",
+    "commit_id": "fb2624f5caa51fa65617982d4ace2104954905df",
+    "original_commit_id": "460ace346cfc040acc1eadd6ba6cba962c348733",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "In that case, I think it's better to leave `int` as-is for now.",
+    "created_at": "2022-01-27T16:38:28Z",
+    "updated_at": "2022-01-27T16:38:28Z",
+    "html_url": "https://github.com/starship/starship/pull/3462#discussion_r793795443",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3462",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/793795443"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3462#discussion_r793795443"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3462"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/793795443/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 112,
+    "side": "RIGHT",
+    "in_reply_to_id": 787658923,
+    "author_association": "MEMBER",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/793820254",
+    "pull_request_review_id": 865177667,
+    "id": 793820254,
+    "node_id": "PRRC_kwDOCqswNs4vULxe",
+    "diff_hunk": "@@ -109,10 +109,7 @@ fn format_exit_code<'a>(\n         }\n     };\n \n-    let hex_status = exit_code\n-        .parse::<i32>()\n-        .ok()\n-        .map(|code| format!(\"0x{:X}\", code));\n+    let hex_status = format!(\"0x{:X}\", exit_code_int as u32);",
+    "path": "src/modules/status.rs",
+    "commit_id": "fb2624f5caa51fa65617982d4ace2104954905df",
+    "original_commit_id": "460ace346cfc040acc1eadd6ba6cba962c348733",
+    "user": {
+      "login": "moko256",
+      "id": 16546008,
+      "node_id": "MDQ6VXNlcjE2NTQ2MDA4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16546008?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/moko256",
+      "html_url": "https://github.com/moko256",
+      "followers_url": "https://api.github.com/users/moko256/followers",
+      "following_url": "https://api.github.com/users/moko256/following{/other_user}",
+      "gists_url": "https://api.github.com/users/moko256/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/moko256/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/moko256/subscriptions",
+      "organizations_url": "https://api.github.com/users/moko256/orgs",
+      "repos_url": "https://api.github.com/users/moko256/repos",
+      "events_url": "https://api.github.com/users/moko256/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/moko256/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Done, I pushed the diff to this PR. Thanks for reviewing!",
+    "created_at": "2022-01-27T17:04:18Z",
+    "updated_at": "2022-01-27T17:04:18Z",
+    "html_url": "https://github.com/starship/starship/pull/3462#discussion_r793820254",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3462",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/793820254"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3462#discussion_r793820254"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3462"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/793820254/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 112,
+    "side": "RIGHT",
+    "in_reply_to_id": 787658923,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/793828605",
+    "pull_request_review_id": 865189806,
+    "id": 793828605,
+    "node_id": "PRRC_kwDOCqswNs4vUNz9",
+    "diff_hunk": "@@ -109,10 +109,7 @@ fn format_exit_code<'a>(\n         }\n     };\n \n-    let hex_status = exit_code\n-        .parse::<i32>()\n-        .ok()\n-        .map(|code| format!(\"0x{:X}\", code));\n+    let hex_status = format!(\"0x{:X}\", exit_code_int as u32);",
+    "path": "src/modules/status.rs",
+    "commit_id": "fb2624f5caa51fa65617982d4ace2104954905df",
+    "original_commit_id": "460ace346cfc040acc1eadd6ba6cba962c348733",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please also add a note in the `status` module description in `docs/config/README.md` about this ~~and that `hex_status` is unsigned.~~ (sorry, looks like you ended up removing that).",
+    "created_at": "2022-01-27T17:12:48Z",
+    "updated_at": "2022-01-27T17:14:35Z",
+    "html_url": "https://github.com/starship/starship/pull/3462#discussion_r793828605",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3462",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/793828605"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3462#discussion_r793828605"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3462"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/793828605/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 112,
+    "side": "RIGHT",
+    "in_reply_to_id": 787658923,
+    "author_association": "MEMBER",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/793829125",
+    "pull_request_review_id": 865190570,
+    "id": 793829125,
+    "node_id": "PRRC_kwDOCqswNs4vUN8F",
+    "diff_hunk": "@@ -569,7 +569,7 @@ pub enum Target {\n /// Properties as passed on from the shell as arguments\n #[derive(Parser, Debug)]\n pub struct Properties {\n-    /// The status code of the previously run command\n+    /// The status code of the previously run command, in unsigned or signed 32bit integer",
+    "path": "src/context.rs",
+    "commit_id": "fb2624f5caa51fa65617982d4ace2104954905df",
+    "original_commit_id": "89735f9d43d512ca2753783f7c319ba4087a16a8",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n    /// The status code of the previously run command as an unsigned or signed 32bit integer\r\n```",
+    "created_at": "2022-01-27T17:13:28Z",
+    "updated_at": "2022-01-27T17:13:28Z",
+    "html_url": "https://github.com/starship/starship/pull/3462#discussion_r793829125",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3462",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/793829125"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3462#discussion_r793829125"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3462"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/793829125/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 572,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 5,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/793848862",
+    "pull_request_review_id": 865218322,
+    "id": 793848862,
+    "node_id": "PRRC_kwDOCqswNs4vUSwe",
+    "diff_hunk": "@@ -109,10 +109,7 @@ fn format_exit_code<'a>(\n         }\n     };\n \n-    let hex_status = exit_code\n-        .parse::<i32>()\n-        .ok()\n-        .map(|code| format!(\"0x{:X}\", code));\n+    let hex_status = format!(\"0x{:X}\", exit_code_int as u32);",
+    "path": "src/modules/status.rs",
+    "commit_id": "fb2624f5caa51fa65617982d4ace2104954905df",
+    "original_commit_id": "460ace346cfc040acc1eadd6ba6cba962c348733",
+    "user": {
+      "login": "moko256",
+      "id": 16546008,
+      "node_id": "MDQ6VXNlcjE2NTQ2MDA4",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16546008?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/moko256",
+      "html_url": "https://github.com/moko256",
+      "followers_url": "https://api.github.com/users/moko256/followers",
+      "following_url": "https://api.github.com/users/moko256/following{/other_user}",
+      "gists_url": "https://api.github.com/users/moko256/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/moko256/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/moko256/subscriptions",
+      "organizations_url": "https://api.github.com/users/moko256/orgs",
+      "repos_url": "https://api.github.com/users/moko256/repos",
+      "events_url": "https://api.github.com/users/moko256/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/moko256/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Done.",
+    "created_at": "2022-01-27T17:36:51Z",
+    "updated_at": "2022-01-27T17:36:51Z",
+    "html_url": "https://github.com/starship/starship/pull/3462#discussion_r793848862",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3462",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/793848862"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3462#discussion_r793848862"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3462"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/793848862/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 112,
+    "side": "RIGHT",
+    "in_reply_to_id": 787658923,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 8,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

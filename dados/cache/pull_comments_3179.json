@@ -1,0 +1,349 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/748722201",
+    "pull_request_review_id": 805368910,
+    "id": 748722201,
+    "node_id": "PRRC_kwDOCqswNs4soJgZ",
+    "diff_hunk": "@@ -102,9 +100,72 @@ pub fn print_configuration(use_default: bool) {\n                 .collect::<String>()\n         );\n     }",
+    "path": "src/configure.rs",
+    "commit_id": "a50ac088ce34a2eb7dcfaf720f879bc19f04864d",
+    "original_commit_id": "fdc120c1c63d98847850d15e8ad2301f6efa8203",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Can you ensure the comments related to `$all` only get printed if `paths` is empty or if it contains `format` or `right_format`?",
+    "created_at": "2021-11-13T13:07:25Z",
+    "updated_at": "2021-11-13T13:34:22Z",
+    "html_url": "https://github.com/starship/starship/pull/3179#discussion_r748722201",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3179",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/748722201"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3179#discussion_r748722201"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3179"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/748722201/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 110,
+    "original_line": 102,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 21,
+    "position": 56,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/748722318",
+    "pull_request_review_id": 805368910,
+    "id": 748722318,
+    "node_id": "PRRC_kwDOCqswNs4soJiO",
+    "diff_hunk": "@@ -102,9 +100,72 @@ pub fn print_configuration(use_default: bool) {\n                 .collect::<String>()\n         );\n     }\n+\n+    let print_config = if paths.is_empty() {\n+        config\n+    } else {\n+        extract_toml_paths(config, paths)\n+    };\n+\n+    let string_config = toml::to_string_pretty(&print_config).unwrap();\n+\n     println!(\"{}\", string_config);\n }\n \n+fn extract_toml_paths(mut config: toml::Value, paths: &[&str]) -> toml::Value {",
+    "path": "src/configure.rs",
+    "commit_id": "a50ac088ce34a2eb7dcfaf720f879bc19f04864d",
+    "original_commit_id": "fdc120c1c63d98847850d15e8ad2301f6efa8203",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think it might be simpler to remove any values from the config that are not listed in `paths` instead of copying them over, but this also looks good to me.",
+    "created_at": "2021-11-13T13:09:18Z",
+    "updated_at": "2021-11-13T13:34:22Z",
+    "html_url": "https://github.com/starship/starship/pull/3179#discussion_r748722318",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3179",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/748722318"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3179#discussion_r748722318"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3179"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/748722318/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 123,
+    "original_line": 115,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 34,
+    "position": 69,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/748724281",
+    "pull_request_review_id": 805368910,
+    "id": 748724281,
+    "node_id": "PRRC_kwDOCqswNs4soKA5",
+    "diff_hunk": "@@ -166,6 +166,12 @@ fn main() {\n                             .long(\"default\")\n                             .help(\"Print the default instead of the computed config\")\n                             .takes_value(false),\n+                    )\n+                    .arg(\n+                        Arg::with_name(\"path\")\n+                            .help(\"Configuration section or value to print\")",
+    "path": "src/main.rs",
+    "commit_id": "a50ac088ce34a2eb7dcfaf720f879bc19f04864d",
+    "original_commit_id": "fdc120c1c63d98847850d15e8ad2301f6efa8203",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this should be plural, and I don't think value quite fits. Maybe subsets would be a better term?",
+    "created_at": "2021-11-13T13:32:34Z",
+    "updated_at": "2021-11-13T13:34:22Z",
+    "html_url": "https://github.com/starship/starship/pull/3179#discussion_r748724281",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3179",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/748724281"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3179#discussion_r748724281"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3179"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/748724281/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 172,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 7,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/748736604",
+    "pull_request_review_id": 805380195,
+    "id": 748736604,
+    "node_id": "PRRC_kwDOCqswNs4soNBc",
+    "diff_hunk": "@@ -102,9 +100,72 @@ pub fn print_configuration(use_default: bool) {\n                 .collect::<String>()\n         );\n     }\n+\n+    let print_config = if paths.is_empty() {\n+        config\n+    } else {\n+        extract_toml_paths(config, paths)\n+    };\n+\n+    let string_config = toml::to_string_pretty(&print_config).unwrap();\n+\n     println!(\"{}\", string_config);\n }\n \n+fn extract_toml_paths(mut config: toml::Value, paths: &[&str]) -> toml::Value {",
+    "path": "src/configure.rs",
+    "commit_id": "a50ac088ce34a2eb7dcfaf720f879bc19f04864d",
+    "original_commit_id": "fdc120c1c63d98847850d15e8ad2301f6efa8203",
+    "user": {
+      "login": "mdonoughe",
+      "id": 17961,
+      "node_id": "MDQ6VXNlcjE3OTYx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17961?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mdonoughe",
+      "html_url": "https://github.com/mdonoughe",
+      "followers_url": "https://api.github.com/users/mdonoughe/followers",
+      "following_url": "https://api.github.com/users/mdonoughe/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mdonoughe/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mdonoughe/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mdonoughe/subscriptions",
+      "organizations_url": "https://api.github.com/users/mdonoughe/orgs",
+      "repos_url": "https://api.github.com/users/mdonoughe/repos",
+      "events_url": "https://api.github.com/users/mdonoughe/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mdonoughe/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "To do it that way, the code would need to recursively compare the keys that are present to the provided paths. I guess if the paths were parsed into a recursive structure first it wouldn't be too bad, but I think it would be significantly more complicated.",
+    "created_at": "2021-11-13T15:53:41Z",
+    "updated_at": "2021-11-13T15:53:41Z",
+    "html_url": "https://github.com/starship/starship/pull/3179#discussion_r748736604",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3179",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/748736604"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3179#discussion_r748736604"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3179"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/748736604/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 123,
+    "original_line": 115,
+    "side": "RIGHT",
+    "in_reply_to_id": 748722318,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 34,
+    "position": 69,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/748736922",
+    "pull_request_review_id": 805380417,
+    "id": 748736922,
+    "node_id": "PRRC_kwDOCqswNs4soNGa",
+    "diff_hunk": "@@ -166,6 +166,12 @@ fn main() {\n                             .long(\"default\")\n                             .help(\"Print the default instead of the computed config\")\n                             .takes_value(false),\n+                    )\n+                    .arg(\n+                        Arg::with_name(\"path\")\n+                            .help(\"Configuration section or value to print\")",
+    "path": "src/main.rs",
+    "commit_id": "a50ac088ce34a2eb7dcfaf720f879bc19f04864d",
+    "original_commit_id": "fdc120c1c63d98847850d15e8ad2301f6efa8203",
+    "user": {
+      "login": "mdonoughe",
+      "id": 17961,
+      "node_id": "MDQ6VXNlcjE3OTYx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17961?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mdonoughe",
+      "html_url": "https://github.com/mdonoughe",
+      "followers_url": "https://api.github.com/users/mdonoughe/followers",
+      "following_url": "https://api.github.com/users/mdonoughe/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mdonoughe/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mdonoughe/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mdonoughe/subscriptions",
+      "organizations_url": "https://api.github.com/users/mdonoughe/orgs",
+      "repos_url": "https://api.github.com/users/mdonoughe/repos",
+      "events_url": "https://api.github.com/users/mdonoughe/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mdonoughe/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I changed the argument name to \"name\" and its help to \"keys\" to match the `config` command.",
+    "created_at": "2021-11-13T15:56:25Z",
+    "updated_at": "2021-11-13T15:56:25Z",
+    "html_url": "https://github.com/starship/starship/pull/3179#discussion_r748736922",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3179",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/748736922"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3179#discussion_r748736922"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3179"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/748736922/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 172,
+    "side": "RIGHT",
+    "in_reply_to_id": 748724281,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 7,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

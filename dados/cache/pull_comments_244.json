@@ -1,0 +1,697 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/318201429",
+    "pull_request_review_id": 280350843,
+    "id": 318201429,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMxODIwMTQyOQ==",
+    "diff_hunk": "@@ -21,6 +21,7 @@ pub const ALL_MODULES: &[&str] = &[\n     \"python\",\n     \"ruby\",\n     \"rust\",\n+    \"php\",",
+    "path": "src/module.rs",
+    "commit_id": "bff8f7b763cb5dbf9a108c2870a33cfd30daf2e1",
+    "original_commit_id": "42c53bd469b95294fc291493b94a794e739e08ba",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Unfortunately, GitHub won't let me comment on files that weren't changed in a PR, so I have to leave this here...\r\n\r\nIt looks like you got very nearly all the places we need to mention the module. There's one more we'll need if you want this to print by default: in the variable `DEFAULT_PROMPT_ORDER` in `print.rs`. Otherwise, the user will have to define a custom prompt order in order to ever have this module display.",
+    "created_at": "2019-08-27T17:21:41Z",
+    "updated_at": "2019-12-05T15:13:13Z",
+    "html_url": "https://github.com/starship/starship/pull/244#discussion_r318201429",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/244",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/318201429"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/244#discussion_r318201429"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/244"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/318201429/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 37,
+    "original_line": 36,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 4,
+    "position": 4,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/318201568",
+    "pull_request_review_id": 280350843,
+    "id": 318201568,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMxODIwMTU2OA==",
+    "diff_hunk": "@@ -0,0 +1,69 @@\n+use ansi_term::Color;\n+use std::process::Command;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the current PHP version\n+///\n+/// Will display the PHP version if any of the following criteria are met:\n+///     - Current directory contains a `.php` file\n+///     - Current directory contains a `composer.json` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_php_project = context\n+        .new_scan_dir()\n+        .set_files(&[\"composer.json\"])\n+        .set_extensions(&[\"php\"])\n+        .scan();\n+\n+    if !is_php_project {\n+        return None;\n+    }\n+\n+    match get_php_version() {\n+        Some(php_version) => {\n+            const PHP_CHAR: &str = \"🐘 \";\n+            let module_color = Color::Red.bold();\n+\n+            let mut module = context.new_module(\"php\")?;\n+            module.set_style(module_color);\n+\n+            let formatted_version = format_php_version(&php_version)?;\n+            module.new_segment(\"symbol\", PHP_CHAR);\n+            module.new_segment(\"version\", &formatted_version);\n+\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn get_php_version() -> Option<String> {\n+    match Command::new(\"php\").arg(\"-v\").output() {\n+        Ok(output) => Some(String::from_utf8(output.stdout).unwrap()),\n+        Err(_) => None,\n+    }\n+}\n+\n+fn format_php_version(php_version: &str) -> Option<String> {\n+    let version = php_version\n+        // split into [\"PHP\", \"7.3.8\", \"(cli)\"]\n+        .split_whitespace()\n+        // return \"7.3.8\"\n+        .nth(1)?;\n+\n+    let mut formatted_version = String::with_capacity(version.len() + 1);\n+    formatted_version.push('v');\n+    formatted_version.push_str(version);\n+    Some(formatted_version)\n+}\n+\n+#[cfg(test)]",
+    "path": "src/modules/php.rs",
+    "commit_id": "bff8f7b763cb5dbf9a108c2870a33cfd30daf2e1",
+    "original_commit_id": "42c53bd469b95294fc291493b94a794e739e08ba",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Dig it :+1: \r\n\r\nLove having in-module unit tests.",
+    "created_at": "2019-08-27T17:22:00Z",
+    "updated_at": "2019-12-05T15:13:13Z",
+    "html_url": "https://github.com/starship/starship/pull/244#discussion_r318201568",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/244",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/318201568"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/244#discussion_r318201568"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/244"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/318201568/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 58,
+    "original_line": 58,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 60,
+    "position": 58,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/318204030",
+    "pull_request_review_id": 280350843,
+    "id": 318204030,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMxODIwNDAzMA==",
+    "diff_hunk": "@@ -0,0 +1,56 @@\n+use std::fs::File;\n+use std::io;\n+\n+use ansi_term::Color;\n+\n+use crate::common;\n+use crate::common::TestCommand;\n+\n+#[test]\n+fn folder_without_php_files() -> io::Result<()> {",
+    "path": "tests/testsuite/php.rs",
+    "commit_id": "bff8f7b763cb5dbf9a108c2870a33cfd30daf2e1",
+    "original_commit_id": "42c53bd469b95294fc291493b94a794e739e08ba",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Excellent.",
+    "created_at": "2019-08-27T17:27:13Z",
+    "updated_at": "2019-12-05T15:13:13Z",
+    "html_url": "https://github.com/starship/starship/pull/244#discussion_r318204030",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/244",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/318204030"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/244#discussion_r318204030"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/244"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/318204030/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 10,
+    "original_line": 10,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 10,
+    "position": 10,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/318204608",
+    "pull_request_review_id": 280350843,
+    "id": 318204608,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMxODIwNDYwOA==",
+    "diff_hunk": "@@ -0,0 +1,56 @@\n+use std::fs::File;\n+use std::io;\n+\n+use ansi_term::Color;\n+\n+use crate::common;\n+use crate::common::TestCommand;\n+\n+#[test]\n+fn folder_without_php_files() -> io::Result<()> {\n+    let dir = common::new_tempdir()?;\n+\n+    let output = common::render_module(\"php\")\n+        .arg(\"--path\")\n+        .arg(dir.path())\n+        .output()?;\n+    let actual = String::from_utf8(output.stdout).unwrap();\n+\n+    let expected = \"\";\n+    assert_eq!(expected, actual);\n+    Ok(())\n+}\n+\n+#[test]\n+#[ignore]",
+    "path": "tests/testsuite/php.rs",
+    "commit_id": "bff8f7b763cb5dbf9a108c2870a33cfd30daf2e1",
+    "original_commit_id": "42c53bd469b95294fc291493b94a794e739e08ba",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Good thinking putting these under `#[ignore]`",
+    "created_at": "2019-08-27T17:28:32Z",
+    "updated_at": "2019-12-05T15:13:13Z",
+    "html_url": "https://github.com/starship/starship/pull/244#discussion_r318204608",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/244",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/318204608"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/244#discussion_r318204608"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/244"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/318204608/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 25,
+    "original_line": 25,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 25,
+    "position": 25,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/318205700",
+    "pull_request_review_id": 280350843,
+    "id": 318205700,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMxODIwNTcwMA==",
+    "diff_hunk": "@@ -0,0 +1,69 @@\n+use ansi_term::Color;\n+use std::process::Command;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the current PHP version\n+///\n+/// Will display the PHP version if any of the following criteria are met:\n+///     - Current directory contains a `.php` file\n+///     - Current directory contains a `composer.json` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_php_project = context\n+        .new_scan_dir()\n+        .set_files(&[\"composer.json\"])\n+        .set_extensions(&[\"php\"])\n+        .scan();\n+\n+    if !is_php_project {\n+        return None;\n+    }\n+\n+    match get_php_version() {\n+        Some(php_version) => {\n+            const PHP_CHAR: &str = \"🐘 \";\n+            let module_color = Color::Red.bold();\n+\n+            let mut module = context.new_module(\"php\")?;\n+            module.set_style(module_color);\n+\n+            let formatted_version = format_php_version(&php_version)?;\n+            module.new_segment(\"symbol\", PHP_CHAR);\n+            module.new_segment(\"version\", &formatted_version);\n+\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn get_php_version() -> Option<String> {\n+    match Command::new(\"php\").arg(\"-v\").output() {\n+        Ok(output) => Some(String::from_utf8(output.stdout).unwrap()),\n+        Err(_) => None,\n+    }\n+}\n+\n+fn format_php_version(php_version: &str) -> Option<String> {",
+    "path": "src/modules/php.rs",
+    "commit_id": "bff8f7b763cb5dbf9a108c2870a33cfd30daf2e1",
+    "original_commit_id": "42c53bd469b95294fc291493b94a794e739e08ba",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Unfortunately, it looks like this is failing on our test machine right now, because [the output of `php -v` doesn't follow the format expected](https://dev.azure.com/starship-control/starship/_build/results?buildId=1778&view=logs&j=d9d4c2cb-ba39-5e18-d2a1-2a7ddd88c390&t=836754d4-a7dc-5a8b-a4c0-cebadad6c826&l=447) \r\n\r\nLooks like the test is spitting out `v7.3.8-1+ubuntu16.04.1+deb.sury.org+1`.",
+    "created_at": "2019-08-27T17:31:03Z",
+    "updated_at": "2019-12-05T15:13:13Z",
+    "html_url": "https://github.com/starship/starship/pull/244#discussion_r318205700",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/244",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/318205700"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/244#discussion_r318205700"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/244"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/318205700/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 51,
+    "original_line": 51,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 47,
+    "position": 51,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/318206904",
+    "pull_request_review_id": 280357773,
+    "id": 318206904,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMxODIwNjkwNA==",
+    "diff_hunk": "@@ -0,0 +1,69 @@\n+use ansi_term::Color;\n+use std::process::Command;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the current PHP version\n+///\n+/// Will display the PHP version if any of the following criteria are met:\n+///     - Current directory contains a `.php` file\n+///     - Current directory contains a `composer.json` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_php_project = context\n+        .new_scan_dir()\n+        .set_files(&[\"composer.json\"])\n+        .set_extensions(&[\"php\"])\n+        .scan();\n+\n+    if !is_php_project {\n+        return None;\n+    }\n+\n+    match get_php_version() {\n+        Some(php_version) => {\n+            const PHP_CHAR: &str = \"🐘 \";\n+            let module_color = Color::Red.bold();\n+\n+            let mut module = context.new_module(\"php\")?;\n+            module.set_style(module_color);\n+\n+            let formatted_version = format_php_version(&php_version)?;\n+            module.new_segment(\"symbol\", PHP_CHAR);\n+            module.new_segment(\"version\", &formatted_version);\n+\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn get_php_version() -> Option<String> {\n+    match Command::new(\"php\").arg(\"-v\").output() {\n+        Ok(output) => Some(String::from_utf8(output.stdout).unwrap()),\n+        Err(_) => None,\n+    }\n+}\n+\n+fn format_php_version(php_version: &str) -> Option<String> {",
+    "path": "src/modules/php.rs",
+    "commit_id": "bff8f7b763cb5dbf9a108c2870a33cfd30daf2e1",
+    "original_commit_id": "42c53bd469b95294fc291493b94a794e739e08ba",
+    "user": {
+      "login": "REBELinBLUE",
+      "id": 2143908,
+      "node_id": "MDQ6VXNlcjIxNDM5MDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2143908?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/REBELinBLUE",
+      "html_url": "https://github.com/REBELinBLUE",
+      "followers_url": "https://api.github.com/users/REBELinBLUE/followers",
+      "following_url": "https://api.github.com/users/REBELinBLUE/following{/other_user}",
+      "gists_url": "https://api.github.com/users/REBELinBLUE/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/REBELinBLUE/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/REBELinBLUE/subscriptions",
+      "organizations_url": "https://api.github.com/users/REBELinBLUE/orgs",
+      "repos_url": "https://api.github.com/users/REBELinBLUE/repos",
+      "events_url": "https://api.github.com/users/REBELinBLUE/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/REBELinBLUE/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Yeah just noticed this, looking into it now",
+    "created_at": "2019-08-27T17:33:50Z",
+    "updated_at": "2019-12-05T15:13:13Z",
+    "html_url": "https://github.com/starship/starship/pull/244#discussion_r318206904",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/244",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/318206904"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/244#discussion_r318206904"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/244"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/318206904/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 51,
+    "original_line": 51,
+    "side": "RIGHT",
+    "in_reply_to_id": 318205700,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 47,
+    "position": 51,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/318207903",
+    "pull_request_review_id": 280359060,
+    "id": 318207903,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMxODIwNzkwMw==",
+    "diff_hunk": "@@ -21,6 +21,7 @@ pub const ALL_MODULES: &[&str] = &[\n     \"python\",\n     \"ruby\",\n     \"rust\",\n+    \"php\",",
+    "path": "src/module.rs",
+    "commit_id": "bff8f7b763cb5dbf9a108c2870a33cfd30daf2e1",
+    "original_commit_id": "42c53bd469b95294fc291493b94a794e739e08ba",
+    "user": {
+      "login": "REBELinBLUE",
+      "id": 2143908,
+      "node_id": "MDQ6VXNlcjIxNDM5MDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2143908?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/REBELinBLUE",
+      "html_url": "https://github.com/REBELinBLUE",
+      "followers_url": "https://api.github.com/users/REBELinBLUE/followers",
+      "following_url": "https://api.github.com/users/REBELinBLUE/following{/other_user}",
+      "gists_url": "https://api.github.com/users/REBELinBLUE/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/REBELinBLUE/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/REBELinBLUE/subscriptions",
+      "organizations_url": "https://api.github.com/users/REBELinBLUE/orgs",
+      "repos_url": "https://api.github.com/users/REBELinBLUE/repos",
+      "events_url": "https://api.github.com/users/REBELinBLUE/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/REBELinBLUE/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ah! I thought there was probably somewhere else it was needed but I couldn't find it",
+    "created_at": "2019-08-27T17:36:07Z",
+    "updated_at": "2019-12-05T15:13:13Z",
+    "html_url": "https://github.com/starship/starship/pull/244#discussion_r318207903",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/244",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/318207903"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/244#discussion_r318207903"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/244"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/318207903/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 37,
+    "original_line": 36,
+    "side": "RIGHT",
+    "in_reply_to_id": 318201429,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 4,
+    "position": 4,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/318536484",
+    "pull_request_review_id": 280772198,
+    "id": 318536484,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMxODUzNjQ4NA==",
+    "diff_hunk": "@@ -0,0 +1,69 @@\n+use ansi_term::Color;\n+use std::process::Command;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the current PHP version\n+///\n+/// Will display the PHP version if any of the following criteria are met:\n+///     - Current directory contains a `.php` file\n+///     - Current directory contains a `composer.json` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_php_project = context\n+        .new_scan_dir()\n+        .set_files(&[\"composer.json\"])\n+        .set_extensions(&[\"php\"])\n+        .scan();\n+\n+    if !is_php_project {\n+        return None;\n+    }\n+\n+    match get_php_version() {\n+        Some(php_version) => {\n+            const PHP_CHAR: &str = \"🐘 \";\n+            let module_color = Color::Red.bold();\n+\n+            let mut module = context.new_module(\"php\")?;\n+            module.set_style(module_color);\n+\n+            let formatted_version = format_php_version(&php_version)?;\n+            module.new_segment(\"symbol\", PHP_CHAR);\n+            module.new_segment(\"version\", &formatted_version);\n+\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn get_php_version() -> Option<String> {\n+    match Command::new(\"php\").arg(\"-v\").output() {\n+        Ok(output) => Some(String::from_utf8(output.stdout).unwrap()),\n+        Err(_) => None,\n+    }\n+}\n+\n+fn format_php_version(php_version: &str) -> Option<String> {",
+    "path": "src/modules/php.rs",
+    "commit_id": "bff8f7b763cb5dbf9a108c2870a33cfd30daf2e1",
+    "original_commit_id": "42c53bd469b95294fc291493b94a794e739e08ba",
+    "user": {
+      "login": "wyze",
+      "id": 186971,
+      "node_id": "MDQ6VXNlcjE4Njk3MQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/186971?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/wyze",
+      "html_url": "https://github.com/wyze",
+      "followers_url": "https://api.github.com/users/wyze/followers",
+      "following_url": "https://api.github.com/users/wyze/following{/other_user}",
+      "gists_url": "https://api.github.com/users/wyze/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/wyze/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/wyze/subscriptions",
+      "organizations_url": "https://api.github.com/users/wyze/orgs",
+      "repos_url": "https://api.github.com/users/wyze/repos",
+      "events_url": "https://api.github.com/users/wyze/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/wyze/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "You could try running the following to get the version and hopefully it will be more consistent across machines.\r\n\r\n`php -r 'echo PHP_VERSION;'`",
+    "created_at": "2019-08-28T11:51:14Z",
+    "updated_at": "2019-12-05T15:13:13Z",
+    "html_url": "https://github.com/starship/starship/pull/244#discussion_r318536484",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/244",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/318536484"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/244#discussion_r318536484"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/244"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/318536484/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 51,
+    "original_line": 51,
+    "side": "RIGHT",
+    "in_reply_to_id": 318205700,
+    "author_association": "MEMBER",
+    "original_position": 47,
+    "position": 51,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/318559478",
+    "pull_request_review_id": 280802181,
+    "id": 318559478,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMxODU1OTQ3OA==",
+    "diff_hunk": "@@ -0,0 +1,69 @@\n+use ansi_term::Color;\n+use std::process::Command;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the current PHP version\n+///\n+/// Will display the PHP version if any of the following criteria are met:\n+///     - Current directory contains a `.php` file\n+///     - Current directory contains a `composer.json` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_php_project = context\n+        .new_scan_dir()\n+        .set_files(&[\"composer.json\"])\n+        .set_extensions(&[\"php\"])\n+        .scan();\n+\n+    if !is_php_project {\n+        return None;\n+    }\n+\n+    match get_php_version() {\n+        Some(php_version) => {\n+            const PHP_CHAR: &str = \"🐘 \";\n+            let module_color = Color::Red.bold();\n+\n+            let mut module = context.new_module(\"php\")?;\n+            module.set_style(module_color);\n+\n+            let formatted_version = format_php_version(&php_version)?;\n+            module.new_segment(\"symbol\", PHP_CHAR);\n+            module.new_segment(\"version\", &formatted_version);\n+\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn get_php_version() -> Option<String> {\n+    match Command::new(\"php\").arg(\"-v\").output() {\n+        Ok(output) => Some(String::from_utf8(output.stdout).unwrap()),\n+        Err(_) => None,\n+    }\n+}\n+\n+fn format_php_version(php_version: &str) -> Option<String> {",
+    "path": "src/modules/php.rs",
+    "commit_id": "bff8f7b763cb5dbf9a108c2870a33cfd30daf2e1",
+    "original_commit_id": "42c53bd469b95294fc291493b94a794e739e08ba",
+    "user": {
+      "login": "REBELinBLUE",
+      "id": 2143908,
+      "node_id": "MDQ6VXNlcjIxNDM5MDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2143908?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/REBELinBLUE",
+      "html_url": "https://github.com/REBELinBLUE",
+      "followers_url": "https://api.github.com/users/REBELinBLUE/followers",
+      "following_url": "https://api.github.com/users/REBELinBLUE/following{/other_user}",
+      "gists_url": "https://api.github.com/users/REBELinBLUE/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/REBELinBLUE/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/REBELinBLUE/subscriptions",
+      "organizations_url": "https://api.github.com/users/REBELinBLUE/orgs",
+      "repos_url": "https://api.github.com/users/REBELinBLUE/repos",
+      "events_url": "https://api.github.com/users/REBELinBLUE/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/REBELinBLUE/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Sadly not\r\n\r\n```$ php -r 'echo PHP_VERSION;'\r\n7.1.31-1+ubuntu16.04.1+deb.sury.org+1z\r\n```\r\n\r\nI did a fix last night though, looks like I just forgot to push it",
+    "created_at": "2019-08-28T12:47:51Z",
+    "updated_at": "2019-12-05T15:13:13Z",
+    "html_url": "https://github.com/starship/starship/pull/244#discussion_r318559478",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/244",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/318559478"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/244#discussion_r318559478"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/244"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/318559478/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 51,
+    "original_line": 51,
+    "side": "RIGHT",
+    "in_reply_to_id": 318205700,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 47,
+    "position": 51,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/318589844",
+    "pull_request_review_id": 280841345,
+    "id": 318589844,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMxODU4OTg0NA==",
+    "diff_hunk": "@@ -0,0 +1,69 @@\n+use ansi_term::Color;\n+use std::process::Command;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the current PHP version\n+///\n+/// Will display the PHP version if any of the following criteria are met:\n+///     - Current directory contains a `.php` file\n+///     - Current directory contains a `composer.json` file\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let is_php_project = context\n+        .new_scan_dir()\n+        .set_files(&[\"composer.json\"])\n+        .set_extensions(&[\"php\"])\n+        .scan();\n+\n+    if !is_php_project {\n+        return None;\n+    }\n+\n+    match get_php_version() {\n+        Some(php_version) => {\n+            const PHP_CHAR: &str = \"🐘 \";\n+            let module_color = Color::Red.bold();\n+\n+            let mut module = context.new_module(\"php\")?;\n+            module.set_style(module_color);\n+\n+            let formatted_version = format_php_version(&php_version)?;\n+            module.new_segment(\"symbol\", PHP_CHAR);\n+            module.new_segment(\"version\", &formatted_version);\n+\n+            Some(module)\n+        }\n+        None => None,\n+    }\n+}\n+\n+fn get_php_version() -> Option<String> {\n+    match Command::new(\"php\").arg(\"-v\").output() {\n+        Ok(output) => Some(String::from_utf8(output.stdout).unwrap()),\n+        Err(_) => None,\n+    }\n+}\n+\n+fn format_php_version(php_version: &str) -> Option<String> {",
+    "path": "src/modules/php.rs",
+    "commit_id": "bff8f7b763cb5dbf9a108c2870a33cfd30daf2e1",
+    "original_commit_id": "42c53bd469b95294fc291493b94a794e739e08ba",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "@wyze I thought that would work too, but then I tried it and it gave the same deal. Even running `phpversion()` with various arguments couldn't strip the suffix out of the version string....not sure why.",
+    "created_at": "2019-08-28T13:47:05Z",
+    "updated_at": "2019-12-05T15:13:13Z",
+    "html_url": "https://github.com/starship/starship/pull/244#discussion_r318589844",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/244",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/318589844"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/244#discussion_r318589844"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/244"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/318589844/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 51,
+    "original_line": 51,
+    "side": "RIGHT",
+    "in_reply_to_id": 318205700,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 47,
+    "position": 51,
+    "subject_type": "line"
+  }
+]

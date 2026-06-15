@@ -1,0 +1,835 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1750474990",
+    "pull_request_review_id": 2290258586,
+    "id": 1750474990,
+    "node_id": "PRRC_kwDOCqswNs5oViDu",
+    "diff_hunk": "@@ -0,0 +1,98 @@\n+use regex::Regex;\n+\n+use crate::{\n+    config::ModuleConfig,\n+    configs::spin::SpinConfig,\n+    context::Context,\n+    formatter::{StringFormatter, VersionFormatter},\n+    module::Module,\n+};\n+\n+use crate::utils::get_command_string_output;\n+const SPIN_CANARY: &str = \"canary\";\n+const SPIN_CANARY_IDENTIFIER: &str = \"pre\";\n+const SPIN_BINARY: &str = \"spin\";\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"spin\");\n+    let config = SpinConfig::try_load(module.config);\n+    if !config.permanent {\n+        let is_spin_project = context\n+            .try_begin_scan()?\n+            .set_files(&config.detect_files)\n+            .set_extensions(&config.detect_extensions)\n+            .set_folders(&config.detect_folders)\n+            .is_match();\n+\n+        if !is_spin_project {\n+            return None;\n+        }\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let spin_version_stdout =\n+                        get_command_string_output(context.exec_cmd(SPIN_BINARY, &[\"--version\"])?);\n+                    let spin_version = parse_spin_version(spin_version_stdout.as_str())?;\n+\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &spin_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `spin`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_spin_version(spin_version_stdout: &str) -> Option<String> {\n+    let semver_regex = Regex::new(r\"\\d+\\.\\d+\\.\\d+\").ok()?;\n+    let input = spin_version_stdout;\n+    let capture = semver_regex.find(input)?.as_str();\n+    if input.contains(SPIN_CANARY_IDENTIFIER) {\n+        Some(format!(\"{} ({})\", capture, SPIN_CANARY))\n+    } else {\n+        Some(capture.to_string())\n+    }\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    #[test]\n+    fn test_parse_spin_version() {\n+        let input = \"spin 2.7.0 (a111517 2024-07-30)\";\n+        assert_eq!(\n+            super::parse_spin_version(input),\n+            Some(String::from(\"2.7.0\"))\n+        );",
+    "path": "src/modules/spin.rs",
+    "commit_id": "80e488f813af3bb48ccc4f4fd53333817f16d6a7",
+    "original_commit_id": "74693eb843f0c96d31d988513afc8af7e0f28afa",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please add some tests [that use `ModuleRenderer`](https://github.com/starship/starship/blob/master/CONTRIBUTING.md#testing).",
+    "created_at": "2024-09-09T15:26:59Z",
+    "updated_at": "2024-09-09T15:36:16Z",
+    "html_url": "https://github.com/starship/starship/pull/6238#discussion_r1750474990",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6238",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1750474990"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6238#discussion_r1750474990"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6238"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1750474990/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 107,
+    "original_line": 90,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 90,
+    "position": 107,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1750476948",
+    "pull_request_review_id": 2290258586,
+    "id": 1750476948,
+    "node_id": "PRRC_kwDOCqswNs5oViiU",
+    "diff_hunk": "@@ -0,0 +1,98 @@\n+use regex::Regex;\n+\n+use crate::{\n+    config::ModuleConfig,\n+    configs::spin::SpinConfig,\n+    context::Context,\n+    formatter::{StringFormatter, VersionFormatter},\n+    module::Module,\n+};\n+\n+use crate::utils::get_command_string_output;\n+const SPIN_CANARY: &str = \"canary\";\n+const SPIN_CANARY_IDENTIFIER: &str = \"pre\";\n+const SPIN_BINARY: &str = \"spin\";\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"spin\");\n+    let config = SpinConfig::try_load(module.config);\n+    if !config.permanent {\n+        let is_spin_project = context\n+            .try_begin_scan()?\n+            .set_files(&config.detect_files)\n+            .set_extensions(&config.detect_extensions)\n+            .set_folders(&config.detect_folders)\n+            .is_match();\n+\n+        if !is_spin_project {\n+            return None;\n+        }\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let spin_version_stdout =\n+                        get_command_string_output(context.exec_cmd(SPIN_BINARY, &[\"--version\"])?);\n+                    let spin_version = parse_spin_version(spin_version_stdout.as_str())?;\n+\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &spin_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `spin`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_spin_version(spin_version_stdout: &str) -> Option<String> {\n+    let semver_regex = Regex::new(r\"\\d+\\.\\d+\\.\\d+\").ok()?;\n+    let input = spin_version_stdout;\n+    let capture = semver_regex.find(input)?.as_str();\n+    if input.contains(SPIN_CANARY_IDENTIFIER) {\n+        Some(format!(\"{} ({})\", capture, SPIN_CANARY))\n+    } else {\n+        Some(capture.to_string())\n+    }",
+    "path": "src/modules/spin.rs",
+    "commit_id": "80e488f813af3bb48ccc4f4fd53333817f16d6a7",
+    "original_commit_id": "74693eb843f0c96d31d988513afc8af7e0f28afa",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Why do you replace `pre` in the version name with `canary`?",
+    "created_at": "2024-09-09T15:28:10Z",
+    "updated_at": "2024-09-09T15:36:16Z",
+    "html_url": "https://github.com/starship/starship/pull/6238#discussion_r1750476948",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6238",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1750476948"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6238#discussion_r1750476948"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6238"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1750476948/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 74,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 79,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 79,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1751516913",
+    "pull_request_review_id": 2291757584,
+    "id": 1751516913,
+    "node_id": "PRRC_kwDOCqswNs5oZgbx",
+    "diff_hunk": "@@ -0,0 +1,98 @@\n+use regex::Regex;\n+\n+use crate::{\n+    config::ModuleConfig,\n+    configs::spin::SpinConfig,\n+    context::Context,\n+    formatter::{StringFormatter, VersionFormatter},\n+    module::Module,\n+};\n+\n+use crate::utils::get_command_string_output;\n+const SPIN_CANARY: &str = \"canary\";\n+const SPIN_CANARY_IDENTIFIER: &str = \"pre\";\n+const SPIN_BINARY: &str = \"spin\";\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"spin\");\n+    let config = SpinConfig::try_load(module.config);\n+    if !config.permanent {\n+        let is_spin_project = context\n+            .try_begin_scan()?\n+            .set_files(&config.detect_files)\n+            .set_extensions(&config.detect_extensions)\n+            .set_folders(&config.detect_folders)\n+            .is_match();\n+\n+        if !is_spin_project {\n+            return None;\n+        }\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let spin_version_stdout =\n+                        get_command_string_output(context.exec_cmd(SPIN_BINARY, &[\"--version\"])?);\n+                    let spin_version = parse_spin_version(spin_version_stdout.as_str())?;\n+\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &spin_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `spin`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_spin_version(spin_version_stdout: &str) -> Option<String> {\n+    let semver_regex = Regex::new(r\"\\d+\\.\\d+\\.\\d+\").ok()?;\n+    let input = spin_version_stdout;\n+    let capture = semver_regex.find(input)?.as_str();\n+    if input.contains(SPIN_CANARY_IDENTIFIER) {\n+        Some(format!(\"{} ({})\", capture, SPIN_CANARY))\n+    } else {\n+        Some(capture.to_string())\n+    }",
+    "path": "src/modules/spin.rs",
+    "commit_id": "80e488f813af3bb48ccc4f4fd53333817f16d6a7",
+    "original_commit_id": "74693eb843f0c96d31d988513afc8af7e0f28afa",
+    "user": {
+      "login": "ThorstenHans",
+      "id": 357884,
+      "node_id": "MDQ6VXNlcjM1Nzg4NA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/357884?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ThorstenHans",
+      "html_url": "https://github.com/ThorstenHans",
+      "followers_url": "https://api.github.com/users/ThorstenHans/followers",
+      "following_url": "https://api.github.com/users/ThorstenHans/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ThorstenHans/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ThorstenHans/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ThorstenHans/subscriptions",
+      "organizations_url": "https://api.github.com/users/ThorstenHans/orgs",
+      "repos_url": "https://api.github.com/users/ThorstenHans/repos",
+      "events_url": "https://api.github.com/users/ThorstenHans/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ThorstenHans/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Initially I thought it would be more self-explaining. However, you're right, `2.8.0 (pre)` makes more sense than `2.8.0 (canary)`",
+    "created_at": "2024-09-10T08:34:41Z",
+    "updated_at": "2024-09-10T08:35:36Z",
+    "html_url": "https://github.com/starship/starship/pull/6238#discussion_r1751516913",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6238",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1751516913"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6238#discussion_r1751516913"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6238"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1751516913/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 74,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 79,
+    "side": "RIGHT",
+    "in_reply_to_id": 1750476948,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 79,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1751555563",
+    "pull_request_review_id": 2291817765,
+    "id": 1751555563,
+    "node_id": "PRRC_kwDOCqswNs5oZp3r",
+    "diff_hunk": "@@ -0,0 +1,98 @@\n+use regex::Regex;\n+\n+use crate::{\n+    config::ModuleConfig,\n+    configs::spin::SpinConfig,\n+    context::Context,\n+    formatter::{StringFormatter, VersionFormatter},\n+    module::Module,\n+};\n+\n+use crate::utils::get_command_string_output;\n+const SPIN_CANARY: &str = \"canary\";\n+const SPIN_CANARY_IDENTIFIER: &str = \"pre\";\n+const SPIN_BINARY: &str = \"spin\";\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"spin\");\n+    let config = SpinConfig::try_load(module.config);\n+    if !config.permanent {\n+        let is_spin_project = context\n+            .try_begin_scan()?\n+            .set_files(&config.detect_files)\n+            .set_extensions(&config.detect_extensions)\n+            .set_folders(&config.detect_folders)\n+            .is_match();\n+\n+        if !is_spin_project {\n+            return None;\n+        }\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let spin_version_stdout =\n+                        get_command_string_output(context.exec_cmd(SPIN_BINARY, &[\"--version\"])?);\n+                    let spin_version = parse_spin_version(spin_version_stdout.as_str())?;\n+\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &spin_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `spin`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_spin_version(spin_version_stdout: &str) -> Option<String> {\n+    let semver_regex = Regex::new(r\"\\d+\\.\\d+\\.\\d+\").ok()?;\n+    let input = spin_version_stdout;\n+    let capture = semver_regex.find(input)?.as_str();\n+    if input.contains(SPIN_CANARY_IDENTIFIER) {\n+        Some(format!(\"{} ({})\", capture, SPIN_CANARY))\n+    } else {\n+        Some(capture.to_string())\n+    }\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    #[test]\n+    fn test_parse_spin_version() {\n+        let input = \"spin 2.7.0 (a111517 2024-07-30)\";\n+        assert_eq!(\n+            super::parse_spin_version(input),\n+            Some(String::from(\"2.7.0\"))\n+        );",
+    "path": "src/modules/spin.rs",
+    "commit_id": "80e488f813af3bb48ccc4f4fd53333817f16d6a7",
+    "original_commit_id": "74693eb843f0c96d31d988513afc8af7e0f28afa",
+    "user": {
+      "login": "ThorstenHans",
+      "id": 357884,
+      "node_id": "MDQ6VXNlcjM1Nzg4NA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/357884?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ThorstenHans",
+      "html_url": "https://github.com/ThorstenHans",
+      "followers_url": "https://api.github.com/users/ThorstenHans/followers",
+      "following_url": "https://api.github.com/users/ThorstenHans/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ThorstenHans/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ThorstenHans/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ThorstenHans/subscriptions",
+      "organizations_url": "https://api.github.com/users/ThorstenHans/orgs",
+      "repos_url": "https://api.github.com/users/ThorstenHans/repos",
+      "events_url": "https://api.github.com/users/ThorstenHans/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ThorstenHans/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Added a new test",
+    "created_at": "2024-09-10T08:57:42Z",
+    "updated_at": "2024-09-10T08:57:42Z",
+    "html_url": "https://github.com/starship/starship/pull/6238#discussion_r1751555563",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6238",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1751555563"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6238#discussion_r1751555563"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6238"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1751555563/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 107,
+    "original_line": 90,
+    "side": "RIGHT",
+    "in_reply_to_id": 1750474990,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 90,
+    "position": 107,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1801806639",
+    "pull_request_review_id": 2370385838,
+    "id": 1801806639,
+    "node_id": "PRRC_kwDOCqswNs5rZWMv",
+    "diff_hunk": "@@ -0,0 +1,98 @@\n+use regex::Regex;\n+\n+use crate::{\n+    config::ModuleConfig,\n+    configs::spin::SpinConfig,\n+    context::Context,\n+    formatter::{StringFormatter, VersionFormatter},\n+    module::Module,\n+};\n+\n+use crate::utils::get_command_string_output;\n+const SPIN_CANARY: &str = \"canary\";\n+const SPIN_CANARY_IDENTIFIER: &str = \"pre\";\n+const SPIN_BINARY: &str = \"spin\";\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"spin\");\n+    let config = SpinConfig::try_load(module.config);\n+    if !config.permanent {\n+        let is_spin_project = context\n+            .try_begin_scan()?\n+            .set_files(&config.detect_files)\n+            .set_extensions(&config.detect_extensions)\n+            .set_folders(&config.detect_folders)\n+            .is_match();\n+\n+        if !is_spin_project {\n+            return None;\n+        }\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let spin_version_stdout =\n+                        get_command_string_output(context.exec_cmd(SPIN_BINARY, &[\"--version\"])?);\n+                    let spin_version = parse_spin_version(spin_version_stdout.as_str())?;\n+\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &spin_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `spin`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_spin_version(spin_version_stdout: &str) -> Option<String> {\n+    let semver_regex = Regex::new(r\"\\d+\\.\\d+\\.\\d+\").ok()?;\n+    let input = spin_version_stdout;\n+    let capture = semver_regex.find(input)?.as_str();\n+    if input.contains(SPIN_CANARY_IDENTIFIER) {\n+        Some(format!(\"{} ({})\", capture, SPIN_CANARY))\n+    } else {\n+        Some(capture.to_string())\n+    }",
+    "path": "src/modules/spin.rs",
+    "commit_id": "80e488f813af3bb48ccc4f4fd53333817f16d6a7",
+    "original_commit_id": "74693eb843f0c96d31d988513afc8af7e0f28afa",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I am not sure if rewriting the version here at all is a good idea.",
+    "created_at": "2024-10-15T19:34:13Z",
+    "updated_at": "2024-10-15T19:34:13Z",
+    "html_url": "https://github.com/starship/starship/pull/6238#discussion_r1801806639",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6238",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1801806639"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6238#discussion_r1801806639"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6238"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1801806639/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 74,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 79,
+    "side": "RIGHT",
+    "in_reply_to_id": 1750476948,
+    "author_association": "MEMBER",
+    "original_position": 79,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1803149380",
+    "pull_request_review_id": 2372551068,
+    "id": 1803149380,
+    "node_id": "PRRC_kwDOCqswNs5reeBE",
+    "diff_hunk": "@@ -0,0 +1,98 @@\n+use regex::Regex;\n+\n+use crate::{\n+    config::ModuleConfig,\n+    configs::spin::SpinConfig,\n+    context::Context,\n+    formatter::{StringFormatter, VersionFormatter},\n+    module::Module,\n+};\n+\n+use crate::utils::get_command_string_output;\n+const SPIN_CANARY: &str = \"canary\";\n+const SPIN_CANARY_IDENTIFIER: &str = \"pre\";\n+const SPIN_BINARY: &str = \"spin\";\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"spin\");\n+    let config = SpinConfig::try_load(module.config);\n+    if !config.permanent {\n+        let is_spin_project = context\n+            .try_begin_scan()?\n+            .set_files(&config.detect_files)\n+            .set_extensions(&config.detect_extensions)\n+            .set_folders(&config.detect_folders)\n+            .is_match();\n+\n+        if !is_spin_project {\n+            return None;\n+        }\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let spin_version_stdout =\n+                        get_command_string_output(context.exec_cmd(SPIN_BINARY, &[\"--version\"])?);\n+                    let spin_version = parse_spin_version(spin_version_stdout.as_str())?;\n+\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &spin_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `spin`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_spin_version(spin_version_stdout: &str) -> Option<String> {\n+    let semver_regex = Regex::new(r\"\\d+\\.\\d+\\.\\d+\").ok()?;\n+    let input = spin_version_stdout;\n+    let capture = semver_regex.find(input)?.as_str();\n+    if input.contains(SPIN_CANARY_IDENTIFIER) {\n+        Some(format!(\"{} ({})\", capture, SPIN_CANARY))\n+    } else {\n+        Some(capture.to_string())\n+    }",
+    "path": "src/modules/spin.rs",
+    "commit_id": "80e488f813af3bb48ccc4f4fd53333817f16d6a7",
+    "original_commit_id": "74693eb843f0c96d31d988513afc8af7e0f28afa",
+    "user": {
+      "login": "ThorstenHans",
+      "id": 357884,
+      "node_id": "MDQ6VXNlcjM1Nzg4NA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/357884?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ThorstenHans",
+      "html_url": "https://github.com/ThorstenHans",
+      "followers_url": "https://api.github.com/users/ThorstenHans/followers",
+      "following_url": "https://api.github.com/users/ThorstenHans/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ThorstenHans/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ThorstenHans/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ThorstenHans/subscriptions",
+      "organizations_url": "https://api.github.com/users/ThorstenHans/orgs",
+      "repos_url": "https://api.github.com/users/ThorstenHans/repos",
+      "events_url": "https://api.github.com/users/ThorstenHans/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ThorstenHans/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Okay, I changed the implementation to use versions provided by `spin --version` as they are",
+    "created_at": "2024-10-16T13:48:49Z",
+    "updated_at": "2024-10-16T13:48:50Z",
+    "html_url": "https://github.com/starship/starship/pull/6238#discussion_r1803149380",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6238",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1803149380"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6238#discussion_r1803149380"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6238"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1803149380/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 74,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 79,
+    "side": "RIGHT",
+    "in_reply_to_id": 1750476948,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 79,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1803617355",
+    "pull_request_review_id": 2373352790,
+    "id": 1803617355,
+    "node_id": "PRRC_kwDOCqswNs5rgQRL",
+    "diff_hunk": "@@ -0,0 +1,36 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct SpinConfig<'a> {\n+    pub format: &'a str,\n+    pub version_format: &'a str,\n+    pub symbol: &'a str,\n+    pub permanent: bool,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+    pub detect_extensions: Vec<&'a str>,\n+    pub detect_files: Vec<&'a str>,\n+    pub detect_folders: Vec<&'a str>,\n+}\n+\n+impl<'a> Default for SpinConfig<'a> {\n+    fn default() -> Self {\n+        SpinConfig {\n+            format: \"[$symbol($version) ]($style)\",\n+            version_format: \"Spin ${raw}\",",
+    "path": "src/configs/spin.rs",
+    "commit_id": "80e488f813af3bb48ccc4f4fd53333817f16d6a7",
+    "original_commit_id": "75e2103135d817dd33b4f0dbde5186d4dd67f080",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please keep this as `v${raw}`, otherwise LGTM.",
+    "created_at": "2024-10-16T18:36:40Z",
+    "updated_at": "2024-10-16T18:36:40Z",
+    "html_url": "https://github.com/starship/starship/pull/6238#discussion_r1803617355",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6238",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1803617355"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6238#discussion_r1803617355"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6238"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1803617355/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 26,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 26,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1807336485",
+    "pull_request_review_id": 2379451630,
+    "id": 1807336485,
+    "node_id": "PRRC_kwDOCqswNs5rucQl",
+    "diff_hunk": "@@ -0,0 +1,36 @@\n+use serde::{Deserialize, Serialize};\n+\n+#[derive(Clone, Deserialize, Serialize)]\n+#[cfg_attr(\n+    feature = \"config-schema\",\n+    derive(schemars::JsonSchema),\n+    schemars(deny_unknown_fields)\n+)]\n+#[serde(default)]\n+pub struct SpinConfig<'a> {\n+    pub format: &'a str,\n+    pub version_format: &'a str,\n+    pub symbol: &'a str,\n+    pub permanent: bool,\n+    pub style: &'a str,\n+    pub disabled: bool,\n+    pub detect_extensions: Vec<&'a str>,\n+    pub detect_files: Vec<&'a str>,\n+    pub detect_folders: Vec<&'a str>,\n+}\n+\n+impl<'a> Default for SpinConfig<'a> {\n+    fn default() -> Self {\n+        SpinConfig {\n+            format: \"[$symbol($version) ]($style)\",\n+            version_format: \"Spin ${raw}\",",
+    "path": "src/configs/spin.rs",
+    "commit_id": "80e488f813af3bb48ccc4f4fd53333817f16d6a7",
+    "original_commit_id": "75e2103135d817dd33b4f0dbde5186d4dd67f080",
+    "user": {
+      "login": "ThorstenHans",
+      "id": 357884,
+      "node_id": "MDQ6VXNlcjM1Nzg4NA==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/357884?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/ThorstenHans",
+      "html_url": "https://github.com/ThorstenHans",
+      "followers_url": "https://api.github.com/users/ThorstenHans/followers",
+      "following_url": "https://api.github.com/users/ThorstenHans/following{/other_user}",
+      "gists_url": "https://api.github.com/users/ThorstenHans/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/ThorstenHans/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/ThorstenHans/subscriptions",
+      "organizations_url": "https://api.github.com/users/ThorstenHans/orgs",
+      "repos_url": "https://api.github.com/users/ThorstenHans/repos",
+      "events_url": "https://api.github.com/users/ThorstenHans/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/ThorstenHans/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "resolved in c7d376b",
+    "created_at": "2024-10-19T13:45:29Z",
+    "updated_at": "2024-10-19T13:45:29Z",
+    "html_url": "https://github.com/starship/starship/pull/6238#discussion_r1807336485",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6238",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1807336485"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6238#discussion_r1807336485"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6238"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1807336485/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 26,
+    "side": "RIGHT",
+    "in_reply_to_id": 1803617355,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 26,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1807354827",
+    "pull_request_review_id": 2379492545,
+    "id": 1807354827,
+    "node_id": "PRRC_kwDOCqswNs5rugvL",
+    "diff_hunk": "@@ -1704,6 +1704,29 @@\n         }\n       ]\n     },\n+    \"spin\": {\n+      \"default\": {\n+        \"detect_extensions\": [],\n+        \"detect_files\": [\n+          \"spin.toml\",\n+          \"Spin.toml\"\n+        ],\n+        \"detect_folders\": [\n+          \".spin\"\n+        ],\n+        \"disabled\": false,\n+        \"format\": \"[$symbol($version) ]($style)\",\n+        \"permanent\": false,\n+        \"style\": \"bold bright-purple\",\n+        \"symbol\": \"💫 \",\n+        \"version_format\": \"Spin ${raw}\"",
+    "path": ".github/config-schema.json",
+    "commit_id": "80e488f813af3bb48ccc4f4fd53333817f16d6a7",
+    "original_commit_id": "c7d376b7bc389c6e7b8682bfe04a006856826354",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n        \"version_format\": \"v${raw}\"\r\n```",
+    "created_at": "2024-10-19T14:14:19Z",
+    "updated_at": "2024-10-19T14:15:36Z",
+    "html_url": "https://github.com/starship/starship/pull/6238#discussion_r1807354827",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6238",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1807354827"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6238#discussion_r1807354827"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6238"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1807354827/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 1722,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 19,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1807354949",
+    "pull_request_review_id": 2379492545,
+    "id": 1807354949,
+    "node_id": "PRRC_kwDOCqswNs5rugxF",
+    "diff_hunk": "@@ -5948,6 +5971,62 @@\n       },\n       \"additionalProperties\": false\n     },\n+    \"SpinConfig\": {\n+      \"type\": \"object\",\n+      \"properties\": {\n+        \"format\": {\n+          \"default\": \"[$symbol($version) ]($style)\",\n+          \"type\": \"string\"\n+        },\n+        \"version_format\": {\n+          \"default\": \"Spin ${raw}\",",
+    "path": ".github/config-schema.json",
+    "commit_id": "80e488f813af3bb48ccc4f4fd53333817f16d6a7",
+    "original_commit_id": "c7d376b7bc389c6e7b8682bfe04a006856826354",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n          \"default\": \"v${raw}\",\r\n```",
+    "created_at": "2024-10-19T14:14:35Z",
+    "updated_at": "2024-10-19T14:15:36Z",
+    "html_url": "https://github.com/starship/starship/pull/6238#discussion_r1807354949",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6238",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1807354949"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6238#discussion_r1807354949"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6238"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1807354949/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 5982,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 42,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1807355129",
+    "pull_request_review_id": 2379492545,
+    "id": 1807355129,
+    "node_id": "PRRC_kwDOCqswNs5rugz5",
+    "diff_hunk": "@@ -4256,6 +4257,46 @@ The `spack` module shows the current [Spack](https://spack.readthedocs.io/en/lat\n format = '[$symbol$environment](dimmed blue) '\n ```\n \n+## Spin\n+\n+The `spin` module displays the current [Spin](https://github.com/fermyon/spin) version.\n+\n+### Options\n+\n+| Option              | Default                          | Description                                  |\n+| ------------------- | -------------------------------- | -------------------------------------------- |\n+| `detect_extensions` | `[]`                             | Which extensions should trigger this module. |\n+| `detect_files`      | `['Spin.toml', 'spin.toml']`     | Which filenames should trigger this module.  |\n+| `detect_folders`    | `['.spin']`                      | Which folders should trigger this module.    |\n+| `permanent`         | `false`                          | Always display the current Spin version.     |\n+| `symbol`            | `'💫 '`                          | The symbol used before the Spin version.     |\n+| `style`             | `'bold bright-purple'`           | The style for the module.                    |\n+| `format`            | `'[$symbol($version) ]($style)'` | The format for the module.                   |\n+| `version_format`    | `'Spin ${raw}'`                  | The format for the Spin version.             |",
+    "path": "docs/config/README.md",
+    "commit_id": "80e488f813af3bb48ccc4f4fd53333817f16d6a7",
+    "original_commit_id": "c7d376b7bc389c6e7b8682bfe04a006856826354",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n| `version_format`    | `'v${raw}'`                      | The format for the Spin version.             |\r\n```",
+    "created_at": "2024-10-19T14:14:59Z",
+    "updated_at": "2024-10-19T14:15:36Z",
+    "html_url": "https://github.com/starship/starship/pull/6238#discussion_r1807355129",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6238",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1807355129"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6238#discussion_r1807355129"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6238"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1807355129/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 4275,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 27,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/1807355192",
+    "pull_request_review_id": 2379492545,
+    "id": 1807355192,
+    "node_id": "PRRC_kwDOCqswNs5rug04",
+    "diff_hunk": "@@ -0,0 +1,118 @@\n+use regex::Regex;\n+\n+use crate::{\n+    config::ModuleConfig,\n+    configs::spin::SpinConfig,\n+    context::Context,\n+    formatter::{StringFormatter, VersionFormatter},\n+    module::Module,\n+};\n+\n+use crate::utils::get_command_string_output;\n+const SPIN_BINARY: &str = \"spin\";\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"spin\");\n+    let config = SpinConfig::try_load(module.config);\n+    if !config.permanent {\n+        let is_spin_project = context\n+            .try_begin_scan()?\n+            .set_files(&config.detect_files)\n+            .set_extensions(&config.detect_extensions)\n+            .set_folders(&config.detect_folders)\n+            .is_match();\n+\n+        if !is_spin_project {\n+            return None;\n+        }\n+    }\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|var, _| match var {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"version\" => {\n+                    let spin_version_stdout =\n+                        get_command_string_output(context.exec_cmd(SPIN_BINARY, &[\"--version\"])?);\n+                    let spin_version = parse_spin_version(spin_version_stdout.as_str())?;\n+\n+                    VersionFormatter::format_module_version(\n+                        module.get_name(),\n+                        &spin_version,\n+                        config.version_format,\n+                    )\n+                    .map(Ok)\n+                }\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `spin`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn parse_spin_version(spin_version_stdout: &str) -> Option<String> {\n+    let semver_regex = Regex::new(r\"\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9]+)?\").ok()?;\n+    let input = spin_version_stdout;\n+    let capture = semver_regex.find(input)?.as_str();\n+    Some(capture.to_string())\n+}\n+\n+#[cfg(test)]\n+mod tests {\n+    use std::io;\n+\n+    use crate::test::ModuleRenderer;\n+    use nu_ansi_term::Color;\n+\n+    #[test]\n+    fn test_spin_module_rendering() -> io::Result<()> {\n+        let dir = tempfile::tempdir()?;\n+\n+        let actual = ModuleRenderer::new(\"spin\")\n+            .path(dir.path())\n+            .config(toml::toml! {\n+               [spin]\n+               permanent = true\n+               disabled = false\n+            })\n+            .collect();\n+\n+        let expected = Some(format!(\n+            \"{}\",\n+            Color::LightPurple.bold().paint(\"💫 Spin 2.7.0 \")",
+    "path": "src/modules/spin.rs",
+    "commit_id": "80e488f813af3bb48ccc4f4fd53333817f16d6a7",
+    "original_commit_id": "c7d376b7bc389c6e7b8682bfe04a006856826354",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n            Color::LightPurple.bold().paint(\"💫 v2.7.0 \")\r\n```",
+    "created_at": "2024-10-19T14:15:23Z",
+    "updated_at": "2024-10-19T14:15:36Z",
+    "html_url": "https://github.com/starship/starship/pull/6238#discussion_r1807355192",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6238",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/1807355192"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6238#discussion_r1807355192"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6238"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/1807355192/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 98,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 98,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

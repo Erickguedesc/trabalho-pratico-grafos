@@ -1,0 +1,281 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/596646695",
+    "pull_request_review_id": 615097165,
+    "id": 596646695,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU5NjY0NjY5NQ==",
+    "diff_hunk": "@@ -207,62 +205,64 @@ impl<'a> GitStatusInfo<'a> {\n }\n \n /// Gets the number of files in various git states (staged, modified, deleted, etc...)\n-fn get_repo_status(repository: &mut Repository) -> Result<RepoStatus, git2::Error> {\n+fn get_repo_status(repo_root: &PathBuf) -> std::io::Result<RepoStatus> {\n     log::debug!(\"New repo status created\");\n-    let mut status_options = git2::StatusOptions::new();\n \n     let mut repo_status = RepoStatus::default();\n \n-    match repository.config()?.get_entry(\"status.showUntrackedFiles\") {\n-        Ok(entry) => status_options.include_untracked(entry.value() != Some(\"no\")),\n-        _ => status_options.include_untracked(true),\n-    };\n-    status_options\n-        .renames_from_rewrites(true)\n-        .renames_head_to_index(true)\n-        .include_unmodified(true);\n-\n-    let statuses = repository.statuses(Some(&mut status_options))?;\n-\n-    if statuses.is_empty() {\n-        return Err(git2::Error::from_str(\"Repo has no status\"));\n-    }\n-\n-    statuses\n-        .iter()\n-        .map(|s| s.status())\n-        .for_each(|status| repo_status.add(status));\n+    let output = Command::new(\"git\")\n+        .current_dir(repo_root)\n+        .args(&[\"config\", \"--get\", \"--local\", \"status.showUntrackedFiles\"])",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "421b3549453490b3019d61af156f317b917331ce",
+    "original_commit_id": "6f1fcf832bdea0865a783d122c1484b07185f01d",
+    "user": {
+      "login": "jankatins",
+      "id": 890156,
+      "node_id": "MDQ6VXNlcjg5MDE1Ng==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/890156?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jankatins",
+      "html_url": "https://github.com/jankatins",
+      "followers_url": "https://api.github.com/users/jankatins/followers",
+      "following_url": "https://api.github.com/users/jankatins/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jankatins/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jankatins/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jankatins/subscriptions",
+      "organizations_url": "https://api.github.com/users/jankatins/orgs",
+      "repos_url": "https://api.github.com/users/jankatins/repos",
+      "events_url": "https://api.github.com/users/jankatins/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jankatins/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Just for my curiosity: Why make this a git config and not a starship one? Means one external call more...",
+    "created_at": "2021-03-18T08:34:48Z",
+    "updated_at": "2021-03-19T01:51:37Z",
+    "html_url": "https://github.com/starship/starship/pull/2465#discussion_r596646695",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2465",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/596646695"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2465#discussion_r596646695"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2465"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/596646695/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 215,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 139,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/596956309",
+    "pull_request_review_id": 615500352,
+    "id": 596956309,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU5Njk1NjMwOQ==",
+    "diff_hunk": "@@ -207,62 +205,64 @@ impl<'a> GitStatusInfo<'a> {\n }\n \n /// Gets the number of files in various git states (staged, modified, deleted, etc...)\n-fn get_repo_status(repository: &mut Repository) -> Result<RepoStatus, git2::Error> {\n+fn get_repo_status(repo_root: &PathBuf) -> std::io::Result<RepoStatus> {\n     log::debug!(\"New repo status created\");\n-    let mut status_options = git2::StatusOptions::new();\n \n     let mut repo_status = RepoStatus::default();\n \n-    match repository.config()?.get_entry(\"status.showUntrackedFiles\") {\n-        Ok(entry) => status_options.include_untracked(entry.value() != Some(\"no\")),\n-        _ => status_options.include_untracked(true),\n-    };\n-    status_options\n-        .renames_from_rewrites(true)\n-        .renames_head_to_index(true)\n-        .include_unmodified(true);\n-\n-    let statuses = repository.statuses(Some(&mut status_options))?;\n-\n-    if statuses.is_empty() {\n-        return Err(git2::Error::from_str(\"Repo has no status\"));\n-    }\n-\n-    statuses\n-        .iter()\n-        .map(|s| s.status())\n-        .for_each(|status| repo_status.add(status));\n+    let output = Command::new(\"git\")\n+        .current_dir(repo_root)\n+        .args(&[\"config\", \"--get\", \"--local\", \"status.showUntrackedFiles\"])",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "421b3549453490b3019d61af156f317b917331ce",
+    "original_commit_id": "6f1fcf832bdea0865a783d122c1484b07185f01d",
+    "user": {
+      "login": "dodgez",
+      "id": 5016575,
+      "node_id": "MDQ6VXNlcjUwMTY1NzU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5016575?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dodgez",
+      "html_url": "https://github.com/dodgez",
+      "followers_url": "https://api.github.com/users/dodgez/followers",
+      "following_url": "https://api.github.com/users/dodgez/following{/other_user}",
+      "gists_url": "https://api.github.com/users/dodgez/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/dodgez/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/dodgez/subscriptions",
+      "organizations_url": "https://api.github.com/users/dodgez/orgs",
+      "repos_url": "https://api.github.com/users/dodgez/repos",
+      "events_url": "https://api.github.com/users/dodgez/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/dodgez/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "The previous code used pulled this same git config option using git2 so I figured I would maintain that for compatibility.  I also thought about that extra external call.  It also makes sense to me for starship to use the git config option, but I can see arguments for both sides.",
+    "created_at": "2021-03-18T15:03:28Z",
+    "updated_at": "2021-03-19T01:51:37Z",
+    "html_url": "https://github.com/starship/starship/pull/2465#discussion_r596956309",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2465",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/596956309"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2465#discussion_r596956309"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2465"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/596956309/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 215,
+    "side": "RIGHT",
+    "in_reply_to_id": 596646695,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 139,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/596958988",
+    "pull_request_review_id": 615504031,
+    "id": 596958988,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU5Njk1ODk4OA==",
+    "diff_hunk": "@@ -207,62 +205,64 @@ impl<'a> GitStatusInfo<'a> {\n }\n \n /// Gets the number of files in various git states (staged, modified, deleted, etc...)\n-fn get_repo_status(repository: &mut Repository) -> Result<RepoStatus, git2::Error> {\n+fn get_repo_status(repo_root: &PathBuf) -> std::io::Result<RepoStatus> {\n     log::debug!(\"New repo status created\");\n-    let mut status_options = git2::StatusOptions::new();\n \n     let mut repo_status = RepoStatus::default();\n \n-    match repository.config()?.get_entry(\"status.showUntrackedFiles\") {\n-        Ok(entry) => status_options.include_untracked(entry.value() != Some(\"no\")),\n-        _ => status_options.include_untracked(true),\n-    };\n-    status_options\n-        .renames_from_rewrites(true)\n-        .renames_head_to_index(true)\n-        .include_unmodified(true);\n-\n-    let statuses = repository.statuses(Some(&mut status_options))?;\n-\n-    if statuses.is_empty() {\n-        return Err(git2::Error::from_str(\"Repo has no status\"));\n-    }\n-\n-    statuses\n-        .iter()\n-        .map(|s| s.status())\n-        .for_each(|status| repo_status.add(status));\n+    let output = Command::new(\"git\")\n+        .current_dir(repo_root)\n+        .args(&[\"config\", \"--get\", \"--local\", \"status.showUntrackedFiles\"])",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "421b3549453490b3019d61af156f317b917331ce",
+    "original_commit_id": "6f1fcf832bdea0865a783d122c1484b07185f01d",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Does `git` not respect its own option here? And if not, it might be faster to read the option directly in starship like before.",
+    "created_at": "2021-03-18T15:06:30Z",
+    "updated_at": "2021-03-19T01:51:37Z",
+    "html_url": "https://github.com/starship/starship/pull/2465#discussion_r596958988",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2465",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/596958988"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2465#discussion_r596958988"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2465"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/596958988/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 215,
+    "side": "RIGHT",
+    "in_reply_to_id": 596646695,
+    "author_association": "MEMBER",
+    "original_position": 139,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/597077875",
+    "pull_request_review_id": 615659836,
+    "id": 597077875,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDU5NzA3Nzg3NQ==",
+    "diff_hunk": "@@ -207,62 +205,64 @@ impl<'a> GitStatusInfo<'a> {\n }\n \n /// Gets the number of files in various git states (staged, modified, deleted, etc...)\n-fn get_repo_status(repository: &mut Repository) -> Result<RepoStatus, git2::Error> {\n+fn get_repo_status(repo_root: &PathBuf) -> std::io::Result<RepoStatus> {\n     log::debug!(\"New repo status created\");\n-    let mut status_options = git2::StatusOptions::new();\n \n     let mut repo_status = RepoStatus::default();\n \n-    match repository.config()?.get_entry(\"status.showUntrackedFiles\") {\n-        Ok(entry) => status_options.include_untracked(entry.value() != Some(\"no\")),\n-        _ => status_options.include_untracked(true),\n-    };\n-    status_options\n-        .renames_from_rewrites(true)\n-        .renames_head_to_index(true)\n-        .include_unmodified(true);\n-\n-    let statuses = repository.statuses(Some(&mut status_options))?;\n-\n-    if statuses.is_empty() {\n-        return Err(git2::Error::from_str(\"Repo has no status\"));\n-    }\n-\n-    statuses\n-        .iter()\n-        .map(|s| s.status())\n-        .for_each(|status| repo_status.add(status));\n+    let output = Command::new(\"git\")\n+        .current_dir(repo_root)\n+        .args(&[\"config\", \"--get\", \"--local\", \"status.showUntrackedFiles\"])",
+    "path": "src/modules/git_status.rs",
+    "commit_id": "421b3549453490b3019d61af156f317b917331ce",
+    "original_commit_id": "6f1fcf832bdea0865a783d122c1484b07185f01d",
+    "user": {
+      "login": "dodgez",
+      "id": 5016575,
+      "node_id": "MDQ6VXNlcjUwMTY1NzU=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5016575?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/dodgez",
+      "html_url": "https://github.com/dodgez",
+      "followers_url": "https://api.github.com/users/dodgez/followers",
+      "following_url": "https://api.github.com/users/dodgez/following{/other_user}",
+      "gists_url": "https://api.github.com/users/dodgez/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/dodgez/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/dodgez/subscriptions",
+      "organizations_url": "https://api.github.com/users/dodgez/orgs",
+      "repos_url": "https://api.github.com/users/dodgez/repos",
+      "events_url": "https://api.github.com/users/dodgez/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/dodgez/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "That is a great point @davidkna.  I would believe git respects its option.  The reason I put this code here was before I made any changes the code was using git2 to pull the same option (so I believe at some point it read it from the repo config).  It may be worth just removing this altogether.\r\n\r\nThe starship configuration for showing the untracked files in the prompt applies independently.  The previous code pulled in all the information and then selectively pulled that information to put into the prompt, which is the same thing I am doing here.\r\n\r\nActually, now that I think about it, the way I am getting the current status removes the need for this command.  I think the old code had to supply this because it used git2 which may not have respected the current configuration.  I will remove this.",
+    "created_at": "2021-03-18T17:07:44Z",
+    "updated_at": "2021-03-19T01:51:37Z",
+    "html_url": "https://github.com/starship/starship/pull/2465#discussion_r597077875",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/2465",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/597077875"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/2465#discussion_r597077875"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/2465"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/597077875/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 215,
+    "side": "RIGHT",
+    "in_reply_to_id": 596646695,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 139,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

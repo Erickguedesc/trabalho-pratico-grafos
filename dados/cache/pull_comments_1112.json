@@ -1,0 +1,349 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/421886674",
+    "pull_request_review_id": 407941481,
+    "id": 421886674,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyMTg4NjY3NA==",
+    "diff_hunk": "@@ -1,26 +1,21 @@\n-use crate::config::{ModuleConfig, RootModuleConfig, SegmentConfig};\n+use crate::config::{ModuleConfig, RootModuleConfig};\n \n-use ansi_term::{Color, Style};\n use starship_module_config_derive::ModuleConfig;\n \n #[derive(Clone, ModuleConfig)]\n pub struct GitBranchConfig<'a> {\n-    pub symbol: SegmentConfig<'a>,\n     pub truncation_length: i64,\n     pub truncation_symbol: &'a str,\n-    pub branch_name: SegmentConfig<'a>,\n-    pub style: Style,\n+    pub format: &'a str,",
+    "path": "src/configs/git_branch.rs",
+    "commit_id": "0402e2ed64040c69e9ff4ae900c06d3429042a59",
+    "original_commit_id": "a069cd6e68c30df797e4f982c9e6efb78b573646",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It is recommended not to remove `symbol` and `style` as per the discussion in https://github.com/starship/starship/discussions/1116#discussioncomment-6579 .\r\n",
+    "created_at": "2020-05-08T01:33:05Z",
+    "updated_at": "2020-06-21T10:09:35Z",
+    "html_url": "https://github.com/starship/starship/pull/1112#discussion_r421886674",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1112",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/421886674"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1112#discussion_r421886674"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1112"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/421886674/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 9,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 14,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/421887243",
+    "pull_request_review_id": 407941481,
+    "id": 421887243,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyMTg4NzI0Mw==",
+    "diff_hunk": "@@ -31,29 +31,37 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     let repo = context.get_repo().ok()?;\n     let branch_name = repo.branch.as_ref()?;\n-    let truncated_graphemes = get_graphemes(&branch_name, len);\n-    // The truncation symbol should only be added if we truncated\n-    let truncated_and_symbol = if len < graphemes_len(&branch_name) {\n-        truncated_graphemes + &truncation_symbol\n+\n+    let mut graphemes = get_graphemes(&branch_name);\n+    let trunc_len = len.min(graphemes.len());\n+\n+    if trunc_len < graphemes.len() {\n+        // The truncation symbol should only be added if we truncate\n+        graphemes[trunc_len] = truncation_symbol;\n+        graphemes.truncate(trunc_len + 1)\n+    }\n+\n+    let formatter = if let Ok(formatter) = StringFormatter::new(config.format) {\n+        formatter.map(|variable| match variable {\n+            \"branch\" => Some(graphemes.concat()),\n+            _ => None,\n+        })\n     } else {\n-        truncated_graphemes\n+        log::error!(\"Error parsing format string in `git_branch.format`\");\n+        return None;",
+    "path": "src/modules/git_branch.rs",
+    "commit_id": "0402e2ed64040c69e9ff4ae900c06d3429042a59",
+    "original_commit_id": "a069cd6e68c30df797e4f982c9e6efb78b573646",
+    "user": {
+      "login": "heyrict",
+      "id": 25698503,
+      "node_id": "MDQ6VXNlcjI1Njk4NTAz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25698503?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/heyrict",
+      "html_url": "https://github.com/heyrict",
+      "followers_url": "https://api.github.com/users/heyrict/followers",
+      "following_url": "https://api.github.com/users/heyrict/following{/other_user}",
+      "gists_url": "https://api.github.com/users/heyrict/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/heyrict/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/heyrict/subscriptions",
+      "organizations_url": "https://api.github.com/users/heyrict/orgs",
+      "repos_url": "https://api.github.com/users/heyrict/repos",
+      "events_url": "https://api.github.com/users/heyrict/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/heyrict/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "API has changed in upstream `feat/format-string` branch.\r\n\r\nHere is an example: https://github.com/starship/starship/pull/1063/files",
+    "created_at": "2020-05-08T01:35:14Z",
+    "updated_at": "2020-06-21T10:09:35Z",
+    "html_url": "https://github.com/starship/starship/pull/1112#discussion_r421887243",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1112",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/421887243"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1112#discussion_r421887243"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1112"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/421887243/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 44,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 51,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 54,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/426160199",
+    "pull_request_review_id": 413082441,
+    "id": 426160199,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyNjE2MDE5OQ==",
+    "diff_hunk": "@@ -31,29 +31,37 @@ pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n \n     let repo = context.get_repo().ok()?;\n     let branch_name = repo.branch.as_ref()?;\n-    let truncated_graphemes = get_graphemes(&branch_name, len);\n-    // The truncation symbol should only be added if we truncated\n-    let truncated_and_symbol = if len < graphemes_len(&branch_name) {\n-        truncated_graphemes + &truncation_symbol\n+\n+    let mut graphemes = get_graphemes(&branch_name);\n+    let trunc_len = len.min(graphemes.len());\n+\n+    if trunc_len < graphemes.len() {\n+        // The truncation symbol should only be added if we truncate\n+        graphemes[trunc_len] = truncation_symbol;\n+        graphemes.truncate(trunc_len + 1)\n+    }\n+\n+    let formatter = if let Ok(formatter) = StringFormatter::new(config.format) {\n+        formatter.map(|variable| match variable {\n+            \"branch\" => Some(graphemes.concat()),\n+            _ => None,\n+        })\n     } else {\n-        truncated_graphemes\n+        log::error!(\"Error parsing format string in `git_branch.format`\");\n+        return None;",
+    "path": "src/modules/git_branch.rs",
+    "commit_id": "0402e2ed64040c69e9ff4ae900c06d3429042a59",
+    "original_commit_id": "a069cd6e68c30df797e4f982c9e6efb78b573646",
+    "user": {
+      "login": "pawroman",
+      "id": 914977,
+      "node_id": "MDQ6VXNlcjkxNDk3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/914977?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/pawroman",
+      "html_url": "https://github.com/pawroman",
+      "followers_url": "https://api.github.com/users/pawroman/followers",
+      "following_url": "https://api.github.com/users/pawroman/following{/other_user}",
+      "gists_url": "https://api.github.com/users/pawroman/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/pawroman/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/pawroman/subscriptions",
+      "organizations_url": "https://api.github.com/users/pawroman/orgs",
+      "repos_url": "https://api.github.com/users/pawroman/repos",
+      "events_url": "https://api.github.com/users/pawroman/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/pawroman/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Thanks, I have rebased against that branch.",
+    "created_at": "2020-05-16T14:50:24Z",
+    "updated_at": "2020-06-21T10:09:35Z",
+    "html_url": "https://github.com/starship/starship/pull/1112#discussion_r426160199",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1112",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/426160199"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1112#discussion_r426160199"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1112"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/426160199/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 44,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 51,
+    "side": "RIGHT",
+    "in_reply_to_id": 421887243,
+    "author_association": "NONE",
+    "original_position": 54,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/426163810",
+    "pull_request_review_id": 413085547,
+    "id": 426163810,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQyNjE2MzgxMA==",
+    "diff_hunk": "@@ -1,26 +1,21 @@\n-use crate::config::{ModuleConfig, RootModuleConfig, SegmentConfig};\n+use crate::config::{ModuleConfig, RootModuleConfig};\n \n-use ansi_term::{Color, Style};\n use starship_module_config_derive::ModuleConfig;\n \n #[derive(Clone, ModuleConfig)]\n pub struct GitBranchConfig<'a> {\n-    pub symbol: SegmentConfig<'a>,\n     pub truncation_length: i64,\n     pub truncation_symbol: &'a str,\n-    pub branch_name: SegmentConfig<'a>,\n-    pub style: Style,\n+    pub format: &'a str,",
+    "path": "src/configs/git_branch.rs",
+    "commit_id": "0402e2ed64040c69e9ff4ae900c06d3429042a59",
+    "original_commit_id": "a069cd6e68c30df797e4f982c9e6efb78b573646",
+    "user": {
+      "login": "pawroman",
+      "id": 914977,
+      "node_id": "MDQ6VXNlcjkxNDk3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/914977?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/pawroman",
+      "html_url": "https://github.com/pawroman",
+      "followers_url": "https://api.github.com/users/pawroman/followers",
+      "following_url": "https://api.github.com/users/pawroman/following{/other_user}",
+      "gists_url": "https://api.github.com/users/pawroman/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/pawroman/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/pawroman/subscriptions",
+      "organizations_url": "https://api.github.com/users/pawroman/orgs",
+      "repos_url": "https://api.github.com/users/pawroman/repos",
+      "events_url": "https://api.github.com/users/pawroman/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/pawroman/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I have restored `symbol` and `style` to match the new conventions.",
+    "created_at": "2020-05-16T15:31:39Z",
+    "updated_at": "2020-06-21T10:09:35Z",
+    "html_url": "https://github.com/starship/starship/pull/1112#discussion_r426163810",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1112",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/426163810"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1112#discussion_r426163810"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1112"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/426163810/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 9,
+    "side": "RIGHT",
+    "in_reply_to_id": 421886674,
+    "author_association": "NONE",
+    "original_position": 14,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/432829951",
+    "pull_request_review_id": 421395299,
+    "id": 432829951,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzMjgyOTk1MQ==",
+    "diff_hunk": "@@ -675,13 +675,22 @@ The `git_branch` module shows the active branch of the repo in your current dire\n \n ### Options\n \n-| Variable            | Default         | Description                                                                           |\n-| ------------------- | --------------- | ------------------------------------------------------------------------------------- |\n-| `symbol`            | `\" \"`          | The symbol used before the branch name of the repo in your current directory.         |\n-| `truncation_length` | `2^63 - 1`      | Truncates a git branch to X graphemes                                                 |\n-| `truncation_symbol` | `\"…\"`           | The symbol used to indicate a branch name was truncated. You can use \"\" for no symbol |\n-| `style`             | `\"bold purple\"` | The style for the module.                                                             |\n-| `disabled`          | `false`         | Disables the `git_branch` module.                                                     |\n+| Variable            | Default                          | Description                                                                            |\n+| ------------------- | -------------------------------- | -------------------------------------------------------------------------------------- |\n+| `format`            | `\"on [$symbol$branch]($style) \"` | The format for the module.  Use `\"$branch\"` to refer to the current branch name.       |\n+| `symbol`            | `\" \"`                           | A format string representing the symbol of git branch.                                 |\n+| `style`             | `\"bold purple\"`                  | The style for the module.                                                              |\n+| `truncation_length` | `2^63 - 1`                       | Truncates a git branch to X graphemes.                                                 |\n+| `truncation_symbol` | `\"…\"`                            | The symbol used to indicate a branch name was truncated. You can use \"\" for no symbol. |",
+    "path": "docs/config/README.md",
+    "commit_id": "0402e2ed64040c69e9ff4ae900c06d3429042a59",
+    "original_commit_id": "526881f9d0e8a441645c17fcdb54ee8727663b3a",
+    "user": {
+      "login": "andytom",
+      "id": 108836,
+      "node_id": "MDQ6VXNlcjEwODgzNg==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/108836?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/andytom",
+      "html_url": "https://github.com/andytom",
+      "followers_url": "https://api.github.com/users/andytom/followers",
+      "following_url": "https://api.github.com/users/andytom/following{/other_user}",
+      "gists_url": "https://api.github.com/users/andytom/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/andytom/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/andytom/subscriptions",
+      "organizations_url": "https://api.github.com/users/andytom/orgs",
+      "repos_url": "https://api.github.com/users/andytom/repos",
+      "events_url": "https://api.github.com/users/andytom/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/andytom/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Not related to your change but it would be nice add the following \r\n```suggestion\r\n| `truncation_symbol` | `\"…\"`                            | The symbol used to indicate a branch name was truncated. You can use `\"\"` for no symbol. |\r\n```",
+    "created_at": "2020-05-30T10:25:01Z",
+    "updated_at": "2020-06-21T10:09:35Z",
+    "html_url": "https://github.com/starship/starship/pull/1112#discussion_r432829951",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1112",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/432829951"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1112#discussion_r432829951"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1112"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/432829951/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 684,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 17,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

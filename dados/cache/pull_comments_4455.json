@@ -1,0 +1,209 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/990664953",
+    "pull_request_review_id": 1135244097,
+    "id": 990664953,
+    "node_id": "PRRC_kwDOCqswNs47DFj5",
+    "diff_hunk": "@@ -655,54 +657,58 @@ credential_process = /opt/bin/awscreds-retriever\n \n         let expiration_date = now_plus_half_hour.to_rfc3339_opts(chrono::SecondsFormat::Secs, true);\n \n-        file.write_all(\n-            format!(\n-                \"[astronauts]\n+        let expiration_keys = [\"expiration\", \"x_security_token_expires\"];\n+        expiration_keys.iter().for_each(|key| {\n+            file.write_all(\n+                format!(\n+                    \"[astronauts]\n aws_access_key_id=dummy\n aws_secret_access_key=dummy\n-expiration={}\n+{}={}\n \",\n-                expiration_date\n-            )\n-            .as_bytes(),\n-        )?;\n-\n-        let actual = ModuleRenderer::new(\"aws\")\n-            .env(\"AWS_PROFILE\", \"astronauts\")\n-            .env(\"AWS_REGION\", \"ap-northeast-2\")\n-            .env(\n-                \"AWS_SHARED_CREDENTIALS_FILE\",\n-                credentials_path.to_string_lossy().as_ref(),\n+                    key, expiration_date\n+                )\n+                .as_bytes(),\n             )\n-            .collect();\n-\n-        let actual_variant = ModuleRenderer::new(\"aws\")\n-            .env(\"AWS_PROFILE\", \"astronauts\")\n-            .env(\"AWS_REGION\", \"ap-northeast-2\")\n-            .env(\n-                \"AWS_CREDENTIALS_FILE\",\n-                credentials_path.to_string_lossy().as_ref(),\n-            )\n-            .collect();\n-\n-        assert_eq!(\n-            actual, actual_variant,\n-            \"both AWS_SHARED_CREDENTIALS_FILE and AWS_CREDENTIALS_FILE should work\"\n-        );\n-\n-        // In principle, \"30m\" should be correct. However, bad luck in scheduling\n-        // on shared runners may delay it. Allow for up to 2 seconds of delay.\n-        let possible_values = [\"30m\", \"29m59s\", \"29m58s\"];\n-        let possible_values = possible_values.map(|duration| {\n-            let segment_colored = format!(\"☁️  astronauts (ap-northeast-2) [{}] \", duration);\n-            Some(format!(\n-                \"on {}\",\n-                Color::Yellow.bold().paint(segment_colored)\n-            ))\n+            .unwrap();\n+\n+            let actual = ModuleRenderer::new(\"aws\")\n+                .env(\"AWS_PROFILE\", \"astronauts\")\n+                .env(\"AWS_REGION\", \"ap-northeast-2\")\n+                .env(\n+                    \"AWS_SHARED_CREDENTIALS_FILE\",\n+                    credentials_path.to_string_lossy().as_ref(),\n+                )\n+                .collect();\n+\n+            let actual_variant = ModuleRenderer::new(\"aws\")\n+                .env(\"AWS_PROFILE\", \"astronauts\")\n+                .env(\"AWS_REGION\", \"ap-northeast-2\")\n+                .env(\n+                    \"AWS_CREDENTIALS_FILE\",\n+                    credentials_path.to_string_lossy().as_ref(),\n+                )\n+                .collect();\n+\n+            assert_eq!(\n+                actual, actual_variant,\n+                \"both AWS_SHARED_CREDENTIALS_FILE and AWS_CREDENTIALS_FILE should work\"\n+            );\n+\n+            // In principle, \"30m\" should be correct. However, bad luck in scheduling\n+            // on shared runners may delay it. Allow for up to 2 seconds of delay.\n+            let possible_values = [\"30m\", \"29m59s\", \"29m58s\"];",
+    "path": "src/modules/aws.rs",
+    "commit_id": "dd0927e15fd28b93766570de334bf7809c795503",
+    "original_commit_id": "4f094e0a2ef06467cfbfe680b21e9d699f23b4c3",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Despite #4455 this test has been failing intermittently, so let's increase the range a bit to avoid worsening the situation:\r\n```suggestion\r\n            // In principle, \"30m\" should be correct. However, bad luck in scheduling\r\n            // on shared runners may delay it. Allow a few seconds of skew.\r\n            let possible_values = [\r\n                \"30m2s\", \"30m1s\", \"30m\", \"29m59s\", \"29m58s\", \"29m57s\", \"29m56s\", \"29m55s\",\r\n            ];\r\n```",
+    "created_at": "2022-10-08T17:06:27Z",
+    "updated_at": "2022-10-08T17:09:25Z",
+    "html_url": "https://github.com/starship/starship/pull/4455#discussion_r990664953",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4455",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/990664953"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4455#discussion_r990664953"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4455"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/990664953/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 698,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 700,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 97,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/990665031",
+    "pull_request_review_id": 1135244097,
+    "id": 990665031,
+    "node_id": "PRRC_kwDOCqswNs47DFlH",
+    "diff_hunk": "@@ -655,54 +657,58 @@ credential_process = /opt/bin/awscreds-retriever\n \n         let expiration_date = now_plus_half_hour.to_rfc3339_opts(chrono::SecondsFormat::Secs, true);\n \n-        file.write_all(\n-            format!(\n-                \"[astronauts]\n+        let expiration_keys = [\"expiration\", \"x_security_token_expires\"];\n+        expiration_keys.iter().for_each(|key| {\n+            file.write_all(\n+                format!(\n+                    \"[astronauts]\n aws_access_key_id=dummy\n aws_secret_access_key=dummy\n-expiration={}\n+{}={}\n \",\n-                expiration_date\n-            )\n-            .as_bytes(),\n-        )?;\n-\n-        let actual = ModuleRenderer::new(\"aws\")\n-            .env(\"AWS_PROFILE\", \"astronauts\")\n-            .env(\"AWS_REGION\", \"ap-northeast-2\")\n-            .env(\n-                \"AWS_SHARED_CREDENTIALS_FILE\",\n-                credentials_path.to_string_lossy().as_ref(),\n+                    key, expiration_date\n+                )\n+                .as_bytes(),\n             )\n-            .collect();\n-\n-        let actual_variant = ModuleRenderer::new(\"aws\")\n-            .env(\"AWS_PROFILE\", \"astronauts\")\n-            .env(\"AWS_REGION\", \"ap-northeast-2\")\n-            .env(\n-                \"AWS_CREDENTIALS_FILE\",\n-                credentials_path.to_string_lossy().as_ref(),\n-            )\n-            .collect();\n-\n-        assert_eq!(\n-            actual, actual_variant,\n-            \"both AWS_SHARED_CREDENTIALS_FILE and AWS_CREDENTIALS_FILE should work\"\n-        );\n-\n-        // In principle, \"30m\" should be correct. However, bad luck in scheduling\n-        // on shared runners may delay it. Allow for up to 2 seconds of delay.\n-        let possible_values = [\"30m\", \"29m59s\", \"29m58s\"];\n-        let possible_values = possible_values.map(|duration| {\n-            let segment_colored = format!(\"☁️  astronauts (ap-northeast-2) [{}] \", duration);\n-            Some(format!(\n-                \"on {}\",\n-                Color::Yellow.bold().paint(segment_colored)\n-            ))\n+            .unwrap();\n+\n+            let actual = ModuleRenderer::new(\"aws\")\n+                .env(\"AWS_PROFILE\", \"astronauts\")\n+                .env(\"AWS_REGION\", \"ap-northeast-2\")\n+                .env(\n+                    \"AWS_SHARED_CREDENTIALS_FILE\",\n+                    credentials_path.to_string_lossy().as_ref(),\n+                )\n+                .collect();\n+\n+            let actual_variant = ModuleRenderer::new(\"aws\")\n+                .env(\"AWS_PROFILE\", \"astronauts\")\n+                .env(\"AWS_REGION\", \"ap-northeast-2\")\n+                .env(\n+                    \"AWS_CREDENTIALS_FILE\",\n+                    credentials_path.to_string_lossy().as_ref(),\n+                )\n+                .collect();\n+\n+            assert_eq!(\n+                actual, actual_variant,\n+                \"both AWS_SHARED_CREDENTIALS_FILE and AWS_CREDENTIALS_FILE should work\"\n+            );\n+\n+            // In principle, \"30m\" should be correct. However, bad luck in scheduling\n+            // on shared runners may delay it. Allow for up to 2 seconds of delay.\n+            let possible_values = [\"30m\", \"29m59s\", \"29m58s\"];\n+            let possible_values = possible_values.map(|duration| {\n+                let segment_colored = format!(\"☁️  astronauts (ap-northeast-2) [{}] \", duration);\n+                Some(format!(\n+                    \"on {}\",\n+                    Color::Yellow.bold().paint(segment_colored)\n+                ))\n+            });\n+\n+            assert!(possible_values.contains(&actual));",
+    "path": "src/modules/aws.rs",
+    "commit_id": "dd0927e15fd28b93766570de334bf7809c795503",
+    "original_commit_id": "4f094e0a2ef06467cfbfe680b21e9d699f23b4c3",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "To increase observability on failure:\r\n```suggestion\r\n            assert!(\r\n                possible_values.contains(&actual),\r\n                \"time is in range: {actual:?}\"\r\n            );\r\n```",
+    "created_at": "2022-10-08T17:07:17Z",
+    "updated_at": "2022-10-08T17:08:26Z",
+    "html_url": "https://github.com/starship/starship/pull/4455#discussion_r990665031",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4455",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/990665031"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4455#discussion_r990665031"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4455"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/990665031/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 709,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 106,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/992530470",
+    "pull_request_review_id": 1137801128,
+    "id": 992530470,
+    "node_id": "PRRC_kwDOCqswNs47KNAm",
+    "diff_hunk": "@@ -326,6 +326,9 @@ When using [AWSume](https://awsu.me) the profile\n is read from the `AWSUME_PROFILE` env var and the credentials expiration\n date is read from the `AWSUME_EXPIRATION` env var.\n \n+When using [saml2aws](https://github.com/Versent/saml2aws) the expiration key in `~/.aws/credentials`\n+is `x_security_token_expires`.",
+    "path": "docs/config/README.md",
+    "commit_id": "dd0927e15fd28b93766570de334bf7809c795503",
+    "original_commit_id": "eb645e04359e049817cb18c1e6a54b99ea30702b",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this reads better:\r\n```suggestion\r\nWhen using [saml2aws](https://github.com/Versent/saml2aws) the expiration information obtained from `~/.aws/credentials`\r\nfalls back to the `x_security_token_expires` key.\r\n```",
+    "created_at": "2022-10-11T16:12:21Z",
+    "updated_at": "2022-10-11T16:12:21Z",
+    "html_url": "https://github.com/starship/starship/pull/4455#discussion_r992530470",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/4455",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/992530470"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/4455#discussion_r992530470"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/4455"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/992530470/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 329,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 330,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 5,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

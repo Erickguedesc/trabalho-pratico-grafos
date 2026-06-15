@@ -1,0 +1,1183 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/320227363",
+    "pull_request_review_id": 282935809,
+    "id": 320227363,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMDIyNzM2Mw==",
+    "diff_hunk": "@@ -0,0 +1,165 @@\n+use ansi_term::Color;\n+use git2::{Repository, RepositoryState};\n+use std::path::Path;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the state of the git repository at the current directory\n+///\n+/// During an git operation it will show: REBASING, BISECTING, MERGING, etc.",
+    "path": "src/modules/git_state.rs",
+    "commit_id": "d40d00c8663c14400436e4681ffd4dad77c4af81",
+    "original_commit_id": "7180a0aeb40dc8ae9047b246229507f5a3bd1ffe",
+    "user": {
+      "login": "wyze",
+      "id": 186971,
+      "node_id": "MDQ6VXNlcjE4Njk3MQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/186971?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/wyze",
+      "html_url": "https://github.com/wyze",
+      "followers_url": "https://api.github.com/users/wyze/followers",
+      "following_url": "https://api.github.com/users/wyze/following{/other_user}",
+      "gists_url": "https://api.github.com/users/wyze/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/wyze/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/wyze/subscriptions",
+      "organizations_url": "https://api.github.com/users/wyze/orgs",
+      "repos_url": "https://api.github.com/users/wyze/repos",
+      "events_url": "https://api.github.com/users/wyze/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/wyze/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Typo, `an` -> `a`.",
+    "created_at": "2019-09-03T11:42:30Z",
+    "updated_at": "2019-09-05T16:08:23Z",
+    "html_url": "https://github.com/starship/starship/pull/276#discussion_r320227363",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/276",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/320227363"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/276#discussion_r320227363"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/276"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/320227363/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 9,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 9,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/321079151",
+    "pull_request_review_id": 284024153,
+    "id": 321079151,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMTA3OTE1MQ==",
+    "diff_hunk": "@@ -0,0 +1,165 @@\n+use ansi_term::Color;\n+use git2::{Repository, RepositoryState};\n+use std::path::Path;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the state of the git repository at the current directory\n+///\n+/// During a git operation it will show: REBASING, BISECTING, MERGING, etc.\n+/// If the progress information is available (e.g. rebasing 3/10), it will show that too.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let repo_root = context.repo_root.as_ref()?;\n+    let mut repository = Repository::open(repo_root).ok()?;\n+    let state_description = get_state_description(&mut repository);\n+\n+    if let StateDescription::Clean = state_description {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"git_state\")?;",
+    "path": "src/modules/git_state.rs",
+    "commit_id": "d40d00c8663c14400436e4681ffd4dad77c4af81",
+    "original_commit_id": "54cc30d9b1651a405400f4216d721561417745eb",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Can we move this to the top of the function? A la #283, touching the filesystem is sometimes a very expensive operation, and we'd like to avoid doing it at all if the module is disabled.",
+    "created_at": "2019-09-05T05:27:20Z",
+    "updated_at": "2019-09-05T16:08:23Z",
+    "html_url": "https://github.com/starship/starship/pull/276#discussion_r321079151",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/276",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/321079151"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/276#discussion_r321079151"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/276"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/321079151/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 20,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 20,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/321079267",
+    "pull_request_review_id": 284024153,
+    "id": 321079267,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMTA3OTI2Nw==",
+    "diff_hunk": "@@ -230,6 +232,36 @@ truncation_length = \"4\"\n truncation_symbol = \"\"\n ```\n \n+## Git State\n+\n+The `git_state` module will show in directories which are part of a git\n+repository, and where there is an operation in progress, such as: _REBASING_,\n+_BISECTING_, etc. If there is progress information (e.g., REBASING 3/10),\n+that information will be shown too.\n+\n+### Options\n+\n+| Variable           | Default            | Description                                                                                                      |\n+| ------------------ | ------------------ | ---------------------------------------------------------------------------------------------------------------- |\n+| `rebase`           | `\"REBASING\"`       | The text displayed when a `rebase` is in progress.                                                               |\n+| `merge`            | `\"MERGING\"`        | The text displayed when a `merge` is in progress.                                                                |\n+| `revert`           | `\"REVERTING\"`      | The text displayed when a `revert` is in progress.                                                               |\n+| `cherry_pick`      | `\"CHERRY-PICKING\"` | The text displayed when a `cherry-pick` is in progress.                                                          |\n+| `bisect`           | `\"BISECTING\"`      | The text displayed when a `bisect` is in progress.                                                               |\n+| `am`               | `\"AM\"`             | The text displayed when an `apply-mailbox` (`git am`) is in progress.                                            |\n+| `am_or_rebase`     | `\"AM/REBASE\"`      | The text displayed when an ambiguous `apply-mailbox` or `rebase` is in progress.                                 |\n+| `progress_divider` | `\"/\"`              | The symbol or text which will separate the current and total progress amounts. (e.g., `\" of \"`, for `\"3 of 10\"`) |\n+",
+    "path": "docs/config/README.md",
+    "commit_id": "d40d00c8663c14400436e4681ffd4dad77c4af81",
+    "original_commit_id": "54cc30d9b1651a405400f4216d721561417745eb",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Does this module support a `disabled` option?",
+    "created_at": "2019-09-05T05:27:55Z",
+    "updated_at": "2019-09-05T16:08:23Z",
+    "html_url": "https://github.com/starship/starship/pull/276#discussion_r321079267",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/276",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/321079267"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/276#discussion_r321079267"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/276"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/321079267/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 255,
+    "original_line": 255,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 39,
+    "position": 40,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/321079377",
+    "pull_request_review_id": 284024153,
+    "id": 321079377,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMTA3OTM3Nw==",
+    "diff_hunk": "@@ -230,6 +232,36 @@ truncation_length = \"4\"\n truncation_symbol = \"\"\n ```\n \n+## Git State\n+\n+The `git_state` module will show in directories which are part of a git",
+    "path": "docs/config/README.md",
+    "commit_id": "d40d00c8663c14400436e4681ffd4dad77c4af81",
+    "original_commit_id": "54cc30d9b1651a405400f4216d721561417745eb",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Nice, clean explanation.",
+    "created_at": "2019-09-05T05:28:30Z",
+    "updated_at": "2019-09-05T16:08:23Z",
+    "html_url": "https://github.com/starship/starship/pull/276#discussion_r321079377",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/276",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/321079377"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/276#discussion_r321079377"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/276"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/321079377/reactions",
+      "total_count": 1,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 1,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 237,
+    "original_line": 237,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 22,
+    "position": 22,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/321079806",
+    "pull_request_review_id": 284024153,
+    "id": 321079806,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMTA3OTgwNg==",
+    "diff_hunk": "@@ -0,0 +1,165 @@\n+use ansi_term::Color;\n+use git2::{Repository, RepositoryState};\n+use std::path::Path;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the state of the git repository at the current directory\n+///\n+/// During a git operation it will show: REBASING, BISECTING, MERGING, etc.\n+/// If the progress information is available (e.g. rebasing 3/10), it will show that too.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let repo_root = context.repo_root.as_ref()?;\n+    let mut repository = Repository::open(repo_root).ok()?;\n+    let state_description = get_state_description(&mut repository);\n+\n+    if let StateDescription::Clean = state_description {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"git_state\")?;\n+    module.get_prefix().set_value(\"(\");\n+    module.get_suffix().set_value(\") \");",
+    "path": "src/modules/git_state.rs",
+    "commit_id": "d40d00c8663c14400436e4681ffd4dad77c4af81",
+    "original_commit_id": "54cc30d9b1651a405400f4216d721561417745eb",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Are the prefix and suffix set this way specifically because they're meant to be used right next to the other `git` modules? I think we usually go for something like \" on \" or \" in \" for defaults.",
+    "created_at": "2019-09-05T05:30:28Z",
+    "updated_at": "2019-09-05T16:08:23Z",
+    "html_url": "https://github.com/starship/starship/pull/276#discussion_r321079806",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/276",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/321079806"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/276#discussion_r321079806"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/276"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/321079806/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 23,
+    "original_line": 23,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 22,
+    "position": 23,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/321079993",
+    "pull_request_review_id": 284024153,
+    "id": 321079993,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMTA3OTk5Mw==",
+    "diff_hunk": "@@ -0,0 +1,165 @@\n+use ansi_term::Color;\n+use git2::{Repository, RepositoryState};\n+use std::path::Path;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the state of the git repository at the current directory\n+///\n+/// During a git operation it will show: REBASING, BISECTING, MERGING, etc.\n+/// If the progress information is available (e.g. rebasing 3/10), it will show that too.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let repo_root = context.repo_root.as_ref()?;\n+    let mut repository = Repository::open(repo_root).ok()?;\n+    let state_description = get_state_description(&mut repository);\n+\n+    if let StateDescription::Clean = state_description {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"git_state\")?;\n+    module.get_prefix().set_value(\"(\");\n+    module.get_suffix().set_value(\") \");\n+    module.set_style(Color::Yellow.bold());\n+\n+    let label = match state_description {\n+        StateDescription::Label(label) => label,\n+        StateDescription::LabelAndProgress(label, _) => label,\n+        // Should only be possible if you've added a new variant to StateDescription",
+    "path": "src/modules/git_state.rs",
+    "commit_id": "d40d00c8663c14400436e4681ffd4dad77c4af81",
+    "original_commit_id": "54cc30d9b1651a405400f4216d721561417745eb",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I love seeing explanations for when panics occur or why things are safe. :+1: ",
+    "created_at": "2019-09-05T05:31:24Z",
+    "updated_at": "2019-09-05T16:08:23Z",
+    "html_url": "https://github.com/starship/starship/pull/276#discussion_r321079993",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/276",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/321079993"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/276#discussion_r321079993"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/276"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/321079993/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 29,
+    "original_line": 29,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 28,
+    "position": 29,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/321080617",
+    "pull_request_review_id": 284024153,
+    "id": 321080617,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMTA4MDYxNw==",
+    "diff_hunk": "@@ -0,0 +1,165 @@\n+use ansi_term::Color;\n+use git2::{Repository, RepositoryState};\n+use std::path::Path;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the state of the git repository at the current directory\n+///\n+/// During a git operation it will show: REBASING, BISECTING, MERGING, etc.\n+/// If the progress information is available (e.g. rebasing 3/10), it will show that too.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let repo_root = context.repo_root.as_ref()?;\n+    let mut repository = Repository::open(repo_root).ok()?;\n+    let state_description = get_state_description(&mut repository);\n+\n+    if let StateDescription::Clean = state_description {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"git_state\")?;\n+    module.get_prefix().set_value(\"(\");\n+    module.get_suffix().set_value(\") \");\n+    module.set_style(Color::Yellow.bold());\n+\n+    let label = match state_description {\n+        StateDescription::Label(label) => label,\n+        StateDescription::LabelAndProgress(label, _) => label,\n+        // Should only be possible if you've added a new variant to StateDescription\n+        _ => panic!(\"Expected to have a label at this point in the control flow.\"),\n+    };\n+\n+    module.new_segment(label.segment_name, label.message_default);\n+\n+    if let StateDescription::LabelAndProgress(_, progress) = state_description {\n+        module.new_segment(\"progress_current\", &format!(\" {}\", progress.current));\n+        module.new_segment(\"progress_divider\", \"/\");\n+        module.new_segment(\"progress_total\", &format!(\"{}\", progress.total));",
+    "path": "src/modules/git_state.rs",
+    "commit_id": "d40d00c8663c14400436e4681ffd4dad77c4af81",
+    "original_commit_id": "54cc30d9b1651a405400f4216d721561417745eb",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "IIRC, if there's a TOML option by the name, then the value is overridden with that value. Does that mean we've created (unintended, undocumented) TOML options here which could break the module if they were set?",
+    "created_at": "2019-09-05T05:34:54Z",
+    "updated_at": "2019-09-05T16:08:23Z",
+    "html_url": "https://github.com/starship/starship/pull/276#discussion_r321080617",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/276",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/321080617"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/276#discussion_r321080617"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/276"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/321080617/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 38,
+    "original_line": 38,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 37,
+    "position": 38,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/321080744",
+    "pull_request_review_id": 284024153,
+    "id": 321080744,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMTA4MDc0NA==",
+    "diff_hunk": "@@ -0,0 +1,165 @@\n+use ansi_term::Color;\n+use git2::{Repository, RepositoryState};\n+use std::path::Path;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the state of the git repository at the current directory\n+///\n+/// During a git operation it will show: REBASING, BISECTING, MERGING, etc.\n+/// If the progress information is available (e.g. rebasing 3/10), it will show that too.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let repo_root = context.repo_root.as_ref()?;\n+    let mut repository = Repository::open(repo_root).ok()?;\n+    let state_description = get_state_description(&mut repository);\n+\n+    if let StateDescription::Clean = state_description {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"git_state\")?;\n+    module.get_prefix().set_value(\"(\");\n+    module.get_suffix().set_value(\") \");\n+    module.set_style(Color::Yellow.bold());\n+\n+    let label = match state_description {\n+        StateDescription::Label(label) => label,\n+        StateDescription::LabelAndProgress(label, _) => label,\n+        // Should only be possible if you've added a new variant to StateDescription\n+        _ => panic!(\"Expected to have a label at this point in the control flow.\"),\n+    };\n+\n+    module.new_segment(label.segment_name, label.message_default);\n+\n+    if let StateDescription::LabelAndProgress(_, progress) = state_description {\n+        module.new_segment(\"progress_current\", &format!(\" {}\", progress.current));\n+        module.new_segment(\"progress_divider\", \"/\");\n+        module.new_segment(\"progress_total\", &format!(\"{}\", progress.total));\n+    }\n+\n+    Some(module)\n+}\n+\n+static MERGE_LABEL: StateLabel = StateLabel {\n+    segment_name: \"merge\",\n+    message_default: \"MERGING\",\n+};\n+\n+static REVERT_LABEL: StateLabel = StateLabel {\n+    segment_name: \"revert\",\n+    message_default: \"REVERTING\",\n+};\n+\n+static CHERRY_LABEL: StateLabel = StateLabel {\n+    segment_name: \"cherry_pick\",\n+    message_default: \"CHERRY-PICKING\",\n+};\n+\n+static BISECT_LABEL: StateLabel = StateLabel {\n+    segment_name: \"bisect\",\n+    message_default: \"BISECTING\",\n+};\n+\n+static AM_LABEL: StateLabel = StateLabel {\n+    segment_name: \"am\",\n+    message_default: \"AM\",\n+};\n+\n+static REBASE_LABEL: StateLabel = StateLabel {\n+    segment_name: \"rebase\",\n+    message_default: \"REBASING\",\n+};\n+\n+static AM_OR_REBASE_LABEL: StateLabel = StateLabel {\n+    segment_name: \"am_or_rebase\",\n+    message_default: \"AM/REBASE\",\n+};\n+\n+fn get_state_description(repository: &mut Repository) -> StateDescription {\n+    match repository.state() {\n+        RepositoryState::Clean => StateDescription::Clean,\n+        RepositoryState::Merge => StateDescription::Label(&MERGE_LABEL),\n+        RepositoryState::Revert => StateDescription::Label(&REVERT_LABEL),\n+        RepositoryState::RevertSequence => StateDescription::Label(&REVERT_LABEL),\n+        RepositoryState::CherryPick => StateDescription::Label(&CHERRY_LABEL),\n+        RepositoryState::CherryPickSequence => StateDescription::Label(&CHERRY_LABEL),\n+        RepositoryState::Bisect => StateDescription::Label(&BISECT_LABEL),\n+        RepositoryState::ApplyMailbox => StateDescription::Label(&AM_LABEL),\n+        RepositoryState::ApplyMailboxOrRebase => StateDescription::Label(&AM_OR_REBASE_LABEL),\n+        RepositoryState::Rebase => describe_rebase(repository),\n+        RepositoryState::RebaseInteractive => describe_rebase(repository),\n+        RepositoryState::RebaseMerge => describe_rebase(repository),\n+    }\n+}\n+\n+fn describe_rebase(repository: &mut Repository) -> StateDescription {\n+    /*\n+     *  Sadly, libgit2 seems to have some issues with reading the state of\n+     *  interactive rebases. So, instead, we'll poke a few of the .git files\n+     *  ourselves. This might be worth re-visiting this in the future...\n+     *\n+     *  The following is based heavily on: https://github.com/magicmonty/bash-git-prompt\n+     */\n+\n+    let just_label = StateDescription::Label(&REBASE_LABEL);\n+\n+    let dot_git = repository\n+        .workdir()\n+        .and_then(|d| Some(d.join(Path::new(\".git\"))));\n+\n+    let dot_git = match dot_git {\n+        None => {\n+            // We didn't find the .git directory.\n+            // Something very odd is going on. We'll just back away slowly.",
+    "path": "src/modules/git_state.rs",
+    "commit_id": "d40d00c8663c14400436e4681ffd4dad77c4af81",
+    "original_commit_id": "54cc30d9b1651a405400f4216d721561417745eb",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": ":laughing: ",
+    "created_at": "2019-09-05T05:35:37Z",
+    "updated_at": "2019-09-05T16:08:23Z",
+    "html_url": "https://github.com/starship/starship/pull/276#discussion_r321080744",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/276",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/321080744"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/276#discussion_r321080744"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/276"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/321080744/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 114,
+    "original_line": 114,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 113,
+    "position": 114,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/321082140",
+    "pull_request_review_id": 284024153,
+    "id": 321082140,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMTA4MjE0MA==",
+    "diff_hunk": "@@ -0,0 +1,177 @@\n+use super::common;\n+use std::ffi::OsStr;\n+use std::fs::OpenOptions;\n+use std::io::{self, Error, ErrorKind, Write};\n+use std::process::{Command, Stdio};\n+\n+#[test]\n+#[ignore]\n+fn shows_rebasing() -> io::Result<()> {\n+    let repo_dir = create_repo_with_conflict()?;\n+    let path = path_str(&repo_dir)?;\n+\n+    run_git_cmd(&[\"rebase\", \"other-branch\"], Some(path), false)?;\n+\n+    let output = common::render_module(\"git_state\")\n+        .current_dir(path)\n+        .output()?;\n+    let text = String::from_utf8(output.stdout).unwrap();\n+    assert!(text.contains(\"REBASING 1/1\"));\n+\n+    Ok(())\n+}\n+\n+#[test]\n+#[ignore]\n+fn shows_merging() -> io::Result<()> {\n+    let repo_dir = create_repo_with_conflict()?;\n+    let path = path_str(&repo_dir)?;\n+\n+    run_git_cmd(&[\"merge\", \"other-branch\"], Some(path), false)?;\n+\n+    let output = common::render_module(\"git_state\")\n+        .current_dir(path)\n+        .output()?;\n+    let text = String::from_utf8(output.stdout).unwrap();\n+    assert!(text.contains(\"MERGING\"));\n+\n+    Ok(())\n+}\n+\n+#[test]\n+#[ignore]\n+fn shows_cherry_picking() -> io::Result<()> {\n+    let repo_dir = create_repo_with_conflict()?;\n+    let path = path_str(&repo_dir)?;\n+\n+    run_git_cmd(&[\"cherry-pick\", \"other-branch\"], Some(path), false)?;\n+\n+    let output = common::render_module(\"git_state\")\n+        .current_dir(path)\n+        .output()?;\n+    let text = String::from_utf8(output.stdout).unwrap();\n+    assert!(text.contains(\"CHERRY-PICKING\"));\n+\n+    Ok(())\n+}\n+\n+#[test]\n+#[ignore]\n+fn shows_bisecting() -> io::Result<()> {\n+    let repo_dir = create_repo_with_conflict()?;\n+    let path = path_str(&repo_dir)?;\n+\n+    run_git_cmd(&[\"bisect\", \"start\"], Some(path), false)?;\n+\n+    let output = common::render_module(\"git_state\")\n+        .current_dir(path)\n+        .output()?;\n+    let text = String::from_utf8(output.stdout).unwrap();\n+    assert!(text.contains(\"BISECTING\"));\n+\n+    Ok(())\n+}\n+\n+#[test]\n+#[ignore]\n+fn shows_reverting() -> io::Result<()> {\n+    let repo_dir = create_repo_with_conflict()?;\n+    let path = path_str(&repo_dir)?;\n+\n+    run_git_cmd(&[\"revert\", \"--no-commit\", \"HEAD~1\"], Some(path), false)?;\n+\n+    let output = common::render_module(\"git_state\")\n+        .current_dir(path)\n+        .output()?;\n+    let text = String::from_utf8(output.stdout).unwrap();\n+    assert!(text.contains(\"REVERTING\"));\n+\n+    Ok(())\n+}\n+\n+fn run_git_cmd<A, S>(args: A, dir: Option<&str>, expect_ok: bool) -> io::Result<()>\n+where\n+    A: IntoIterator<Item = S>,\n+    S: AsRef<OsStr>,\n+{\n+    let mut command = Command::new(\"git\");\n+    command\n+        .args(args)\n+        .stdout(Stdio::null())\n+        .stderr(Stdio::null())\n+        .stdin(Stdio::null());\n+\n+    if let Some(dir) = dir {\n+        command.current_dir(dir);\n+    }\n+\n+    let status = command.status()?;\n+\n+    if expect_ok && !status.success() {\n+        Err(Error::from(ErrorKind::Other))\n+    } else {\n+        Ok(())\n+    }\n+}\n+\n+fn create_repo_with_conflict() -> io::Result<tempfile::TempDir> {",
+    "path": "tests/testsuite/git_state.rs",
+    "commit_id": "d40d00c8663c14400436e4681ffd4dad77c4af81",
+    "original_commit_id": "54cc30d9b1651a405400f4216d721561417745eb",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Well. That is one monster of a function, and you've written it beautifully. 10/10, would read again.",
+    "created_at": "2019-09-05T05:42:26Z",
+    "updated_at": "2019-09-05T16:08:23Z",
+    "html_url": "https://github.com/starship/starship/pull/276#discussion_r321082140",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/276",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/321082140"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/276#discussion_r321082140"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/276"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/321082140/reactions",
+      "total_count": 1,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 1,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 117,
+    "original_line": 117,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 117,
+    "position": 117,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/321082481",
+    "pull_request_review_id": 284024153,
+    "id": 321082481,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMTA4MjQ4MQ==",
+    "diff_hunk": "@@ -0,0 +1,165 @@\n+use ansi_term::Color;\n+use git2::{Repository, RepositoryState};\n+use std::path::Path;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the state of the git repository at the current directory\n+///\n+/// During a git operation it will show: REBASING, BISECTING, MERGING, etc.\n+/// If the progress information is available (e.g. rebasing 3/10), it will show that too.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let repo_root = context.repo_root.as_ref()?;\n+    let mut repository = Repository::open(repo_root).ok()?;\n+    let state_description = get_state_description(&mut repository);\n+\n+    if let StateDescription::Clean = state_description {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"git_state\")?;\n+    module.get_prefix().set_value(\"(\");\n+    module.get_suffix().set_value(\") \");\n+    module.set_style(Color::Yellow.bold());\n+\n+    let label = match state_description {\n+        StateDescription::Label(label) => label,\n+        StateDescription::LabelAndProgress(label, _) => label,\n+        // Should only be possible if you've added a new variant to StateDescription\n+        _ => panic!(\"Expected to have a label at this point in the control flow.\"),\n+    };\n+\n+    module.new_segment(label.segment_name, label.message_default);\n+\n+    if let StateDescription::LabelAndProgress(_, progress) = state_description {\n+        module.new_segment(\"progress_current\", &format!(\" {}\", progress.current));\n+        module.new_segment(\"progress_divider\", \"/\");\n+        module.new_segment(\"progress_total\", &format!(\"{}\", progress.total));",
+    "path": "src/modules/git_state.rs",
+    "commit_id": "d40d00c8663c14400436e4681ffd4dad77c4af81",
+    "original_commit_id": "54cc30d9b1651a405400f4216d721561417745eb",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "It's not a big deal if the answer is \"yes,\" it's just going to be a mental note in the 1.0 refactor to have ways to avoid this.",
+    "created_at": "2019-09-05T05:44:08Z",
+    "updated_at": "2019-09-05T16:08:23Z",
+    "html_url": "https://github.com/starship/starship/pull/276#discussion_r321082481",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/276",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/321082481"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/276#discussion_r321082481"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/276"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/321082481/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 38,
+    "original_line": 38,
+    "side": "RIGHT",
+    "in_reply_to_id": 321080617,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 37,
+    "position": 38,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/321085018",
+    "pull_request_review_id": 284031107,
+    "id": 321085018,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMTA4NTAxOA==",
+    "diff_hunk": "@@ -0,0 +1,165 @@\n+use ansi_term::Color;\n+use git2::{Repository, RepositoryState};\n+use std::path::Path;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the state of the git repository at the current directory\n+///\n+/// During a git operation it will show: REBASING, BISECTING, MERGING, etc.\n+/// If the progress information is available (e.g. rebasing 3/10), it will show that too.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let repo_root = context.repo_root.as_ref()?;\n+    let mut repository = Repository::open(repo_root).ok()?;\n+    let state_description = get_state_description(&mut repository);\n+\n+    if let StateDescription::Clean = state_description {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"git_state\")?;",
+    "path": "src/modules/git_state.rs",
+    "commit_id": "d40d00c8663c14400436e4681ffd4dad77c4af81",
+    "original_commit_id": "54cc30d9b1651a405400f4216d721561417745eb",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ah, good point. I actually missed that `new_module` checked the `disabled` setting. 👍 \r\n\r\nI'll fix that shortly.",
+    "created_at": "2019-09-05T05:56:11Z",
+    "updated_at": "2019-09-05T16:08:23Z",
+    "html_url": "https://github.com/starship/starship/pull/276#discussion_r321085018",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/276",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/321085018"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/276#discussion_r321085018"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/276"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/321085018/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 20,
+    "side": "RIGHT",
+    "in_reply_to_id": 321079151,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 20,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/321085260",
+    "pull_request_review_id": 284031345,
+    "id": 321085260,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMTA4NTI2MA==",
+    "diff_hunk": "@@ -230,6 +232,36 @@ truncation_length = \"4\"\n truncation_symbol = \"\"\n ```\n \n+## Git State\n+\n+The `git_state` module will show in directories which are part of a git\n+repository, and where there is an operation in progress, such as: _REBASING_,\n+_BISECTING_, etc. If there is progress information (e.g., REBASING 3/10),\n+that information will be shown too.\n+\n+### Options\n+\n+| Variable           | Default            | Description                                                                                                      |\n+| ------------------ | ------------------ | ---------------------------------------------------------------------------------------------------------------- |\n+| `rebase`           | `\"REBASING\"`       | The text displayed when a `rebase` is in progress.                                                               |\n+| `merge`            | `\"MERGING\"`        | The text displayed when a `merge` is in progress.                                                                |\n+| `revert`           | `\"REVERTING\"`      | The text displayed when a `revert` is in progress.                                                               |\n+| `cherry_pick`      | `\"CHERRY-PICKING\"` | The text displayed when a `cherry-pick` is in progress.                                                          |\n+| `bisect`           | `\"BISECTING\"`      | The text displayed when a `bisect` is in progress.                                                               |\n+| `am`               | `\"AM\"`             | The text displayed when an `apply-mailbox` (`git am`) is in progress.                                            |\n+| `am_or_rebase`     | `\"AM/REBASE\"`      | The text displayed when an ambiguous `apply-mailbox` or `rebase` is in progress.                                 |\n+| `progress_divider` | `\"/\"`              | The symbol or text which will separate the current and total progress amounts. (e.g., `\" of \"`, for `\"3 of 10\"`) |\n+",
+    "path": "docs/config/README.md",
+    "commit_id": "d40d00c8663c14400436e4681ffd4dad77c4af81",
+    "original_commit_id": "54cc30d9b1651a405400f4216d721561417745eb",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I guess all modules implicitly do. I will update the docs 😄 ",
+    "created_at": "2019-09-05T05:57:00Z",
+    "updated_at": "2019-09-05T16:08:23Z",
+    "html_url": "https://github.com/starship/starship/pull/276#discussion_r321085260",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/276",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/321085260"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/276#discussion_r321085260"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/276"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/321085260/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 255,
+    "original_line": 255,
+    "side": "RIGHT",
+    "in_reply_to_id": 321079267,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 39,
+    "position": 40,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/321085680",
+    "pull_request_review_id": 284031902,
+    "id": 321085680,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMTA4NTY4MA==",
+    "diff_hunk": "@@ -0,0 +1,165 @@\n+use ansi_term::Color;\n+use git2::{Repository, RepositoryState};\n+use std::path::Path;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the state of the git repository at the current directory\n+///\n+/// During a git operation it will show: REBASING, BISECTING, MERGING, etc.\n+/// If the progress information is available (e.g. rebasing 3/10), it will show that too.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let repo_root = context.repo_root.as_ref()?;\n+    let mut repository = Repository::open(repo_root).ok()?;\n+    let state_description = get_state_description(&mut repository);\n+\n+    if let StateDescription::Clean = state_description {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"git_state\")?;\n+    module.get_prefix().set_value(\"(\");\n+    module.get_suffix().set_value(\") \");",
+    "path": "src/modules/git_state.rs",
+    "commit_id": "d40d00c8663c14400436e4681ffd4dad77c4af81",
+    "original_commit_id": "54cc30d9b1651a405400f4216d721561417745eb",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Honestly, this choice was mostly to ensure that the prompt doesn't get too long. In the default prompt order, this comes directly after the branch name, so it usually makes sense it context.\r\n\r\nThat said, I'm happy to make changes if people think there are better options..?",
+    "created_at": "2019-09-05T05:58:56Z",
+    "updated_at": "2019-09-05T16:08:23Z",
+    "html_url": "https://github.com/starship/starship/pull/276#discussion_r321085680",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/276",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/321085680"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/276#discussion_r321085680"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/276"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/321085680/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 23,
+    "original_line": 23,
+    "side": "RIGHT",
+    "in_reply_to_id": 321079806,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 22,
+    "position": 23,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/321085863",
+    "pull_request_review_id": 284032142,
+    "id": 321085863,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMTA4NTg2Mw==",
+    "diff_hunk": "@@ -0,0 +1,165 @@\n+use ansi_term::Color;\n+use git2::{Repository, RepositoryState};\n+use std::path::Path;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the state of the git repository at the current directory\n+///\n+/// During a git operation it will show: REBASING, BISECTING, MERGING, etc.\n+/// If the progress information is available (e.g. rebasing 3/10), it will show that too.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let repo_root = context.repo_root.as_ref()?;\n+    let mut repository = Repository::open(repo_root).ok()?;\n+    let state_description = get_state_description(&mut repository);\n+\n+    if let StateDescription::Clean = state_description {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"git_state\")?;\n+    module.get_prefix().set_value(\"(\");\n+    module.get_suffix().set_value(\") \");\n+    module.set_style(Color::Yellow.bold());\n+\n+    let label = match state_description {\n+        StateDescription::Label(label) => label,\n+        StateDescription::LabelAndProgress(label, _) => label,\n+        // Should only be possible if you've added a new variant to StateDescription\n+        _ => panic!(\"Expected to have a label at this point in the control flow.\"),\n+    };\n+\n+    module.new_segment(label.segment_name, label.message_default);\n+\n+    if let StateDescription::LabelAndProgress(_, progress) = state_description {\n+        module.new_segment(\"progress_current\", &format!(\" {}\", progress.current));\n+        module.new_segment(\"progress_divider\", \"/\");\n+        module.new_segment(\"progress_total\", &format!(\"{}\", progress.total));",
+    "path": "src/modules/git_state.rs",
+    "commit_id": "d40d00c8663c14400436e4681ffd4dad77c4af81",
+    "original_commit_id": "54cc30d9b1651a405400f4216d721561417745eb",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Yeah, the answer is yes. I think this issue affects most modules in some form or another.",
+    "created_at": "2019-09-05T05:59:46Z",
+    "updated_at": "2019-09-05T16:08:23Z",
+    "html_url": "https://github.com/starship/starship/pull/276#discussion_r321085863",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/276",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/321085863"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/276#discussion_r321085863"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/276"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/321085863/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 38,
+    "original_line": 38,
+    "side": "RIGHT",
+    "in_reply_to_id": 321080617,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 37,
+    "position": 38,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/321086172",
+    "pull_request_review_id": 284032535,
+    "id": 321086172,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMTA4NjE3Mg==",
+    "diff_hunk": "@@ -0,0 +1,165 @@\n+use ansi_term::Color;\n+use git2::{Repository, RepositoryState};\n+use std::path::Path;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the state of the git repository at the current directory\n+///\n+/// During a git operation it will show: REBASING, BISECTING, MERGING, etc.\n+/// If the progress information is available (e.g. rebasing 3/10), it will show that too.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let repo_root = context.repo_root.as_ref()?;\n+    let mut repository = Repository::open(repo_root).ok()?;\n+    let state_description = get_state_description(&mut repository);\n+\n+    if let StateDescription::Clean = state_description {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"git_state\")?;\n+    module.get_prefix().set_value(\"(\");\n+    module.get_suffix().set_value(\") \");",
+    "path": "src/modules/git_state.rs",
+    "commit_id": "d40d00c8663c14400436e4681ffd4dad77c4af81",
+    "original_commit_id": "54cc30d9b1651a405400f4216d721561417745eb",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think this is a fine compromise to make for now. I think at some point in the future, we're going to have to start adding shell adapter code that tells starship what size the terminal is, and let starship decide what gets sacrificed if the terminal is too small to fit everything.\r\n\r\n(I also seem to recall properly handling SIGWINCH being a PITA, so I'm really looking forward to that...)",
+    "created_at": "2019-09-05T06:01:16Z",
+    "updated_at": "2019-09-05T16:08:23Z",
+    "html_url": "https://github.com/starship/starship/pull/276#discussion_r321086172",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/276",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/321086172"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/276#discussion_r321086172"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/276"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/321086172/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 23,
+    "original_line": 23,
+    "side": "RIGHT",
+    "in_reply_to_id": 321079806,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 22,
+    "position": 23,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/321089034",
+    "pull_request_review_id": 284036126,
+    "id": 321089034,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMTA4OTAzNA==",
+    "diff_hunk": "@@ -0,0 +1,165 @@\n+use ansi_term::Color;\n+use git2::{Repository, RepositoryState};\n+use std::path::Path;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the state of the git repository at the current directory\n+///\n+/// During a git operation it will show: REBASING, BISECTING, MERGING, etc.\n+/// If the progress information is available (e.g. rebasing 3/10), it will show that too.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let repo_root = context.repo_root.as_ref()?;\n+    let mut repository = Repository::open(repo_root).ok()?;\n+    let state_description = get_state_description(&mut repository);\n+\n+    if let StateDescription::Clean = state_description {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"git_state\")?;\n+    module.get_prefix().set_value(\"(\");\n+    module.get_suffix().set_value(\") \");\n+    module.set_style(Color::Yellow.bold());\n+\n+    let label = match state_description {\n+        StateDescription::Label(label) => label,\n+        StateDescription::LabelAndProgress(label, _) => label,\n+        // Should only be possible if you've added a new variant to StateDescription\n+        _ => panic!(\"Expected to have a label at this point in the control flow.\"),\n+    };\n+\n+    module.new_segment(label.segment_name, label.message_default);\n+\n+    if let StateDescription::LabelAndProgress(_, progress) = state_description {\n+        module.new_segment(\"progress_current\", &format!(\" {}\", progress.current));\n+        module.new_segment(\"progress_divider\", \"/\");\n+        module.new_segment(\"progress_total\", &format!(\"{}\", progress.total));",
+    "path": "src/modules/git_state.rs",
+    "commit_id": "d40d00c8663c14400436e4681ffd4dad77c4af81",
+    "original_commit_id": "54cc30d9b1651a405400f4216d721561417745eb",
+    "user": {
+      "login": "chipbuster",
+      "id": 4605384,
+      "node_id": "MDQ6VXNlcjQ2MDUzODQ=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4605384?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/chipbuster",
+      "html_url": "https://github.com/chipbuster",
+      "followers_url": "https://api.github.com/users/chipbuster/followers",
+      "following_url": "https://api.github.com/users/chipbuster/following{/other_user}",
+      "gists_url": "https://api.github.com/users/chipbuster/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/chipbuster/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/chipbuster/subscriptions",
+      "organizations_url": "https://api.github.com/users/chipbuster/orgs",
+      "repos_url": "https://api.github.com/users/chipbuster/repos",
+      "events_url": "https://api.github.com/users/chipbuster/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/chipbuster/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Alright, we'll kick that particular can down the road for now then.",
+    "created_at": "2019-09-05T06:14:22Z",
+    "updated_at": "2019-09-05T16:08:23Z",
+    "html_url": "https://github.com/starship/starship/pull/276#discussion_r321089034",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/276",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/321089034"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/276#discussion_r321089034"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/276"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/321089034/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 38,
+    "original_line": 38,
+    "side": "RIGHT",
+    "in_reply_to_id": 321080617,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 37,
+    "position": 38,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/321357084",
+    "pull_request_review_id": 284380585,
+    "id": 321357084,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDMyMTM1NzA4NA==",
+    "diff_hunk": "@@ -0,0 +1,165 @@\n+use ansi_term::Color;\n+use git2::{Repository, RepositoryState};\n+use std::path::Path;\n+\n+use super::{Context, Module};\n+\n+/// Creates a module with the state of the git repository at the current directory\n+///\n+/// During a git operation it will show: REBASING, BISECTING, MERGING, etc.\n+/// If the progress information is available (e.g. rebasing 3/10), it will show that too.\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let repo_root = context.repo_root.as_ref()?;\n+    let mut repository = Repository::open(repo_root).ok()?;\n+    let state_description = get_state_description(&mut repository);\n+\n+    if let StateDescription::Clean = state_description {\n+        return None;\n+    }\n+\n+    let mut module = context.new_module(\"git_state\")?;\n+    module.get_prefix().set_value(\"(\");\n+    module.get_suffix().set_value(\") \");\n+    module.set_style(Color::Yellow.bold());\n+\n+    let label = match state_description {\n+        StateDescription::Label(label) => label,\n+        StateDescription::LabelAndProgress(label, _) => label,\n+        // Should only be possible if you've added a new variant to StateDescription\n+        _ => panic!(\"Expected to have a label at this point in the control flow.\"),\n+    };\n+\n+    module.new_segment(label.segment_name, label.message_default);\n+\n+    if let StateDescription::LabelAndProgress(_, progress) = state_description {\n+        module.new_segment(\"progress_current\", &format!(\" {}\", progress.current));\n+        module.new_segment(\"progress_divider\", \"/\");\n+        module.new_segment(\"progress_total\", &format!(\"{}\", progress.total));",
+    "path": "src/modules/git_state.rs",
+    "commit_id": "d40d00c8663c14400436e4681ffd4dad77c4af81",
+    "original_commit_id": "54cc30d9b1651a405400f4216d721561417745eb",
+    "user": {
+      "login": "matchai",
+      "id": 4658208,
+      "node_id": "MDQ6VXNlcjQ2NTgyMDg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4658208?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/matchai",
+      "html_url": "https://github.com/matchai",
+      "followers_url": "https://api.github.com/users/matchai/followers",
+      "following_url": "https://api.github.com/users/matchai/following{/other_user}",
+      "gists_url": "https://api.github.com/users/matchai/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/matchai/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/matchai/subscriptions",
+      "organizations_url": "https://api.github.com/users/matchai/orgs",
+      "repos_url": "https://api.github.com/users/matchai/repos",
+      "events_url": "https://api.github.com/users/matchai/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/matchai/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Haha. You have uncovered my janky implementation of configuration. 🙃 \r\nI would definitely like to rework it during the refactor.",
+    "created_at": "2019-09-05T16:14:48Z",
+    "updated_at": "2019-09-05T16:14:49Z",
+    "html_url": "https://github.com/starship/starship/pull/276#discussion_r321357084",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/276",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/321357084"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/276#discussion_r321357084"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/276"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/321357084/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 38,
+    "original_line": 38,
+    "side": "RIGHT",
+    "in_reply_to_id": 321080617,
+    "author_association": "MEMBER",
+    "original_position": 37,
+    "position": 38,
+    "subject_type": "line"
+  }
+]

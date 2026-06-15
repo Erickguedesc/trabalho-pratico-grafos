@@ -1,0 +1,71 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/2150394008",
+    "pull_request_review_id": 2932757548,
+    "id": 2150394008,
+    "node_id": "PRRC_kwDOCqswNs6ALGiY",
+    "diff_hunk": "@@ -0,0 +1,311 @@\n+# Get editor completions based on the config schema\n+\"$schema\" = 'https://starship.rs/config-schema.json'\n+\n+# ### ---------\n+# ### \"Power10\"\n+# ### ---------\n+# - Variant 2: two line prompt, no background in top line, separators on left side, filling solid line in top row\n+# - This preset is inspired by a [powerlevel10k](https://github.com/romkatv/powerlevel10k) configuration variant.\n+#\n+# - Recommended / tested with Font 'MesloLGS NF Regular' from: Meslo Nerd Font patched for Powerlevel10k\n+#   Link: https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#manual-font-installation\n+#         --> \"Manual font installation\", with currently 4 Font Types\n+\n+# - If you do not want the filling solid line in top row:\n+#   set the fill symbol to ' '\n+# - Shell [shell]:\n+#   If you want to see the content of the shell module, search for [shell] and change 'disabled = true' to false\n+# - '$line_break': everything from the next line on refers to the second line of the prompt\n+# - Some modules listed further down will not show up (all the time), as their default value is 'disabled = true' or\n+#   they are only displayed under certain conditions\n+# - added but disabled modules: [battery], [time]\n+#   - if you want to see them: search for the module and set 'disabled' to 'false'\n+# - Symbols:\n+#   Don't be confused if you don't see any \"real\" symbols here. If Nerd-fonts are installed on your system, it should work.\n+\n+# Customizing the prompt (and placing desired modules at desired position and sequence):\n+# ╭╴ # \\u256D\\u2574\n+# ╰╴ # \\u2570\\u2574\n+format = \"\"\"\n+[\\u256D\\u2574](fg:greydimmed)\\\n+$os\\\n+$shell\\\n+$username\\\n+$hostname\\\n+$sudo\\\n+$directory\\\n+$direnv\\\n+$php\\\n+$python\\\n+$git_branch$git_commit$git_state$git_metrics$git_status\\\n+[ ](fg:greydarker)\\\n+$fill\\\n+$fill\\\n+$status\\\n+$jobs\\\n+$memory_usage\\\n+$cmd_duration\\\n+$battery\\\n+$time\\\n+$line_break\\\n+\\\n+[\\u2570\\u2574](fg:greydimmed)\\\n+[$character]($style)\"\"\"\n+\n+# move the rest of the prompt to the right\n+right_format = \"\"\"\n+[$localip]($style)\"\"\"\n+\n+# Inserts a blank line between shell prompts:\n+add_newline = true\n+\n+# Color Palette\n+palette = \"Power10\"\n+\n+[palettes.Power10]\n+# only lowercase names\n+greydimmed = '#424242'\n+greydarker = '#242424'\n+ossymbol = '#AAAAAA' # dimmed white\n+user = 'green'\n+userroot = 'red'\n+sshsymbol = 'green'\n+hostname = 'green'\n+sudo = 'red'\n+directory = 'cyan'\n+php = '#7a86b8' # light blue\n+python = 'yellow'\n+# git start ---\n+orangegit = '#E04D27'\n+conflicted = 'red'\n+ahead = 'yellow'\n+behind = 'yellow'\n+diverged = 'yellow'\n+uptodate = 'green'\n+untracked = 'red'\n+stashed = '#A52A2A' # redbrown\n+modified = '#C8AC00' # darker yellow\n+staged = 'green'\n+renamed = 'yellow'\n+deleted = 'orange'\n+# git end ---\n+jobs = 'blue'\n+memory = 'purple'\n+duration = 'yellow'\n+fill = '#424242' # greydimmed\n+status = 'red'\n+localip = 'green'\n+shell = '#424242' # greydimmed\n+\n+# Customization and activation of some modules:\n+# Listed in the order of their position in the module rows above\n+[os]\n+format = \"[$symbol]($style)()\"\n+style = \"ossymbol\"\n+disabled = false\n+\n+[os.symbols]\n+AIX = \"AIX \"\n+Alpaquita = \"\\uf26a \" # \\uf26a  # \\ue3a5\\ue390 \n+AlmaLinux = \"\\uf31d \" # \n+Alpine = \"\\uf300 \" # \"\"\n+Amazon = \"\\uf270 \" # \"\"\n+Android = \"\\ue70e \" # \"\"\n+Arch = \"\\uf303 \" # \"\"\n+Artix = \"\\uf31f \" # \n+CentOS = \"\\uf304 \" # \"\"\n+Debian = \"\\uf306 \" # \"\"\n+DragonFly = \"\\ueef8 \" #    🐉\n+Emscripten = \"\\u26A1 \" # ⚡\n+EndeavourOS = \"\\uf322 \" # \"\" # \n+Fedora = \"\\uf30a \" # \"\"\n+FreeBSD = \"\\uf30c \" # \"\"\n+Garuda = \"\\uf337 \" # \"\"\n+Gentoo = \"\\uf30d \" # \"\"\n+HardenedBSD = \"\\uf132 \" # \n+Illumos = \"\\uf326 \" # \"🐦\"\n+Kali = \"\\uf327 \" # \n+Linux = \"\\uf17c \" # \"\"\n+Mabox = \"\\uf1b2 \" #  📦\n+Macos = \"\\uf302 \" # \"\"\n+Manjaro = \"\\uf312 \" # \"\"\n+Mariner = \"\\ue7ae \" # \\ue7ae \n+MidnightBSD = \"\\ue3e0 \" # 🌘\n+Mint = \"\\uf30e \" # \"\"\n+NetBSD = \"\\u2691 \" # ⚑\n+NixOS = \"\\uf313 \" # \"\"\n+OpenBSD = \"\\uf328 \" # \"\"\n+OpenCloudOS = \"\\uf0c2 \" # \n+openEuler = \"\\u2208 \" # \\u2208 ∈\n+openSUSE = \"\\uf314 \" # \"\"\n+OracleLinux = \"\\u213A \" # \\u213A ℺ # ⊂⊃ \\u2282\\u2283\n+Pop = \"\\uf32a \" # \"\"\n+Raspbian = \"\\uf315 \" # \"\"\n+Redhat = \"\\uf316 \" # \"\" # 󱄛\n+RedHatEnterprise = \"\\uf316 \" # \"\" # 󱄛\n+RockyLinux = \"\\uf32b \" # \n+Redox = \"\\uf331 \" #   󰺕\n+Solus = \"\\uf32d \" # \"\" # \" \"\n+SUSE = \"\\uef6d \" # \"\"\n+Ubuntu = \"\\uf31b \" # \"\"\n+Ultramarine = \"󱙳 \" # 🔷\n+Unknown = \"\\uf108 \" # \"\"\n+Void = \"\\uf32e \" #  \n+Windows = \"\\uf17a \" # \"\"\n+\n+[shell]\n+format = '[$indicator]($style)()'\n+style = 'fg:shell'\n+# empty indicator (''): e.g. if you do not want to see indicator for your standard shell\n+zsh_indicator = '%_ ' # '%_ ' '󰰶 '\n+bash_indicator = '\\$_ ' # \"\\uebca \" ' ' '\\$_ '\n+fish_indicator = '>> ' # \"\\uee41 \" '󰈺 ' '>>_ '\n+powershell_indicator = '>_ ' # \"\\uebc7 \" ' ' '>_'\n+unknown_indicator = '?_ ' # '?_ ' ' '\n+disabled = true # set to false if you want to see the shell indicator\n+\n+[username]\n+format = \"[\\ueab6 ](fg:user bold)[$user]($style)[ ]()\" # \\u276F ❯ \\ueab6 \n+style_user = 'fg:user bold'\n+style_root = 'fg:userroot bold'\n+show_always = false\n+disabled = false\n+\n+[hostname]\n+format = '[$ssh_symbol ](fg:sshsymbol bold)[$hostname](fg:hostname bold)[ ]()'\n+ssh_only = true\n+ssh_symbol = \"\\ue36e\" # \\ue36e '' # '⇒' # ' ' # 'ﬁ⇒'\n+# trim_at = '.companyname.com'\n+disabled = false\n+\n+[sudo]\n+format = \"[\\ueab6 ](fg:sudo bold)[as $symbol]($style)\" # \\u276F ❯ \\ueab6 \n+style = 'fg:red bold'\n+symbol = \"\\uf007! \" # \\uf007  # \\uf21b \\uedcc ' ' # ' '\n+disabled = false\n+\n+[directory]\n+format = \"[\\ueab6 ](fg:directory bold)[$read_only]($read_only_style)[$repo_root]($repo_root_style)[$path ]($style)\" # \\u276F ❯ \\ueab6 \n+style = 'fg:directory bold'\n+home_symbol = \"\\uf015 ~\" # \\uf015 ' ~'\n+read_only = \"\\uf023 \" # \\uf023 ' '\n+read_only_style = 'fg:directory'\n+truncation_length = 3\n+truncation_symbol = '…/'\n+truncate_to_repo = true\n+repo_root_format = \"[\\ueab6 ](fg:directory bold)[$read_only]($read_only_style)[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path ]($style)\" # \\u276F ❯ \\ueab6 \n+repo_root_style = 'fg:directory bold'\n+use_os_path_sep = true\n+disabled = false\n+\n+[direnv]\n+symbol = 'direnv'\n+style = 'fg:greydimmed'\n+format = \"[\\u3009$symbol $loaded/$allowed ]($style)\"\n+allowed_msg = 'a' # 'ok' # '✓'\n+not_allowed_msg = '!a' # 'nok' # '!'\n+denied_msg = 'x' # '✘'\n+loaded_msg = '+' # \"\\ueabc\" # \\ueabc  # '->' # 'yo' # '󰗡' # \\udb81\\udde1 # '󱥸✓' # '󱥸✓' # \n+unloaded_msg = '-' # \"\\ueabc!\" # \\ueabc ! # '->!' # 'no' # '󰅚' # '󱥸!' \\udb86\\udd78\n+disabled = false\n+\n+[php]\n+format = \" [\\u3009[$symbol](php italic)($version )]($style)\"\n+style = 'fg:php'\n+symbol = \"php \" # \\ue73d  # 󰌟\n+\n+[python]\n+format = \"[\\u3009${symbol}${pyenv_prefix}(${version} )(($virtualenv) )]($style)\"\n+style = 'fg:python'\n+symbol = \"\\ue73c \" # \n+pyenv_version_name = true\n+\n+[git_branch]\n+format = \"[\\u3009$symbol $branch(:$remote_branch)]($style)[ ]()\" # \\u3009 \\uf460 ❯\n+style = 'fg:orangegit'\n+symbol = \"\\ue702\" # \\ue702 \n+# ignore_branches = ['master', 'main']\n+\n+[git_commit]\n+format = '[\\($hash$tag\\)]($style)[ ]()'\n+style = 'fg:orangegit'\n+commit_hash_length = 8\n+tag_symbol = \" \\uf412 \" # \\uf412 '  ' # '  ''\n+tag_disabled = false\n+disabled = false\n+\n+[git_metrics]\n+format = '[\\[+$added/]($added_style)[-$deleted\\]]($deleted_style)[ ]()'\n+added_style = 'fg:orangegit'\n+deleted_style = 'fg:orangegit'\n+disabled = false\n+\n+[git_status]\n+format = '([$all_status$ahead_behind]($style))'\n+style = 'fg:orangegit'\n+conflicted = \"[\\ueaaf${count} ](fg:conflicted)\" # \n+ahead = \"[\\u21E1${count} ](fg:ahead)\" # ⇡ \\ueaa0\n+behind = \"[\\u21E3${unt} ](fg:behind)\" # ⇣ \\uea9d",
+    "path": "docs/public/presets/toml/power10.toml",
+    "commit_id": "f4485531e5fdedf7f8f29134cca61307518af2a1",
+    "original_commit_id": "215f4235a32fcae3a385b9d1f714285e9e94d4de",
+    "user": {
+      "login": "cappyzawa",
+      "id": 12455284,
+      "node_id": "MDQ6VXNlcjEyNDU1Mjg0",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12455284?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cappyzawa",
+      "html_url": "https://github.com/cappyzawa",
+      "followers_url": "https://api.github.com/users/cappyzawa/followers",
+      "following_url": "https://api.github.com/users/cappyzawa/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cappyzawa/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cappyzawa/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cappyzawa/subscriptions",
+      "organizations_url": "https://api.github.com/users/cappyzawa/orgs",
+      "repos_url": "https://api.github.com/users/cappyzawa/repos",
+      "events_url": "https://api.github.com/users/cappyzawa/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cappyzawa/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "count?\r\n\r\n```suggestion\r\nbehind = \"[\\u21E3${count} ](fg:behind)\" # ⇣ \\uea9d\r\n```",
+    "created_at": "2025-06-16T16:18:56Z",
+    "updated_at": "2025-06-16T16:18:57Z",
+    "html_url": "https://github.com/starship/starship/pull/6279#discussion_r2150394008",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/6279",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/2150394008"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/6279#discussion_r2150394008"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/6279"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/2150394008/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 248,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 248,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

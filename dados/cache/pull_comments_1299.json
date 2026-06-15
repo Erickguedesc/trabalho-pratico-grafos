@@ -1,0 +1,349 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/437849850",
+    "pull_request_review_id": 427698358,
+    "id": 437849850,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzNzg0OTg1MA==",
+    "diff_hunk": "@@ -134,6 +136,60 @@ fn contract_path(full_path: &Path, top_level_path: &Path, top_level_replacement:\n     )\n }\n \n+/// Contract the root component of a path based on the real path\n+///\n+/// Replaces the `top_level_path` in a given `full_path` with the provided\n+/// `top_level_replacement` by walking ancestors and comparing its real path.\n+fn contract_repo_path(full_path: &Path, top_level_path: &Path) -> Option<String> {\n+    let top_level_real_path = real_path(top_level_path);\n+    // Walk ancestors to preserve logical path in `full_path`.\n+    // If we'd just `full_real_path.strip_prefix(top_level_real_path)`,\n+    // then it wouldn't preserve logical path. It would've returned physical path.\n+    for (i, ancestor) in full_path.ancestors().enumerate() {\n+        let ancestor_real_path = real_path(ancestor);\n+        if ancestor_real_path != top_level_real_path {\n+            continue;\n+        }\n+\n+        let components: Vec<_> = full_path.components().collect();\n+        let repo_name = components[components.len() - i - 1]\n+            .as_os_str()\n+            .to_str()\n+            .unwrap();\n+\n+        if i == 0 {\n+            return Some(repo_name.to_string());\n+        }\n+\n+        let path = PathBuf::from_iter(&components[components.len() - i..]);",
+    "path": "src/modules/directory.rs",
+    "commit_id": "ddb9d599e1b178c6f8f6b447793bffb49495bc2e",
+    "original_commit_id": "2b27b5654928c58127c653cecc9a4a3e19c75a8f",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "`PathBuf::from_str` should work here? One less memory allocation.",
+    "created_at": "2020-06-10T04:14:24Z",
+    "updated_at": "2020-06-11T03:16:37Z",
+    "html_url": "https://github.com/starship/starship/pull/1299#discussion_r437849850",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1299",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/437849850"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1299#discussion_r437849850"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1299"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/437849850/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 161,
+    "original_line": 164,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 55,
+    "position": 52,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/437850345",
+    "pull_request_review_id": 427698964,
+    "id": 437850345,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzNzg1MDM0NQ==",
+    "diff_hunk": "@@ -134,6 +136,60 @@ fn contract_path(full_path: &Path, top_level_path: &Path, top_level_replacement:\n     )\n }\n \n+/// Contract the root component of a path based on the real path\n+///\n+/// Replaces the `top_level_path` in a given `full_path` with the provided\n+/// `top_level_replacement` by walking ancestors and comparing its real path.\n+fn contract_repo_path(full_path: &Path, top_level_path: &Path) -> Option<String> {\n+    let top_level_real_path = real_path(top_level_path);\n+    // Walk ancestors to preserve logical path in `full_path`.\n+    // If we'd just `full_real_path.strip_prefix(top_level_real_path)`,\n+    // then it wouldn't preserve logical path. It would've returned physical path.\n+    for (i, ancestor) in full_path.ancestors().enumerate() {\n+        let ancestor_real_path = real_path(ancestor);\n+        if ancestor_real_path != top_level_real_path {\n+            continue;\n+        }\n+\n+        let components: Vec<_> = full_path.components().collect();\n+        let repo_name = components[components.len() - i - 1]\n+            .as_os_str()\n+            .to_str()\n+            .unwrap();",
+    "path": "src/modules/directory.rs",
+    "commit_id": "ddb9d599e1b178c6f8f6b447793bffb49495bc2e",
+    "original_commit_id": "2b27b5654928c58127c653cecc9a4a3e19c75a8f",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Should we panic here? Maybe `.to_str()?` is better?",
+    "created_at": "2020-06-10T04:16:34Z",
+    "updated_at": "2020-06-11T03:16:37Z",
+    "html_url": "https://github.com/starship/starship/pull/1299#discussion_r437850345",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1299",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/437850345"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1299#discussion_r437850345"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1299"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/437850345/reactions",
+      "total_count": 2,
+      "+1": 2,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 158,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 49,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/437850451",
+    "pull_request_review_id": 427699110,
+    "id": 437850451,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzNzg1MDQ1MQ==",
+    "diff_hunk": "@@ -134,6 +136,60 @@ fn contract_path(full_path: &Path, top_level_path: &Path, top_level_replacement:\n     )\n }\n \n+/// Contract the root component of a path based on the real path\n+///\n+/// Replaces the `top_level_path` in a given `full_path` with the provided\n+/// `top_level_replacement` by walking ancestors and comparing its real path.\n+fn contract_repo_path(full_path: &Path, top_level_path: &Path) -> Option<String> {\n+    let top_level_real_path = real_path(top_level_path);\n+    // Walk ancestors to preserve logical path in `full_path`.\n+    // If we'd just `full_real_path.strip_prefix(top_level_real_path)`,\n+    // then it wouldn't preserve logical path. It would've returned physical path.\n+    for (i, ancestor) in full_path.ancestors().enumerate() {\n+        let ancestor_real_path = real_path(ancestor);\n+        if ancestor_real_path != top_level_real_path {\n+            continue;\n+        }\n+\n+        let components: Vec<_> = full_path.components().collect();\n+        let repo_name = components[components.len() - i - 1]\n+            .as_os_str()\n+            .to_str()\n+            .unwrap();\n+\n+        if i == 0 {\n+            return Some(repo_name.to_string());\n+        }\n+\n+        let path = PathBuf::from_iter(&components[components.len() - i..]);\n+        return Some(format!(\n+            \"{repo_name}{separator}{path}\",\n+            repo_name = repo_name,\n+            separator = \"/\",\n+            path = path.to_slash().unwrap()",
+    "path": "src/modules/directory.rs",
+    "commit_id": "ddb9d599e1b178c6f8f6b447793bffb49495bc2e",
+    "original_commit_id": "2b27b5654928c58127c653cecc9a4a3e19c75a8f",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Can we also avoid this panic?",
+    "created_at": "2020-06-10T04:17:06Z",
+    "updated_at": "2020-06-11T03:16:37Z",
+    "html_url": "https://github.com/starship/starship/pull/1299#discussion_r437850451",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1299",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/437850451"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1299#discussion_r437850451"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1299"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/437850451/reactions",
+      "total_count": 2,
+      "+1": 2,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 169,
+    "side": "RIGHT",
+    "author_association": "CONTRIBUTOR",
+    "original_position": 60,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/437859748",
+    "pull_request_review_id": 427710117,
+    "id": 437859748,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzNzg1OTc0OA==",
+    "diff_hunk": "@@ -134,6 +136,60 @@ fn contract_path(full_path: &Path, top_level_path: &Path, top_level_replacement:\n     )\n }\n \n+/// Contract the root component of a path based on the real path\n+///\n+/// Replaces the `top_level_path` in a given `full_path` with the provided\n+/// `top_level_replacement` by walking ancestors and comparing its real path.\n+fn contract_repo_path(full_path: &Path, top_level_path: &Path) -> Option<String> {\n+    let top_level_real_path = real_path(top_level_path);\n+    // Walk ancestors to preserve logical path in `full_path`.\n+    // If we'd just `full_real_path.strip_prefix(top_level_real_path)`,\n+    // then it wouldn't preserve logical path. It would've returned physical path.\n+    for (i, ancestor) in full_path.ancestors().enumerate() {\n+        let ancestor_real_path = real_path(ancestor);\n+        if ancestor_real_path != top_level_real_path {\n+            continue;\n+        }\n+\n+        let components: Vec<_> = full_path.components().collect();\n+        let repo_name = components[components.len() - i - 1]\n+            .as_os_str()\n+            .to_str()\n+            .unwrap();\n+\n+        if i == 0 {\n+            return Some(repo_name.to_string());\n+        }\n+\n+        let path = PathBuf::from_iter(&components[components.len() - i..]);",
+    "path": "src/modules/directory.rs",
+    "commit_id": "ddb9d599e1b178c6f8f6b447793bffb49495bc2e",
+    "original_commit_id": "2b27b5654928c58127c653cecc9a4a3e19c75a8f",
+    "user": {
+      "login": "foriequal0",
+      "id": 5465658,
+      "node_id": "MDQ6VXNlcjU0NjU2NTg=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5465658?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/foriequal0",
+      "html_url": "https://github.com/foriequal0",
+      "followers_url": "https://api.github.com/users/foriequal0/followers",
+      "following_url": "https://api.github.com/users/foriequal0/following{/other_user}",
+      "gists_url": "https://api.github.com/users/foriequal0/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/foriequal0/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/foriequal0/subscriptions",
+      "organizations_url": "https://api.github.com/users/foriequal0/orgs",
+      "repos_url": "https://api.github.com/users/foriequal0/repos",
+      "events_url": "https://api.github.com/users/foriequal0/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/foriequal0/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "I think there is no way to get sub-`&Path` or `&str` or `&OsStr` from `full_path.components().skip(N)...`. Similar situation to that `\"some string\".chars().skip(5)` cannot get `&\"string\"`",
+    "created_at": "2020-06-10T04:55:46Z",
+    "updated_at": "2020-06-11T03:16:37Z",
+    "html_url": "https://github.com/starship/starship/pull/1299#discussion_r437859748",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1299",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/437859748"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1299#discussion_r437859748"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1299"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/437859748/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 161,
+    "original_line": 164,
+    "side": "RIGHT",
+    "in_reply_to_id": 437849850,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 55,
+    "position": 52,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/438505701",
+    "pull_request_review_id": 428547777,
+    "id": 438505701,
+    "node_id": "MDI0OlB1bGxSZXF1ZXN0UmV2aWV3Q29tbWVudDQzODUwNTcwMQ==",
+    "diff_hunk": "@@ -134,6 +136,60 @@ fn contract_path(full_path: &Path, top_level_path: &Path, top_level_replacement:\n     )\n }\n \n+/// Contract the root component of a path based on the real path\n+///\n+/// Replaces the `top_level_path` in a given `full_path` with the provided\n+/// `top_level_replacement` by walking ancestors and comparing its real path.\n+fn contract_repo_path(full_path: &Path, top_level_path: &Path) -> Option<String> {\n+    let top_level_real_path = real_path(top_level_path);\n+    // Walk ancestors to preserve logical path in `full_path`.\n+    // If we'd just `full_real_path.strip_prefix(top_level_real_path)`,\n+    // then it wouldn't preserve logical path. It would've returned physical path.\n+    for (i, ancestor) in full_path.ancestors().enumerate() {\n+        let ancestor_real_path = real_path(ancestor);\n+        if ancestor_real_path != top_level_real_path {\n+            continue;\n+        }\n+\n+        let components: Vec<_> = full_path.components().collect();\n+        let repo_name = components[components.len() - i - 1]\n+            .as_os_str()\n+            .to_str()\n+            .unwrap();\n+\n+        if i == 0 {\n+            return Some(repo_name.to_string());\n+        }\n+\n+        let path = PathBuf::from_iter(&components[components.len() - i..]);",
+    "path": "src/modules/directory.rs",
+    "commit_id": "ddb9d599e1b178c6f8f6b447793bffb49495bc2e",
+    "original_commit_id": "2b27b5654928c58127c653cecc9a4a3e19c75a8f",
+    "user": {
+      "login": "nickwb",
+      "id": 594211,
+      "node_id": "MDQ6VXNlcjU5NDIxMQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/594211?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/nickwb",
+      "html_url": "https://github.com/nickwb",
+      "followers_url": "https://api.github.com/users/nickwb/followers",
+      "following_url": "https://api.github.com/users/nickwb/following{/other_user}",
+      "gists_url": "https://api.github.com/users/nickwb/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/nickwb/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/nickwb/subscriptions",
+      "organizations_url": "https://api.github.com/users/nickwb/orgs",
+      "repos_url": "https://api.github.com/users/nickwb/repos",
+      "events_url": "https://api.github.com/users/nickwb/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/nickwb/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Ah, sorry @foriequal0 - I mistakenly thought that `components` was a string slice.\r\n\r\nYour existing implementation is fine 👍 ",
+    "created_at": "2020-06-11T02:18:15Z",
+    "updated_at": "2020-06-11T03:16:37Z",
+    "html_url": "https://github.com/starship/starship/pull/1299#discussion_r438505701",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/1299",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/438505701"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/1299#discussion_r438505701"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/1299"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/438505701/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 161,
+    "original_line": 164,
+    "side": "RIGHT",
+    "in_reply_to_id": 437849850,
+    "author_association": "CONTRIBUTOR",
+    "original_position": 55,
+    "position": 52,
+    "subject_type": "line"
+  }
+]

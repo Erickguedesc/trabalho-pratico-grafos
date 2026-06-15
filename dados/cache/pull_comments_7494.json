@@ -1,0 +1,279 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3286140305",
+    "pull_request_review_id": 4342848587,
+    "id": 3286140305,
+    "node_id": "PRRC_kwDOCqswNs7D3oWR",
+    "diff_hunk": "@@ -0,0 +1,285 @@\n+import pytest",
+    "path": "tests/test_invariant_Cargo.py",
+    "commit_id": "a5dcb056e04eda2296a5be0663977ada87b83ec2",
+    "original_commit_id": "a5dcb056e04eda2296a5be0663977ada87b83ec2",
+    "user": {
+      "login": "cubic-dev-ai[bot]",
+      "id": 191113872,
+      "node_id": "BOT_kgDOC2QqkA",
+      "avatar_url": "https://avatars.githubusercontent.com/in/1082092?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D",
+      "html_url": "https://github.com/apps/cubic-dev-ai",
+      "followers_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/followers",
+      "following_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/subscriptions",
+      "organizations_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/orgs",
+      "repos_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/repos",
+      "events_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "<!-- cubic:v=dd431622-72c4-4f32-9413-e8526c584383 -->\n<!-- metadata:{\"confidence\":10} -->\nP1: These tests are tautological because they validate only locally defined mock helpers instead of the production code paths they are meant to protect, so they cannot catch regressions in the actual Cargo.lock/git validation logic.\n\n<details>\n<summary>Prompt for AI agents</summary>\n\n```text\nCheck if this issue is valid — if so, understand the root cause and fix it. At tests/test_invariant_Cargo.py, line 64:\n\n<comment>These tests are tautological because they validate only locally defined mock helpers instead of the production code paths they are meant to protect, so they cannot catch regressions in the actual Cargo.lock/git validation logic.</comment>\n\n<file context>\n@@ -0,0 +1,285 @@\n+]\n+\n+\n+def is_safe_ref_name(ref_name: str) -> bool:\n+    \"\"\"\n+    Validate that a git reference name is safe.\n</file context>\n```\n\n</details>",
+    "created_at": "2026-05-22T05:51:19Z",
+    "updated_at": "2026-05-22T05:51:19Z",
+    "html_url": "https://github.com/starship/starship/pull/7494#discussion_r3286140305",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7494",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3286140305"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7494#discussion_r3286140305"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7494"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3286140305/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1,
+    "original_line": 1,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 1,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3286140307",
+    "pull_request_review_id": 4342848587,
+    "id": 3286140307,
+    "node_id": "PRRC_kwDOCqswNs7D3oWT",
+    "diff_hunk": "@@ -0,0 +1,285 @@\n+import pytest\n+import re\n+import os\n+import tempfile\n+import subprocess\n+\n+\n+# Adversarial payloads targeting git path traversal, credential exposure,\n+# and repository manipulation vulnerabilities similar to gitoxide CVEs\n+ADVERSARIAL_PAYLOADS = [\n+    # Path traversal attempts\n+    \"../../../etc/passwd\",\n+    \"..\\\\..\\\\..\\\\windows\\\\system32\\\\config\\\\sam\",\n+    \".git/../../../etc/shadow\",\n+    \"%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd\",\n+    \"....//....//....//etc/passwd\",\n+    # Null byte injection\n+    \"valid_ref\\x00malicious\",\n+    \"refs/heads/main\\x00../../etc/passwd\",\n+    # Git ref injection\n+    \"refs/heads/../../../etc/passwd\",\n+    \"refs/heads/HEAD\\nref: refs/heads/malicious\",\n+    # Unicode/encoding tricks\n+    \"\\u202e\\u0041\\u0042\\u0043\",  # Right-to-left override\n+    \"refs/heads/\\u0000evil\",\n+    # Shell injection in ref names\n+    \"refs/heads/$(cat /etc/passwd)\",\n+    \"refs/heads/`id`\",\n+    \"refs/heads/main; rm -rf /\",\n+    # Credential/config injection\n+    \"[core]\\n\\tgitProxy=malicious_command\",\n+    \"url = https://evil.com\\n[credential]\\n\\thelper=malicious\",\n+    # Extremely long inputs\n+    \"A\" * 10000,\n+    \"refs/heads/\" + \"A\" * 5000,\n+    # Special git references\n+    \"HEAD\",\n+    \"FETCH_HEAD\",\n+    \"ORIG_HEAD\",\n+    \"MERGE_HEAD\",\n+    \"refs/heads/-malicious\",\n+    # Symlink attacks\n+    \".git/config\",\n+    \".git/hooks/pre-commit\",\n+    # CRLF injection\n+    \"refs/heads/main\\r\\nmalicious: header\",\n+    \"valid\\r\\n\\r\\nmalicious_body\",\n+    # Empty and whitespace\n+    \"\",\n+    \"   \",\n+    \"\\t\\n\\r\",\n+    # Cargo.lock specific - package name injection\n+    'name = \"malicious\"\\nversion = \"0.0.1\"\\n[dependencies]\\nevil = \"*\"',\n+    # Version string attacks\n+    \"0.0.0-alpha.1; DROP TABLE packages;--\",\n+    \"999999999.999999999.999999999\",\n+    # URL injection in Cargo.lock\n+    'https://evil.com/malicious#abc123',\n+    'file:///etc/passwd',\n+    'ssh://evil.com/repo.git',\n+]\n+\n+\n+def is_safe_ref_name(ref_name: str) -> bool:\n+    \"\"\"\n+    Validate that a git reference name is safe.\n+    Implements git ref validation rules to prevent path traversal and injection.\n+    \"\"\"\n+    if not ref_name or not ref_name.strip():\n+        return False\n+    \n+    # Must not contain null bytes\n+    if '\\x00' in ref_name:\n+        return False\n+    \n+    # Must not contain control characters\n+    if any(ord(c) < 32 for c in ref_name):\n+        return False\n+    \n+    # Must not contain path traversal sequences\n+    if '..' in ref_name:\n+        return False\n+    \n+    # Must not start with a dash\n+    if ref_name.startswith('-'):\n+        return False\n+    \n+    # Must not contain shell metacharacters\n+    dangerous_chars = set('`$;|&><(){}[]\\\\')\n+    if any(c in dangerous_chars for c in ref_name):\n+        return False\n+    \n+    return True\n+\n+\n+def is_safe_package_name(name: str) -> bool:\n+    \"\"\"Validate that a Cargo package name is safe (alphanumeric, hyphens, underscores).\"\"\"\n+    if not name:\n+        return False\n+    return bool(re.match(r'^[a-zA-Z0-9_-]+$', name))\n+\n+\n+def is_safe_version(version: str) -> bool:\n+    \"\"\"Validate that a version string is a safe semver.\"\"\"\n+    if not version:\n+        return False\n+    return bool(re.match(r'^\\d+\\.\\d+\\.\\d+([.-][a-zA-Z0-9.+]+)?$', version))\n+\n+\n+def is_safe_url(url: str) -> bool:\n+    \"\"\"Validate that a URL is safe (no file://, no injection).\"\"\"\n+    if not url:\n+        return True  # Empty URL is acceptable\n+    \n+    # Must not use file:// protocol\n+    if url.lower().startswith('file://'):\n+        return False\n+    \n+    # Must not contain null bytes or control characters\n+    if any(ord(c) < 32 for c in url):\n+        return False\n+    \n+    # Must not contain path traversal\n+    if '..' in url:\n+        return False\n+    \n+    return True\n+\n+\n+def sanitize_input(payload: str) -> str:\n+    \"\"\"Sanitize input by removing dangerous characters.\"\"\"\n+    # Remove null bytes\n+    sanitized = payload.replace('\\x00', '')\n+    # Remove control characters\n+    sanitized = re.sub(r'[\\x00-\\x1f\\x7f]', '', sanitized)\n+    # Remove path traversal\n+    sanitized = sanitized.replace('..', '')\n+    return sanitized\n+\n+\n+@pytest.mark.parametrize(\"payload\", ADVERSARIAL_PAYLOADS)\n+def test_git_ref_security_boundary(payload):\n+    \"\"\"Invariant: Adversarial inputs must never be treated as valid git references\n+    that could enable path traversal, injection, or unauthorized access.\"\"\"\n+    \n+    # If the payload contains path traversal or injection patterns,\n+    # it must be rejected by the validator\n+    dangerous_patterns = [\n+        r'\\.\\.',           # Path traversal\n+        r'\\x00',           # Null byte\n+        r'[\\x00-\\x1f]',   # Control characters\n+        r'[`$;|&><]',     # Shell metacharacters\n+    ]\n+    \n+    is_dangerous = any(\n+        re.search(pattern, payload) \n+        for pattern in dangerous_patterns\n+    )\n+    \n+    if is_dangerous:\n+        # Dangerous payloads MUST be rejected\n+        assert not is_safe_ref_name(payload), (\n+            f\"Security violation: Dangerous payload was accepted as valid ref: {repr(payload)}\"\n+        )\n+    \n+    # Sanitized version must never contain dangerous sequences\n+    sanitized = sanitize_input(payload)\n+    assert '\\x00' not in sanitized, \"Null bytes must be removed during sanitization\"\n+    assert not re.search(r'[\\x00-\\x1f]', sanitized), \"Control chars must be removed\"\n+\n+\n+@pytest.mark.parametrize(\"payload\", ADVERSARIAL_PAYLOADS)\n+def test_cargo_lock_package_name_security(payload):\n+    \"\"\"Invariant: Package names from Cargo.lock must always be validated\n+    to prevent injection attacks through dependency names.\"\"\"\n+    \n+    # Package names with special characters must be rejected\n+    if re.search(r'[^a-zA-Z0-9_-]', payload) or not payload.strip():\n+        assert not is_safe_package_name(payload), (\n+            f\"Security violation: Invalid package name accepted: {repr(payload)}\"\n+        )\n+\n+\n+@pytest.mark.parametrize(\"payload\", ADVERSARIAL_PAYLOADS)\n+def test_version_string_security(payload):\n+    \"\"\"Invariant: Version strings must conform to semver and never contain\n+    injection payloads that could be executed or cause path traversal.\"\"\"\n+    \n+    # Payloads with non-semver characters must be rejected\n+    if re.search(r'[^0-9a-zA-Z.\\-+]', payload) or not payload.strip():\n+        assert not is_safe_version(payload), (\n+            f\"Security violation: Malicious version string accepted: {repr(payload)}\"\n+        )\n+\n+\n+@pytest.mark.parametrize(\"payload\", ADVERSARIAL_PAYLOADS)\n+def test_url_security_boundary(payload):\n+    \"\"\"Invariant: URLs in Cargo.lock must never use file:// protocol\n+    or contain path traversal sequences that could access local files.\"\"\"\n+    \n+    if payload.lower().startswith('file://'):\n+        assert not is_safe_url(payload), (\n+            f\"Security violation: file:// URL was accepted: {repr(payload)}\"\n+        )\n+    \n+    if '..' in payload and ('/' in payload or '\\\\' in payload):\n+        # Path traversal in URLs must be rejected\n+        assert not is_safe_url(payload), (\n+            f\"Security violation: Path traversal URL was accepted: {repr(payload)}\"\n+        )\n+\n+\n+@pytest.mark.parametrize(\"payload\", ADVERSARIAL_PAYLOADS)\n+def test_no_command_injection_in_git_operations(payload):\n+    \"\"\"Invariant: Git-related inputs must never allow command injection\n+    regardless of the payload content.\"\"\"\n+    \n+    # Shell metacharacters in any git-related input must be sanitized\n+    shell_metacharacters = set('`$;|&><(){}[]\\\\')\n+    \n+    sanitized = sanitize_input(payload)\n+    \n+    # After sanitization, dangerous shell chars should be handled\n+    # The key invariant: null bytes are always removed\n+    assert '\\x00' not in sanitized, (\n+        f\"Null byte injection not prevented for payload: {repr(payload)}\"\n+    )\n+    \n+    # Control characters are always removed\n+    assert not any(ord(c) < 32 for c in sanitized), (\n+        f\"Control character injection not prevented for payload: {repr(payload)}\"\n+    )\n+\n+\n+@pytest.mark.parametrize(\"payload\", [\n+    \"../../../etc/passwd\",\n+    \"..\\\\..\\\\..\\\\windows\\\\system32\",\n+    \".git/../../../etc/shadow\",\n+    \"refs/heads/../../../sensitive\",\n+    \"%2e%2e%2f%2e%2e%2f\",",
+    "path": "tests/test_invariant_Cargo.py",
+    "commit_id": "a5dcb056e04eda2296a5be0663977ada87b83ec2",
+    "original_commit_id": "a5dcb056e04eda2296a5be0663977ada87b83ec2",
+    "user": {
+      "login": "cubic-dev-ai[bot]",
+      "id": 191113872,
+      "node_id": "BOT_kgDOC2QqkA",
+      "avatar_url": "https://avatars.githubusercontent.com/in/1082092?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D",
+      "html_url": "https://github.com/apps/cubic-dev-ai",
+      "followers_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/followers",
+      "following_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/subscriptions",
+      "organizations_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/orgs",
+      "repos_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/repos",
+      "events_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "<!-- cubic:v=50b08cc9-6566-4db3-9904-37f31bfde67c -->\n<!-- metadata:{\"confidence\":10} -->\nP2: The URL-encoded traversal payload is never decoded, so this test case is classified as safe by `is_safe_ref_name()` and makes the test fail.\n\n<details>\n<summary>Prompt for AI agents</summary>\n\n```text\nCheck if this issue is valid — if so, understand the root cause and fix it. At tests/test_invariant_Cargo.py, line 240:\n\n<comment>The URL-encoded traversal payload is never decoded, so this test case is classified as safe by `is_safe_ref_name()` and makes the test fail.</comment>\n\n<file context>\n@@ -0,0 +1,285 @@\n+    \"..\\\\..\\\\..\\\\windows\\\\system32\",\n+    \".git/../../../etc/shadow\",\n+    \"refs/heads/../../../sensitive\",\n+    \"%2e%2e%2f%2e%2e%2f\",\n+])\n+def test_path_traversal_always_blocked(payload):\n</file context>\n```\n\n</details>",
+    "created_at": "2026-05-22T05:51:19Z",
+    "updated_at": "2026-05-22T05:51:19Z",
+    "html_url": "https://github.com/starship/starship/pull/7494#discussion_r3286140307",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7494",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3286140307"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7494#discussion_r3286140307"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7494"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3286140307/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 240,
+    "original_line": 240,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 240,
+    "position": 240,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3286140313",
+    "pull_request_review_id": 4342848587,
+    "id": 3286140313,
+    "node_id": "PRRC_kwDOCqswNs7D3oWZ",
+    "diff_hunk": "@@ -0,0 +1,285 @@\n+import pytest\n+import re\n+import os\n+import tempfile\n+import subprocess\n+\n+\n+# Adversarial payloads targeting git path traversal, credential exposure,\n+# and repository manipulation vulnerabilities similar to gitoxide CVEs\n+ADVERSARIAL_PAYLOADS = [\n+    # Path traversal attempts\n+    \"../../../etc/passwd\",\n+    \"..\\\\..\\\\..\\\\windows\\\\system32\\\\config\\\\sam\",\n+    \".git/../../../etc/shadow\",\n+    \"%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd\",\n+    \"....//....//....//etc/passwd\",\n+    # Null byte injection\n+    \"valid_ref\\x00malicious\",\n+    \"refs/heads/main\\x00../../etc/passwd\",\n+    # Git ref injection\n+    \"refs/heads/../../../etc/passwd\",\n+    \"refs/heads/HEAD\\nref: refs/heads/malicious\",\n+    # Unicode/encoding tricks\n+    \"\\u202e\\u0041\\u0042\\u0043\",  # Right-to-left override\n+    \"refs/heads/\\u0000evil\",\n+    # Shell injection in ref names\n+    \"refs/heads/$(cat /etc/passwd)\",\n+    \"refs/heads/`id`\",\n+    \"refs/heads/main; rm -rf /\",\n+    # Credential/config injection\n+    \"[core]\\n\\tgitProxy=malicious_command\",\n+    \"url = https://evil.com\\n[credential]\\n\\thelper=malicious\",\n+    # Extremely long inputs\n+    \"A\" * 10000,\n+    \"refs/heads/\" + \"A\" * 5000,\n+    # Special git references\n+    \"HEAD\",\n+    \"FETCH_HEAD\",\n+    \"ORIG_HEAD\",\n+    \"MERGE_HEAD\",\n+    \"refs/heads/-malicious\",\n+    # Symlink attacks\n+    \".git/config\",\n+    \".git/hooks/pre-commit\",\n+    # CRLF injection\n+    \"refs/heads/main\\r\\nmalicious: header\",\n+    \"valid\\r\\n\\r\\nmalicious_body\",\n+    # Empty and whitespace\n+    \"\",\n+    \"   \",\n+    \"\\t\\n\\r\",\n+    # Cargo.lock specific - package name injection\n+    'name = \"malicious\"\\nversion = \"0.0.1\"\\n[dependencies]\\nevil = \"*\"',\n+    # Version string attacks\n+    \"0.0.0-alpha.1; DROP TABLE packages;--\",\n+    \"999999999.999999999.999999999\",\n+    # URL injection in Cargo.lock\n+    'https://evil.com/malicious#abc123',\n+    'file:///etc/passwd',\n+    'ssh://evil.com/repo.git',\n+]\n+\n+\n+def is_safe_ref_name(ref_name: str) -> bool:\n+    \"\"\"\n+    Validate that a git reference name is safe.\n+    Implements git ref validation rules to prevent path traversal and injection.\n+    \"\"\"\n+    if not ref_name or not ref_name.strip():\n+        return False\n+    \n+    # Must not contain null bytes\n+    if '\\x00' in ref_name:\n+        return False\n+    \n+    # Must not contain control characters\n+    if any(ord(c) < 32 for c in ref_name):\n+        return False\n+    \n+    # Must not contain path traversal sequences\n+    if '..' in ref_name:\n+        return False\n+    \n+    # Must not start with a dash\n+    if ref_name.startswith('-'):\n+        return False\n+    \n+    # Must not contain shell metacharacters\n+    dangerous_chars = set('`$;|&><(){}[]\\\\')\n+    if any(c in dangerous_chars for c in ref_name):\n+        return False\n+    \n+    return True\n+\n+\n+def is_safe_package_name(name: str) -> bool:\n+    \"\"\"Validate that a Cargo package name is safe (alphanumeric, hyphens, underscores).\"\"\"\n+    if not name:\n+        return False\n+    return bool(re.match(r'^[a-zA-Z0-9_-]+$', name))\n+\n+\n+def is_safe_version(version: str) -> bool:\n+    \"\"\"Validate that a version string is a safe semver.\"\"\"\n+    if not version:\n+        return False\n+    return bool(re.match(r'^\\d+\\.\\d+\\.\\d+([.-][a-zA-Z0-9.+]+)?$', version))\n+\n+\n+def is_safe_url(url: str) -> bool:\n+    \"\"\"Validate that a URL is safe (no file://, no injection).\"\"\"\n+    if not url:\n+        return True  # Empty URL is acceptable\n+    \n+    # Must not use file:// protocol\n+    if url.lower().startswith('file://'):\n+        return False\n+    \n+    # Must not contain null bytes or control characters\n+    if any(ord(c) < 32 for c in url):\n+        return False\n+    \n+    # Must not contain path traversal\n+    if '..' in url:\n+        return False\n+    \n+    return True\n+\n+\n+def sanitize_input(payload: str) -> str:\n+    \"\"\"Sanitize input by removing dangerous characters.\"\"\"\n+    # Remove null bytes\n+    sanitized = payload.replace('\\x00', '')\n+    # Remove control characters\n+    sanitized = re.sub(r'[\\x00-\\x1f\\x7f]', '', sanitized)\n+    # Remove path traversal\n+    sanitized = sanitized.replace('..', '')\n+    return sanitized\n+\n+\n+@pytest.mark.parametrize(\"payload\", ADVERSARIAL_PAYLOADS)\n+def test_git_ref_security_boundary(payload):\n+    \"\"\"Invariant: Adversarial inputs must never be treated as valid git references\n+    that could enable path traversal, injection, or unauthorized access.\"\"\"\n+    \n+    # If the payload contains path traversal or injection patterns,\n+    # it must be rejected by the validator\n+    dangerous_patterns = [\n+        r'\\.\\.',           # Path traversal\n+        r'\\x00',           # Null byte\n+        r'[\\x00-\\x1f]',   # Control characters\n+        r'[`$;|&><]',     # Shell metacharacters\n+    ]\n+    \n+    is_dangerous = any(\n+        re.search(pattern, payload) \n+        for pattern in dangerous_patterns\n+    )\n+    \n+    if is_dangerous:\n+        # Dangerous payloads MUST be rejected\n+        assert not is_safe_ref_name(payload), (\n+            f\"Security violation: Dangerous payload was accepted as valid ref: {repr(payload)}\"\n+        )\n+    \n+    # Sanitized version must never contain dangerous sequences\n+    sanitized = sanitize_input(payload)\n+    assert '\\x00' not in sanitized, \"Null bytes must be removed during sanitization\"\n+    assert not re.search(r'[\\x00-\\x1f]', sanitized), \"Control chars must be removed\"\n+\n+\n+@pytest.mark.parametrize(\"payload\", ADVERSARIAL_PAYLOADS)\n+def test_cargo_lock_package_name_security(payload):\n+    \"\"\"Invariant: Package names from Cargo.lock must always be validated\n+    to prevent injection attacks through dependency names.\"\"\"\n+    \n+    # Package names with special characters must be rejected\n+    if re.search(r'[^a-zA-Z0-9_-]', payload) or not payload.strip():\n+        assert not is_safe_package_name(payload), (\n+            f\"Security violation: Invalid package name accepted: {repr(payload)}\"\n+        )\n+\n+\n+@pytest.mark.parametrize(\"payload\", ADVERSARIAL_PAYLOADS)\n+def test_version_string_security(payload):\n+    \"\"\"Invariant: Version strings must conform to semver and never contain\n+    injection payloads that could be executed or cause path traversal.\"\"\"\n+    \n+    # Payloads with non-semver characters must be rejected\n+    if re.search(r'[^0-9a-zA-Z.\\-+]', payload) or not payload.strip():\n+        assert not is_safe_version(payload), (\n+            f\"Security violation: Malicious version string accepted: {repr(payload)}\"\n+        )\n+\n+\n+@pytest.mark.parametrize(\"payload\", ADVERSARIAL_PAYLOADS)\n+def test_url_security_boundary(payload):\n+    \"\"\"Invariant: URLs in Cargo.lock must never use file:// protocol\n+    or contain path traversal sequences that could access local files.\"\"\"\n+    \n+    if payload.lower().startswith('file://'):\n+        assert not is_safe_url(payload), (\n+            f\"Security violation: file:// URL was accepted: {repr(payload)}\"\n+        )\n+    \n+    if '..' in payload and ('/' in payload or '\\\\' in payload):\n+        # Path traversal in URLs must be rejected\n+        assert not is_safe_url(payload), (\n+            f\"Security violation: Path traversal URL was accepted: {repr(payload)}\"\n+        )\n+\n+\n+@pytest.mark.parametrize(\"payload\", ADVERSARIAL_PAYLOADS)\n+def test_no_command_injection_in_git_operations(payload):\n+    \"\"\"Invariant: Git-related inputs must never allow command injection\n+    regardless of the payload content.\"\"\"\n+    \n+    # Shell metacharacters in any git-related input must be sanitized\n+    shell_metacharacters = set('`$;|&><(){}[]\\\\')",
+    "path": "tests/test_invariant_Cargo.py",
+    "commit_id": "a5dcb056e04eda2296a5be0663977ada87b83ec2",
+    "original_commit_id": "a5dcb056e04eda2296a5be0663977ada87b83ec2",
+    "user": {
+      "login": "cubic-dev-ai[bot]",
+      "id": 191113872,
+      "node_id": "BOT_kgDOC2QqkA",
+      "avatar_url": "https://avatars.githubusercontent.com/in/1082092?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D",
+      "html_url": "https://github.com/apps/cubic-dev-ai",
+      "followers_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/followers",
+      "following_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/subscriptions",
+      "organizations_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/orgs",
+      "repos_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/repos",
+      "events_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cubic-dev-ai%5Bbot%5D/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "<!-- cubic:v=8607c0c3-d21e-4747-a3d8-c14e4272545b -->\n<!-- metadata:{\"confidence\":9} -->\nP3: The command-injection test is misleading: it defines shell metacharacters but never checks them, so it does not actually verify the security property it claims to cover.\n\n<details>\n<summary>Prompt for AI agents</summary>\n\n```text\nCheck if this issue is valid — if so, understand the root cause and fix it. At tests/test_invariant_Cargo.py, line 219:\n\n<comment>The command-injection test is misleading: it defines shell metacharacters but never checks them, so it does not actually verify the security property it claims to cover.</comment>\n\n<file context>\n@@ -0,0 +1,285 @@\n+    regardless of the payload content.\"\"\"\n+    \n+    # Shell metacharacters in any git-related input must be sanitized\n+    shell_metacharacters = set('`$;|&><(){}[]\\\\')\n+    \n+    sanitized = sanitize_input(payload)\n</file context>\n```\n\n</details>",
+    "created_at": "2026-05-22T05:51:19Z",
+    "updated_at": "2026-05-22T05:51:19Z",
+    "html_url": "https://github.com/starship/starship/pull/7494#discussion_r3286140313",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7494",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3286140313"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7494#discussion_r3286140313"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7494"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3286140313/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 219,
+    "original_line": 219,
+    "side": "RIGHT",
+    "author_association": "NONE",
+    "original_position": 219,
+    "position": 219,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/3286166428",
+    "pull_request_review_id": 4342878766,
+    "id": 3286166428,
+    "node_id": "PRRC_kwDOCqswNs7D3uuc",
+    "diff_hunk": "@@ -0,0 +1,285 @@\n+import pytest",
+    "path": "tests/test_invariant_Cargo.py",
+    "commit_id": "a5dcb056e04eda2296a5be0663977ada87b83ec2",
+    "original_commit_id": "a5dcb056e04eda2296a5be0663977ada87b83ec2",
+    "user": {
+      "login": "anupamme",
+      "id": 667857,
+      "node_id": "MDQ6VXNlcjY2Nzg1Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/667857?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/anupamme",
+      "html_url": "https://github.com/anupamme",
+      "followers_url": "https://api.github.com/users/anupamme/followers",
+      "following_url": "https://api.github.com/users/anupamme/following{/other_user}",
+      "gists_url": "https://api.github.com/users/anupamme/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/anupamme/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/anupamme/subscriptions",
+      "organizations_url": "https://api.github.com/users/anupamme/orgs",
+      "repos_url": "https://api.github.com/users/anupamme/repos",
+      "events_url": "https://api.github.com/users/anupamme/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/anupamme/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "@orbisai0security can you address code review comments",
+    "created_at": "2026-05-22T05:57:13Z",
+    "updated_at": "2026-05-22T05:57:13Z",
+    "html_url": "https://github.com/starship/starship/pull/7494#discussion_r3286166428",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/7494",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/3286166428"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/7494#discussion_r3286166428"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/7494"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/3286166428/reactions",
+      "total_count": 1,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 1
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 1,
+    "original_line": 1,
+    "side": "RIGHT",
+    "in_reply_to_id": 3286140305,
+    "author_association": "NONE",
+    "original_position": 1,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

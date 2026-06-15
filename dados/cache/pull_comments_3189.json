@@ -1,0 +1,833 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/741443595",
+    "pull_request_review_id": 795891144,
+    "id": 741443595,
+    "node_id": "PRRC_kwDOCqswNs4sMYgL",
+    "diff_hunk": "@@ -0,0 +1,301 @@\n+use encoding_rs::*;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader, Read};\n+use std::path::PathBuf;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+type JValue = serde_json::Value;\n+\n+use crate::configs::azure::AzureConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"azure\");\n+    let config = AzureConfig::try_load(module.config);\n+\n+    let subscription_name = get_azure_subscription_name(context)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"subscription\" => Some(Ok(subscription_name.to_string())),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `azure`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_azure_config_file_location(context: &Context) -> Option<PathBuf> {\n+    context\n+        .get_env(\"AZURE_CONFIG_DIR\")\n+        .map(PathBuf::from)\n+        .or_else(|| {\n+            let mut home = dirs_next::home_dir()?;",
+    "path": "src/modules/azure.rs",
+    "commit_id": "0c93c8441edc1753a7bd77b6bbf81f388ea07b4e",
+    "original_commit_id": "ab279ef5c3b3c5fc3a56eb672bc98db3309c12ec",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please use `context.get_home()` and remove `dirs-next` from `Cargo.toml`\r\n```suggestion\r\n            let mut home = context.get_home()?;\r\n```",
+    "created_at": "2021-11-02T20:35:55Z",
+    "updated_at": "2021-11-02T20:48:04Z",
+    "html_url": "https://github.com/starship/starship/pull/3189#discussion_r741443595",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3189",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/741443595"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3189#discussion_r741443595"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3189"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/741443595/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 52,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 52,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/741445164",
+    "pull_request_review_id": 795891144,
+    "id": 741445164,
+    "node_id": "PRRC_kwDOCqswNs4sMY4s",
+    "diff_hunk": "@@ -0,0 +1,301 @@\n+use encoding_rs::*;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader, Read};\n+use std::path::PathBuf;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+type JValue = serde_json::Value;\n+\n+use crate::configs::azure::AzureConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"azure\");\n+    let config = AzureConfig::try_load(module.config);\n+\n+    let subscription_name = get_azure_subscription_name(context)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"subscription\" => Some(Ok(subscription_name.to_string())),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `azure`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_azure_config_file_location(context: &Context) -> Option<PathBuf> {\n+    context\n+        .get_env(\"AZURE_CONFIG_DIR\")\n+        .map(PathBuf::from)\n+        .or_else(|| {\n+            let mut home = dirs_next::home_dir()?;\n+            home.push(\".azure\");\n+            Some(home)\n+        })\n+}\n+\n+fn get_azure_subscription_name(context: &Context) -> Option<String> {\n+    let mut azure_profile_json = get_azure_config_file_location(context)?;\n+    azure_profile_json.push(\"azureProfile.json\");\n+\n+    let mut cloud_config = get_azure_config_file_location(context)?;\n+    cloud_config.push(\"clouds.config\");\n+\n+    let file = File::open(&cloud_config).ok()?;\n+    let reader = BufReader::new(file);\n+    let cloud_config_lines = reader.lines().filter_map(Result::ok);\n+\n+    let subscription_line = cloud_config_lines\n+        .skip_while(|line| line != \"[AzureCloud]\")\n+        .find(|line| line.starts_with(\"subscription\"))?;\n+\n+    let current_subscription_id = subscription_line.split('=').nth(1)?.trim();\n+\n+    let file = File::open(&azure_profile_json).ok()?;\n+    let mut buffer: Vec<u8> = Vec::new();\n+    let mut reader = BufReader::new(file);\n+    reader.read_to_end(&mut buffer).ok()?;\n+    let bytes = buffer.as_mut_slice();\n+    let decodedbuffer = UTF_8.decode_with_bom_removal(bytes).0;",
+    "path": "src/modules/azure.rs",
+    "commit_id": "0c93c8441edc1753a7bd77b6bbf81f388ea07b4e",
+    "original_commit_id": "ab279ef5c3b3c5fc3a56eb672bc98db3309c12ec",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Instead of adding a dependency, please use something like `.strip_prefix(&[239, 187, 191])` to get rid of the BOM.",
+    "created_at": "2021-11-02T20:38:28Z",
+    "updated_at": "2021-11-02T20:49:11Z",
+    "html_url": "https://github.com/starship/starship/pull/3189#discussion_r741445164",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3189",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/741445164"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3189#discussion_r741445164"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3189"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/741445164/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 80,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 80,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/741446431",
+    "pull_request_review_id": 795891144,
+    "id": 741446431,
+    "node_id": "PRRC_kwDOCqswNs4sMZMf",
+    "diff_hunk": "@@ -0,0 +1,301 @@\n+use encoding_rs::*;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader, Read};\n+use std::path::PathBuf;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+type JValue = serde_json::Value;\n+\n+use crate::configs::azure::AzureConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"azure\");\n+    let config = AzureConfig::try_load(module.config);\n+\n+    let subscription_name = get_azure_subscription_name(context)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"subscription\" => Some(Ok(subscription_name.to_string())),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `azure`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_azure_config_file_location(context: &Context) -> Option<PathBuf> {\n+    context\n+        .get_env(\"AZURE_CONFIG_DIR\")\n+        .map(PathBuf::from)\n+        .or_else(|| {\n+            let mut home = dirs_next::home_dir()?;\n+            home.push(\".azure\");\n+            Some(home)\n+        })\n+}\n+\n+fn get_azure_subscription_name(context: &Context) -> Option<String> {\n+    let mut azure_profile_json = get_azure_config_file_location(context)?;\n+    azure_profile_json.push(\"azureProfile.json\");\n+\n+    let mut cloud_config = get_azure_config_file_location(context)?;\n+    cloud_config.push(\"clouds.config\");",
+    "path": "src/modules/azure.rs",
+    "commit_id": "0c93c8441edc1753a7bd77b6bbf81f388ea07b4e",
+    "original_commit_id": "ab279ef5c3b3c5fc3a56eb672bc98db3309c12ec",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Does this file use the INI format? If so, please use the `rust-ini` library for parsing this file.",
+    "created_at": "2021-11-02T20:40:30Z",
+    "updated_at": "2021-11-02T20:48:04Z",
+    "html_url": "https://github.com/starship/starship/pull/3189#discussion_r741446431",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3189",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/741446431"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3189#discussion_r741446431"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3189"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/741446431/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 62,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 63,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 63,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/741449006",
+    "pull_request_review_id": 795891144,
+    "id": 741449006,
+    "node_id": "PRRC_kwDOCqswNs4sMZ0u",
+    "diff_hunk": "@@ -0,0 +1,301 @@\n+use encoding_rs::*;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader, Read};\n+use std::path::PathBuf;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+type JValue = serde_json::Value;\n+\n+use crate::configs::azure::AzureConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"azure\");\n+    let config = AzureConfig::try_load(module.config);",
+    "path": "src/modules/azure.rs",
+    "commit_id": "0c93c8441edc1753a7bd77b6bbf81f388ea07b4e",
+    "original_commit_id": "ab279ef5c3b3c5fc3a56eb672bc98db3309c12ec",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Is there some kind of environment variable to ensure this module is only shown when it's relevant? Otherwise, it should be disabled by default.",
+    "created_at": "2021-11-02T20:44:36Z",
+    "updated_at": "2021-11-02T20:48:04Z",
+    "html_url": "https://github.com/starship/starship/pull/3189#discussion_r741449006",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3189",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/741449006"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3189#discussion_r741449006"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3189"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/741449006/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 18,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/741482370",
+    "pull_request_review_id": 795941978,
+    "id": 741482370,
+    "node_id": "PRRC_kwDOCqswNs4sMh-C",
+    "diff_hunk": "@@ -0,0 +1,301 @@\n+use encoding_rs::*;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader, Read};\n+use std::path::PathBuf;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+type JValue = serde_json::Value;\n+\n+use crate::configs::azure::AzureConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"azure\");\n+    let config = AzureConfig::try_load(module.config);",
+    "path": "src/modules/azure.rs",
+    "commit_id": "0c93c8441edc1753a7bd77b6bbf81f388ea07b4e",
+    "original_commit_id": "ab279ef5c3b3c5fc3a56eb672bc98db3309c12ec",
+    "user": {
+      "login": "mikkelhegn",
+      "id": 12242001,
+      "node_id": "MDQ6VXNlcjEyMjQyMDAx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12242001?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mikkelhegn",
+      "html_url": "https://github.com/mikkelhegn",
+      "followers_url": "https://api.github.com/users/mikkelhegn/followers",
+      "following_url": "https://api.github.com/users/mikkelhegn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mikkelhegn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mikkelhegn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mikkelhegn/subscriptions",
+      "organizations_url": "https://api.github.com/users/mikkelhegn/orgs",
+      "repos_url": "https://api.github.com/users/mikkelhegn/repos",
+      "events_url": "https://api.github.com/users/mikkelhegn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mikkelhegn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Don't have that, so changing the module to be disabled.",
+    "created_at": "2021-11-02T21:42:10Z",
+    "updated_at": "2021-11-02T21:42:11Z",
+    "html_url": "https://github.com/starship/starship/pull/3189#discussion_r741482370",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3189",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/741482370"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3189#discussion_r741482370"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3189"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/741482370/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 18,
+    "side": "RIGHT",
+    "in_reply_to_id": 741449006,
+    "author_association": "NONE",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/741490711",
+    "pull_request_review_id": 795952532,
+    "id": 741490711,
+    "node_id": "PRRC_kwDOCqswNs4sMkAX",
+    "diff_hunk": "@@ -0,0 +1,301 @@\n+use encoding_rs::*;\n+use std::fs::File;\n+use std::io::{BufRead, BufReader, Read};\n+use std::path::PathBuf;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+type JValue = serde_json::Value;\n+\n+use crate::configs::azure::AzureConfig;\n+use crate::formatter::StringFormatter;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"azure\");\n+    let config = AzureConfig::try_load(module.config);",
+    "path": "src/modules/azure.rs",
+    "commit_id": "0c93c8441edc1753a7bd77b6bbf81f388ea07b4e",
+    "original_commit_id": "ab279ef5c3b3c5fc3a56eb672bc98db3309c12ec",
+    "user": {
+      "login": "mikkelhegn",
+      "id": 12242001,
+      "node_id": "MDQ6VXNlcjEyMjQyMDAx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12242001?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mikkelhegn",
+      "html_url": "https://github.com/mikkelhegn",
+      "followers_url": "https://api.github.com/users/mikkelhegn/followers",
+      "following_url": "https://api.github.com/users/mikkelhegn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mikkelhegn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mikkelhegn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mikkelhegn/subscriptions",
+      "organizations_url": "https://api.github.com/users/mikkelhegn/orgs",
+      "repos_url": "https://api.github.com/users/mikkelhegn/repos",
+      "events_url": "https://api.github.com/users/mikkelhegn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mikkelhegn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Second commit resolves this...",
+    "created_at": "2021-11-02T21:58:17Z",
+    "updated_at": "2021-11-02T21:58:18Z",
+    "html_url": "https://github.com/starship/starship/pull/3189#discussion_r741490711",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3189",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/741490711"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3189#discussion_r741490711"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3189"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/741490711/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 18,
+    "side": "RIGHT",
+    "in_reply_to_id": 741449006,
+    "author_association": "NONE",
+    "original_position": 15,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/742203366",
+    "pull_request_review_id": 796921175,
+    "id": 742203366,
+    "node_id": "PRRC_kwDOCqswNs4sPR_m",
+    "diff_hunk": "@@ -0,0 +1,273 @@\n+use ini::Ini;\n+use std::fs::File;\n+use std::io::{BufReader, Read};\n+use std::path::{Path, PathBuf};\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+type JValue = serde_json::Value;\n+\n+use crate::configs::azure::AzureConfig;\n+use crate::formatter::StringFormatter;\n+\n+type SubscriptionId = String;\n+type SubscriptionName = String;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"azure\");\n+    let config = AzureConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    };\n+\n+    let subscription_id = get_azure_subscription_id(context)?;\n+    let subscription_name = get_azure_subscription_name(context, &subscription_id)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"subscription\" => Some(Ok(subscription_name.to_string())),\n+                _ => None,\n+            })\n+            .parse(None)\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `azure`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_config_file_location(context: &Context) -> Option<PathBuf> {\n+    context\n+        .get_env(\"AZURE_CONFIG_DIR\")\n+        .map(PathBuf::from)\n+        .or_else(|| {\n+            let mut home = context.get_home()?;\n+            home.push(\".azure\");\n+            Some(home)\n+        })\n+}\n+\n+fn get_azure_subscription_id(context: &Context) -> Option<SubscriptionId> {\n+    let mut config_path = get_config_file_location(context)?;\n+    config_path.push(\"clouds.config\");\n+\n+    let config_file = Ini::load_from_file(config_path.as_path()).ok()?;\n+    let azure_cloud_section = config_file.section(Some(\"AzureCloud\")).unwrap();\n+    let current_subscription_id = azure_cloud_section.get(\"subscription\").unwrap();\n+    Some(current_subscription_id.to_string())\n+}\n+\n+fn get_azure_subscription_name(\n+    context: &Context,\n+    subscription_id: &str,\n+) -> Option<SubscriptionName> {\n+    let mut config_path = get_config_file_location(context)?;\n+    config_path.push(\"azureProfile.json\");\n+\n+    if let Some(parsed_json) = parse_json(&config_path) {\n+        let subscriptions = parsed_json[\"subscriptions\"].as_array()?;\n+\n+        subscriptions\n+            .iter()\n+            .find_map(|s| find_subscription_name(s, subscription_id.to_string()))\n+    } else {\n+        None\n+    }\n+}\n+\n+fn parse_json(json_file_path: &Path) -> Option<JValue> {\n+    let mut buffer: Vec<u8> = Vec::new();\n+\n+    if let Ok(json_file) = File::open(&json_file_path) {\n+        let mut reader = BufReader::new(json_file);\n+        reader.read_to_end(&mut buffer).ok()?;\n+    } else {\n+        return None;\n+    }\n+\n+    let bytes = buffer.as_mut_slice();\n+    let decodedbuffer;\n+\n+    if let Some([239, 187, 191]) = bytes.get(0..3) {\n+        decodedbuffer = bytes.strip_prefix(&[239, 187, 191]).unwrap();\n+    } else {\n+        decodedbuffer = bytes;\n+    }",
+    "path": "src/modules/azure.rs",
+    "commit_id": "0c93c8441edc1753a7bd77b6bbf81f388ea07b4e",
+    "original_commit_id": "5428aea1c856a292e40255dee19a38cc2706094c",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This can be simplified to this:\r\n```suggestion\r\n    let json_file = File::open(&json_file_path).ok()?;\r\n    let mut reader = BufReader::new(json_file);\r\n    reader.read_to_end(&mut buffer).ok()?;\r\n\r\n    let bytes = buffer.as_mut_slice();\r\n    let decodedbuffer = bytes.strip_prefix(&[239, 187, 191]).unwrap_or(bytes);\r\n```\r\n\r\nAdditionally, a test for the BOM handling would be nice.",
+    "created_at": "2021-11-03T18:01:23Z",
+    "updated_at": "2021-11-05T11:53:52Z",
+    "html_url": "https://github.com/starship/starship/pull/3189#discussion_r742203366",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3189",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/742203366"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3189#discussion_r742203366"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3189"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/742203366/reactions",
+      "total_count": 1,
+      "+1": 1,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 97,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 111,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 111,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/743593052",
+    "pull_request_review_id": 796921175,
+    "id": 743593052,
+    "node_id": "PRRC_kwDOCqswNs4sUlRc",
+    "diff_hunk": "@@ -0,0 +1,273 @@\n+use ini::Ini;\n+use std::fs::File;\n+use std::io::{BufReader, Read};\n+use std::path::{Path, PathBuf};\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+type JValue = serde_json::Value;\n+\n+use crate::configs::azure::AzureConfig;\n+use crate::formatter::StringFormatter;\n+\n+type SubscriptionId = String;\n+type SubscriptionName = String;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"azure\");\n+    let config = AzureConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    };\n+\n+    let subscription_id = get_azure_subscription_id(context)?;\n+    let subscription_name = get_azure_subscription_name(context, &subscription_id)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"subscription\" => Some(Ok(subscription_name.to_string())),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `azure`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_config_file_location(context: &Context) -> Option<PathBuf> {\n+    context\n+        .get_env(\"AZURE_CONFIG_DIR\")\n+        .map(PathBuf::from)\n+        .or_else(|| {\n+            let mut home = context.get_home()?;\n+            home.push(\".azure\");\n+            Some(home)\n+        })\n+}\n+\n+fn get_azure_subscription_id(context: &Context) -> Option<SubscriptionId> {\n+    let mut config_path = get_config_file_location(context)?;\n+    config_path.push(\"clouds.config\");\n+\n+    let config_file = Ini::load_from_file(config_path.as_path()).ok()?;\n+    let azure_cloud_section = config_file.section(Some(\"AzureCloud\")).unwrap();\n+    let current_subscription_id = azure_cloud_section.get(\"subscription\").unwrap();\n+    Some(current_subscription_id.to_string())",
+    "path": "src/modules/azure.rs",
+    "commit_id": "0c93c8441edc1753a7bd77b6bbf81f388ea07b4e",
+    "original_commit_id": "d4f7a6152787a19f257252e05cdd0c4e9d7d56f0",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please don't use `.unwrap()` here. Use `?` instead, and add a test to ensure the missing section doesn't cause unwanted behaviour.\r\nIn general, some logging here and elsewhere would be nice to have.",
+    "created_at": "2021-11-05T11:43:33Z",
+    "updated_at": "2021-11-05T11:55:02Z",
+    "html_url": "https://github.com/starship/starship/pull/3189#discussion_r743593052",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3189",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/743593052"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3189#discussion_r743593052"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3189"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/743593052/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 70,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 73,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 73,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/743596007",
+    "pull_request_review_id": 796921175,
+    "id": 743596007,
+    "node_id": "PRRC_kwDOCqswNs4sUl_n",
+    "diff_hunk": "@@ -0,0 +1,273 @@\n+use ini::Ini;\n+use std::fs::File;\n+use std::io::{BufReader, Read};\n+use std::path::{Path, PathBuf};\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+type JValue = serde_json::Value;\n+\n+use crate::configs::azure::AzureConfig;\n+use crate::formatter::StringFormatter;\n+\n+type SubscriptionId = String;\n+type SubscriptionName = String;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"azure\");\n+    let config = AzureConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    };\n+\n+    let subscription_id = get_azure_subscription_id(context)?;\n+    let subscription_name = get_azure_subscription_name(context, &subscription_id)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"subscription\" => Some(Ok(subscription_name.to_string())),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `azure`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_config_file_location(context: &Context) -> Option<PathBuf> {\n+    context\n+        .get_env(\"AZURE_CONFIG_DIR\")\n+        .map(PathBuf::from)\n+        .or_else(|| {\n+            let mut home = context.get_home()?;\n+            home.push(\".azure\");\n+            Some(home)\n+        })\n+}\n+\n+fn get_azure_subscription_id(context: &Context) -> Option<SubscriptionId> {\n+    let mut config_path = get_config_file_location(context)?;\n+    config_path.push(\"clouds.config\");\n+\n+    let config_file = Ini::load_from_file(config_path.as_path()).ok()?;\n+    let azure_cloud_section = config_file.section(Some(\"AzureCloud\")).unwrap();\n+    let current_subscription_id = azure_cloud_section.get(\"subscription\").unwrap();\n+    Some(current_subscription_id.to_string())\n+}\n+\n+fn get_azure_subscription_name(\n+    context: &Context,\n+    subscription_id: &str,\n+) -> Option<SubscriptionName> {\n+    let mut config_path = get_config_file_location(context)?;\n+    config_path.push(\"azureProfile.json\");\n+\n+    if let Some(parsed_json) = parse_json(&config_path) {\n+        let subscriptions = parsed_json[\"subscriptions\"].as_array()?;\n+\n+        subscriptions\n+            .iter()\n+            .find_map(|s| find_subscription_name(s, subscription_id.to_string()))\n+    } else {\n+        None\n+    }\n+}\n+\n+fn parse_json(json_file_path: &Path) -> Option<JValue> {\n+    let mut buffer: Vec<u8> = Vec::new();\n+\n+    if let Ok(json_file) = File::open(&json_file_path) {\n+        let mut reader = BufReader::new(json_file);\n+        reader.read_to_end(&mut buffer).ok()?;\n+    } else {\n+        return None;\n+    }\n+\n+    let bytes = buffer.as_mut_slice();\n+    let decodedbuffer;\n+\n+    if let Some([239, 187, 191]) = bytes.get(0..3) {\n+        decodedbuffer = bytes.strip_prefix(&[239, 187, 191]).unwrap();\n+    } else {\n+        decodedbuffer = bytes;\n+    }\n+\n+    let parsed_json: JValue = serde_json::from_slice(decodedbuffer).ok()?;\n+    Some(parsed_json)\n+}\n+\n+fn find_subscription_name(\n+    subscription: &JValue,\n+    current_subscription_id: SubscriptionId,\n+) -> Option<SubscriptionName> {\n+    let subscription_id = subscription[\"id\"].as_str()?;\n+\n+    if subscription_id == current_subscription_id {\n+        let subscription_name = subscription[\"name\"].as_str()?;",
+    "path": "src/modules/azure.rs",
+    "commit_id": "0c93c8441edc1753a7bd77b6bbf81f388ea07b4e",
+    "original_commit_id": "d4f7a6152787a19f257252e05cdd0c4e9d7d56f0",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please use `.get()` instead of `[]` for indexing to avoid potential panics, and add a test for missing `id`/`name`.",
+    "created_at": "2021-11-05T11:48:53Z",
+    "updated_at": "2021-11-05T11:53:52Z",
+    "html_url": "https://github.com/starship/starship/pull/3189#discussion_r743596007",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3189",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/743596007"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3189#discussion_r743596007"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3189"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/743596007/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 121,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 124,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 124,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/743597060",
+    "pull_request_review_id": 796921175,
+    "id": 743597060,
+    "node_id": "PRRC_kwDOCqswNs4sUmQE",
+    "diff_hunk": "@@ -343,6 +344,31 @@ style = \"bold blue\"\n symbol = \"🅰 \"\n ```\n \n+## Azure\n+\n+The `azure` module shows the current Azure Subscription. This is based on \n+`~/.azure/clouds.config` and `~/.azure/azureProfile.json` files.\n+\n+### Options\n+\n+| Variable          | Default                                  | Description                                |\n+| ----------------- | ---------------------------------------- | ------------------------------------------ |\n+| `format`          | `\"on [$symbol($subscription)]($style) \"` | The format for the Azure module to render. |\n+| `symbol`          | `\"ﴃ \"`                                   | The symbol used in the format.             |\n+| `style`           | `\"blue bold\"`                            | The style used in the format.              |\n+| `disabled`        | `false`                                  | Disables the `azure` module.               |",
+    "path": "docs/config/README.md",
+    "commit_id": "0c93c8441edc1753a7bd77b6bbf81f388ea07b4e",
+    "original_commit_id": "d4f7a6152787a19f257252e05cdd0c4e9d7d56f0",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "```suggestion\r\n| `disabled`        | `true`                                  | Disables the `azure` module.               |\r\n```",
+    "created_at": "2021-11-05T11:50:44Z",
+    "updated_at": "2021-11-05T11:53:52Z",
+    "html_url": "https://github.com/starship/starship/pull/3189#discussion_r743597060",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3189",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/743597060"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3189#discussion_r743597060"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3189"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/743597060/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": null,
+    "original_line": 359,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 24,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/743597953",
+    "pull_request_review_id": 796921175,
+    "id": 743597953,
+    "node_id": "PRRC_kwDOCqswNs4sUmeB",
+    "diff_hunk": "@@ -343,6 +344,31 @@ style = \"bold blue\"\n symbol = \"🅰 \"\n ```\n \n+## Azure\n+\n+The `azure` module shows the current Azure Subscription. This is based on \n+`~/.azure/clouds.config` and `~/.azure/azureProfile.json` files.\n+\n+### Options\n+\n+| Variable          | Default                                  | Description                                |\n+| ----------------- | ---------------------------------------- | ------------------------------------------ |\n+| `format`          | `\"on [$symbol($subscription)]($style) \"` | The format for the Azure module to render. |\n+| `symbol`          | `\"ﴃ \"`                                   | The symbol used in the format.             |\n+| `style`           | `\"blue bold\"`                            | The style used in the format.              |\n+| `disabled`        | `false`                                  | Disables the `azure` module.               |\n+\n+### Example\n+\n+```toml\n+# ~/.config/starship.toml\n+\n+[azure]\n+format= \"on [$symbol($subscription)]($style) \"\n+symbol= \"ﴃ \"\n+style= \"blue bold\"",
+    "path": "docs/config/README.md",
+    "commit_id": "0c93c8441edc1753a7bd77b6bbf81f388ea07b4e",
+    "original_commit_id": "d4f7a6152787a19f257252e05cdd0c4e9d7d56f0",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Formatting and I think the sample should enable the module:\r\n```suggestion\r\ndisabled = false\r\nformat = \"on [$symbol($subscription)]($style) \"\r\nsymbol = \"ﴃ \"\r\nstyle = \"blue bold\"\r\n```",
+    "created_at": "2021-11-05T11:52:22Z",
+    "updated_at": "2021-11-05T11:53:52Z",
+    "html_url": "https://github.com/starship/starship/pull/3189#discussion_r743597953",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3189",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/743597953"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3189#discussion_r743597953"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3189"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/743597953/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 367,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 369,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 34,
+    "position": 1,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/757437344",
+    "pull_request_review_id": 816701946,
+    "id": 757437344,
+    "node_id": "PRRC_kwDOCqswNs4tJZOg",
+    "diff_hunk": "@@ -0,0 +1,273 @@\n+use ini::Ini;\n+use std::fs::File;\n+use std::io::{BufReader, Read};\n+use std::path::{Path, PathBuf};\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+type JValue = serde_json::Value;\n+\n+use crate::configs::azure::AzureConfig;\n+use crate::formatter::StringFormatter;\n+\n+type SubscriptionId = String;\n+type SubscriptionName = String;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"azure\");\n+    let config = AzureConfig::try_load(module.config);\n+\n+    if config.disabled {\n+        return None;\n+    };\n+\n+    let subscription_id = get_azure_subscription_id(context)?;\n+    let subscription_name = get_azure_subscription_name(context, &subscription_id)?;\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"subscription\" => Some(Ok(subscription_name.to_string())),\n+                _ => None,\n+            })\n+            .parse(None, Some(context))\n+    });\n+\n+    module.set_segments(match parsed {\n+        Ok(segments) => segments,\n+        Err(error) => {\n+            log::warn!(\"Error in module `azure`:\\n{}\", error);\n+            return None;\n+        }\n+    });\n+\n+    Some(module)\n+}\n+\n+fn get_config_file_location(context: &Context) -> Option<PathBuf> {\n+    context\n+        .get_env(\"AZURE_CONFIG_DIR\")\n+        .map(PathBuf::from)\n+        .or_else(|| {\n+            let mut home = context.get_home()?;\n+            home.push(\".azure\");\n+            Some(home)\n+        })\n+}\n+\n+fn get_azure_subscription_id(context: &Context) -> Option<SubscriptionId> {\n+    let mut config_path = get_config_file_location(context)?;\n+    config_path.push(\"clouds.config\");\n+\n+    let config_file = Ini::load_from_file(config_path.as_path()).ok()?;\n+    let azure_cloud_section = config_file.section(Some(\"AzureCloud\")).unwrap();\n+    let current_subscription_id = azure_cloud_section.get(\"subscription\").unwrap();\n+    Some(current_subscription_id.to_string())",
+    "path": "src/modules/azure.rs",
+    "commit_id": "0c93c8441edc1753a7bd77b6bbf81f388ea07b4e",
+    "original_commit_id": "d4f7a6152787a19f257252e05cdd0c4e9d7d56f0",
+    "user": {
+      "login": "mikkelhegn",
+      "id": 12242001,
+      "node_id": "MDQ6VXNlcjEyMjQyMDAx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12242001?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/mikkelhegn",
+      "html_url": "https://github.com/mikkelhegn",
+      "followers_url": "https://api.github.com/users/mikkelhegn/followers",
+      "following_url": "https://api.github.com/users/mikkelhegn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/mikkelhegn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/mikkelhegn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/mikkelhegn/subscriptions",
+      "organizations_url": "https://api.github.com/users/mikkelhegn/orgs",
+      "repos_url": "https://api.github.com/users/mikkelhegn/repos",
+      "events_url": "https://api.github.com/users/mikkelhegn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/mikkelhegn/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Added logging throughout the module.",
+    "created_at": "2021-11-26T11:44:59Z",
+    "updated_at": "2021-11-26T11:45:00Z",
+    "html_url": "https://github.com/starship/starship/pull/3189#discussion_r757437344",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3189",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/757437344"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3189#discussion_r757437344"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3189"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/757437344/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": 70,
+    "start_side": "RIGHT",
+    "line": null,
+    "original_line": 73,
+    "side": "RIGHT",
+    "in_reply_to_id": 743593052,
+    "author_association": "NONE",
+    "original_position": 73,
+    "position": 1,
+    "subject_type": "line"
+  }
+]

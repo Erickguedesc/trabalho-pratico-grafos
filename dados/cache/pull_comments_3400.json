@@ -1,0 +1,278 @@
+[
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/805150317",
+    "pull_request_review_id": 880847483,
+    "id": 805150317,
+    "node_id": "PRRC_kwDOCqswNs4v_Z5t",
+    "diff_hunk": "@@ -0,0 +1,186 @@\n+use unicode_segmentation::UnicodeSegmentation;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::dolt_branch::DoltBranchConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils::get_command_string_output;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"dolt_branch\");\n+    let config: DoltBranchConfig = DoltBranchConfig::try_load(module.config);\n+\n+    let is_dolt_repo = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_file)\n+        .set_folders(&config.detect_folder)\n+        .is_match();\n+    if !is_dolt_repo {\n+        return None;\n+    }\n+\n+    if config.disabled {\n+        return None;\n+    }\n+",
+    "path": "src/modules/dolt_branch.rs",
+    "commit_id": "a013de61bb1bd79588144714445204afb7f72277",
+    "original_commit_id": "e7332c0657b884ef36ad2e383ad0df70ec49828c",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This is unnecessary unless the module is disabled by default:\r\n```suggestion\r\n```",
+    "created_at": "2022-02-12T11:21:53Z",
+    "updated_at": "2022-02-12T11:39:42Z",
+    "html_url": "https://github.com/starship/starship/pull/3400#discussion_r805150317",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3400",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/805150317"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3400#discussion_r805150317"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3400"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/805150317/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 22,
+    "original_start_line": 22,
+    "start_side": "RIGHT",
+    "line": 25,
+    "original_line": 25,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 25,
+    "position": 25,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/805150350",
+    "pull_request_review_id": 880847483,
+    "id": 805150350,
+    "node_id": "PRRC_kwDOCqswNs4v_Z6O",
+    "diff_hunk": "@@ -0,0 +1,31 @@\n+use crate::config::ModuleConfig;\n+\n+use serde::Serialize;\n+use starship_module_config_derive::ModuleConfig;\n+\n+#[derive(Clone, ModuleConfig, Serialize)]\n+pub struct DoltBranchConfig<'a> {\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub truncation_length: i64,\n+    pub truncation_symbol: &'a str,\n+    pub detect_file: Vec<&'a str>,\n+    pub detect_folder: Vec<&'a str>,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> Default for DoltBranchConfig<'a> {\n+    fn default() -> Self {\n+        DoltBranchConfig {\n+            format: \"on [$symbol$branch]($style)\",\n+            symbol: \" \",\n+            style: \"bold purple\",\n+            truncation_length: std::i64::MAX,\n+            truncation_symbol: \"…\",\n+            detect_file: Vec::default(),\n+            detect_folder: vec![\".dolt\"],",
+    "path": "src/configs/dolt_branch.rs",
+    "commit_id": "a013de61bb1bd79588144714445204afb7f72277",
+    "original_commit_id": "e7332c0657b884ef36ad2e383ad0df70ec49828c",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "Please add `detect_extensions`",
+    "created_at": "2022-02-12T11:22:13Z",
+    "updated_at": "2022-02-12T11:39:43Z",
+    "html_url": "https://github.com/starship/starship/pull/3400#discussion_r805150350",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3400",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/805150350"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3400#discussion_r805150350"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3400"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/805150350/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": 26,
+    "original_start_line": 26,
+    "start_side": "RIGHT",
+    "line": 27,
+    "original_line": 27,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 27,
+    "position": 27,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/805150477",
+    "pull_request_review_id": 880847483,
+    "id": 805150477,
+    "node_id": "PRRC_kwDOCqswNs4v_Z8N",
+    "diff_hunk": "@@ -0,0 +1,31 @@\n+use crate::config::ModuleConfig;\n+\n+use serde::Serialize;\n+use starship_module_config_derive::ModuleConfig;\n+\n+#[derive(Clone, ModuleConfig, Serialize)]\n+pub struct DoltBranchConfig<'a> {\n+    pub format: &'a str,\n+    pub symbol: &'a str,\n+    pub style: &'a str,\n+    pub truncation_length: i64,\n+    pub truncation_symbol: &'a str,\n+    pub detect_file: Vec<&'a str>,\n+    pub detect_folder: Vec<&'a str>,\n+    pub disabled: bool,\n+}\n+\n+impl<'a> Default for DoltBranchConfig<'a> {\n+    fn default() -> Self {\n+        DoltBranchConfig {\n+            format: \"on [$symbol$branch]($style)\",\n+            symbol: \" \",",
+    "path": "src/configs/dolt_branch.rs",
+    "commit_id": "a013de61bb1bd79588144714445204afb7f72277",
+    "original_commit_id": "e7332c0657b884ef36ad2e383ad0df70ec49828c",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "There's some discussion around potentially switching to emojis only by default. Please preferably use an emoji symbol here, and please also update the presets per the [checklist](https://github.com/starship/starship/blob/master/CONTRIBUTING.md#new-module-checklist).",
+    "created_at": "2022-02-12T11:23:58Z",
+    "updated_at": "2022-02-12T11:39:43Z",
+    "html_url": "https://github.com/starship/starship/pull/3400#discussion_r805150477",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3400",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/805150477"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3400#discussion_r805150477"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3400"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/805150477/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 22,
+    "original_line": 22,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 22,
+    "position": 22,
+    "subject_type": "line"
+  },
+  {
+    "url": "https://api.github.com/repos/starship/starship/pulls/comments/805150778",
+    "pull_request_review_id": 880847483,
+    "id": 805150778,
+    "node_id": "PRRC_kwDOCqswNs4v_aA6",
+    "diff_hunk": "@@ -0,0 +1,186 @@\n+use unicode_segmentation::UnicodeSegmentation;\n+\n+use super::{Context, Module, RootModuleConfig};\n+\n+use crate::configs::dolt_branch::DoltBranchConfig;\n+use crate::formatter::StringFormatter;\n+use crate::utils::get_command_string_output;\n+\n+pub fn module<'a>(context: &'a Context) -> Option<Module<'a>> {\n+    let mut module = context.new_module(\"dolt_branch\");\n+    let config: DoltBranchConfig = DoltBranchConfig::try_load(module.config);\n+\n+    let is_dolt_repo = context\n+        .try_begin_scan()?\n+        .set_files(&config.detect_file)\n+        .set_folders(&config.detect_folder)\n+        .is_match();\n+    if !is_dolt_repo {\n+        return None;\n+    }\n+\n+    if config.disabled {\n+        return None;\n+    }\n+\n+    let len = if config.truncation_length <= 0 {\n+        log::warn!(\n+            \"\\\"truncation_length\\\" should be a positive value, got {}\",\n+            config.truncation_length\n+        );\n+        std::usize::MAX\n+    } else {\n+        config.truncation_length as usize\n+    };\n+\n+    let parsed = StringFormatter::new(config.format).and_then(|formatter| {\n+        formatter\n+            .map_meta(|variable, _| match variable {\n+                \"symbol\" => Some(config.symbol),\n+                _ => None,\n+            })\n+            .map_style(|variable| match variable {\n+                \"style\" => Some(Ok(config.style)),\n+                _ => None,\n+            })\n+            .map(|variable| match variable {\n+                \"branch\" => {\n+                    let command = context.exec_cmd(\"dolt\", &[\"branch\", \"--show-current\"])?;",
+    "path": "src/modules/dolt_branch.rs",
+    "commit_id": "a013de61bb1bd79588144714445204afb7f72277",
+    "original_commit_id": "e7332c0657b884ef36ad2e383ad0df70ec49828c",
+    "user": {
+      "login": "davidkna",
+      "id": 835177,
+      "node_id": "MDQ6VXNlcjgzNTE3Nw==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835177?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/davidkna",
+      "html_url": "https://github.com/davidkna",
+      "followers_url": "https://api.github.com/users/davidkna/followers",
+      "following_url": "https://api.github.com/users/davidkna/following{/other_user}",
+      "gists_url": "https://api.github.com/users/davidkna/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/davidkna/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/davidkna/subscriptions",
+      "organizations_url": "https://api.github.com/users/davidkna/orgs",
+      "repos_url": "https://api.github.com/users/davidkna/repos",
+      "events_url": "https://api.github.com/users/davidkna/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/davidkna/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "body": "This commands seems to be very slow (~300ms). Is there a way to speed this up? This module also doesn't seem to work on Windows right now, but that could be due to #3582.",
+    "created_at": "2022-02-12T11:27:09Z",
+    "updated_at": "2022-02-12T11:39:43Z",
+    "html_url": "https://github.com/starship/starship/pull/3400#discussion_r805150778",
+    "pull_request_url": "https://api.github.com/repos/starship/starship/pulls/3400",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/comments/805150778"
+      },
+      "html": {
+        "href": "https://github.com/starship/starship/pull/3400#discussion_r805150778"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/starship/starship/pulls/3400"
+      }
+    },
+    "reactions": {
+      "url": "https://api.github.com/repos/starship/starship/pulls/comments/805150778/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "start_line": null,
+    "original_start_line": null,
+    "start_side": null,
+    "line": 48,
+    "original_line": 48,
+    "side": "RIGHT",
+    "author_association": "MEMBER",
+    "original_position": 48,
+    "position": 48,
+    "subject_type": "line"
+  }
+]
