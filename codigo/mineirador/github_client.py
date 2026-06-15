@@ -17,7 +17,6 @@ import urllib.request
 import urllib.error
 import json
 from typing import Any
-import http.client
 
 from .config import MinerConfig
 from .json_cache import CacheJson
@@ -148,7 +147,7 @@ class GitHubClient:
             self._throttle()
             req = self._build_request(url)
             try:
-                with urllib.request.urlopen(req, timeout=30) as resp:
+                with urllib.request.urlopen(req, timeout=120) as resp:
                     data = json.loads(resp.read())
                     next_url = self._parse_next_link(resp.headers.get("Link", ""))
                 self._rotate_token()
@@ -169,10 +168,27 @@ class GitHubClient:
 
             except urllib.error.URLError as exc:
                 if attempt < self._config.max_retries:
-                    logger.warning("Erro de rede (%s). Retentando em 5s...", exc.reason)
+                    logger.warning(
+                        "Erro de rede (%s). Retentando em 5s... (tentativa %d/%d)",
+                        exc.reason, attempt + 1, self._config.max_retries,
+                    )
                     time.sleep(5)
                     continue
                 logger.error("Erro de rede ao acessar %s: %s", url, exc.reason)
+                raise
+
+            except (TimeoutError, OSError) as exc:
+                # TimeoutError é subclasse de OSError, não de URLError —
+                # por isso precisa de bloco próprio para ser capturado e ter retry.
+                if attempt < self._config.max_retries:
+                    wait = 10 * (attempt + 1)  # backoff: 10s, 20s, 30s
+                    logger.warning(
+                        "Timeout ao ler resposta de %s. Aguardando %ds... (tentativa %d/%d)",
+                        url, wait, attempt + 1, self._config.max_retries,
+                    )
+                    time.sleep(wait)
+                    continue
+                logger.error("Timeout persistente ao acessar %s após %d tentativas.", url, self._config.max_retries)
                 raise
 
         raise RateLimitError(f"Máximo de tentativas atingido para {url}")
