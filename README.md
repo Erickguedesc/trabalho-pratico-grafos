@@ -332,12 +332,3 @@ O minerador grava e o construtor lê linhas no seguinte formato (JSON Lines — 
 | `pr_merge` | Merge de pull request | 5 |
 
 ---
-
-## Membros do Grupo
-
-| Nome | Responsabilidade |
-|------|-----------------|
-| _(preencher)_ | _(preencher)_ |
-| _(preencher)_ | _(preencher)_ |
-| _(preencher)_ | _(preencher)_ |
-| _(preencher)_ | _(preencher)_ |
