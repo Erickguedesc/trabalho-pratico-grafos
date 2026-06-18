@@ -222,3 +222,32 @@ class AdjacencyMatrixGraph(AbstractGraph):
                 out_degree += 1
 
         return out_degree
+    
+    def getVertexOutDegree(self, u: int) -> int:
+        self._validate_vertex(u)
+
+        out_degree = 0
+
+        for destination in range(self.num_vertices):
+            if self.adjacency_matrix[u][destination]:
+                out_degree += 1
+
+        return out_degree
+
+    def getNeighbors(self, u: int):
+        """
+        Retorna a lista de vizinhos de saída do vértice u.
+
+        Recebe:
+            u (int): vértice analisado.
+
+        Retorna:
+            list[int]: índices dos vértices v tais que existe aresta u -> v.
+        """
+
+        self._validate_vertex(u)
+
+        return [
+            v for v in range(self.num_vertices)
+            if v != u and self.adjacency_matrix[u][v]
+        ]
