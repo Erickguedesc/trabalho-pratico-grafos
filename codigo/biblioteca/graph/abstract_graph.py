@@ -515,3 +515,17 @@ class AbstractGraph(ABC):
         a estrutura interna usada: matriz ou lista.
         """
         pass
+
+    @abstractmethod
+    def getNeighbors(self, u: int):
+        """
+        Retorna os vizinhos de saída do vértice u, ou seja, todos os vértices v
+        tais que existe uma aresta u -> v.
+
+        Retorna:
+            Iterable[int]: coleção dos vértices destino das arestas que saem de u.
+
+        Deve ser implementado em cada subclasse para aproveitar melhor
+        a estrutura interna usada: matriz ou lista.
+        """
+        pass
