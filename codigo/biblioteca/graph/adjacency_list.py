@@ -83,3 +83,11 @@ class AdjacencyListGraph(AbstractGraph):
                 lines.append(f"{u}: []")
 
         return "\n".join(lines)
+    
+    def getVertexOutDegree(self, u: int) -> int:
+        self._validate_vertex(u)
+        return len(self.adjacency_list[u])
+
+    def getNeighbors(self, u: int):
+        self._validate_vertex(u)
+        return list(self.adjacency_list[u].keys())
